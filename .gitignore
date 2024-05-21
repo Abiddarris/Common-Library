@@ -83,3 +83,4 @@ lint/tmp/
 # lint/reports/
 
 buildlib/
+.androidide/
