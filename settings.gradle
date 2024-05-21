@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Renpy Emulator"
 
-include(":app", ":market_apk_expansion")
+include(":app", ":market_apk_expansion", ":market_licensing")
