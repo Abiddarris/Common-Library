@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.abiddarris.preferences'
+    namespace 'com.abiddarris.common'
     compileSdk 33
     buildToolsVersion "34.0.4"
 
