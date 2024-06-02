@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.ActivityAboutBinding;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +52,8 @@ public class AboutActivity extends AppCompatActivity {
         binding = ActivityAboutBinding.inflate(getLayoutInflater());
         
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+        setTitle(R.string.about);
         
         var extras = getIntent().getExtras();
         String aboutFileName = extras.getString(ABOUT_FILE_NAME);
