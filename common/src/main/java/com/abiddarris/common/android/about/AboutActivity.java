@@ -21,13 +21,11 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.ActivityAboutBinding;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,58 +57,60 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         setSupportActionBar(binding.toolbar);
         setTitle(R.string.about);
-        
-        var extras = getIntent().getExtras();
+         
+        Bundle extras = getIntent().getExtras();
         String aboutFileName = extras.getString(ABOUT_FILE_NAME);
         String attributionFileName = extras.getString(ATTRIBUTION_FILE_NAME);
         
         if(aboutFileName == null) {
-            return;
+            throw new IllegalArgumentException("aboutFileName cannot be null.");
         }
+        
         executor.submit(() -> {
-            AssetManager assets = getAssets();
-            StringBuilder aboutText = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(assets.open(aboutFileName)))) {
-                    
-                reader.lines()
-                    .map(text -> text + "\n")
-                    .forEach(aboutText::append);
-            } catch (IOException e) {
-                e.printStackTrace();
-                finish();
+            try {
+                loadText(aboutFileName, attributionFileName);
+            } finally {
+                executor.shutdown();
             }
-                
-            StringBuilder attributionsText = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(assets.open(attributionFileName)))) {
-            
-                reader.lines()
-                    .map(text -> text + "\n")     
-                    .forEach(attributionsText::append);   
-            } catch (IOException e) {
-                e.printStackTrace();
-                finish();
-            }
-                
-            List<Attribution> attributions = Attribution.parse(attributionsText.toString());
-                
-            runOnUiThread(() -> {
-                AttributionAdapter adapter = new AttributionAdapter(this, attributions);
-                
-                binding.attributions.setAdapter(adapter);    
-                binding.attributions.setLayoutManager(new LinearLayoutManager(this));     
-                        
-                binding.about.setText(aboutText.toString());
-            });
         });
     }
     
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    private void loadText(String aboutFileName, String attributionFileName) {
+        AssetManager assets = getAssets();
+        StringBuilder aboutText = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(assets.open(aboutFileName)))) {
+                    
+            reader.lines()
+                .map(text -> text + "\n")
+                .forEach(aboutText::append);
+        } catch (IOException e) {
+            e.printStackTrace();
+            finish();
+        }
+                
+        StringBuilder attributionsText = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(assets.open(attributionFileName)))) {
+            
+            reader.lines()
+                .map(text -> text + "\n")     
+                .forEach(attributionsText::append);   
+        } catch (IOException e) {
+            e.printStackTrace();
+            finish();
+        }
+                
+        Attribution[] attributions = Attribution.parse(attributionsText.toString());
+        AboutFragment fragment = AboutFragment.newAboutFragment(aboutText.toString(), attributions);
         
-        executor.shutdown();
+        runOnUiThread(() -> {
+            getSupportFragmentManager()
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .add(R.id.about_fragment, fragment, null)
+                .commit();
+        });
     }
     
 }

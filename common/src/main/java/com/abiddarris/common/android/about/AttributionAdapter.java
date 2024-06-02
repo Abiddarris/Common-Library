@@ -23,15 +23,14 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.abiddarris.common.android.about.AttributionAdapter.AttributionViewHolder;
 import com.abiddarris.common.databinding.LayoutAttributionBinding;
-import java.util.List;
 
 public class AttributionAdapter extends Adapter<AttributionViewHolder> {
     
     private Context context;
     private LayoutInflater inflater;
-    private List<Attribution> attributions;
+    private Attribution[] attributions;
     
-    public AttributionAdapter(Context context, List<Attribution> attributions) {
+    public AttributionAdapter(Context context, Attribution[] attributions) {
         this.context = context;
         this.attributions = attributions;
         
@@ -46,7 +45,7 @@ public class AttributionAdapter extends Adapter<AttributionViewHolder> {
 
     @Override
     public void onBindViewHolder(AttributionViewHolder holder, int index) {
-        Attribution attribution = attributions.get(index);
+        Attribution attribution = attributions[index];
         
         holder.binding.header.setText(attribution.getHeader());
         holder.binding.viewLicenseButton.setOnClickListener((view) -> {
@@ -56,7 +55,7 @@ public class AttributionAdapter extends Adapter<AttributionViewHolder> {
 
     @Override
     public int getItemCount() {
-        return attributions.size();
+        return attributions.length;
     }
     
     public static class AttributionViewHolder extends ViewHolder {

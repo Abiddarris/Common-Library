@@ -25,24 +25,10 @@
          android:layout_width="match_parent"
          app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <LinearLayout
+        <FrameLayout
+             android:id="@+id/about_fragment"
              android:layout_height="match_parent"
-             android:layout_width="match_parent"
-             android:orientation="vertical">
-
-            <TextView
-                 android:layout_height="wrap_content"
-                 android:layout_width="wrap_content"
-                 android:autoLink="web"
-                 android:linksClickable="true"
-                 android:id="@+id/about" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                 android:id="@+id/attributions"
-                 android:layout_height="match_parent"
-                 android:layout_width="match_parent" />
-
-        </LinearLayout>
+             android:layout_width="match_parent"/>
 
     </androidx.core.widget.NestedScrollView>
 

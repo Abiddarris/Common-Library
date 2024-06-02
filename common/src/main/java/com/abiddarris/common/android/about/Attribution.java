@@ -16,12 +16,27 @@
 
 package com.abiddarris.common.android.about;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Attribution {
+public class Attribution implements Parcelable {
+
+    public static final Creator<Attribution> CREATOR = new Creator<>() {
+        @Override
+        public Attribution createFromParcel(Parcel parcel) {
+            return new Attribution(parcel);
+        }
+
+        @Override
+        public Attribution[] newArray(int len) {
+            return new Attribution[len];
+        }
+    };
 
     private static final Pattern ATTRIBUTION_PATTERN = Pattern.compile("LicenseText : (.*)");
 
@@ -31,6 +46,22 @@ public class Attribution {
     public Attribution(String header, String licenseTextAssets) {
         this.header = header;
         this.licenseTextAssets = licenseTextAssets;
+    }
+
+    public Attribution(Parcel parcel) {
+        header = parcel.readString();
+        licenseTextAssets = parcel.readString();
+    }
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(header);
+        parcel.writeString(licenseTextAssets);
     }
 
     public String getHeader() {
@@ -48,8 +79,8 @@ public class Attribution {
     public void setLicenseTextAssets(String licenseTextAssets) {
         this.licenseTextAssets = licenseTextAssets;
     }
-    
-    public static List<Attribution> parse(String text) {
+
+    public static Attribution[] parse(String text) {
         Matcher matcher = ATTRIBUTION_PATTERN.matcher(text);
         int attributionEnd = 0;
         List<Attribution> attributions = new ArrayList<>();
@@ -63,7 +94,6 @@ public class Attribution {
             attributionEnd = matcher.end();
         }
 
-        return attributions;
+        return attributions.toArray(new Attribution[0]);
     }
-
 }
