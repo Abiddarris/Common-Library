@@ -21,11 +21,13 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.ActivityAboutBinding;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,13 +37,16 @@ import java.util.concurrent.Executors;
 public class AboutActivity extends AppCompatActivity {
     
     private static final String ABOUT_FILE_NAME = "about_file_name";
+    private static final String ATTRIBUTION_FILE_NAME = "attribution_file_name";
     
     private ActivityAboutBinding binding;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
     
-    public static Intent newAboutActivity(Context context, String aboutFileName) {
+    public static Intent newAboutActivity(Context context, String aboutFileName, String attributionFileName) {
         var intent = new Intent(context, AboutActivity.class);
         intent.putExtra(ABOUT_FILE_NAME, aboutFileName);
+        intent.putExtra(ATTRIBUTION_FILE_NAME, attributionFileName);
+        
         return intent;
     }
     
@@ -57,6 +62,7 @@ public class AboutActivity extends AppCompatActivity {
         
         var extras = getIntent().getExtras();
         String aboutFileName = extras.getString(ABOUT_FILE_NAME);
+        String attributionFileName = extras.getString(ATTRIBUTION_FILE_NAME);
         
         if(aboutFileName == null) {
             return;
@@ -75,7 +81,26 @@ public class AboutActivity extends AppCompatActivity {
                 finish();
             }
                 
+            StringBuilder attributionsText = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(assets.open(attributionFileName)))) {
+            
+                reader.lines()
+                    .map(text -> text + "\n")     
+                    .forEach(attributionsText::append);   
+            } catch (IOException e) {
+                e.printStackTrace();
+                finish();
+            }
+                
+            List<Attribution> attributions = Attribution.parse(attributionsText.toString());
+                
             runOnUiThread(() -> {
+                AttributionAdapter adapter = new AttributionAdapter(this, attributions);
+                
+                binding.attributions.setAdapter(adapter);    
+                binding.attributions.setLayoutManager(new LinearLayoutManager(this));     
+                        
                 binding.about.setText(aboutText.toString());
             });
         });

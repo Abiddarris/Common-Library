@@ -3,4 +3,5 @@
     <string name="permission_required">Permission required</string>
     <string name="grant">Grant</string>
     <string name="about">About</string>
+    <string name="view_license">View License</string>
 </resources>
