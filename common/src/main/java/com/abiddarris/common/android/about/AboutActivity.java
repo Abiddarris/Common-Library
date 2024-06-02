@@ -38,7 +38,6 @@ public class AboutActivity extends AppCompatActivity {
     private static final String ATTRIBUTION_FILE_NAME = "attribution_file_name";
     
     private ActivityAboutBinding binding;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
     
     public static Intent newAboutActivity(Context context, String aboutFileName, String attributionFileName) {
         var intent = new Intent(context, AboutActivity.class);
@@ -58,6 +57,10 @@ public class AboutActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
         setTitle(R.string.about);
          
+        if(savedInstanceState != null) {
+            return;
+        }
+        
         Bundle extras = getIntent().getExtras();
         String aboutFileName = extras.getString(ABOUT_FILE_NAME);
         String attributionFileName = extras.getString(ATTRIBUTION_FILE_NAME);
@@ -66,6 +69,7 @@ public class AboutActivity extends AppCompatActivity {
             throw new IllegalArgumentException("aboutFileName cannot be null.");
         }
         
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             try {
                 loadText(aboutFileName, attributionFileName);
