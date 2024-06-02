@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,19 +28,27 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import com.abiddarris.common.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class Permissions {
     
-    public static void requestManageExternalStoragePermission(FragmentManager manager, String message) {
+    public static void requestManageExternalStoragePermission(FragmentActivity activity, String message) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             RequestExternalStorageDialog.newInstance(message)
-                .show(manager, null);
+                .show(activity.getSupportFragmentManager(), null);
             return;
         }
+        
+        ActivityResultLauncher<String> requestPermissionLauncher =
+            activity.registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+            });
+        
+        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
     
     public static class RequestExternalStorageDialog extends DialogFragment {
