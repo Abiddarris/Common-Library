@@ -55,6 +55,7 @@ public class AboutFragment extends TextFragment {
         RecyclerView attributionList = new RecyclerView(getContext());
         AttributionAdapter adapter = new AttributionAdapter(getContext(), attributions);
                 
+        attributionList.setNestedScrollingEnabled(false);
         attributionList.setAdapter(adapter);    
         attributionList.setLayoutManager(new LinearLayoutManager(getContext()));     
         
