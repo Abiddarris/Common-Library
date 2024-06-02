@@ -58,7 +58,7 @@ public class AboutActivity extends AppCompatActivity {
         var extras = getIntent().getExtras();
         String aboutFileName = extras.getString(ABOUT_FILE_NAME);
         
-        if(ABOUT_FILE_NAME == null) {
+        if(aboutFileName == null) {
             return;
         }
         executor.submit(() -> {
