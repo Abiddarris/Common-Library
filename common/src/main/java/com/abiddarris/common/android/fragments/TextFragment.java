@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 import com.abiddarris.common.databinding.FragmentTextBinding;
 
@@ -27,6 +28,8 @@ import com.abiddarris.common.databinding.FragmentTextBinding;
  */
 public class TextFragment extends Fragment {
     
+    private static final String TEXT = "text";
+    
     private FragmentTextBinding binding;
     
     @Override
@@ -34,6 +37,26 @@ public class TextFragment extends Fragment {
         binding = FragmentTextBinding.inflate(inflater, group, false);
         
         return binding.getRoot();
+    }
+    
+    @Override
+    @MainThread
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        
+        if(savedInstanceState == null) {
+            return;
+        }
+       
+        setText(savedInstanceState.getString(TEXT));
+    }
+    
+    @Override
+    @MainThread
+    public void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        
+        bundle.putString(TEXT, binding.text.getText().toString());
     }
     
     public void setText(String text) {
