@@ -47,7 +47,7 @@ public class AboutFragment extends TextFragment {
     @Override
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-        
+ 
         String header = getArguments().getString(HEADER);
         Attribution[] attributions = (Attribution[])getArguments()
             .getParcelableArray(ATTRIBUTIONS);

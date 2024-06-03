@@ -44,6 +44,10 @@ public class LicenseFragment extends TextFragment {
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
         
+        if(bundle != null) {
+            return;
+        }
+        
         ExecutorService executors = Executors.newSingleThreadExecutor();
         Attribution attribution = getArguments().getParcelable(ATTRIBUTION);
         
