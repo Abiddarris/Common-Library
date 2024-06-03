@@ -15,31 +15,27 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.dialogs;
 
-import android.os.Bundle;
-import androidx.fragment.app.FragmentManager;
+import android.content.Context;
+import android.content.res.Resources;
+import android.view.View;
+import com.abiddarris.common.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class SimpleDialog extends BaseDialogFragment {
-    
-    private static final String TITLE = "title";
-    private static final String MESSAGE = "message";
-    
-    @Override
-    protected void onCreateDialog(MaterialAlertDialogBuilder builder) {
-        var args = getArguments();
-        
-        builder.setTitle(args.getString(TITLE))
-            .setMessage(args.getString(MESSAGE))
-            .setPositiveButton(android.R.string.ok, (dialog, which) -> {});
+public class DialogBuilder extends MaterialAlertDialogBuilder {
+
+    public DialogBuilder(Context context) {
+        super(context);
     }
- 
-    public static void show(FragmentManager manager, String title, String message) {
-    	var args = new Bundle();
-        args.putString(TITLE, title);
-        args.putString(MESSAGE, message);
+    
+    public DialogBuilder setView(View view) {
+        Resources resources = getContext().getResources();
         
-        var dialog = new SimpleDialog();
-        dialog.setArguments(args);
-        dialog.show(manager, null);
+        int padding = (int)resources.getDimension(R.dimen.abc_dialog_padding_material);
+        int paddingTop = (int)resources.getDimension(R.dimen.abc_dialog_padding_top_material);
+        int paddingBottom = (int)resources.getDimension(R.dimen.abc_dialog_list_padding_bottom_no_buttons);
+        
+        setView(view, padding, padding, paddingTop, paddingBottom);
+            
+        return this;    
     }
 }

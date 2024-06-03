@@ -16,45 +16,27 @@
 package com.abiddarris.common.android.dialogs;
 
 import android.app.Dialog;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import com.abiddarris.common.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class BaseDialogFragment extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
-        MaterialAlertDialogBuilder builder = createDialog();
-        View view = createView();
-        if(view != null) {
-            Resources resources = getResources();
-            int padding = (int)resources.getDimension(R.dimen.abc_dialog_padding_material);
-            int paddingTop = (int)resources.getDimension(R.dimen.abc_dialog_padding_top_material);
-            view.setPadding(view.getPaddingLeft() + padding, 
-                view.getPaddingRight() + padding, 
-                view.getPaddingTop() + paddingTop,
-                view.getPaddingBottom() + (hasButton() ? 0 : (int)resources.getDimension(R.dimen.abc_dialog_list_padding_bottom_no_buttons)));
-            
-            builder.setView(view);
-        }
+        MaterialAlertDialogBuilder builder = new DialogBuilder(getContext());
+        onCreateDialog(builder);
         
-        return builder.create();
+        AlertDialog dialog = builder.create();
+        onDialogCreated(dialog);
+        
+        return dialog;
     }
     
-    protected MaterialAlertDialogBuilder createDialog() {
-    	return new MaterialAlertDialogBuilder(getContext());
+    protected void onCreateDialog(MaterialAlertDialogBuilder builder) {
     }
     
-    protected View createView() {
-        return null;
-    }
-    
-    protected boolean hasButton() {
-        return false;
+    protected void onDialogCreated(AlertDialog dialog) {
     }
 }
