@@ -58,6 +58,7 @@ public class AboutFragment extends TextFragment {
             getParentFragmentManager()
                 .beginTransaction()
                 .setReorderingAllowed(true)
+                .addToBackStack(null)
                 .replace(getId(), LicenseFragment.newLicenseFragment(attribution))
                 .commit();
         });
