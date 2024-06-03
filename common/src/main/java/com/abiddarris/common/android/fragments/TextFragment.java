@@ -31,6 +31,7 @@ public class TextFragment extends Fragment {
     private static final String TEXT = "text";
     
     private FragmentTextBinding binding;
+    private String text;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle bundle) {
@@ -56,11 +57,13 @@ public class TextFragment extends Fragment {
     public void onSaveInstanceState(Bundle bundle) {
         super.onSaveInstanceState(bundle);
         
-        bundle.putString(TEXT, binding.text.getText().toString());
+        bundle.putString(TEXT, text);
     }
     
     public void setText(String text) {
-        binding.text.setText(text);
+        this.text = text;
+        
+        getBinding().text.setText(text);
     }
     
     public FragmentTextBinding getBinding() {
