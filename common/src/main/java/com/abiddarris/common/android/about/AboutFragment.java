@@ -54,7 +54,14 @@ public class AboutFragment extends TextFragment {
         
         RecyclerView attributionList = new RecyclerView(getContext());
         AttributionAdapter adapter = new AttributionAdapter(getContext(), attributions);
-                
+        adapter.setCallback((index, attribution) -> {
+            getParentFragmentManager()
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(getId(), LicenseFragment.newLicenseFragment(attribution))
+                .commit();
+        });
+        
         attributionList.setNestedScrollingEnabled(false);
         attributionList.setAdapter(adapter);    
         attributionList.setLayoutManager(new LinearLayoutManager(getContext()));     
