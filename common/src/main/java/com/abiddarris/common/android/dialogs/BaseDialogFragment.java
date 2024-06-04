@@ -25,13 +25,28 @@ public class BaseDialogFragment extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        MaterialAlertDialogBuilder builder = new DialogBuilder(getContext());
+        MaterialAlertDialogBuilder builder = newDialogBuilder();
+        if(builder == null) {
+            throw new NullPointerException("newDialogBuilder() cannot return null");
+        }
+        
         onCreateDialog(builder, savedInstanceState);
         
         AlertDialog dialog = builder.create();
         onDialogCreated(dialog, savedInstanceState);
         
         return dialog;
+    }
+    
+    /**
+     * Returns new {@code MaterialAlertDialogBuilder}.
+     * Class that override this method must returns non null 
+     * {@code MaterialAlertDialogBuilder}.
+     *
+     * @return new {@code MaterialAlertDialogBuilder}.
+     */
+    protected MaterialAlertDialogBuilder newDialogBuilder() {
+        return new DialogBuilder(getContext());
     }
     
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
