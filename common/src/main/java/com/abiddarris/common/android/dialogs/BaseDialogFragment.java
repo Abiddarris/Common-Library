@@ -24,19 +24,19 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 public class BaseDialogFragment extends DialogFragment {
     
     @Override
-    public Dialog onCreateDialog(Bundle bundle) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         MaterialAlertDialogBuilder builder = new DialogBuilder(getContext());
-        onCreateDialog(builder);
+        onCreateDialog(builder, savedInstanceState);
         
         AlertDialog dialog = builder.create();
-        onDialogCreated(dialog);
+        onDialogCreated(dialog, savedInstanceState);
         
         return dialog;
     }
     
-    protected void onCreateDialog(MaterialAlertDialogBuilder builder) {
+    protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
     }
     
-    protected void onDialogCreated(AlertDialog dialog) {
+    protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
     }
 }

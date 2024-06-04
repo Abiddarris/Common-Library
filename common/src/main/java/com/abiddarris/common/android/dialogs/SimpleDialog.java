@@ -25,7 +25,7 @@ public class SimpleDialog extends BaseDialogFragment {
     private static final String MESSAGE = "message";
     
     @Override
-    protected void onCreateDialog(MaterialAlertDialogBuilder builder) {
+    protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         var args = getArguments();
         
         builder.setTitle(args.getString(TITLE))
