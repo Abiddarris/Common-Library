@@ -67,7 +67,7 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
         saveVariable(ITEMS, items);
         
         var adapter = new ArrayAdapter<>(
-            getContext(), android.R.layout.simple_list_item_1, items);
+            getContext(), R.layout.layout_item, items);
         var spinner = (MaterialAutoCompleteTextView) ui.spinner.getEditText();
         spinner.setAdapter(adapter);
         
