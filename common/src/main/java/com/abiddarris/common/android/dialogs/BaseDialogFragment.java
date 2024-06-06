@@ -126,19 +126,19 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     
     @SuppressWarnings("unchecked")
     @Nullable
-    protected <T> T getVariable(@Nullable String name) {
+    public <T> T getVariable(@Nullable String name) {
         return getVariable(name, null);
     }
     
     @SuppressWarnings("unchecked")
     @Nullable
-    protected <T> T getVariable(@Nullable String name, T defaultVal) {
+    public <T> T getVariable(@Nullable String name, T defaultVal) {
         return (T)variables.getOrDefault(name, defaultVal);
     }
     
     @SuppressWarnings("unchecked")
     @Nullable
-    protected <T> T saveVariable(@Nullable String name, @Nullable T obj) {
+    public <T> T saveVariable(@Nullable String name, @Nullable T obj) {
         return (T)variables.put(name, obj);
     }
     
