@@ -49,9 +49,10 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
         super.onDialogCreated(dialog, savedInstanceState);
         
-        if(savedInstanceState != null) {
-            setItems(getItems(), getSelection());
-        }
+        var items = getItems();
+        if(items != null)
+            fillUIWithItems(items, getSelection());
+        
         if(dialogNull) {
             dialog.setOnShowListener(v -> enablePositiveButton(enablePositiveButton));
         }
@@ -65,18 +66,9 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     
     public void setItems(String[] items, int selection) {
         saveVariable(ITEMS, items);
-        
-        var adapter = new ArrayAdapter<>(
-            getContext(), R.layout.layout_item, items);
-        var spinner = (MaterialAutoCompleteTextView) ui.spinner.getEditText();
-        spinner.setAdapter(adapter);
-        
-        String text = selection >= 0 ? items[selection] : getString(R.string.select_item);
-        spinner.setText(text, false);
-       
         onSelected(selection);
         
-        spinner.setOnItemClickListener((adapterView, view, index, id) -> onSelected(index));
+        fillUIWithItems(items, selection);
     }
     
     @Override
@@ -89,7 +81,22 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     }
     
     public int getSelection() {
-    	return getVariable(SELECTION);
+    	return getVariable(SELECTION, -1);
+    }
+    
+    private void fillUIWithItems(String[] items, int selection) {
+        var context = getContext();
+        if(context == null) {
+            return;
+        }
+        
+        var adapter = new ArrayAdapter<>(context, R.layout.layout_item, items);
+        var spinner = (MaterialAutoCompleteTextView) ui.spinner.getEditText();
+        spinner.setAdapter(adapter);
+        
+        String text = selection >= 0 ? items[selection] : getString(R.string.select_item);
+        spinner.setText(text, false);
+        spinner.setOnItemClickListener((adapterView, view, index, id) -> onSelected(index));
     }
     
     private void enablePositiveButton(boolean enabled) {
