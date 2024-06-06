@@ -20,6 +20,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
+import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.DialogSingleChoiceBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -47,6 +48,9 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
             getContext(), android.R.layout.simple_list_item_1, items);
         var spinner = (MaterialAutoCompleteTextView) ui.spinner.getEditText();
         spinner.setAdapter(adapter);
+        
+        String text = selection >= 0 ? items[selection] : getString(R.string.select_item);
+        spinner.setText(text, false);
         
         onSelected(selection);
         
