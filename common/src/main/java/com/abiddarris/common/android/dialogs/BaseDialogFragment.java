@@ -97,7 +97,7 @@ public class BaseDialogFragment<Result> extends DialogFragment {
                 }
             }
         }
-        System.out.println("Returns result for " + getClass() + " with value of : " + lock.getObject());
+        
         return lock.getObject();
     }
     
@@ -108,9 +108,6 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     }
     
     protected synchronized void sendResult(@Nullable Result result) {
-        System.out.println("send result called for " + getClass() + " with hash " + hashCode()  );
-        System.out.println(NON_SERIALIZABLE_OBJECTS);
-        
         Consumer<Result> listener = getVariable(RESULT_LISTENER);
         if(listener == null) {
             return;
