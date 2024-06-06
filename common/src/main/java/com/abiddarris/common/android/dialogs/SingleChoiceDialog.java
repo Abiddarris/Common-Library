@@ -25,8 +25,9 @@ import com.abiddarris.common.android.utils.ItemSelectedListener;
 import com.abiddarris.common.databinding.DialogSingleChoiceBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import java.util.Optional;
 
-public class SingleChoiceDialog extends BaseDialogFragment {
+public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     
     private DialogSingleChoiceBinding ui;
     private int selection;
@@ -52,6 +53,11 @@ public class SingleChoiceDialog extends BaseDialogFragment {
         onSelected(selection);
         
         spinner.setOnItemSelectedListener(new ItemSelectedListener(this::onSelected));
+    }
+    
+    @Override
+    protected Integer getDefaultResult() {
+        return getSelection();
     }
     
     public String[] getItems() {
@@ -81,7 +87,8 @@ public class SingleChoiceDialog extends BaseDialogFragment {
         @Override
         @NonNull
         public MaterialAlertDialogBuilder setPositiveButton(CharSequence sequence, OnClickListener listener) {
-            return super.setPositiveButton(sequence, (dialog, which) -> listener.onClick(dialog, getSelection()));
+            return super.setPositiveButton(sequence, (dialog, which) -> Optional.ofNullable(listener)
+                .ifPresent(callback -> callback.onClick(dialog, getSelection())));
         }
         
         @Override
