@@ -52,7 +52,7 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
         
         onSelected(selection);
         
-        spinner.setOnItemSelectedListener(new ItemSelectedListener(this::onSelected));
+        spinner.setOnItemClickListener((adapterView, view, index, id) -> onSelected(index));
     }
     
     @Override
