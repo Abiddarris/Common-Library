@@ -32,12 +32,13 @@ import java.util.Optional;
 
 public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     
+    private static final String ITEMS = "items";
+    private static final String SELECTION = "selection";
+    
     private boolean dialogNull;
     private boolean enablePositiveButton;
     
     private DialogSingleChoiceBinding ui;
-    private int selection;
-    private String[] items;
     
     @Override
     protected MaterialAlertDialogBuilder newDialogBuilder() {
@@ -48,19 +49,22 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
         super.onDialogCreated(dialog, savedInstanceState);
         
+        if(savedInstanceState != null) {
+            setItems(getItems(), getSelection());
+        }
         if(dialogNull) {
             dialog.setOnShowListener(v -> enablePositiveButton(enablePositiveButton));
         }
     }
     
     protected void onSelected(int selection) {
-        this.selection = selection;
+        saveVariable(SELECTION, selection);
         
         enablePositiveButton(selection >= 0);
     }
     
     public void setItems(String[] items, int selection) {
-        this.items = items;
+        saveVariable(ITEMS, items);
         
         var adapter = new ArrayAdapter<>(
             getContext(), android.R.layout.simple_list_item_1, items);
@@ -81,11 +85,11 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     }
     
     public String[] getItems() {
-        return items;
+        return getVariable(ITEMS);
     }
     
     public int getSelection() {
-    	return selection;
+    	return getVariable(SELECTION);
     }
     
     private void enablePositiveButton(boolean enabled) {
