@@ -45,11 +45,12 @@ public class TextFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        if(savedInstanceState == null) {
+        if(savedInstanceState != null) {
+            setText(savedInstanceState.getString(TEXT));
             return;
         }
        
-        setText(savedInstanceState.getString(TEXT));
+        updateUI();
     }
     
     @Override
@@ -62,7 +63,9 @@ public class TextFragment extends Fragment {
     
     public void setText(String text) {
         this.text = text;
-        
+    }
+    
+    private void updateUI() {
         if(getBinding() != null)   
             getBinding().text.setText(text);
     }
