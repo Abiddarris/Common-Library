@@ -63,7 +63,8 @@ public class TextFragment extends Fragment {
     public void setText(String text) {
         this.text = text;
         
-        getBinding().text.setText(text);
+        if(getBinding() != null)   
+            getBinding().text.setText(text);
     }
     
     public FragmentTextBinding getBinding() {
