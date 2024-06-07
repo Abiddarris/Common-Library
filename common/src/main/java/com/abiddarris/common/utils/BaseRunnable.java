@@ -34,8 +34,6 @@ public interface BaseRunnable extends Runnable {
     
     public default void onExceptionThrown(Exception e) {
         e.printStackTrace();
-            
-        throw new RuntimeException("Error while running : " + toString(), e);
     }
     
 }
