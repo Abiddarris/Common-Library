@@ -22,6 +22,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Button;
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -40,6 +41,7 @@ import java.util.function.Consumer;
 
 public class BaseDialogFragment<Result> extends DialogFragment {
     
+    private static final String ENABLE_POSITIVE_BUTTON = "enablePositiveButton";
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
     private static final String ID = "id";
     private static final String RESULT_CALLED = "resultCalled";
@@ -139,6 +141,25 @@ public class BaseDialogFragment<Result> extends DialogFragment {
         return (T)variables.put(name, obj);
     }
     
+    public void enablePositiveButton(boolean enabled) {
+        saveVariable(ENABLE_POSITIVE_BUTTON, enabled);
+        
+        enablePositiveButtonInternal(enabled);
+    }
+    
+    private void enablePositiveButtonInternal(boolean enabled) {
+        AlertDialog dialog = (AlertDialog)getDialog();
+        if(dialog == null) {
+            return;
+        }
+        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        if(button == null) {
+            dialog.setOnShowListener((dialog2) -> enablePositiveButtonInternal(enabled));
+            return;
+        }
+        button.setEnabled(enabled);
+    }
+    
     @Nullable
     protected Result getDefaultResult() {
         return null;
@@ -159,6 +180,10 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     }
     
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
+        Boolean enablePositiveButton = getVariable(ENABLE_POSITIVE_BUTTON);
+        if(enablePositiveButton != null) {
+            dialog.setOnShowListener(v -> enablePositiveButton(enablePositiveButton));
+        }
     }
     
     public static class BaseDialogViewModel extends ViewModel {
