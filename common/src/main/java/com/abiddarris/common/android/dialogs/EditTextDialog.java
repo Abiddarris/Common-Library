@@ -19,14 +19,14 @@ import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
 import androidx.appcompat.app.AlertDialog;
 import com.abiddarris.common.databinding.DialogEditTextBinding;
+import com.abiddarris.common.validator.Validator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Optional;
 
 public class EditTextDialog extends BaseDialogFragment<String> {
-    
+   
     private static final String TEXT = "text";
     
     private DialogEditTextBinding ui;
