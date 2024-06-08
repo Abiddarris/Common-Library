@@ -59,7 +59,7 @@ public class BaseDialogFragment<Result> extends DialogFragment {
         model = new ViewModelProvider(this)
             .get(BaseDialogViewModel.class);
         variables = model.attach(variables, this);
-    }    
+    }
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
