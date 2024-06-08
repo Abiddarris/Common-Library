@@ -35,9 +35,6 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
     private static final String ITEMS = "items";
     private static final String SELECTION = "selection";
     
-    private boolean dialogNull;
-    private boolean enablePositiveButton;
-    
     private DialogSingleChoiceBinding ui;
     
     @Override
@@ -52,10 +49,6 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
         var items = getItems();
         if(items != null)
             fillUIWithItems(items, getSelection());
-        
-        if(dialogNull) {
-            dialog.setOnShowListener(v -> enablePositiveButton(enablePositiveButton));
-        }
     }
     
     protected void onSelected(int selection) {
@@ -98,23 +91,6 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
         spinner.setText(text, false);
         spinner.setOnItemClickListener((adapterView, view, index, id) -> onSelected(index));
     }
-    
-    private void enablePositiveButton(boolean enabled) {
-        var dialog = (AlertDialog) getDialog();
-        if(dialog == null) {
-            dialogNull = true;
-            enablePositiveButton = enabled;
-            return;
-        }
-        
-        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if(button == null) {
-            dialog.setOnShowListener(v -> enablePositiveButton(enabled));
-            return;
-        }
-        button.setEnabled(enabled);
-    }
-    
     
     private class SingleChoiceDialogBuilder extends DialogBuilder {
         
