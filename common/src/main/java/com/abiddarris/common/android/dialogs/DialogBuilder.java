@@ -16,8 +16,10 @@
 package com.abiddarris.common.android.dialogs;
 
 import android.content.Context;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.view.View;
+import androidx.annotation.NonNull;
 import com.abiddarris.common.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -25,6 +27,12 @@ public class DialogBuilder extends MaterialAlertDialogBuilder {
 
     public DialogBuilder(Context context) {
         super(context);
+    }
+    
+    @Override
+    @NonNull
+    public MaterialAlertDialogBuilder setPositiveButton(int id, OnClickListener listener) {
+        return setPositiveButton(getContext().getString(id), listener);
     }
     
     public DialogBuilder setView(View view) {
