@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import androidx.appcompat.app.AlertDialog;
 import com.abiddarris.common.databinding.DialogEditTextBinding;
-import com.abiddarris.common.validator.Validator;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.Optional;
 
