@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Renpy Emulator"
 
-include(":app", ":common", ":plugin-6.99.12.4.2187")
+include(":app", ":common", ":plugin", ":plugin-6.99.12.4.2187")
