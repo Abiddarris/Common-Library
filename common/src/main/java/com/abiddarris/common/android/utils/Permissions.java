@@ -15,9 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.utils;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.Dialog;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_DENIED;
+
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -26,58 +29,66 @@ import android.os.Environment;
 import android.provider.Settings;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.DialogFragment;
+import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import java.util.function.Consumer;
 
 public class Permissions {
     
-    public static void requestManageExternalStoragePermission(FragmentActivity activity, String message) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-            var dialog = new RequestExternalStorageDialog();
-            dialog.saveVariable(RequestExternalStorageDialog.MESSAGE, message);
-            dialog.show(activity.getSupportFragmentManager(), null);
-            
+    public static boolean checkPermission(Context context, String... permissions) {
+        for(var permission : permissions) {
+        	if(ContextCompat.checkSelfPermission(context, permission) == PERMISSION_DENIED) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean isManageExternalStorageGranted(Context context) {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ?
+            Environment.isExternalStorageManager() :
+            checkPermission(context, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE);
+    }
+    
+    public static void requestPermissions(FragmentActivity activity, Consumer<Boolean> callback, String... permissions) {
+        ActivityResultLauncher<String[]> requestPermissionLauncher =
+        activity.registerForActivityResult(new RequestMultiplePermissions(), result -> 
+            callback.accept(result.values()
+                .stream()
+                .reduce(Boolean::logicalAnd)
+                .get()));
+    }
+    
+    public static void requestManageExternalStoragePermission(FragmentActivity activity, String message, Consumer<Boolean> callback) {
+        if(isManageExternalStorageGranted(activity)) {
             return;
         }
         
-        ActivityResultLauncher<String> requestPermissionLauncher =
-            activity.registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
-            });
-        
-        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-    }
-    
-    public static class RequestExternalStorageDialog extends BaseDialogFragment<Boolean> {
-        
-        private static final String MESSAGE = "message";
-        
-        private ActivityResultLauncher<Intent> launcher;
-        
-        @Override
-        protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
-            super.onCreateDialog(builder, savedInstanceState);
-            
-            var arguments = getArguments();
-            
-            launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onResult);
-            
-            builder.setTitle(R.string.permission_required)
-                .setMessage(getVariable(MESSAGE))
-                .setPositiveButton(R.string.grant, (dialog, which) -> openSettings());
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            requestPermissions(activity, callback, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE);
+            return;
         }
         
-        private void openSettings() {
+        ActivityResultLauncher<Intent> launcher = activity.registerForActivityResult(
+            new StartActivityForResult(), result -> callback.accept(isManageExternalStorageGranted(activity)));
+            
+        var dialog = new RequestExternalStorageDialog();
+        dialog.saveVariable(RequestExternalStorageDialog.MESSAGE, message);
+        dialog.showForResult(activity.getSupportFragmentManager(), result -> {
+            if(!result) {
+                return;
+            }
+                
             try {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 intent.addCategory("android.intent.category.DEFAULT");
-                intent.setData(Uri.parse(String.format("package:%s", getContext().getPackageName())));
+                intent.setData(Uri.parse(String.format("package:%s", activity.getPackageName())));
                 
                 launcher.launch(intent);
             } catch (Exception e) {
@@ -87,10 +98,27 @@ public class Permissions {
                 intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
           
                 launcher.launch(intent);
-            }
+            }    
+        });
+    }
+    
+    public static class RequestExternalStorageDialog extends BaseDialogFragment<Boolean> {
+        
+        private static final String MESSAGE = "message";
+        
+        @Override
+        protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
+            super.onCreateDialog(builder, savedInstanceState);
+            
+            builder.setTitle(R.string.permission_required)
+                .setMessage(getVariable(MESSAGE))
+                .setPositiveButton(R.string.grant, (dialog, which) -> sendResult(true));
         }
         
-        private void onResult(ActivityResult result) {
+        @Nullable
+        @Override
+        protected Boolean getDefaultResult() {
+            return false;
         }
         
     }
