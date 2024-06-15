@@ -15,33 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-
-public class Exceptions {
+public class UncheckExceptionWrapper extends RuntimeException {
     
-    public static String toString(Throwable throwable) {
-        var os = new ByteArrayOutputStream();
-        
-        throwable.printStackTrace(new PrintStream(os));
-        
-        String string = new String(os.toByteArray());
-        try {
-            os.close();
-        } catch (IOException ignored) {
-            ignored.printStackTrace();
-        }
-        
-        return string;
-    }
-    
-    public static RuntimeException toUncheckException(Throwable throwable) {
-        if(throwable instanceof RuntimeException) {
-            return (RuntimeException)throwable;
-        }
-        
-        return new UncheckExceptionWrapper(throwable);
+    public UncheckExceptionWrapper(Throwable throwable) {
+        super(throwable);
     }
     
 }
