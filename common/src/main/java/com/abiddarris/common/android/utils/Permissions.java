@@ -20,17 +20,17 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult;
+import androidx.annotation.CallSuper;
+import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -114,6 +114,15 @@ public class Permissions {
             builder.setTitle(R.string.permission_required)
                 .setMessage(getVariable(MESSAGE))
                 .setPositiveButton(R.string.grant, (dialog, which) -> sendResult(true));
+        }
+        
+        @Override
+        @MainThread
+        @CallSuper
+        public void onDestroy() {
+            super.onDestroy();
+            
+            dismiss();
         }
         
         @Nullable
