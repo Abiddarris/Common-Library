@@ -33,14 +33,17 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import com.abiddarris.common.R;
+import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class Permissions {
     
     public static void requestManageExternalStoragePermission(FragmentActivity activity, String message) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
-            RequestExternalStorageDialog.newInstance(message)
-                .show(activity.getSupportFragmentManager(), null);
+            var dialog = new RequestExternalStorageDialog();
+            dialog.saveVariable(RequestExternalStorageDialog.MESSAGE, message);
+            dialog.show(activity.getSupportFragmentManager(), null);
+            
             return;
         }
         
@@ -51,23 +54,23 @@ public class Permissions {
         requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
     
-    public static class RequestExternalStorageDialog extends DialogFragment {
+    public static class RequestExternalStorageDialog extends BaseDialogFragment<Boolean> {
         
         private static final String MESSAGE = "message";
         
         private ActivityResultLauncher<Intent> launcher;
-
+        
         @Override
-        public Dialog onCreateDialog(Bundle bundle) {
+        protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
+            super.onCreateDialog(builder, savedInstanceState);
+            
             var arguments = getArguments();
             
             launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), this::onResult);
             
-            return new MaterialAlertDialogBuilder(requireContext())
-                .setTitle(R.string.permission_required)
-                .setMessage(arguments.getString(MESSAGE))
-                .setPositiveButton(R.string.grant, (dialog, which) -> openSettings())
-                .create();
+            builder.setTitle(R.string.permission_required)
+                .setMessage(getVariable(MESSAGE))
+                .setPositiveButton(R.string.grant, (dialog, which) -> openSettings());
         }
         
         private void openSettings() {
@@ -90,14 +93,5 @@ public class Permissions {
         private void onResult(ActivityResult result) {
         }
         
-        private static RequestExternalStorageDialog newInstance(String message) {
-            var bundle = new Bundle();
-            bundle.putString(MESSAGE, message);
-            
-            var dialog = new RequestExternalStorageDialog();
-            dialog.setArguments(bundle);
-            
-            return dialog;
-        }
     }
 }
