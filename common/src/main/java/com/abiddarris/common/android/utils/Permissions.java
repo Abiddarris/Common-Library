@@ -82,6 +82,7 @@ public class Permissions {
         dialog.saveVariable(RequestExternalStorageDialog.MESSAGE, message);
         dialog.showForResult(activity.getSupportFragmentManager(), result -> {
             if(!result) {
+                callback.accept(false);   
                 return;
             }
                 
