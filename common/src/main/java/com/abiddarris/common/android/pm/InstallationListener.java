@@ -1,5 +1,7 @@
 package com.abiddarris.common.android.pm;
 
+import static android.content.pm.PackageInstaller.EXTRA_STATUS_MESSAGE;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,15 +11,21 @@ import android.widget.Toast;
 
 class InstallationListener extends BroadcastReceiver {
     
-    private boolean received;
+    private int status = -1;
+    private String message;
     
-    public boolean isReceived() {
-        return this.received;
+    int getStatus() {
+        return status;
+    }
+    
+    String getMessage() {
+        return message;
     }
     
     @Override
     public void onReceive(Context context, Intent intent) {
         int status = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -2);
+        String message = intent.getExtras().getString(EXTRA_STATUS_MESSAGE);
         
         switch (status) {
             case PackageInstaller.STATUS_PENDING_USER_ACTION:
@@ -25,7 +33,9 @@ class InstallationListener extends BroadcastReceiver {
                 context.startActivity(confirmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 break;
             default : 
-                received = true;
+                this.status = status;
+                this.message = message;
+            
                 synchronized(this) {
                     notifyAll();
                 }

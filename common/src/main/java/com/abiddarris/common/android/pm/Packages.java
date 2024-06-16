@@ -49,13 +49,13 @@ public class Packages {
         return true;
     }
     
-    public static void installPackage(Context context, File file) throws IOException {
+    public static InstallationResult installPackage(Context context, File file) throws IOException {
     	try (InputStream stream = new BufferedInputStream(new FileInputStream(file))){
-            installPackage(context, stream);
+            return installPackage(context, stream);
         } 
     }
     
-    public static void installPackage(Context context, InputStream stream) throws IOException {
+    public static InstallationResult installPackage(Context context, InputStream stream) throws IOException {
         PackageInstaller packageInstaller = context.getPackageManager()
             .getPackageInstaller();
         SessionParams params = new SessionParams(SessionParams.MODE_FULL_INSTALL);
@@ -82,7 +82,7 @@ public class Packages {
             session.commit(pendingIntent.getIntentSender());
             
             synchronized(listener) {
-                if(!listener.isReceived()) {
+                if(listener.getStatus() == -1) {
                     try {
                         listener.wait();
                     } catch (InterruptedException e) {
@@ -90,6 +90,8 @@ public class Packages {
                     }
                 }
             }
+            return new InstallationResult(
+                listener.getStatus(), listener.getMessage());
         } finally {
             context.unregisterReceiver(listener);
         }
