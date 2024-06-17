@@ -15,15 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.pm;
 
+import android.annotation.TargetApi;
 import static android.content.pm.PackageInstaller.EXTRA_STATUS_MESSAGE;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInstaller;
-import android.os.Bundle;
-import android.widget.Toast;
 
+@TargetApi(21)
 class InstallationListener extends BroadcastReceiver {
     
     private int status = -1;
