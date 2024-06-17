@@ -17,9 +17,9 @@ package com.abiddarris.common.android.utils;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import android.annotation.TargetApi;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -66,7 +66,7 @@ public class Permissions {
         activity.registerForActivityResult(new RequestMultiplePermissions(), result -> 
             callback.accept(result.values()
                 .stream()
-                .reduce(Boolean::logicalAnd)
+                .reduce((p1, p2) -> p1 && p2)
                 .get()));
     }
     
