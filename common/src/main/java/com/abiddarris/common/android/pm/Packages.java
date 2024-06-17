@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.pm;
 
+import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +56,7 @@ public class Packages {
         } 
     }
     
+    @TargetApi(21)
     public static InstallationResult installPackage(Context context, InputStream stream) throws IOException {
         PackageInstaller packageInstaller = context.getPackageManager()
             .getPackageInstaller();
