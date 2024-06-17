@@ -17,6 +17,7 @@ package com.abiddarris.common.android.utils;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import android.annotation.TargetApi;
 import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 import android.content.Context;
@@ -69,6 +70,7 @@ public class Permissions {
                 .get()));
     }
     
+    @TargetApi(16)
     public static void requestManageExternalStoragePermission(FragmentActivity activity, String message, Consumer<Boolean> callback) {
         if(isManageExternalStorageGranted(activity)) {
             return;
