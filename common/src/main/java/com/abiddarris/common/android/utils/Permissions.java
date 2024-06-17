@@ -51,6 +51,10 @@ public class Permissions {
     }
     
     public static boolean isManageExternalStorageGranted(Context context) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            return true;
+        }
+        
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ?
             Environment.isExternalStorageManager() :
             checkPermission(context, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE);
