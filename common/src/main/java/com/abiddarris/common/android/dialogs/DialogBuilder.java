@@ -42,7 +42,13 @@ public class DialogBuilder extends MaterialAlertDialogBuilder {
         int paddingTop = (int)resources.getDimension(R.dimen.abc_dialog_padding_top_material);
         int paddingBottom = (int)resources.getDimension(R.dimen.abc_dialog_list_padding_bottom_no_buttons);
         
-        setView(view, padding, padding, paddingTop, paddingBottom);
+        view.setPadding(
+            view.getPaddingLeft() + padding,
+            view.getPaddingRight() + padding,
+            view.getPaddingTop() + paddingTop,
+            view.getPaddingBottom() + paddingBottom
+        );
+        super.setView(view);
             
         return this;    
     }
