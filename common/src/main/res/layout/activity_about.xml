@@ -23,6 +23,7 @@
     <FrameLayout
          app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
          android:paddingStart="@dimen/about_acivity_start_padding"
+         android:paddingLeft="@dimen/about_acivity_start_padding"
          android:layout_height="match_parent"
          android:layout_width="match_parent"
          android:id="@+id/about_fragment">
