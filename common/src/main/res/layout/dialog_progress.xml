@@ -32,6 +32,7 @@
          android:layout_toRightOf="@id/progress"
          android:layout_centerVertical="true"
          android:layout_marginLeft="@dimen/apply_patch_message_left_margin"
+         android:layout_marginStart="@dimen/apply_patch_message_left_margin"
          android:id="@+id/message" />
 
 </RelativeLayout>
