@@ -85,10 +85,12 @@ public class SingleChoiceDialog extends BaseDialogFragment<Integer> {
         
         var adapter = new ArrayAdapter<>(context, R.layout.layout_item, items);
         var spinner = (MaterialAutoCompleteTextView) ui.spinner.getEditText();
-        spinner.setAdapter(adapter);
+        spinner.setAdapter(null);
         
         String text = selection >= 0 ? items[selection] : getString(R.string.select_item);
-        spinner.setText(text, false);
+        
+        spinner.setText(text);
+        spinner.setAdapter(adapter);
         spinner.setOnItemClickListener((adapterView, view, index, id) -> onSelected(index));
     }
     
