@@ -66,7 +66,7 @@ public class AboutFragment extends TextFragment {
         attributionList.setNestedScrollingEnabled(false);
         attributionList.setAdapter(adapter);    
         attributionList.setLayoutManager(new LinearLayoutManager(getContext()));     
-        
+       
         setText(header);
         
         getBinding().scrollViewChild

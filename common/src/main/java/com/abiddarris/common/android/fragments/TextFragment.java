@@ -63,6 +63,8 @@ public class TextFragment extends Fragment {
     
     public void setText(String text) {
         this.text = text;
+        
+        updateUI();
     }
     
     private void updateUI() {
