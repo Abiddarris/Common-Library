@@ -24,7 +24,10 @@ public interface BaseRunnable extends Runnable {
         try {
             execute();
         } catch (Exception e) {
+            onThrowableCatched(e);
             onExceptionThrown(e);
+        } catch (Throwable e) {
+            onThrowableCatched(e);
         } finally {
             onFinally();
         }
@@ -32,8 +35,12 @@ public interface BaseRunnable extends Runnable {
     
     public default void onFinally() {}
     
+    @Deprecated
     public default void onExceptionThrown(Exception e) {
         e.printStackTrace();
     }
     
+    public default void onThrowableCatched(Throwable throwable) {
+        throwable.printStackTrace();
+    }
 }
