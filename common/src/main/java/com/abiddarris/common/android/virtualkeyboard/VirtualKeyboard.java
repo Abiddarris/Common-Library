@@ -23,17 +23,17 @@ import com.abiddarris.common.android.view.MoveableViewsGroup;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
+    private KeyListener listener;
     
     public VirtualKeyboard(Context context) {
         super(context);
     }
     
-    protected void sendKeyDownEvent(int keycode) {
-        
-    }
-    
-    protected void sendKeyUpEvent(int keycode) {
-        
+    protected void sendKeyEvent(Event event, int keycode) {
+        var listener = getKeyListener();
+        if(listener != null) {
+            listener.onKey(event, keycode);
+        }
     }
     
     public void addButton(String title, int keycode) {
@@ -42,6 +42,12 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         
         addMoveableView(button, new LayoutParams(100, 100), new TouchListener(this, keycode));
     }
-
     
+    public KeyListener getKeyListener() {
+        return this.listener;
+    }
+    
+    public void setKeyListener(KeyListener listener) {
+        this.listener = listener;
+    }
 }
