@@ -21,7 +21,6 @@ import android.view.View.OnTouchListener;
 
 class TouchHandler implements OnTouchListener {
    
-    private float dX, dY;
     private MoveableViewsGroup group;
     private OnTouchListener listener;
     
@@ -33,27 +32,10 @@ class TouchHandler implements OnTouchListener {
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         if(group.isEdit()) {
-            return handleMove(view, event);
+            return group.onChildTouch(view, event);
         }
         
         return listener == null ? false : listener.onTouch(view, event);
     }
     
-    private boolean handleMove(View view, MotionEvent event) {
-        switch(event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                dX = view.getX() - event.getRawX();
-                dY = view.getY() - event.getRawY();
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                view.setX(event.getRawX() + dX);
-                view.setY(event.getRawY() + dY);
-                view.bringToFront();
-                view.invalidate();
-            
-                return true;
-            default:
-                return false;
-        }
-    }
 }

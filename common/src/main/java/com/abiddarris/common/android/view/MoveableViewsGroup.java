@@ -16,15 +16,35 @@
 package com.abiddarris.common.android.view;
 
 import android.content.Context;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 public class MoveableViewsGroup extends RelativeLayout {
     
     private boolean edit;
+    private float dX, dY;
     
     public MoveableViewsGroup(Context context) {
         super(context);
+    }
+    
+    protected boolean onChildTouch(View view, MotionEvent event) {
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                dX = view.getX() - event.getRawX();
+                dY = view.getY() - event.getRawY();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                view.setX(event.getRawX() + dX);
+                view.setY(event.getRawY() + dY);
+                view.bringToFront();
+                view.invalidate();
+            
+                return true;
+            default:
+                return false;
+        }
     }
     
     public void addMoveableView(View view, LayoutParams params, OnTouchListener listener) {
