@@ -72,6 +72,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         }
     }
     
+    public void addButton() {
+        addButton("button", -1);
+    }
+    
     public void addButton(String title, int keycode) {
         Button button = new Button(getContext());
         button.setText(title);
