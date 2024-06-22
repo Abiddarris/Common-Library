@@ -32,6 +32,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         super(context);
         
         editButton = new Button(getContext());
+        editButton.setVisibility(GONE);
         
         addView(editButton);
     }
@@ -40,7 +41,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     protected boolean onChildTouch(View view, MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                editButton.setVisibility(INVISIBLE);
+                editButton.setVisibility(GONE);
                 break;
             case MotionEvent.ACTION_UP :
                 editButton.setVisibility(VISIBLE);
