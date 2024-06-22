@@ -56,6 +56,15 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         return super.onChildTouch(view, event);
     }
     
+    @Override
+    public void setEdit(boolean edit) {
+        super.setEdit(edit);
+        
+        if(!edit) {
+            editButton.setVisibility(GONE);
+        }
+    }
+    
     protected void sendKeyEvent(Event event, int keycode) {
         var listener = getKeyListener();
         if(listener != null) {
