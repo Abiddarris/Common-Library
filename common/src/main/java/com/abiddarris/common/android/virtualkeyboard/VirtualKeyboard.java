@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import com.abiddarris.common.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
 import java.util.Random;
 
@@ -33,6 +34,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         
         editButton = new Button(getContext());
         editButton.setVisibility(GONE);
+        editButton.setText(R.string.edit);
         
         addView(editButton);
     }
