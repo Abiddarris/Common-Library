@@ -17,16 +17,40 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.content.Context;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
+import java.util.Random;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
+    private Button editButton;
     private KeyListener listener;
     
     public VirtualKeyboard(Context context) {
         super(context);
+        
+        editButton = new Button(getContext());
+        
+        addView(editButton);
+    }
+    
+    @Override
+    protected boolean onChildTouch(View view, MotionEvent event) {
+        switch(event.getAction()) {
+            case MotionEvent.ACTION_DOWN :
+                editButton.setVisibility(INVISIBLE);
+                break;
+            case MotionEvent.ACTION_UP :
+                editButton.setVisibility(VISIBLE);
+                editButton.setX(view.getX() + 
+                                view.getWidth() / 2 -
+                                editButton.getWidth() / 2);
+                editButton.setY(view.getY() + view.getHeight());
+                editButton.bringToFront();
+        }
+        return super.onChildTouch(view, event);
     }
     
     protected void sendKeyEvent(Event event, int keycode) {
