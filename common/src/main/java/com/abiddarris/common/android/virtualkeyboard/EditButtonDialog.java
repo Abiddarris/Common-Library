@@ -21,6 +21,7 @@ import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.databinding.DialogEditButtonBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
     
@@ -45,6 +46,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         binding = DialogEditButtonBinding.inflate(getLayoutInflater());
         binding.name.getEditText()
             .setText(button.getText());
+       
+        MaterialAutoCompleteTextView keySpinner = (MaterialAutoCompleteTextView) binding.key.getEditText();
+        keySpinner.setAdapter(new KeySpinner(getContext()));
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
