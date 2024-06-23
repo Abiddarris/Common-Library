@@ -8,4 +8,5 @@
     <string name="exception_dialog_title">An exception has been thrown!</string>
     <string name="edit">Edit</string>
     <string name="name">Name</string>
+    <string name="keycode">Keycode</string>
 </resources>
