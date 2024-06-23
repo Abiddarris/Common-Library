@@ -9,4 +9,5 @@
     <string name="edit">Edit</string>
     <string name="name">Name</string>
     <string name="keycode">Keycode</string>
+    <string name="alignment">Alignment</string>
 </resources>

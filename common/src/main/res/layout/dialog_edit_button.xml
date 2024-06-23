@@ -32,4 +32,19 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+     <com.google.android.material.textfield.TextInputLayout
+         android:layout_height="wrap_content"
+         android:layout_width="match_parent"
+         android:layout_below="@id/key"
+         android:hint="@string/alignment"
+         style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+         android:id="@+id/alignment">
+
+        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:inputType="none" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 </RelativeLayout>
