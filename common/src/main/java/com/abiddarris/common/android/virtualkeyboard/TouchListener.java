@@ -6,23 +6,23 @@ import android.view.View.OnTouchListener;
 
 class TouchListener implements OnTouchListener {
     
-    private int keycode;
+    private Key key;
     private VirtualKeyboard keyboard;
     
-    TouchListener(VirtualKeyboard keyboard, int keycode) {
+    TouchListener(VirtualKeyboard keyboard, Key key) {
         this.keyboard = keyboard;
-        this.keycode = keycode;
+        this.key = key;
     }
     
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                keyboard.sendKeyEvent(Event.DOWN, keycode);
+                keyboard.sendKeyEvent(Event.DOWN, key.getKeycode().getKeycode());
                 return true;    
             case MotionEvent.ACTION_UP :
             case MotionEvent.ACTION_CANCEL :
-                keyboard.sendKeyEvent(Event.UP, keycode);
+                keyboard.sendKeyEvent(Event.UP, key.getKeycode().getKeycode());
                 return true;
             default :
                 return false;        

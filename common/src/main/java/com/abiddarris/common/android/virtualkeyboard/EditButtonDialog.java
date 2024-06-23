@@ -28,9 +28,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     
     private DialogEditButtonBinding binding;
     
-    public static EditButtonDialog newInstance(Button target) {
+    public static EditButtonDialog newInstance(Key key) {
         var dialog = new EditButtonDialog();
-        dialog.saveVariable(FOCUS, target);
+        dialog.saveVariable(FOCUS, key);
         
         return dialog;
     }
@@ -39,16 +39,17 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
        
-        Button focus = getVariable(FOCUS);
+        Key key = getVariable(FOCUS);
+        Button button = key.getButton();
         
         binding = DialogEditButtonBinding.inflate(getLayoutInflater());
         binding.name.getEditText()
-            .setText(focus.getText());
+            .setText(button.getText());
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                focus.setText(binding.name.getEditText().getText().toString());
+                button.setText(binding.name.getEditText().getText().toString());
             });
     }
     

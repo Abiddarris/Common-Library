@@ -19,16 +19,17 @@ import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import androidx.fragment.app.FragmentActivity;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
     private Button editButton;
-    private Button focus;
+    private Key focus;
+    private List<Key> keys = new ArrayList<>();
     private KeyListener listener;
     
     public VirtualKeyboard(Context context) {
@@ -54,7 +55,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
                 editButton.setVisibility(GONE);
                 break;
             case MotionEvent.ACTION_UP :
-                focus = (Button) view;
+                focus = keys.stream()
+                    .filter(key -> key.getButton() == view)
+                    .findFirst()
+                    .get();
             
                 editButton.setVisibility(VISIBLE);
                 editButton.setX(view.getX() + 
@@ -82,15 +86,19 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         }
     }
     
-    public void addButton() {
-        addButton("button", -1);
-    }
-    
-    public void addButton(String title, int keycode) {
-        Button button = new Button(getContext());
-        button.setText(title);
+    public Key addButton() {
+        Key key = new Key();
+        key.init(getContext());
         
-        addMoveableView(button, new LayoutParams(100, 100), new TouchListener(this, keycode));
+        keys.add(key);
+        
+        addMoveableView(
+            key.getButton(), 
+            new LayoutParams(100, 100),
+            new TouchListener(this, key)
+        );
+        
+        return key;
     }
     
     public KeyListener getKeyListener() {
