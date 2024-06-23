@@ -28,6 +28,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     private static final String FOCUS = "focus";
     
     private DialogEditButtonBinding binding;
+    private Keycode code;
     
     public static EditButtonDialog newInstance(Key key) {
         var dialog = new EditButtonDialog();
@@ -47,13 +48,18 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         binding.name.getEditText()
             .setText(button.getText());
        
+        var adapter = new KeySpinner(getContext());
+        
         MaterialAutoCompleteTextView keySpinner = (MaterialAutoCompleteTextView) binding.key.getEditText();
-        keySpinner.setAdapter(new KeySpinner(getContext()));
+        keySpinner.setAdapter(adapter);
+        keySpinner.setOnItemClickListener((adapterView, view, index, id) -> code = adapter.getItem(index));
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                 button.setText(binding.name.getEditText().getText().toString());
+                
+                key.setKeycode(code);
             });
     }
     
