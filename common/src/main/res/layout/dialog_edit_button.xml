@@ -8,8 +8,9 @@
     <com.google.android.material.textfield.TextInputLayout
          android:layout_height="wrap_content"
          android:layout_width="match_parent"
-         android:id="@+id/name">
-
+         android:id="@+id/name"
+         android:hint="@string/name">
+ 
         <com.google.android.material.textfield.TextInputEditText
              android:layout_height="wrap_content"
              android:layout_width="match_parent" />

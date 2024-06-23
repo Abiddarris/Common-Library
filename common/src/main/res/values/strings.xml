@@ -7,4 +7,5 @@
     <string name="select_item">Select Item</string>
     <string name="exception_dialog_title">An exception has been thrown!</string>
     <string name="edit">Edit</string>
+    <string name="name">Name</string>
 </resources>
