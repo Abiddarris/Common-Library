@@ -16,18 +16,40 @@
 package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
+import android.widget.Button;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
+import com.abiddarris.common.databinding.DialogEditButtonBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class EditButtonDialog extends BaseDialogFragment {
+public class EditButtonDialog extends BaseDialogFragment<Void> {
+    
+    private static final String FOCUS = "focus";
+    
+    private DialogEditButtonBinding binding;
+    
+    public static EditButtonDialog newInstance(Button target) {
+        var dialog = new EditButtonDialog();
+        dialog.saveVariable(FOCUS, target);
+        
+        return dialog;
+    }
     
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
+       
+        Button focus = getVariable(FOCUS);
         
-        builder.setTitle(R.string.edit);
+        binding = DialogEditButtonBinding.inflate(getLayoutInflater());
+        binding.name.getEditText()
+            .setText(focus.getText());
         
+        builder.setTitle(R.string.edit)
+            .setView(binding.getRoot())
+            .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                focus.setText(binding.name.getEditText().getText().toString());
+            });
     }
     
 }

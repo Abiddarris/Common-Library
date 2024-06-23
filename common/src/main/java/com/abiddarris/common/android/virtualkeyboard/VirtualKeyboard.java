@@ -28,6 +28,7 @@ import java.util.Random;
 public class VirtualKeyboard extends MoveableViewsGroup {
     
     private Button editButton;
+    private Button focus;
     private KeyListener listener;
     
     public VirtualKeyboard(Context context) {
@@ -37,8 +38,8 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         editButton.setVisibility(GONE);
         editButton.setText(R.string.edit);
         editButton.setOnClickListener(v -> {
-            new EditButtonDialog()
-                .show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
+            var dialog = EditButtonDialog.newInstance(focus);
+            dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
         });
         
         addView(editButton);
@@ -48,9 +49,13 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     protected boolean onChildTouch(View view, MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
+                focus = null;
+            
                 editButton.setVisibility(GONE);
                 break;
             case MotionEvent.ACTION_UP :
+                focus = (Button) view;
+            
                 editButton.setVisibility(VISIBLE);
                 editButton.setX(view.getX() + 
                                 view.getWidth() / 2 -
