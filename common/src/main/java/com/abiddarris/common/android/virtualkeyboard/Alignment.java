@@ -15,8 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import com.abiddarris.common.android.utils.ScreenUtils;
 
 public class Alignment {
 
@@ -80,6 +82,11 @@ public class Alignment {
             flags |= Alignment.BOTTOM;
             marginY = marginBottom;
         }
+        
+        Context context = button.getContext();
+        
+        marginX = ScreenUtils.pixelToDp(context, marginX);
+        marginY = ScreenUtils.pixelToDp(context, marginY);
         
         calculated = true;
     }
