@@ -18,6 +18,7 @@ package com.abiddarris.common.android.virtualkeyboard;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import static com.abiddarris.common.android.utils.Locales.getPrimaryLocale;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -33,7 +34,7 @@ import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
 import com.abiddarris.common.databinding.DialogEditButtonBinding;
-import com.abiddarris.common.utils.Locales;
+
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
@@ -90,7 +91,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         alignmentSpinner.setOnItemClickListener((adapterView, view, index, id) -> alignmentIndex = index);
         
         numberFormattor = NumberFormat.getInstance(
-            Locales.getPrimaryLocale(getContext())
+            getPrimaryLocale(getContext())
         );
         
         binding.marginX.getEditText()
