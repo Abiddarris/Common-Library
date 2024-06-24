@@ -88,7 +88,20 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         binding.marginY.getEditText()
             .setText(numberFormattor.format(alignment.getMarginY()));
         
+        Size size = key.getSize();
+        size.calculate();
+        
+        int sizeId;
+        switch(size.getType()) {
+            case Size.AUTO :
+                sizeId = R.string.auto;
+                break;
+            default :
+                sizeId = R.string.custom;
+        }
+        
         MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
+        sizeSpinner.setText(sizeId);
         sizeSpinner.setSimpleItems(R.array.size_choices);
         
         builder.setTitle(R.string.edit)
