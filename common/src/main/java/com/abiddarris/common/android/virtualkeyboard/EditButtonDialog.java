@@ -88,6 +88,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         binding.marginY.getEditText()
             .setText(numberFormattor.format(alignment.getMarginY()));
         
+        MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
+        sizeSpinner.setSimpleItems(R.array.size_choices);
+        
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {

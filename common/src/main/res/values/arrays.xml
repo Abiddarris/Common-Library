@@ -6,4 +6,9 @@
         <item>@string/right</item>
         <item>@string/right_and_bottom</item>
     </string-array>
+    
+    <string-array name="size_choices">
+        <item>@string/auto</item>
+        <item>@string/custom</item>
+    </string-array>
 </resources>

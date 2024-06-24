@@ -19,4 +19,6 @@
     <string name="right_and_bottom">"Right &amp; Bottom"</string>
     <string name="margin_x">Margin X</string>
     <string name="margin_y">Margin Y</string>
+    <string name="auto">Auto</string>
+    <string name="custom">Custom</string>
 </resources>
