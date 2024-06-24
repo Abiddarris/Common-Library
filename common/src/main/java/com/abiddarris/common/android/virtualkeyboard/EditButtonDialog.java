@@ -22,6 +22,8 @@ import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.TOP;
+import static com.abiddarris.common.android.virtualkeyboard.Size.AUTO;
+import static com.abiddarris.common.android.virtualkeyboard.Size.CUSTOM;
 
 import android.os.Bundle;
 import android.view.View;
@@ -46,6 +48,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     
     private DialogEditButtonBinding binding;
     private int alignmentIndex;
+    private int sizeType;
     private NumberFormat numberFormattor;
     private Keycode code;
     
@@ -145,6 +148,14 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                     editTextToFloat(binding.marginX),
                     editTextToFloat(binding.marginY)
                 );
+                
+                size.setType(sizeType);
+                if(sizeType == CUSTOM) {
+                    size.setSize(
+                        editTextToFloat(binding.width),
+                        editTextToFloat(binding.height)
+                    );
+                }
             });
     }
     
@@ -153,9 +164,11 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         switch(index) {
             case 0 :
                 sizeVisibility = GONE;
+                sizeType = AUTO;
                 break;
             case 1 :
                 sizeVisibility = VISIBLE;
+                sizeType = CUSTOM;
         }
         
         binding.width.setVisibility(sizeVisibility);
