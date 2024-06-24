@@ -52,9 +52,12 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         binding.name.getEditText()
             .setText(button.getText());
        
+        code = key.getKeycode();
+        
         var adapter = new KeySpinner(getContext());
         
         MaterialAutoCompleteTextView keySpinner = (MaterialAutoCompleteTextView) binding.key.getEditText();
+        keySpinner.setText(code == null ? getString(R.string.select_item) : code.name());
         keySpinner.setAdapter(adapter);
         keySpinner.setOnItemClickListener((adapterView, view, index, id) -> code = adapter.getItem(index));
         
