@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import static com.abiddarris.common.android.utils.ScreenUtils.dpToPixel;
+
 import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -52,6 +54,42 @@ public class Alignment {
         calculateIfNot();
         
         return this.marginY;
+    }
+    
+    public void setMargins(int flags, float marginX, float marginY) {
+        Button button = key.getButton();
+        Context context = button.getContext();
+        RelativeLayout parent = (RelativeLayout)button.getParent();
+        Size size = key.getSize();
+        
+        float marginXPixel = dpToPixel(context, marginX);
+        float marginYPixel = dpToPixel(context, marginY);
+        float x = 0, y = 0;
+        
+        switch(flags) {
+            case LEFT | TOP :
+                x = marginXPixel;
+                y = marginYPixel;
+                break;
+            case RIGHT | TOP :
+                x = parent.getWidth() - marginXPixel - dpToPixel(context, size.getWidth());
+                y = marginYPixel;
+                break;
+            case LEFT | BOTTOM :
+                x = marginXPixel;
+                y = parent.getHeight() - marginYPixel - dpToPixel(context, size.getHeight());
+                break;
+            case RIGHT | BOTTOM :
+                x = parent.getWidth() - marginXPixel - dpToPixel(context, size.getWidth());
+                y = parent.getHeight() - marginYPixel - dpToPixel(context, size.getHeight());
+        }
+        
+        button.setX(x);
+        button.setY(y);
+        
+        this.flags = flags;
+        this.marginX = marginX;
+        this.marginY = marginY;
     }
 
     public void calculate() {
