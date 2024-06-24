@@ -26,6 +26,10 @@ public final class ScreenUtils {
     	return pixel / getDensity(context);
     }
     
+    public static float dpToPixel(Context context, float dp) {
+    	return dp * getDensity(context);
+    }
+    
     public static float getDensity(Context context) {
     	return context.getResources()
             .getDisplayMetrics()
