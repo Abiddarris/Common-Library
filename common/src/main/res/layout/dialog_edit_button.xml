@@ -55,7 +55,7 @@
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
              android:layout_below="@id/alignment"
-             android:id="@+id/margin1">
+             android:id="@+id/marginX">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
@@ -67,8 +67,8 @@
         <com.google.android.material.textfield.TextInputLayout
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
-             android:layout_below="@id/margin1"
-             android:id="@+id/margin2">
+             android:layout_below="@id/marginX"
+             android:id="@+id/marginY">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
         <com.google.android.material.textfield.TextInputLayout
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
-             android:layout_below="@id/margin2"
+             android:layout_below="@id/marginY"
              android:hint="@string/size"
              style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
              android:id="@+id/size">
