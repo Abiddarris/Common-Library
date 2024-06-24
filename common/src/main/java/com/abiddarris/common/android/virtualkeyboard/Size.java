@@ -15,7 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import android.content.Context;
 import static android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT;
+import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
 
 import android.widget.Button;
 
@@ -26,7 +28,7 @@ public class Size {
 
     private boolean calculated;
     private int type;
-    private int width, height;
+    private float width, height;
     private Key key;
 
     Size(Key key) {
@@ -39,13 +41,13 @@ public class Size {
         return type;
     }
     
-    public int getWidth() {
+    public float getWidth() {
         calculateIfNot();
         
         return width;
     }
     
-    public int getHeight() {
+    public float getHeight() {
     	calculateIfNot();
         
         return height;
@@ -64,8 +66,10 @@ public class Size {
             type = CUSTOM;
         }
         
-        width = button.getWidth();
-        height = button.getHeight();
+        Context context = button.getContext();
+        
+        width = pixelToDp(context, button.getWidth());
+        height = pixelToDp(context, button.getHeight());
         
         calculated = true;
     }
