@@ -99,7 +99,8 @@
              android:layout_width="match_parent"
              android:layout_below="@id/size"
              android:hint="@string/width"
-             android:id="@+id/width">
+             android:id="@+id/width"
+             android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
@@ -113,7 +114,8 @@
              android:layout_width="match_parent"
              android:layout_below="@id/width"
              android:hint="@string/height"
-             android:id="@+id/height">
+             android:id="@+id/height"
+             android:visibility="gone">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
