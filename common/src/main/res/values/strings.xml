@@ -17,4 +17,6 @@
     <string name="left_and_bottom">"Left &amp; Bottom"</string>
     <string name="right">Right</string>
     <string name="right_and_bottom">"Right &amp; Bottom"</string>
+    <string name="margin_x">Margin X</string>
+    <string name="margin_y">Margin Y</string>
 </resources>

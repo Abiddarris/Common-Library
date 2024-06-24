@@ -55,6 +55,7 @@
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
              android:layout_below="@id/alignment"
+             android:hint="@string/margin_x"
              android:id="@+id/marginX">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -68,6 +69,7 @@
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
              android:layout_below="@id/marginX"
+             android:hint="@string/margin_y"
              android:id="@+id/marginY">
 
             <com.google.android.material.textfield.TextInputEditText
