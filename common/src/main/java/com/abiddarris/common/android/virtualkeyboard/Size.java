@@ -15,11 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
-import android.content.Context;
 import static android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT;
+
+import static com.abiddarris.common.android.utils.ScreenUtils.dpToPixel;
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
 
+import android.content.Context;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class Size {
 
@@ -39,6 +43,41 @@ public class Size {
         calculateIfNot();
         
         return type;
+    }
+    
+    public void setType(int type) {
+        this.type = type;
+        
+        if(type == AUTO) {
+            updateSizeInternal(WRAP_CONTENT, WRAP_CONTENT);
+        }
+    }
+    
+    public void setSize(float width, float height) {
+        if(type != CUSTOM) {
+            throw new IllegalStateException("Cannot set size if size type is not CUSTOM");
+        }
+        
+        Button button = key.getButton();
+        Context context = button.getContext();
+        
+        updateSizeInternal(
+            Math.round(dpToPixel(context, width)),
+            Math.round(dpToPixel(context, height))
+        );
+        
+        this.width = width;
+        this.height = height;
+    }
+    
+    private void updateSizeInternal(int widthPx, int heightPx) {
+        Button button = key.getButton();
+        RelativeLayout parent = (RelativeLayout)button.getParent();
+        LayoutParams params = (LayoutParams)button.getLayoutParams();
+        params.width = widthPx;
+        params.height = heightPx;
+        
+        parent.updateViewLayout(button, params);
     }
     
     public float getWidth() {
