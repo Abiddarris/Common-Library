@@ -114,17 +114,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         Size size = key.getSize();
         size.calculate();
         
-        int sizeId;
-        switch(size.getType()) {
-            case Size.AUTO :
-                sizeId = R.string.auto;
-                break;
-            default :
-                sizeId = R.string.custom;
-            
-                binding.width.setVisibility(View.VISIBLE);
-                binding.height.setVisibility(View.VISIBLE);
-        }
+        int sizeId = getSizeId(size.getType());
         
         binding.width.getEditText()
             .setText(numberFormattor.format(size.getWidth()));
@@ -157,6 +147,23 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                     );
                 }
             });
+    }
+    
+    private int getSizeId(int type) {
+        int sizeId;
+        switch(type) {
+            case Size.AUTO :
+                sizeId = R.string.auto;
+                sizeType = AUTO;
+                break;
+            default :
+                sizeId = R.string.custom;
+                sizeType = CUSTOM;
+            
+                binding.width.setVisibility(View.VISIBLE);
+                binding.height.setVisibility(View.VISIBLE);
+        }
+        return sizeId;
     }
     
     private void handleSizeSpinnerChanged(int index) {
