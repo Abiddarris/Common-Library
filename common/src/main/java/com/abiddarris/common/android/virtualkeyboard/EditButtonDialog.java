@@ -82,20 +82,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         Alignment alignment = key.getAlignment();
         alignment.calculate();
         
-        int alignmentId;
-        switch(alignment.getFlags()) {
-            case Alignment.LEFT | Alignment.TOP :
-                alignmentId = R.string.left;
-                break;
-            case Alignment.LEFT | Alignment.BOTTOM :
-                alignmentId = R.string.left_and_bottom;
-                break;
-            case Alignment.RIGHT | Alignment.TOP :
-                alignmentId = R.string.right;
-                break;
-            default :
-                alignmentId = R.string.right_and_bottom;
-        }
+        int alignmentId = getAlignmentId(alignment.getFlags());
         
         MaterialAutoCompleteTextView alignmentSpinner = (MaterialAutoCompleteTextView)binding.alignment.getEditText();
         alignmentSpinner.setText(alignmentId);
@@ -147,6 +134,28 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                     );
                 }
             });
+    }
+    
+    private int getAlignmentId(int flags) {
+        int alignmentId;
+        switch(flags) {
+            case LEFT | BOTTOM :
+                alignmentId = R.string.left_and_bottom;
+                alignmentIndex = 1;
+                break;
+            case RIGHT | TOP :
+                alignmentId = R.string.right;
+                alignmentIndex = 2;
+                break;
+            case RIGHT | BOTTOM :
+                alignmentId = R.string.right_and_bottom;
+                alignmentIndex = 3;
+                break;
+            default :
+                alignmentId = R.string.left;
+                alignmentIndex = 0;
+        }
+        return alignmentId;
     }
     
     private int getSizeId(int type) {
