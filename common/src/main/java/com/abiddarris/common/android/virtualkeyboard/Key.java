@@ -17,9 +17,11 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.content.Context;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 public class Key {
 
+    private Alignment alignment = new Alignment(this);
     private Button button;
     private int id;
     private Keycode keycode;
@@ -30,6 +32,10 @@ public class Key {
     
     public Button getButton() {
         return button;
+    }
+    
+    public Alignment getAlignment() {
+        return alignment;
     }
     
     public int getId() {

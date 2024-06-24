@@ -54,8 +54,28 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         keySpinner.setAdapter(adapter);
         keySpinner.setOnItemClickListener((adapterView, view, index, id) -> code = adapter.getItem(index));
         
+        Alignment alignment = key.getAlignment();
+        alignment.calculate();
+        
+        int alignmentId;
+        switch(alignment.getFlags()) {
+            case Alignment.LEFT | Alignment.TOP :
+                alignmentId = R.string.left;
+                break;
+            case Alignment.LEFT | Alignment.BOTTOM :
+                alignmentId = R.string.left_and_bottom;
+                break;
+            case Alignment.RIGHT | Alignment.TOP :
+                alignmentId = R.string.right;
+                break;
+            default :
+                alignmentId = R.string.right_and_bottom;
+        }
+        
         MaterialAutoCompleteTextView alignmentSpinner = (MaterialAutoCompleteTextView)binding.alignment.getEditText();
+        alignmentSpinner.setText(alignmentId);
         alignmentSpinner.setSimpleItems(R.array.alignment);
+        
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
