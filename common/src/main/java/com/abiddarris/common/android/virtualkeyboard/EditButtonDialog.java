@@ -20,8 +20,11 @@ import android.widget.Button;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.databinding.DialogEditButtonBinding;
+import com.abiddarris.common.utils.Locales;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
     
@@ -76,6 +79,14 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         alignmentSpinner.setText(alignmentId);
         alignmentSpinner.setSimpleItems(R.array.alignment);
         
+        NumberFormat numberFormattor = NumberFormat.getInstance(
+            Locales.getPrimaryLocale(getContext())
+        );
+        
+        binding.marginX.getEditText()
+            .setText(numberFormattor.format(alignment.getMarginX()));
+        binding.marginY.getEditText()
+            .setText(numberFormattor.format(alignment.getMarginY()));
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
