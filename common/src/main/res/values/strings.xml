@@ -11,4 +11,6 @@
     <string name="keycode">Keycode</string>
     <string name="alignment">Alignment</string>
     <string name="size">Size</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
 </resources>

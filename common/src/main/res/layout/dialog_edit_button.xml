@@ -26,7 +26,7 @@
              android:layout_width="match_parent"
              android:layout_below="@id/name"
              android:hint="@string/keycode"
-              style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
              android:id="@+id/key">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -66,6 +66,35 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_below="@id/size"
+             android:hint="@string/width"
+             android:id="@+id/width">
+
+            <com.google.android.material.textfield.TextInputEditText
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:inputType="number" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+        
+        
+         <com.google.android.material.textfield.TextInputLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_below="@id/width"
+             android:hint="@string/height"
+             android:id="@+id/height">
+
+            <com.google.android.material.textfield.TextInputEditText
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent" 
+                 android:inputType="number"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+        
     </RelativeLayout>
 
 </ScrollView>
