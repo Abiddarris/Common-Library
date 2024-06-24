@@ -15,6 +15,13 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import com.abiddarris.common.android.dialogs.ExceptionDialog;
+import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
+import static com.abiddarris.common.android.virtualkeyboard.Alignment.TOP;
+import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
+import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
+
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +31,9 @@ import com.abiddarris.common.databinding.DialogEditButtonBinding;
 import com.abiddarris.common.utils.Locales;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputLayout;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Locale;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
@@ -32,6 +41,8 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     private static final String FOCUS = "focus";
     
     private DialogEditButtonBinding binding;
+    private int alignmentIndex;
+    private NumberFormat numberFormattor;
     private Keycode code;
     
     public static EditButtonDialog newInstance(Key key) {
@@ -82,8 +93,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         MaterialAutoCompleteTextView alignmentSpinner = (MaterialAutoCompleteTextView)binding.alignment.getEditText();
         alignmentSpinner.setText(alignmentId);
         alignmentSpinner.setSimpleItems(R.array.alignment);
+        alignmentSpinner.setOnItemClickListener((adapterView, view, index, id) -> alignmentIndex = index);
         
-        NumberFormat numberFormattor = NumberFormat.getInstance(
+        numberFormattor = NumberFormat.getInstance(
             Locales.getPrimaryLocale(getContext())
         );
         
@@ -122,7 +134,42 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                 button.setText(binding.name.getEditText().getText().toString());
                 
                 key.setKeycode(code);
+                
+                alignment.setMargins(
+                    getAlignmentFlag(),
+                    editTextToFloat(binding.marginX),
+                    editTextToFloat(binding.marginY)
+                );
             });
+    }
+    
+    private float editTextToFloat(TextInputLayout layout) {
+        try {
+            return numberFormattor.parse(
+                layout.getEditText()
+                    .getText()
+                    .toString())
+                .floatValue();
+        } catch (ParseException e) {
+            var dialog = new ExceptionDialog();
+            dialog.setThrowable(e);
+            dialog.show(getParentFragmentManager(), null);
+            
+            return 0;
+        }
+    }
+    
+    private int getAlignmentFlag() {
+        switch(alignmentIndex) {
+            case 1 :
+                return LEFT | BOTTOM;
+            case 2 :
+                return RIGHT | TOP;
+            case 3 :
+                return RIGHT | BOTTOM;
+            default :
+                return LEFT | TOP;
+        }
     }
     
 }
