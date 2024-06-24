@@ -1,50 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
      xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_height="match_parent"
      android:layout_width="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <RelativeLayout
          android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         android:id="@+id/name"
-         android:hint="@string/name">
- 
-        <com.google.android.material.textfield.TextInputEditText
-             android:layout_height="wrap_content"
-             android:layout_width="match_parent" />
+         android:layout_width="match_parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-         android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         android:layout_below="@id/name"
-         android:hint="@string/keycode"
-         style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-         android:id="@+id/key">
-
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        <com.google.android.material.textfield.TextInputLayout
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
-             android:inputType="none" />
+             android:hint="@string/name"
+             android:id="@+id/name">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent" />
 
-     <com.google.android.material.textfield.TextInputLayout
-         android:layout_height="wrap_content"
-         android:layout_width="match_parent"
-         android:layout_below="@id/key"
-         android:hint="@string/alignment"
-         style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
-         android:id="@+id/alignment">
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.MaterialAutoCompleteTextView
+        <com.google.android.material.textfield.TextInputLayout
              android:layout_height="wrap_content"
              android:layout_width="match_parent"
-             android:inputType="none" />
+             android:layout_below="@id/name"
+             android:hint="@string/keycode"
+             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+             android:id="@+id/key">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:inputType="none" />
 
-</RelativeLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_below="@id/key"
+             android:hint="@string/alignment"
+             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+             android:id="@+id/alignment">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+             android:layout_height="wrap_content"
+             android:layout_width="match_parent"
+             android:layout_below="@id/alignment"
+             android:hint="@string/size"
+             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+             android:id="@+id/size">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="match_parent"
+                 android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </RelativeLayout>
+
+</ScrollView>
