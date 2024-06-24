@@ -54,6 +54,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         keySpinner.setAdapter(adapter);
         keySpinner.setOnItemClickListener((adapterView, view, index, id) -> code = adapter.getItem(index));
         
+        MaterialAutoCompleteTextView alignmentSpinner = (MaterialAutoCompleteTextView)binding.alignment.getEditText();
+        alignmentSpinner.setSimpleItems(R.array.alignment);
+        
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {

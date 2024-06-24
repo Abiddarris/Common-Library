@@ -13,4 +13,8 @@
     <string name="size">Size</string>
     <string name="width">Width</string>
     <string name="height">Height</string>
+    <string name="left">Left</string>
+    <string name="left_and_bottom">"Left &amp; Bottom"</string>
+    <string name="right">Right</string>
+    <string name="right_and_bottom">"Right &amp; Bottom"</string>
 </resources>

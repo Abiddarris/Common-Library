@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="alignment">
+        <item>@string/left</item>
+        <item>@string/left_and_bottom</item>
+        <item>@string/right</item>
+        <item>@string/right_and_bottom</item>
+    </string-array>
+</resources>
