@@ -16,6 +16,7 @@
 package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
@@ -98,6 +99,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                 break;
             default :
                 sizeId = R.string.custom;
+            
+                binding.width.setVisibility(View.VISIBLE);
+                binding.height.setVisibility(View.VISIBLE);
         }
         
         MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
