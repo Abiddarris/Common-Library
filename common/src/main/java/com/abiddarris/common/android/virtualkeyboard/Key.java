@@ -25,6 +25,7 @@ public class Key {
     private Button button;
     private int id;
     private Keycode keycode;
+    private Size size = new Size(this);
     
     public void init(Context context) {
         button = new Button(context);
@@ -36,6 +37,10 @@ public class Key {
     
     public Alignment getAlignment() {
         return alignment;
+    }
+    
+    public Size getSize() {
+        return size;
     }
     
     public int getId() {
