@@ -26,7 +26,7 @@
              android:layout_width="match_parent"
              android:layout_below="@id/name"
              android:hint="@string/keycode"
-             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+              style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
              android:id="@+id/key">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -41,7 +41,7 @@
              android:layout_width="match_parent"
              android:layout_below="@id/key"
              android:hint="@string/alignment"
-             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
              android:id="@+id/alignment">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
@@ -56,7 +56,7 @@
              android:layout_width="match_parent"
              android:layout_below="@id/alignment"
              android:hint="@string/size"
-             style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
              android:id="@+id/size">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
