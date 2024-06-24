@@ -104,6 +104,11 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                 binding.height.setVisibility(View.VISIBLE);
         }
         
+        binding.width.getEditText()
+            .setText(numberFormattor.format(size.getWidth()));
+        binding.height.getEditText()
+            .setText(numberFormattor.format(size.getHeight()));
+        
         MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
         sizeSpinner.setText(sizeId);
         sizeSpinner.setSimpleItems(R.array.size_choices);
