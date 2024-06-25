@@ -23,6 +23,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.LayoutVirtualKeyboardOptionsBinding;
@@ -30,6 +31,7 @@ import com.abiddarris.common.databinding.LayoutVirtualKeyboardOptionsBinding;
 public class VirtualKeyboardOptions extends LinearLayout {
     
     private LayoutVirtualKeyboardOptionsBinding binding;
+    private String keyboardFolderPath;
     
     public VirtualKeyboardOptions(Context context, VirtualKeyboard keyboard) {
         super(context);
@@ -58,4 +60,11 @@ public class VirtualKeyboardOptions extends LinearLayout {
         keyboard.addView(this, params);
     }
     
+    public String getKeyboardFolderPath() {
+        return this.keyboardFolderPath;
+    }
+    
+    public void setKeyboardFolderPath(String keyboardFolderPath) {
+        this.keyboardFolderPath = keyboardFolderPath;
+    }
 }
