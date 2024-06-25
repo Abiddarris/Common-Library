@@ -23,4 +23,5 @@
     <string name="custom">Custom</string>
     <string name="save">Save</string>
     <string name="load">Load</string>
+    <string name="saving">Saving&#8230;</string>
 </resources>
