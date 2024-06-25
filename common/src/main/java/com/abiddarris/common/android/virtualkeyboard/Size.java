@@ -19,11 +19,17 @@ import static android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT;
 
 import static com.abiddarris.common.android.utils.ScreenUtils.dpToPixel;
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.HEIGHT;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.TYPE;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.WIDTH;
 
 import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Size {
 
@@ -37,6 +43,17 @@ public class Size {
 
     Size(Key key) {
         this.key = key;
+    }
+    
+    JSONObject save() throws JSONException {
+        calculate();
+        
+    	JSONObject size = new JSONObject();
+        size.put(TYPE, getType());
+        size.put(WIDTH, getWidth());
+        size.put(HEIGHT, getHeight());
+        
+        return size;
     }
     
     public int getType() {
