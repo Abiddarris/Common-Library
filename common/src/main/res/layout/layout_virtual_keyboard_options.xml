@@ -11,11 +11,13 @@
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
          android:src="@drawable/ic_add"
-         android:id="@+id/add" />
+         android:id="@+id/add"
+         android:visibility="gone" />
 
     <ImageButton
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
          android:src="@drawable/ic_setting"
-         android:id="@+id/setting" />
+         android:id="@+id/setting"
+         android:visibility="gone" />
 </merge>
