@@ -63,6 +63,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
+        setCancelable(false);
        
         Key key = getVariable(FOCUS);
         Button button = key.getButton();
