@@ -16,11 +16,18 @@
 package com.abiddarris.common.android.virtualkeyboard;
 
 import static com.abiddarris.common.android.utils.ScreenUtils.dpToPixel;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.FLAGS;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_X;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_Y;
 
 import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+
 import com.abiddarris.common.android.utils.ScreenUtils;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Alignment {
 
@@ -36,6 +43,17 @@ public class Alignment {
 
     Alignment(Key key) {
         this.key = key;
+    }
+    
+    JSONObject save() throws JSONException {
+        calculate();
+        
+        JSONObject alignment = new JSONObject();
+        alignment.put(FLAGS, getFlags());
+        alignment.put(MARGIN_X, getMarginX());
+        alignment.put(MARGIN_Y, getMarginY());
+        
+        return alignment;
     }
     
     public int getFlags() {
