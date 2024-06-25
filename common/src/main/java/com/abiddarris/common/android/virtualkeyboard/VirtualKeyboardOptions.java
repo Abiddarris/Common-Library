@@ -15,9 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import android.widget.RelativeLayout;
+import static android.widget.RelativeLayout.CENTER_HORIZONTAL;
+import static android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+
 import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.LayoutVirtualKeyboardOptionsBinding;
 
@@ -41,7 +46,11 @@ public class VirtualKeyboardOptions extends LinearLayout {
         
         binding.add.setOnClickListener(v -> keyboard.addButton());
         
-        keyboard.addView(this);
+        var params = new RelativeLayout.LayoutParams(
+                WRAP_CONTENT, WRAP_CONTENT);
+        params.addRule(CENTER_HORIZONTAL);
+        
+        keyboard.addView(this, params);
     }
     
 }
