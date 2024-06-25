@@ -15,13 +15,22 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
+
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+
 import androidx.fragment.app.FragmentActivity;
+
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,5 +116,18 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     
     public void setKeyListener(KeyListener listener) {
         this.listener = listener;
+    }
+    
+    public JSONObject save() throws JSONException {
+        JSONObject header = new JSONObject();
+        JSONArray array = new JSONArray();
+        
+        for(var key : keys) {
+        	array.put(key.save());
+        }
+        
+        header.put(KEYS, array);
+        
+        return header;
     }
 }
