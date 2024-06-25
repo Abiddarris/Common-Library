@@ -15,9 +15,17 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.ALIGNMENT;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYCODE;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.NAME;
+import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.SIZE;
+
 import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Key {
 
@@ -26,6 +34,18 @@ public class Key {
     private int id;
     private Keycode keycode;
     private Size size = new Size(this);
+    
+    protected JSONObject save() throws JSONException {
+        var keycode = getKeycode();
+        
+        JSONObject key = new JSONObject();
+        key.put(KEYCODE, keycode != null ? keycode.name() : JSONObject.NULL);
+        key.put(ALIGNMENT, alignment.save());
+        key.put(SIZE, size.save());
+        key.put(NAME, button.getText());
+        
+        return key;
+    }
     
     public void init(Context context) {
         button = new Button(context);
@@ -58,4 +78,5 @@ public class Key {
     public void setKeycode(Keycode keycode) {
         this.keycode = keycode;
     }
+    
 }
