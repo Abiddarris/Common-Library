@@ -116,6 +116,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
+            .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                 button.setText(binding.name.getEditText().getText().toString());
                 
