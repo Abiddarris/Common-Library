@@ -18,28 +18,18 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
 import com.abiddarris.common.R;
-import com.abiddarris.common.android.dialogs.BaseDialogFragment;
+import com.abiddarris.common.android.dialogs.EditTextDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
+public class SaveKeyboardDialog extends EditTextDialog {
 
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
         
-        builder.setItems(R.array.virtual_keyboard_settings_choices, (dialog, which) -> {
-            switch(which) {
-                case 0 :
-                    save();
-                    return;
-            }
-        });
-    }
-    
-    private void save() {
-        new SaveKeyboardDialog()
-            .showForResult(getParentFragmentManager(), (name) -> {
-                
-            });
+        getUI().textInputLayout.setHint(R.string.name);
+        
+        builder.setTitle(R.string.save)
+            .setPositiveButton(android.R.string.ok, null);
     }
 }
