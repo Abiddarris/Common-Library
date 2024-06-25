@@ -11,4 +11,10 @@
         <item>@string/auto</item>
         <item>@string/custom</item>
     </string-array>
+    
+    <string-array name="virtual_keyboard_settings_choices">
+        <item>@string/save</item>
+        <item>@string/load</item>
+    </string-array>
+    
 </resources>

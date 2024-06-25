@@ -21,4 +21,6 @@
     <string name="margin_y">Margin Y</string>
     <string name="auto">Auto</string>
     <string name="custom">Custom</string>
+    <string name="save">Save</string>
+    <string name="load">Load</string>
 </resources>
