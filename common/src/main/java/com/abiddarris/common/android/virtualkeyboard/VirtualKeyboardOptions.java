@@ -34,7 +34,9 @@ public class VirtualKeyboardOptions extends LinearLayout {
             keyboard.setEdit(!keyboard.isEdit());
              
             int visibility = keyboard.isEdit() ? VISIBLE : GONE;
-            binding.add.setVisibility(visibility);    
+            
+            binding.add.setVisibility(visibility); 
+            binding.setting.setVisibility(visibility);     
         });
         
         binding.add.setOnClickListener(v -> keyboard.addButton());
