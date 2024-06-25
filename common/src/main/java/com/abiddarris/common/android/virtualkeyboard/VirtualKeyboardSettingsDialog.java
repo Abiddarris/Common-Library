@@ -17,12 +17,25 @@
 package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
+
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
+import com.abiddarris.common.android.tasks.TaskViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import java.io.File;
 
 public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
 
+    private static final String OPTIONS = "options";
+    
+    static VirtualKeyboardSettingsDialog newInstance(VirtualKeyboardOptions options) {
+        var dialog = new VirtualKeyboardSettingsDialog();
+        dialog.saveVariable(OPTIONS, options);
+        
+        return dialog;
+    }
+    
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
@@ -37,9 +50,14 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
     }
     
     private void save() {
-        new SaveKeyboardDialog()
-            .showForResult(getParentFragmentManager(), (name) -> {
+        var dialog = new SaveKeyboardDialog();
+        dialog.showForResult(getParentFragmentManager(), (name) -> {
+            VirtualKeyboardOptions options = getVariable(OPTIONS);
                 
-            });
+            TaskViewModel model = TaskViewModel.getInstance(dialog.getActivity());
+            model.execute(new SaveTask(
+                        options.getKeyboard(),
+                        new File(options.getKeyboardFolderPath(), name)));
+        });
     }
 }
