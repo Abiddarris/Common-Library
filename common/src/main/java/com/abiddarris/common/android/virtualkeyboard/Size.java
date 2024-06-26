@@ -59,6 +59,17 @@ public class Size {
         return size;
     }
     
+    void load(JSONObject size) throws JSONException     {
+        setType(size.getInt(TYPE));
+        
+        if(type == CUSTOM) {
+            setSize(
+                (float)size.getDouble(WIDTH),
+                (float)size.getDouble(HEIGHT)
+            );
+        }
+    }
+    
     public int getType() {
         calculateIfNot();
         
