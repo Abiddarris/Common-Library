@@ -56,6 +56,8 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
     private void save() {
         var dialog = new SaveKeyboardDialog();
         dialog.showForResult(getParentFragmentManager(), (name) -> {
+            if(name == null) return;
+                
             VirtualKeyboardOptions options = getVariable(OPTIONS);
                 
             TaskViewModel model = TaskViewModel.getInstance(dialog.getActivity());
