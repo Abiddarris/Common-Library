@@ -110,6 +110,12 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         return key;
     }
     
+    public void removeButton(Key key) {
+        removeView(key.getButton());
+      
+        keys.remove(key);
+    }
+    
     public KeyListener getKeyListener() {
         return this.listener;
     }
@@ -129,5 +135,23 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         header.put(KEYS, array);
         
         return header;
+    }
+    
+    public void clearKeys() {
+        for(Key key : keys) {
+        	removeButton(key);
+        }
+    }
+    
+    public void load(JSONObject keyboard) throws JSONException {
+        clearKeys(); 
+        
+        JSONArray keys = keyboard.getJSONArray(KEYS);
+        for(int i = 0; i < keys.length(); ++i) {
+        	Key key = addButton();
+            JSONObject keyJSON = keys.getJSONObject(i);
+            
+            key.load(keyJSON);
+        }
     }
 }
