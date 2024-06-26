@@ -50,8 +50,11 @@ public class Size {
         
     	JSONObject size = new JSONObject();
         size.put(TYPE, getType());
-        size.put(WIDTH, getWidth());
-        size.put(HEIGHT, getHeight());
+        
+        if(type == CUSTOM) {
+            size.put(WIDTH, getWidth());
+            size.put(HEIGHT, getHeight());
+        }
         
         return size;
     }
