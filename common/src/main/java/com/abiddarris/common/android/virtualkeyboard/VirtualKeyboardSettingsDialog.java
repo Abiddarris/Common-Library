@@ -78,7 +78,10 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
             -1
         );
         dialog.showForResult(getParentFragmentManager(), (index) -> {
-            
+            TaskViewModel model = TaskViewModel.getInstance(dialog.getActivity());
+            model.execute(new LoadTask(
+                        options.getKeyboard(),
+                        keyboards[index]));
         });
     }
 }
