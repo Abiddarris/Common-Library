@@ -39,10 +39,10 @@ public class Key {
         var keycode = getKeycode();
         
         JSONObject key = new JSONObject();
+        key.put(NAME, button.getText());
         key.put(KEYCODE, keycode != null ? keycode.name() : JSONObject.NULL);
         key.put(ALIGNMENT, alignment.save());
         key.put(SIZE, size.save());
-        key.put(NAME, button.getText());
         
         return key;
     }
