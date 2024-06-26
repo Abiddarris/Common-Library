@@ -19,9 +19,9 @@ import static android.view.KeyEvent.*;
 
 public enum Keycode {
     
-    A(KEYCODE_A),
-    W(KEYCODE_W), 
-    SPACE(KEYCODE_SPACE);
+    KEY_A(KEYCODE_A),
+    KEY_W(KEYCODE_W), 
+    KEY_SPACE(KEYCODE_SPACE);
     
     private int keycode;
     
