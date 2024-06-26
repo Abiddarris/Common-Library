@@ -56,6 +56,14 @@ public class Alignment {
         return alignment;
     }
     
+    void load(JSONObject alignment) throws JSONException {
+        setMargins(
+            alignment.getInt(FLAGS),
+            (float)alignment.getDouble(MARGIN_X),
+            (float)alignment.getDouble(MARGIN_Y)
+        );
+    }
+    
     public int getFlags() {
         calculateIfNot();
         
