@@ -18,12 +18,14 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
 
+import android.widget.Toast;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.tasks.TaskViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
+import java.util.stream.Stream;
 
 public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
 
@@ -45,6 +47,8 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
                 case 0 :
                     save();
                     return;
+                case 1 :
+                    load();
             }
         });
     }
@@ -58,6 +62,23 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
             model.execute(new SaveTask(
                         options.getKeyboard(),
                         new File(options.getKeyboardFolderPath(), name)));
+        });
+    }
+    
+    private void load() {
+        VirtualKeyboardOptions options = getVariable(OPTIONS);
+        File[] keyboards = new File(options.getKeyboardFolderPath())
+            .listFiles();
+        
+        var dialog = new LoadKeyboardSelectorDialog();
+        dialog.setItems(
+            Stream.of(keyboards)
+                .map(File::getName)
+                .toArray(String[]::new),
+            -1
+        );
+        dialog.showForResult(getParentFragmentManager(), (index) -> {
+            
         });
     }
 }
