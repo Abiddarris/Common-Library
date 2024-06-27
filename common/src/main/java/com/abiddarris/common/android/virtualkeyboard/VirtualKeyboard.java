@@ -101,8 +101,11 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         
         keys.add(key);
         
+        Button button = key.getButton();
+        button.setText(R.string.button);
+        
         addMoveableView(
-            key.getButton(), 
+            button, 
             new LayoutParams(100, 100),
             new TouchListener(this, key)
         );

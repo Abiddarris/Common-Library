@@ -25,4 +25,5 @@
     <string name="load">Load</string>
     <string name="saving">Saving&#8230;</string>
     <string name="loading">Loading&#8230;</string>
+    <string name="button">Button</string>
 </resources>
