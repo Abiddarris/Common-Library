@@ -19,6 +19,10 @@ import static android.view.KeyEvent.*;
 
 public enum Keycode {
     
+    KEY_ARROW_UP(KEYCODE_DPAD_UP),
+    KEY_ARROW_DOWN(KEYCODE_DPAD_DOWN),
+    KEY_ARROW_LEFT(KEYCODE_DPAD_LEFT),
+    KEY_ARROW_RIGHT(KEYCODE_DPAD_RIGHT),
     KEY_A(KEYCODE_A),
     KEY_B(KEYCODE_B),
     KEY_C(KEYCODE_C),
