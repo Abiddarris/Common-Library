@@ -23,6 +23,6 @@ public class DefaultLogger extends Logger {
 
     @Override
     public void log(String string) {
-        System.out.printf("%s : %s", getTag(), string);
+        System.out.printf("%s : %s\n", getTag(), string);
     }
 }
