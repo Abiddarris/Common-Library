@@ -20,6 +20,7 @@ import android.os.Bundle;
 
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.EditTextDialog;
+import com.abiddarris.common.android.utils.TextListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SaveKeyboardDialog extends EditTextDialog {
@@ -28,8 +29,20 @@ public class SaveKeyboardDialog extends EditTextDialog {
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
         
+        var ui = getUI();
+        
         getUI().textInputLayout.setHint(R.string.name);
         getUI().textInputLayout.setSuffixText(getString(R.string.json_extension));
+        ui.textInputLayout.getEditText()
+            .addTextChangedListener(TextListener.newTextListener(editable -> {
+                String text = editable.toString();
+                int errorMessageRes = -1;    
+                if(text.isBlank()) {
+                    errorMessageRes = R.string.name_blank_error;
+                }
+                ui.textInputLayout.setError(errorMessageRes == -1 ? "" : getString(errorMessageRes));
+                ui.textInputLayout.setErrorEnabled(errorMessageRes != -1); 
+            }));
         
         builder.setTitle(R.string.save)
             .setPositiveButton(android.R.string.ok, null);
