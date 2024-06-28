@@ -72,7 +72,7 @@
              android:layout_below="@id/marginX"
              android:hint="@string/margin_y"
              android:id="@+id/marginY"
-             app:suffixText="@string/dp">>
+             app:suffixText="@string/dp">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
@@ -102,7 +102,8 @@
              android:layout_below="@id/size"
              android:hint="@string/width"
              android:id="@+id/width"
-             android:visibility="gone">
+             android:visibility="gone"
+             app:suffixText="@string/dp">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
@@ -117,7 +118,8 @@
              android:layout_below="@id/width"
              android:hint="@string/height"
              android:id="@+id/height"
-             android:visibility="gone">
+             android:visibility="gone"
+             app:suffixText="@string/dp">
 
             <com.google.android.material.textfield.TextInputEditText
                  android:layout_height="wrap_content"
