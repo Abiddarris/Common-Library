@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import android.widget.ImageButton;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
 
 import android.content.Context;
@@ -37,7 +38,7 @@ import java.util.List;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
-    private Button editButton;
+    private ImageButton editButton;
     private Key focus;
     private List<Key> keys = new ArrayList<>();
     private KeyListener listener;
@@ -45,9 +46,9 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public VirtualKeyboard(Context context) {
         super(context);
         
-        editButton = new Button(getContext());
+        editButton = new ImageButton(getContext());
         editButton.setVisibility(GONE);
-        editButton.setText(R.string.edit);
+        editButton.setImageResource(R.drawable.ic_setting);
         editButton.setOnClickListener(v -> {
             var dialog = EditButtonDialog.newInstance(focus);
             dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
