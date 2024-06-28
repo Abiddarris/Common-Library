@@ -29,6 +29,7 @@ public class SaveKeyboardDialog extends EditTextDialog {
         super.onCreateDialog(builder, savedInstanceState);
         
         getUI().textInputLayout.setHint(R.string.name);
+        getUI().textInputLayout.setSuffixText(getString(R.string.json_extension));
         
         builder.setTitle(R.string.save)
             .setPositiveButton(android.R.string.ok, null);
