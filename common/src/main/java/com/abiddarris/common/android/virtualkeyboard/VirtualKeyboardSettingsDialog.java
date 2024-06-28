@@ -71,7 +71,7 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
         VirtualKeyboardOptions options = getVariable(OPTIONS);
         File[] keyboards = new File(options.getKeyboardFolderPath())
             .listFiles(file -> {
-                return !file.isDirectory();
+                return !file.isDirectory() && file.getName().endsWith(".json");
             });
         
         var dialog = new LoadKeyboardSelectorDialog();
