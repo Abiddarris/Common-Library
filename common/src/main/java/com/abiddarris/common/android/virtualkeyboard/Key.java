@@ -57,8 +57,8 @@ public class Key {
         Object keycode = object.get(KEYCODE);
         this.keycode = keycode == NULL ? null : valueOf(String.valueOf(keycode));
         
-        alignment.load(object.getJSONObject(ALIGNMENT));
         size.load(object.getJSONObject(SIZE));
+        alignment.load(object.getJSONObject(ALIGNMENT));
     }
     
     public void init(Context context) {

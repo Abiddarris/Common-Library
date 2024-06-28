@@ -99,6 +99,8 @@ public class Size {
         
         this.width = width;
         this.height = height;
+        
+        calculated = true;
     }
     
     private void updateSizeInternal(int widthPx, int heightPx) {
