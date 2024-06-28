@@ -63,7 +63,7 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
             TaskViewModel model = TaskViewModel.getInstance(dialog.getActivity());
             model.execute(new SaveTask(
                         options.getKeyboard(),
-                        new File(options.getKeyboardFolderPath(), name)));
+                        new File(options.getKeyboardFolderPath(), name + ".json")));
         });
     }
     
