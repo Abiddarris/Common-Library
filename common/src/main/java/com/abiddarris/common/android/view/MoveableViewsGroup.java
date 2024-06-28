@@ -36,8 +36,10 @@ public class MoveableViewsGroup extends RelativeLayout {
                 dY = view.getY() - event.getRawY();
                 return true;
             case MotionEvent.ACTION_MOVE:
-                view.setX(event.getRawX() + dX);
-                view.setY(event.getRawY() + dY);
+                view.setX(
+                    validatePos(getWidth() - view.getWidth(), event.getRawX() + dX));
+                view.setY(
+                    validatePos(getHeight() - view.getHeight(), event.getRawY() + dY));
                 view.bringToFront();
                 view.invalidate();
             
@@ -45,6 +47,10 @@ public class MoveableViewsGroup extends RelativeLayout {
             default:
                 return false;
         }
+    }
+    
+    private float validatePos(int bound, float pos) {
+        return pos <= 0 ? 0 : (pos >= bound ? bound : pos);
     }
     
     public void addMoveableView(View view, LayoutParams params, OnTouchListener listener) {
