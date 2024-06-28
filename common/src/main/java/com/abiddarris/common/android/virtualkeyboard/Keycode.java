@@ -50,7 +50,9 @@ public enum Keycode {
     KEY_Y(KEYCODE_Y),
     KEY_Z(KEYCODE_Z),
     KEY_SPACE(KEYCODE_SPACE),
-    KEY_ENTER(KEYCODE_ENTER);
+    KEY_ENTER(KEYCODE_ENTER),
+    KEY_SHIFT_LEFT(KEYCODE_SHIFT_LEFT),
+    KEY_SHIFT_RIGHT(KEYCODE_SHIFT_RIGHT);
     
     private int keycode;
     
