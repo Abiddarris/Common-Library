@@ -70,7 +70,9 @@ public class VirtualKeyboardSettingsDialog extends BaseDialogFragment<Void> {
     private void load() {
         VirtualKeyboardOptions options = getVariable(OPTIONS);
         File[] keyboards = new File(options.getKeyboardFolderPath())
-            .listFiles();
+            .listFiles(file -> {
+                return !file.isDirectory();
+            });
         
         var dialog = new LoadKeyboardSelectorDialog();
         dialog.setItems(
