@@ -33,17 +33,17 @@ class TouchListener implements OnTouchListener {
     public boolean onTouch(View view, MotionEvent event) {
         Keycode code = key.getKeycode();
         if(code == null) {
-            return true;
+            return false;
         }
         
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
                 keyboard.sendKeyEvent(Event.DOWN, code.getKeycode());
-                return true;    
+                return false;    
             case MotionEvent.ACTION_UP :
             case MotionEvent.ACTION_CANCEL :
                 keyboard.sendKeyEvent(Event.UP, code.getKeycode());
-                return true;
+                return false;
             default :
                 return false;        
         }
