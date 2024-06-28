@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
@@ -141,7 +142,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     }
     
     public void clearKeys() {
-        for(Key key : keys) {
+        for(Key key : new ArrayList<>(keys)) {
         	removeButton(key);
         }
     }
