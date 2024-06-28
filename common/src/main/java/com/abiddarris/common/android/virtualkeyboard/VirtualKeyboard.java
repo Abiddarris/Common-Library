@@ -71,11 +71,14 @@ public class VirtualKeyboard extends MoveableViewsGroup {
                     .findFirst()
                     .get();
             
+                LayoutParams params = (LayoutParams)editButton.getLayoutParams();
+                params.height = view.getHeight();
+                
+                updateViewLayout(editButton, params);
+            
                 editButton.setVisibility(VISIBLE);
-                editButton.setX(view.getX() + 
-                                view.getWidth() / 2 -
-                                editButton.getWidth() / 2);
-                editButton.setY(view.getY() + view.getHeight());
+                editButton.setX(view.getX() + view.getWidth());
+                editButton.setY(view.getY());
                 editButton.bringToFront();
         }
         return super.onChildTouch(view, event);
