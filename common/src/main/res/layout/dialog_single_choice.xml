@@ -18,7 +18,7 @@
      xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_height="wrap_content"
      android:layout_width="match_parent"
-     style="@style/Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu"
+     style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
      android:id="@+id/spinner">
 
     <com.google.android.material.textfield.MaterialAutoCompleteTextView
