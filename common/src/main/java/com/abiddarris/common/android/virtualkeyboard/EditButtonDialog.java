@@ -45,7 +45,7 @@ import java.util.Locale;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
     
-    private static final String FOCUS = "focus";
+    private static final String VIRTUAL_KEYBOARD = "keyboard";
     
     private DialogEditButtonBinding binding;
     private int alignmentIndex;
@@ -53,9 +53,9 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     private NumberFormat numberFormattor;
     private Keycode code;
     
-    public static EditButtonDialog newInstance(Key key) {
+    public static EditButtonDialog newInstance(VirtualKeyboard keyboard) {
         var dialog = new EditButtonDialog();
-        dialog.saveVariable(FOCUS, key);
+        dialog.saveVariable(VIRTUAL_KEYBOARD, keyboard);
         
         return dialog;
     }
@@ -65,7 +65,8 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         super.onCreateDialog(builder, savedInstanceState);
         setCancelable(false);
        
-        Key key = getVariable(FOCUS);
+        VirtualKeyboard keyboard = getVariable(VIRTUAL_KEYBOARD);
+        Key key = keyboard.getFocus();
         Button button = key.getButton();
         
         binding = DialogEditButtonBinding.inflate(getLayoutInflater());
@@ -117,6 +118,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         
         builder.setTitle(R.string.edit)
             .setView(binding.getRoot())
+            .setNeutralButton(R.string.delete, (dialog, which) -> keyboard.removeButton(key))
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                 button.setText(binding.name.getEditText().getText().toString());

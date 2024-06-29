@@ -50,7 +50,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         editButton.setVisibility(GONE);
         editButton.setImageResource(R.drawable.ic_setting);
         editButton.setOnClickListener(v -> {
-            var dialog = EditButtonDialog.newInstance(focus);
+            var dialog = EditButtonDialog.newInstance(this);
             dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
         });
         
@@ -91,6 +91,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         if(!edit) {
             editButton.setVisibility(GONE);
         }
+    }
+    
+    protected Key getFocus() {
+        return focus;
     }
     
     protected void sendKeyEvent(Event event, int keycode) {
