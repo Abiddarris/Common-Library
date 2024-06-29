@@ -15,6 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.logs;
 
+import com.abiddarris.common.logs.factory.DefaultLogFactory;
+import com.abiddarris.common.logs.factory.LogFactory;
+
 public final class Logs {
     
     private static LogFactory factory = new DefaultLogFactory();

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.logs;
+package com.abiddarris.common.logs.factory;
+
+import com.abiddarris.common.logs.Level;
+import com.abiddarris.common.logs.Logger;
 
 public interface LogFactory {
     
