@@ -29,4 +29,5 @@
     <string name="dp">dp</string>
     <string name="json_extension">.json</string>
     <string name="name_blank_error">Name cannot be blank</string>
+    <string name="delete">Delete</string>
 </resources>
