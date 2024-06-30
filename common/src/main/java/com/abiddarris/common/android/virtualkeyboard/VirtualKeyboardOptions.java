@@ -22,7 +22,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -48,7 +47,11 @@ public class VirtualKeyboardOptions extends LinearLayout {
             int visibility = keyboard.isEdit() ? VISIBLE : GONE;
             
             binding.add.setVisibility(visibility); 
-            binding.setting.setVisibility(visibility);     
+            binding.setting.setVisibility(visibility);   
+                
+            binding.edit.setImageResource(
+                keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit
+            );
         });
         
         binding.add.setOnClickListener(v -> keyboard.addButton());
