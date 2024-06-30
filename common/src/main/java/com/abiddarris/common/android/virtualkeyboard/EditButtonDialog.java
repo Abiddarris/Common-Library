@@ -18,7 +18,6 @@ package com.abiddarris.common.android.virtualkeyboard;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import static com.abiddarris.common.android.utils.Locales.getPrimaryLocale;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -39,9 +38,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.Locale;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
     
@@ -50,7 +47,6 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     private DialogEditButtonBinding binding;
     private int alignmentIndex;
     private int sizeType;
-    private NumberFormat numberFormattor;
     private Keycode code;
     
     public static EditButtonDialog newInstance(VirtualKeyboard keyboard) {
@@ -92,24 +88,16 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         alignmentSpinner.setSimpleItems(R.array.alignment);
         alignmentSpinner.setOnItemClickListener((adapterView, view, index, id) -> alignmentIndex = index);
         
-        numberFormattor = NumberFormat.getInstance(
-            getPrimaryLocale(getContext())
-        );
-        
-        binding.marginX.getEditText()
-            .setText(numberFormattor.format(alignment.getMarginX()));
-        binding.marginY.getEditText()
-            .setText(numberFormattor.format(alignment.getMarginY()));
+        setValue(binding.marginX, alignment.getMarginX());
+        setValue(binding.marginY, alignment.getMarginY());
         
         Size size = key.getSize();
         size.calculate();
         
         int sizeId = getSizeId(size.getType());
         
-        binding.width.getEditText()
-            .setText(numberFormattor.format(size.getWidth()));
-        binding.height.getEditText()
-            .setText(numberFormattor.format(size.getHeight()));
+        setValue(binding.width, size.getWidth());
+        setValue(binding.height, size.getHeight());
         
         MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
         sizeSpinner.setText(sizeId);
@@ -139,6 +127,11 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                     );
                 }
             });
+    }
+    
+    private void setValue(TextInputLayout textInput, float value) {
+        textInput.getEditText()
+            .setText(String.valueOf(value));
     }
     
     private int getAlignmentId(int flags) {
@@ -197,19 +190,10 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     }
     
     private float editTextToFloat(TextInputLayout layout) {
-        try {
-            return numberFormattor.parse(
+        return Float.valueOf(
                 layout.getEditText()
                     .getText()
-                    .toString())
-                .floatValue();
-        } catch (ParseException e) {
-            var dialog = new ExceptionDialog();
-            dialog.setThrowable(e);
-            dialog.show(getParentFragmentManager(), null);
-            
-            return 0;
-        }
+                    .toString());
     }
     
     private int getAlignmentFlag() {
