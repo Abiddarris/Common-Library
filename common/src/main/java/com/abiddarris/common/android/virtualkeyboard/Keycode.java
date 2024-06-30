@@ -58,7 +58,8 @@ public enum Keycode {
     KEY_CAPS_LOCK(KEYCODE_CAPS_LOCK),
     KEY_CTRL_LEFT(KEYCODE_CTRL_LEFT),
     KEY_CTRL_RIGHT(KEYCODE_CTRL_RIGHT),
-    KEY_TAB(KEYCODE_TAB);
+    KEY_TAB(KEYCODE_TAB),
+    KEY_ESCAPE(KEYCODE_ESCAPE);
     
     private int keycode;
     
