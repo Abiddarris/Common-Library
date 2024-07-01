@@ -15,13 +15,22 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import static com.abiddarris.common.android.handlers.MainThreads.postDelayed;
+import static com.abiddarris.common.android.handlers.MainThreads.removeCallbacks;
+import static com.abiddarris.common.android.virtualkeyboard.Event.DOWN;
+import static com.abiddarris.common.android.virtualkeyboard.Event.UP;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
-class TouchListener implements OnTouchListener {
+class TouchListener implements Runnable, OnTouchListener {
+    
+    private static final int INITIAL_DELAY = 500;
+    private static final int INTERVAL = 50;
     
     private Key key;
+    private Runnable initialKeyDispatcher = () -> postDelayed(this, INTERVAL);
     private VirtualKeyboard keyboard;
     
     TouchListener(VirtualKeyboard keyboard, Key key) {
@@ -31,23 +40,41 @@ class TouchListener implements OnTouchListener {
     
     @Override
     public boolean onTouch(View view, MotionEvent event) {
-        Keycode code = key.getKeycode();
-        if(code == null) {
+        if(key.getKeycode() == null) {
             return false;
         }
         
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                keyboard.sendKeyEvent(Event.DOWN, code.getKeycode());
+                postDelayed(this, INITIAL_DELAY);
+                
+                sendKeyEvent(DOWN);
                 return false;    
             case MotionEvent.ACTION_UP :
             case MotionEvent.ACTION_CANCEL :
-                keyboard.sendKeyEvent(Event.UP, code.getKeycode());
+                removeCallbacks(initialKeyDispatcher);
+                removeCallbacks(this);
+                
+                sendKeyEvent(UP);
                 return false;
             default :
                 return false;        
         }
     }
     
+    @Override
+    public void run() {
+        sendKeyEvent(DOWN);
+        postDelayed(this, INTERVAL);
+    }
+    
+    private void sendKeyEvent(Event event) {
+    	Keycode code = key.getKeycode();
+        if(code == null) {
+            return;
+        }
+        
+        keyboard.sendKeyEvent(event, code.getKeycode());
+    }
     
 }
