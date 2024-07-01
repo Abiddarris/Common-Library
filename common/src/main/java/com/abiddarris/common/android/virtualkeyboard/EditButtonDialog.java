@@ -18,6 +18,8 @@ package com.abiddarris.common.android.virtualkeyboard;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import com.abiddarris.common.android.utils.TextListener;
+import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -39,6 +41,8 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.ParseException;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class EditButtonDialog extends BaseDialogFragment<Void> {
     
@@ -90,6 +94,20 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         
         setValue(binding.marginX, alignment.getMarginX());
         setValue(binding.marginY, alignment.getMarginY());
+        setValidation(binding.marginX, (text) -> {
+            float x = Float.valueOf(text);
+            if(x > pixelToDp(getContext(), keyboard.getWidth()) || x < 0) {
+                return getString(R.string.out_of_bounds_error);
+            }
+            return null;
+        });
+        setValidation(binding.marginY, (text) -> {
+            float y = Float.valueOf(text);
+            if(y > pixelToDp(getContext(), keyboard.getHeight()) || y < 0) {
+                return getString(R.string.out_of_bounds_error);
+            }
+            return null;
+        });
         
         Size size = key.getSize();
         size.calculate();
@@ -127,6 +145,17 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
                     );
                 }
             });
+    }
+    
+    private void setValidation(TextInputLayout layout, Function<String, String> callback) {
+        layout.getEditText()
+            .addTextChangedListener(TextListener.newTextListener(editable -> {
+                String message = callback.apply(editable.toString());
+               
+                boolean error = message != null;
+                layout.setErrorEnabled(error);
+                layout.setError(error ? message : "");
+            }));
     }
     
     private void setValue(TextInputLayout textInput, float value) {
