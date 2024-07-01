@@ -60,7 +60,17 @@ public enum Keycode {
     KEY_CTRL_RIGHT(KEYCODE_CTRL_RIGHT),
     KEY_TAB(KEYCODE_TAB),
     KEY_ESCAPE(KEYCODE_ESCAPE),
-    KEY_BACKSPACE(KEYCODE_DEL);
+    KEY_BACKSPACE(KEYCODE_DEL),
+    KEY_0(KEYCODE_0),
+    KEY_1(KEYCODE_1),
+    KEY_2(KEYCODE_2),
+    KEY_3(KEYCODE_3),
+    KEY_4(KEYCODE_4),
+    KEY_5(KEYCODE_5),
+    KEY_6(KEYCODE_6),
+    KEY_7(KEYCODE_7),
+    KEY_8(KEYCODE_8),
+    KEY_9(KEYCODE_9);
     
     private int keycode;
     
