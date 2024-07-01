@@ -28,6 +28,7 @@ public class SaveKeyboardDialog extends EditTextDialog {
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
+        enablePositiveButton(false);
         
         var ui = getUI();
         
@@ -40,8 +41,11 @@ public class SaveKeyboardDialog extends EditTextDialog {
                 if(text.isBlank()) {
                     errorMessageRes = R.string.name_blank_error;
                 }
-                ui.textInputLayout.setError(errorMessageRes == -1 ? "" : getString(errorMessageRes));
-                ui.textInputLayout.setErrorEnabled(errorMessageRes != -1); 
+                boolean error = errorMessageRes != -1;
+                ui.textInputLayout.setError(error ? getString(errorMessageRes) : "");
+                ui.textInputLayout.setErrorEnabled(error); 
+                    
+                enablePositiveButton(!error);
             }));
         
         builder.setTitle(R.string.save)
