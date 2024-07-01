@@ -76,8 +76,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
                 
                 updateViewLayout(editButton, params);
             
+                float x = view.getX() + view.getWidth();
+            
                 editButton.setVisibility(VISIBLE);
-                editButton.setX(view.getX() + view.getWidth());
+                editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
                 editButton.setY(view.getY());
                 editButton.bringToFront();
         }
