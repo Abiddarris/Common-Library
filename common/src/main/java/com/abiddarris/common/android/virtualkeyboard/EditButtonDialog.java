@@ -95,14 +95,14 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         setValue(binding.marginX, alignment.getMarginX());
         setValue(binding.marginY, alignment.getMarginY());
         setValidation(binding.marginX, (text) -> {
-            float x = Float.valueOf(text);
+            float x = toFloat(text);
             if(x > pixelToDp(getContext(), keyboard.getWidth()) || x < 0) {
                 return getString(R.string.out_of_bounds_error);
             }
             return null;
         });
         setValidation(binding.marginY, (text) -> {
-            float y = Float.valueOf(text);
+            float y = toFloat(text);
             if(y > pixelToDp(getContext(), keyboard.getHeight()) || y < 0) {
                 return getString(R.string.out_of_bounds_error);
             }
@@ -216,6 +216,13 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         
         binding.width.setVisibility(sizeVisibility);
         binding.height.setVisibility(sizeVisibility);
+    }
+    
+    private float toFloat(String string) {
+        if(string.isBlank()) {
+            return 0;
+        }
+        return Float.valueOf(string);
     }
     
     private float editTextToFloat(TextInputLayout layout) {
