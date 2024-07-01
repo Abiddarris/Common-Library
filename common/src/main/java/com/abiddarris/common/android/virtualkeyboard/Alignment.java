@@ -21,10 +21,12 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_X;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_Y;
 
 import android.content.Context;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.abiddarris.common.android.utils.ScreenUtils;
+import com.abiddarris.common.android.view.listeners.AutoRemoveGlobalLayoutListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,11 +59,18 @@ public class Alignment {
     }
     
     void load(JSONObject alignment) throws JSONException {
-        setMargins(
-            alignment.getInt(FLAGS),
-            (float)alignment.getDouble(MARGIN_X),
-            (float)alignment.getDouble(MARGIN_Y)
-        );
+        int flags = alignment.getInt(FLAGS);
+        float marginX = (float)alignment.getDouble(MARGIN_X);
+        float marginY = (float)alignment.getDouble(MARGIN_Y);
+     
+        OnGlobalLayoutListener listener = () -> setMargins(flags, marginX, marginY);
+        if(key.getSize().isCalculated()) {
+            listener.onGlobalLayout();
+            return;
+        }
+        
+        new AutoRemoveGlobalLayoutListener(
+            key.getButton().getViewTreeObserver(), listener);
     }
     
     public int getFlags() {

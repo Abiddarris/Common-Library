@@ -146,6 +146,10 @@ public class Size {
         calculated = true;
     }
     
+    public boolean isCalculated() {
+        return calculated;
+    }
+    
     private void calculateIfNot() {
         if(!calculated)
             calculate();

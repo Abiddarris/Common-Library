@@ -27,6 +27,8 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.abiddarris.common.android.view.listeners.AutoRemoveGlobalLayoutListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
