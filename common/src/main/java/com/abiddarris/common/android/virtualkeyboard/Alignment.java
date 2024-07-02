@@ -20,6 +20,8 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.FLAGS;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_X;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.MARGIN_Y;
 
+import static java.lang.Math.max;
+
 import android.content.Context;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
@@ -60,9 +62,10 @@ public class Alignment {
     
     void load(JSONObject alignment) throws JSONException {
         int flags = alignment.getInt(FLAGS);
-        float marginX = (float)alignment.getDouble(MARGIN_X);
-        float marginY = (float)alignment.getDouble(MARGIN_Y);
-     
+        
+        float marginX = max(0, (float)alignment.getDouble(MARGIN_X));
+        float marginY = max(0, (float)alignment.getDouble(MARGIN_Y));
+        
         OnGlobalLayoutListener listener = () -> setMargins(flags, marginX, marginY);
         if(key.getSize().isCalculated()) {
             listener.onGlobalLayout();
