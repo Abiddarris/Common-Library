@@ -18,7 +18,6 @@ package com.abiddarris.common.android.virtualkeyboard;
 import static android.view.KeyEvent.*;
 
 public enum Keycode {
-    
     KEY_ARROW_UP(KEYCODE_DPAD_UP),
     KEY_ARROW_DOWN(KEYCODE_DPAD_DOWN),
     KEY_ARROW_LEFT(KEYCODE_DPAD_LEFT),
@@ -45,7 +44,7 @@ public enum Keycode {
     KEY_T(KEYCODE_T),
     KEY_U(KEYCODE_U),
     KEY_V(KEYCODE_V),
-    KEY_W(KEYCODE_W), 
+    KEY_W(KEYCODE_W),
     KEY_X(KEYCODE_X),
     KEY_Y(KEYCODE_Y),
     KEY_Z(KEYCODE_Z),
@@ -70,15 +69,27 @@ public enum Keycode {
     KEY_6(KEYCODE_6),
     KEY_7(KEYCODE_7),
     KEY_8(KEYCODE_8),
-    KEY_9(KEYCODE_9);
-    
+    KEY_9(KEYCODE_9),
+    KEY_COMMA(KEYCODE_COMMA),
+    KEY_PERIOD(KEYCODE_PERIOD),
+    KEY_BACKTICK(KEYCODE_GRAVE),
+    KEY_MINUS(KEYCODE_MINUS),
+    KEY_EQUALS(KEYCODE_EQUALS),
+    KEY_LEFT_BRACKET(KEYCODE_LEFT_BRACKET),
+    KEY_RIGHT_BRACKET(KEYCODE_RIGHT_BRACKET),
+    KEY_BACKSLASH(KEYCODE_BACKSLASH),
+    KEY_SEMICOLON(KEYCODE_SEMICOLON),
+    KEY_APOSTROPHE(KEYCODE_APOSTROPHE),
+    KEY_SLASH(KEYCODE_SLASH);
+
     private int keycode;
-    
+
     private Keycode(int keycode) {
         this.keycode = keycode;
     }
-    
+
     public int getKeycode() {
         return keycode;
     }
+
 }
