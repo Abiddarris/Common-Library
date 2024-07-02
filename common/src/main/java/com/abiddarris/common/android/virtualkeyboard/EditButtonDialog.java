@@ -18,7 +18,6 @@ package com.abiddarris.common.android.virtualkeyboard;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
-import com.abiddarris.common.android.utils.TextListener;
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
@@ -34,8 +33,8 @@ import android.widget.Button;
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
+import com.abiddarris.common.android.utils.TextListener;
 import com.abiddarris.common.databinding.DialogEditButtonBinding;
-
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
@@ -226,8 +225,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     }
     
     private float editTextToFloat(TextInputLayout layout) {
-        return Float.valueOf(
-                layout.getEditText()
+        return toFloat(layout.getEditText()
                     .getText()
                     .toString());
     }
