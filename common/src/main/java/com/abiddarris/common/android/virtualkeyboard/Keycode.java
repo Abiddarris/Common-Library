@@ -92,4 +92,8 @@ public enum Keycode {
         return keycode;
     }
 
+    @Override
+    public String toString() {
+        return super.toString().substring(4);
+    }
 }

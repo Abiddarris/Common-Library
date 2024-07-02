@@ -46,8 +46,7 @@ public class KeySpinner extends ArrayAdapter<Keycode> {
         }
         
         TextView textView = (TextView)view;
-        textView.setText(getItem(pos)
-            .name().substring(4));
+        textView.setText(getItem(pos).toString());
         
         return view;
     }
