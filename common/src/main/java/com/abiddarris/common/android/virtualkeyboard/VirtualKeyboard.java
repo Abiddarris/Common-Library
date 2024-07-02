@@ -61,9 +61,8 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     protected boolean onChildTouch(View view, MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                focus = null;
-            
-                editButton.setVisibility(GONE);
+                onLostFocus();
+                
                 break;
             case MotionEvent.ACTION_UP :
                 focus = keys.stream()
@@ -127,6 +126,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public void removeButton(Key key) {
         removeView(key.getButton());
       
+        if(key == focus) {
+            onLostFocus();
+        }
+        
         keys.remove(key);
     }
     
@@ -167,5 +170,11 @@ public class VirtualKeyboard extends MoveableViewsGroup {
             
             key.load(keyJSON);
         }
+    }
+    
+    private void onLostFocus() {
+        focus = null;
+            
+        editButton.setVisibility(GONE);
     }
 }
