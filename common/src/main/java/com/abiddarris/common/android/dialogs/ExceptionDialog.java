@@ -22,10 +22,16 @@ import com.abiddarris.common.utils.Exceptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**
- * {@code Dialog} that will show an exception
+ * {@code Dialog} that will show a throwable.
+ *
+ * @since 1.0
+ * @author Abiddarris
  */
 public class ExceptionDialog<Result> extends FragmentDialog<Result> {
     
+    /**
+     * Identifier for throwable that will be shown
+     */
     private static final String THROWABLE = "throwable";
     
     @Override
@@ -43,6 +49,15 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         setFragment(fragment);
     }
     
+    /**
+     * Set {@code Throwable} that will be shown to user.
+     *
+     * <p>This method can be called even when dialog 
+     * not attached.
+     *
+     * @param throwable Throwable to show
+     * @since 1.0
+     */
     public void setThrowable(Throwable throwable) {
         saveVariable(THROWABLE, throwable);
         
@@ -52,6 +67,12 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         }
     }
     
+    /**
+     * Returns throwable that will be shown to user.
+     *
+     * @return throwable that will be shown to user.
+     * @since 1.0
+     */
     public Throwable getThrowable() {
         return getVariable(THROWABLE);
     }
