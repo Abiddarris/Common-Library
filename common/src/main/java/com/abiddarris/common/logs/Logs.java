@@ -33,4 +33,8 @@ public final class Logs {
     public static Logger newLogger(Level level, String tag) {
         return factory.newLogger(level, tag);
     }
+    
+    public static void setLogFactory(LogFactory factory) {
+        Logs.factory = factory;
+    }
 }
