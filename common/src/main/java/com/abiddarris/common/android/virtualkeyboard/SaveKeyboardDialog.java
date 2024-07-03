@@ -25,6 +25,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class SaveKeyboardDialog extends EditTextDialog {
 
+    public static SaveKeyboardDialog newInstance(String defaultName) {
+        var dialog = new SaveKeyboardDialog();
+        dialog.setText(defaultName);
+        
+        return dialog;
+    }
+    
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);

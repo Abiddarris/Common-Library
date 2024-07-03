@@ -29,53 +29,62 @@ import com.abiddarris.common.R;
 import com.abiddarris.common.databinding.LayoutVirtualKeyboardOptionsBinding;
 
 public class VirtualKeyboardOptions extends LinearLayout {
-    
+
     private LayoutVirtualKeyboardOptionsBinding binding;
     private String keyboardFolderPath;
+    private String defaultSaveName;
     private VirtualKeyboard keyboard;
-    
+
     public VirtualKeyboardOptions(Context context, VirtualKeyboard keyboard) {
         super(context);
-        
+
         this.keyboard = keyboard;
-        
-        binding = LayoutVirtualKeyboardOptionsBinding.inflate(
-            LayoutInflater.from(context), this);
-        binding.edit.setOnClickListener(v -> {
-            keyboard.setEdit(!keyboard.isEdit());
-             
-            int visibility = keyboard.isEdit() ? VISIBLE : GONE;
-            
-            binding.add.setVisibility(visibility); 
-            binding.setting.setVisibility(visibility);   
-                
-            binding.edit.setImageResource(
-                keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit
-            );
-        });
-        
+
+        binding = LayoutVirtualKeyboardOptionsBinding.inflate(LayoutInflater.from(context), this);
+        binding.edit.setOnClickListener(
+                v -> {
+                    keyboard.setEdit(!keyboard.isEdit());
+
+                    int visibility = keyboard.isEdit() ? VISIBLE : GONE;
+
+                    binding.add.setVisibility(visibility);
+                    binding.setting.setVisibility(visibility);
+
+                    binding.edit.setImageResource(
+                            keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit);
+                });
+
         binding.add.setOnClickListener(v -> keyboard.addButton());
-        binding.setting.setOnClickListener(v -> {
-            var dialog = VirtualKeyboardSettingsDialog.newInstance(this);
-            dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
-        });
-        
-        var params = new RelativeLayout.LayoutParams(
-                WRAP_CONTENT, WRAP_CONTENT);
+        binding.setting.setOnClickListener(
+                v -> {
+                    var dialog = VirtualKeyboardSettingsDialog.newInstance(this);
+                    dialog.show(
+                            ((FragmentActivity) getContext()).getSupportFragmentManager(), null);
+                });
+
+        var params = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         params.addRule(CENTER_HORIZONTAL);
-        
+
         keyboard.addView(this, params);
     }
-    
+
     public String getKeyboardFolderPath() {
         return this.keyboardFolderPath;
     }
-    
+
     public void setKeyboardFolderPath(String keyboardFolderPath) {
         this.keyboardFolderPath = keyboardFolderPath;
     }
-    
+
     public VirtualKeyboard getKeyboard() {
         return keyboard;
+    }
+
+    protected String getDefaultSaveName() {
+        return this.defaultSaveName;
+    }
+
+    protected void setDefaultSaveName(String defaultSaveName) {
+        this.defaultSaveName = defaultSaveName;
     }
 }
