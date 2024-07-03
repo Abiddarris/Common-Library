@@ -19,6 +19,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
+import com.abiddarris.common.android.validations.ValidationEngine;
+import com.abiddarris.common.android.validations.Validator;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -51,6 +53,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     private int alignmentIndex;
     private int sizeType;
     private Keycode code;
+    private ValidationEngine validationEngine = new ValidationEngine();
     
     public static EditButtonDialog newInstance(VirtualKeyboard keyboard) {
         var dialog = new EditButtonDialog();
@@ -63,6 +66,8 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         super.onCreateDialog(builder, savedInstanceState);
         setCancelable(false);
+        
+        validationEngine.setValidationChangedListener(this::enablePositiveButton);
        
         VirtualKeyboard keyboard = getVariable(VIRTUAL_KEYBOARD);
         Key key = keyboard.getFocus();
@@ -146,15 +151,8 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
             });
     }
     
-    private void setValidation(TextInputLayout layout, Function<String, String> callback) {
-        layout.getEditText()
-            .addTextChangedListener(TextListener.newTextListener(editable -> {
-                String message = callback.apply(editable.toString());
-               
-                boolean error = message != null;
-                layout.setErrorEnabled(error);
-                layout.setError(error ? message : "");
-            }));
+    private void setValidation(TextInputLayout layout, Validator validator) {
+        validationEngine.addEditText(layout, validator);
     }
     
     private void setValue(TextInputLayout textInput, float value) {
