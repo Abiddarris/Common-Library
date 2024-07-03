@@ -62,18 +62,10 @@ public class Alignment {
     
     void load(JSONObject alignment) throws JSONException {
         int flags = alignment.getInt(FLAGS);
-        
-        float marginX = max(0, (float)alignment.getDouble(MARGIN_X));
-        float marginY = max(0, (float)alignment.getDouble(MARGIN_Y));
-        
-        OnGlobalLayoutListener listener = () -> setMargins(flags, marginX, marginY);
-        if(key.getSize().isCalculated()) {
-            listener.onGlobalLayout();
-            return;
-        }
-        
-        new AutoRemoveGlobalLayoutListener(
-            key.getButton().getViewTreeObserver(), listener);
+        float marginX = (float)alignment.getDouble(MARGIN_X);
+        float marginY = (float)alignment.getDouble(MARGIN_Y);
+       
+        setMargins(flags, marginX, marginY);
     }
     
     public int getFlags() {
@@ -99,6 +91,17 @@ public class Alignment {
         Context context = button.getContext();
         RelativeLayout parent = (RelativeLayout)button.getParent();
         Size size = key.getSize();
+        
+        marginX = max(0, marginX);
+        marginY = max(0, marginY);
+        
+        if(!key.getSize().isCalculated()) {
+            float marginXFinal = marginX, marginYFinal = marginY;
+            new AutoRemoveGlobalLayoutListener(
+                key.getButton().getViewTreeObserver(),
+                 () -> setMargins(flags, marginXFinal, marginYFinal));
+            return;
+        }
         
         float marginXPixel = dpToPixel(context, marginX);
         float marginYPixel = dpToPixel(context, marginY);
