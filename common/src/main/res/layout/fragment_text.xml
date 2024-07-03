@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<ScrollView
      xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:app="http://schemas.android.com/apk/res-auto"
      android:layout_height="match_parent"
-     android:layout_width="match_parent"
-     app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+     android:layout_width="match_parent">
 
-    <LinearLayout
-         android:layout_height="match_parent"
-         android:layout_width="match_parent"
-         android:orientation="vertical"
-         android:id="@+id/scroll_view_child">
+    <HorizontalScrollView
+         android:layout_height="wrap_content"
+         android:layout_width="wrap_content">
 
-        <TextView
-             android:layout_height="wrap_content"
-             android:layout_width="wrap_content"
-             android:autoLink="web"
-             android:linksClickable="true"
-             android:id="@+id/text" />
+        <LinearLayout
+             android:layout_height="match_parent"
+             android:layout_width="match_parent"
+             android:orientation="vertical"
+             android:id="@+id/scroll_view_child">
 
-    </LinearLayout>
+            <TextView
+                 android:layout_height="wrap_content"
+                 android:layout_width="wrap_content"
+                 android:autoLink="web"
+                 android:linksClickable="true"
+                 android:id="@+id/text" />
 
-</androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+</ScrollView>
