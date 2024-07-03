@@ -23,6 +23,8 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.HEIGHT;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.TYPE;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.WIDTH;
 
+import static java.lang.Math.abs;
+
 import android.content.Context;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -59,15 +61,20 @@ public class Size {
         return size;
     }
     
-    void load(JSONObject size) throws JSONException     {
+    void load(JSONObject size) throws JSONException {
         setType(size.getInt(TYPE));
         
-        if(type == CUSTOM) {
-            setSize(
-                (float)size.getDouble(WIDTH),
-                (float)size.getDouble(HEIGHT)
-            );
+        if(type != CUSTOM) {
+            return;
         }
+        
+        float width = (float)size.getDouble(WIDTH);
+        float height = (float)size.getDouble(HEIGHT);
+        
+        width = abs(width);
+        height = abs(height);
+        
+        setSize(width, height);
     }
     
     public int getType() {
