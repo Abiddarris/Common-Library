@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.Button;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -32,23 +33,20 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+
 import com.abiddarris.common.utils.ObjectWrapper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 
 public class BaseDialogFragment<Result> extends DialogFragment {
     
     private static final String ENABLE_POSITIVE_BUTTON = "enablePositiveButton";
-    private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    private static final String ID = "id";
     private static final String RESULT_CALLED = "resultCalled";
     private static final String RESULT_LISTENER = "resultListener";
-    private static final Map<String, Map<String, Object>> NON_SERIALIZABLE_OBJECTS = new HashMap<>();
-    private static final Random RANDOM = new Random();
-    
+
     private BaseDialogViewModel model;
     private Map<String, Object> variables = new HashMap<>();
     
