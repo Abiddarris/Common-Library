@@ -71,9 +71,6 @@ public class Size {
         float width = (float)size.getDouble(WIDTH);
         float height = (float)size.getDouble(HEIGHT);
         
-        width = abs(width);
-        height = abs(height);
-        
         setSize(width, height);
     }
     
@@ -95,6 +92,9 @@ public class Size {
         if(type != CUSTOM) {
             throw new IllegalStateException("Cannot set size if size type is not CUSTOM");
         }
+        
+        width = abs(width);
+        height = abs(height);
         
         Button button = key.getButton();
         Context context = button.getContext();
