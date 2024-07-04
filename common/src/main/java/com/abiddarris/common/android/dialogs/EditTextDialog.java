@@ -59,7 +59,8 @@ public class EditTextDialog extends BaseDialogFragment<String> {
     }
     
     private void updateUI(String text) {
-        ui.textInputEditText.setText(text);
+        if(!ui.textInputEditText.getText().toString().equals(text))
+            ui.textInputEditText.setText(text);
     }
     
     public class EditTextDialogBuilder extends DefaultViewDialogBuilder {
