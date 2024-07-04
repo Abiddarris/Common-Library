@@ -56,5 +56,18 @@ public final class Files {
         return fileName.substring(extensionSeparator + 1);
     }
     
-    
+    /**
+     * Returns new file that has been created based on given file with different extension.
+     *
+     * @param extension New extension. Can include {@code .} on first character.
+     * @return File that has been created based on given file with different extension.
+     * @since 1.0
+     */
+    public static File changeExtension(File file, String extension) {
+        if(!extension.startsWith(".")) {
+            extension = "." + extension;
+        }
+        return new File(
+            file.getParent(), getNameWithoutExtension(file) + extension);
+    }
 }
