@@ -19,14 +19,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
+
 import com.abiddarris.common.databinding.FragmentTextBinding;
 
 /**
- * {@code Fragment} that contains {@code TextView} inside {@code NestedScrollView}
+ * {@code Fragment} that contains {@code TextView} inside {@code ScrollView}
  */
-public class TextFragment extends Fragment {
+public class TextFragment extends AdvanceFragment {
     
     private static final String TEXT = "text";
     
@@ -45,35 +47,23 @@ public class TextFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        if(savedInstanceState != null) {
-            setText(savedInstanceState.getString(TEXT));
-            return;
-        }
-       
+        text = getVariable(TEXT);
         updateUI();
-    }
-    
-    @Override
-    @MainThread
-    public void onSaveInstanceState(Bundle bundle) {
-        super.onSaveInstanceState(bundle);
-        
-        bundle.putString(TEXT, text);
     }
     
     public void setText(String text) {
-        this.text = text;
+        saveVariable(TEXT, text);
         
         updateUI();
+    }
+    
+    public FragmentTextBinding getBinding() {
+        return binding;
     }
     
     private void updateUI() {
         if(getBinding() != null)   
             getBinding().text.setText(text);
-    }
-    
-    public FragmentTextBinding getBinding() {
-        return binding;
     }
     
 }
