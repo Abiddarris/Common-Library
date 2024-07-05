@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.stream;
 
+import static java.util.Arrays.copyOf;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,5 +50,40 @@ public final class InputStreams {
         }
         
         return outputStream.toByteArray();
+    }
+    
+    /**
+     * Attempt to read exactly {@code n} bytes. 
+     *
+     * <p>If the stream already at the end of stream, it returns 
+     * empty array. If this method encounter end of stream before
+     * read exactly {@code n}, it trims the array to how many bytes are read.
+     *
+     * @param stream {@code InputStream}
+     * @param n How many byte to read
+     * @throws IOException if I/O error occurs while reading the stream
+     * @return Array of bytes containing the data
+     * @since 1.0
+     */
+    public static byte[] readExact(InputStream stream, int n) throws IOException {
+        byte[] b = new byte[n];
+        int len = stream.read(b);
+        if(len == -1) {
+            return new byte[0];
+        }
+                
+        while(len != n) {
+            int readed = stream.read(b, len, b.length - len);
+            if(readed == -1) {
+                break;
+            }
+            len += readed;
+        }
+                
+        if(len != n) {
+            b = copyOf(b, len);
+        } 
+            
+        return b;
     }
 }
