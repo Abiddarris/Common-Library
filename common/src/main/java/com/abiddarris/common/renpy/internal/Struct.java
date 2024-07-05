@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.stream.Signs.sign;
+
 import com.abiddarris.common.annotations.PrivateApi;
 
 import java.nio.ByteBuffer;
@@ -24,6 +26,10 @@ import java.util.List;
 
 @PrivateApi
 public class Struct {
+    
+    public static Number[] unpack(String format, int[] unsignedBytes) {
+        return unpack(format, sign(unsignedBytes));
+    } 
     
     public static Number[] unpack(String format, byte[] signedBytes) {
         ByteBuffer buffer = ByteBuffer.wrap(signedBytes);
