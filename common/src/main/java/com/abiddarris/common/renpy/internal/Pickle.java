@@ -698,7 +698,7 @@ public class Pickle {
         */
         
         private void load_long_binget() {
-            int i = unpack("<I", this.read(4))[0].intValue();
+            long i = unpack("<I", this.read(4))[0].longValue();
             Object obj = this.memo.get(i);
             if(obj == null) {
                 throw new UnpicklingError("Memo value not found at index " + i); //from None
