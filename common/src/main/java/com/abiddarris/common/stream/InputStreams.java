@@ -140,4 +140,17 @@ public final class InputStreams {
         
         return skipped;
     }
+    
+    /**
+     * Discard all remaining bytes from the input stream.
+     *
+     * @param stream {@code InputStream}
+     * @throws IOException if an I/O error occurs while reading the stream
+     * @since 1.0
+     */
+    public static void discardAll(InputStream stream) throws IOException {
+    	do {
+            skipExact(stream, Long.MAX_VALUE);
+        } while(stream.read() != -1);
+    }
 }
