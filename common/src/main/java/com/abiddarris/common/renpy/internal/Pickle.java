@@ -225,7 +225,7 @@ public class Pickle {
          *
          * Return the reconstituted object hierarchy specified in the file.
          */
-        private Object load() {
+        public Object load() {
             unframer = new Unframer(this);
             /*
             self.readinto = self._unframer.readinto
