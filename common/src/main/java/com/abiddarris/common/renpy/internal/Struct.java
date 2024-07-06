@@ -17,10 +17,12 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.stream.Signs.sign;
 
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
+import static java.nio.ByteOrder.nativeOrder;
+
 import com.abiddarris.common.annotations.PrivateApi;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +35,13 @@ public class Struct {
     
     public static Number[] unpack(String format, byte[] signedBytes) {
         ByteBuffer buffer = ByteBuffer.wrap(signedBytes);
+        buffer.order(nativeOrder());
         
         List<Number> number = new ArrayList<>();
         for(char c : format.toCharArray()) {
         	switch(c) {
                 case '<' :
-                    buffer.order(ByteOrder.LITTLE_ENDIAN);
+                    buffer.order(LITTLE_ENDIAN);
                     break;
                 case 'I' :
                     number.add(buffer.getInt() & 0xFFFFFFFFL);
