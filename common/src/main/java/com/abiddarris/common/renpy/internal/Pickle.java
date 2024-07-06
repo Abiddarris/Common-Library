@@ -113,7 +113,7 @@ public class Pickle {
         return buffer.getInt();
     }
    
-    private static class Unpickler {
+    public static class Unpickler {
 
         private InputStream stream;
         private String encoding;
@@ -157,7 +157,7 @@ public class Pickle {
          * Python 2; these default to 'ASCII' and 'strict', respectively. *encoding* can be 'bytes'
          * to read these 8-bit string instances as bytes objects.
          */
-        private Unpickler(InputStream stream, boolean fix_imports,
+        public Unpickler(InputStream stream, boolean fix_imports,
                  String encoding, String errors/*, buffers=None*/) {
             this.stream = stream;
             this.encoding = encoding;
