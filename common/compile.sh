@@ -8,4 +8,9 @@ fi
 echo "Main.java" >> build/classes.txt
 
 javac -d build/classes @build/classes.txt
+
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
 java -cp build/classes Main
