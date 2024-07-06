@@ -15,12 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.stream;
 
-import java.io.OutputStream;
 import static java.util.Arrays.copyOf;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Class that provides utilities for {@code InputStream}.
@@ -105,5 +105,39 @@ public final class InputStreams {
         }
             
         return output.toByteArray();
+    }
+    
+    /**
+     * Attempt to exactly skip {@code n} bytes
+     *
+     * <p>If the stream already at the end of stream, it returns 
+     * {@code 0}. If this method encounter end of stream before
+     * skip exactly {@code n} bytes, it returns how many bytes are skipped.
+     *
+     * @param stream {@code InputStream}
+     * @param n How many byte to skip
+     * @throws IOException if I/O error occurs while skipping the stream
+     * @return How many bytes are skipped
+     * @since 1.0
+     */
+    public static long skipExact(InputStream stream, long n) throws IOException {
+        if(n <= 0) {
+            return 0;
+        }
+        
+        long skipped = 0;
+        long skip = n;
+        while(skipped != n) {
+            long delta = stream.skip(skip);
+            if(delta <= 0) {
+                if(stream.read() == -1)
+                    break;
+                delta = 1;
+            }
+            skip = skip - delta;
+            skipped += delta;
+        }
+        
+        return skipped;
     }
 }
