@@ -9,6 +9,7 @@ import static com.abiddarris.common.stream.Signs.unsign;
 
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.CodingErrorAction.REPORT;
+import static java.util.Arrays.copyOf;
 
 import com.abiddarris.common.annotations.PrivateApi;
 
@@ -42,6 +43,7 @@ public class Pickle {
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
     private static final int APPEND         = 'a';   // append stack top to list below it
+    private static final int GLOBAL         = 'c';   // push self.find_class(modname, name); 2 string args   
     private static final int EMPTY_DICT     = '}';   // push empty dict
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
@@ -177,7 +179,8 @@ public class Pickle {
             dispatch.put(APPEND, this::load_append);
             dispatch.put(STOP, this::load_stop);
             dispatch.put(SETITEMS, this::load_setitems);
-      
+            dispatch.put(GLOBAL, this::load_global);
+
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -195,7 +198,10 @@ public class Pickle {
         
         private int[] _file_readline() {
             try {
-                return unsign(readLine(stream));
+                byte[] b = readLine(stream);
+                b = copyOf(b, b.length + 1);
+                b[b.length - 1] = '\n';
+                return unsign(b);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -595,14 +601,23 @@ public class Pickle {
             obj = cls.__new__(cls, *args, **kwargs)
             self.append(obj)
         dispatch[NEWOBJ_EX[0]] = load_newobj_ex
-
-        def load_global(self):
-            module = self.readline()[:-1].decode("utf-8")
-            name = self.readline()[:-1].decode("utf-8")
-            klass = self.find_class(module, name)
-            self.append(klass)
-        dispatch[GLOBAL[0]] = load_global
-
+        */
+        protected void load_global() {
+            Charset charset = Charset.forName("UTF-8");
+            
+            int[] moduleBytes = this.readline();
+            moduleBytes = copyOf(moduleBytes, moduleBytes.length - 1);
+            
+            int[] nameBytes = this.readline();
+            nameBytes = copyOf(nameBytes, nameBytes.length - 1);
+            
+            String module = new String(sign(moduleBytes), charset);
+            String name = new String(sign(nameBytes), charset);
+            Class klass = this.find_class(module, name);
+            this.append(klass);
+        }
+        
+        /*
         def load_stack_global(self):
             name = self.stack.pop()
             module = self.stack.pop()
@@ -641,9 +656,11 @@ public class Pickle {
             obj = self.find_class(*key)
             _extension_cache[code] = obj
             self.append(obj)
+        */
 
-        def find_class(self, module, name):
-            # Subclasses may override this.
+        protected Class find_class(String module, String name) {
+            throw new UnsupportedOperationException();
+            /*# Subclasses may override this.
             sys.audit('pickle.find_class', module, name)
             if self.proto < 3 and self.fix_imports:
                 if (module, name) in _compat_pickle.NAME_MAPPING:
@@ -654,8 +671,9 @@ public class Pickle {
             if self.proto >= 4:
                 return _getattribute(sys.modules[module], name)[0]
             else:
-                return getattr(sys.modules[module], name)
-
+                return getattr(sys.modules[module], name)*/
+        }
+        /*
         def load_reduce(self):
             stack = self.stack
             args = stack.pop()
