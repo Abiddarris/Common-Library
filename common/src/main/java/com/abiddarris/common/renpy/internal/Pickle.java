@@ -593,8 +593,8 @@ public class Pickle {
         */
         
         public void load_newobj() {
-            Object args = this.stack.get(this.stack.size() - 1);
-            Object cls = this.stack.get(this.stack.size() - 1);
+            Object args = this.stack.remove(this.stack.size() - 1);
+            Object cls = this.stack.remove(this.stack.size() - 1);
             
             throw new UnsupportedOperationException(args + " " + cls);
             //obj = cls.__new__(cls, *args)
