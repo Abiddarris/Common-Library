@@ -53,6 +53,7 @@ public class Pickle {
     
     //Protocol 2
     private static final int PROTO          = 0x80;  // identify pickle protocol
+    private static final int NEWOBJ         = 0x81;  // build object by applying cls.__new__ to argtuple
     private static final int TUPLE3         = 0x87;  // build 3-tuple from three topmost stack items    
     private static final int LONG1          = 0x8a;  // push long from < 256 bytes
     
@@ -182,6 +183,7 @@ public class Pickle {
             dispatch.put(SETITEMS, this::load_setitems);
             dispatch.put(GLOBAL, this::load_global);
             dispatch.put(EMPTY_TUPLE, this::load_empty_tuple);
+            dispatch.put(NEWOBJ, this::load_newobj);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -588,14 +590,18 @@ public class Pickle {
             cls = args.pop(0)
             self._instantiate(cls, args)
         dispatch[OBJ[0]] = load_obj
-
-        def load_newobj(self):
-            args = self.stack.pop()
-            cls = self.stack.pop()
-            obj = cls.__new__(cls, *args)
-            self.append(obj)
-        dispatch[NEWOBJ[0]] = load_newobj
-
+        */
+        
+        public void load_newobj() {
+            Object args = this.stack.get(this.stack.size() - 1);
+            Object cls = this.stack.get(this.stack.size() - 1);
+            
+            throw new UnsupportedOperationException(args + " " + cls);
+            //obj = cls.__new__(cls, *args)
+            //this.append(obj);
+        }
+        
+        /*
         def load_newobj_ex(self):
             kwargs = self.stack.pop()
             args = self.stack.pop()
