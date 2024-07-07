@@ -26,7 +26,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import static java.util.Collections.EMPTY_LIST;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +48,7 @@ public class Pickle {
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
     private static final int BINPUT         = 'q';   //   "     "    "   "   " ;   "    " 1-byte arg
+    private static final int EMPTY_TUPLE    = ')';   // push empty tuple
     private static final int SETITEMS       = 'u';   // modify dict by adding topmost key+value pairs
     
     //Protocol 2
@@ -180,7 +181,7 @@ public class Pickle {
             dispatch.put(STOP, this::load_stop);
             dispatch.put(SETITEMS, this::load_setitems);
             dispatch.put(GLOBAL, this::load_global);
-
+            dispatch.put(EMPTY_TUPLE, this::load_empty_tuple);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -500,12 +501,13 @@ public class Pickle {
         def load_tuple(self):
             items = self.pop_mark()
             self.append(tuple(items))
-        dispatch[TUPLE[0]] = load_tuple
+        dispatch[TUPLE[0]] = load_tuple*/
 
-        def load_empty_tuple(self):
-            self.append(())
-        dispatch[EMPTY_TUPLE[0]] = load_empty_tuple
-
+        public void load_empty_tuple() {
+            this.append(EMPTY_LIST);
+        }
+        
+        /*
         def load_tuple1(self):
             self.stack[-1] = (self.stack[-1],)
         dispatch[TUPLE1[0]] = load_tuple1
