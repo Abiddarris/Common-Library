@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.fragments;
 
+import static android.text.util.Linkify.WEB_URLS;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,7 @@ import com.abiddarris.common.databinding.FragmentTextBinding;
 public class TextFragment extends AdvanceFragment {
     
     private static final String TEXT = "text";
+    private static final String HIGHLIGHT_LINK = "highlight_text";
     
     private FragmentTextBinding binding;
     private String text;
@@ -48,6 +51,8 @@ public class TextFragment extends AdvanceFragment {
         super.onViewCreated(view, savedInstanceState);
         
         text = getVariable(TEXT);
+        setHighlightLinkInternal(getVariable(HIGHLIGHT_LINK, true));
+        
         updateUI();
     }
     
@@ -57,13 +62,30 @@ public class TextFragment extends AdvanceFragment {
         updateUI();
     }
     
+    public void setHighlightLink(boolean highlight) {
+        saveVariable(HIGHLIGHT_LINK, highlight);
+        
+        setHighlightLinkInternal(highlight);
+    }
+    
     public FragmentTextBinding getBinding() {
         return binding;
     }
     
     private void updateUI() {
-        if(getBinding() != null)   
+        if(getBinding() != null) {
             getBinding().text.setText(text);
+        }
+    }
+    
+    private void setHighlightLinkInternal(boolean highlight) {
+        var binding = getBinding();
+        if(binding == null) return;
+        
+        int value = highlight ? WEB_URLS : 0;
+        if(binding.text.getAutoLinkMask() != value) {
+            binding.text.setAutoLinkMask(value);
+        }
     }
     
 }
