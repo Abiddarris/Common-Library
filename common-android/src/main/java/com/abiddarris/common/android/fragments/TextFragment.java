@@ -30,20 +30,19 @@ import com.abiddarris.common.android.databinding.FragmentTextBinding;
 /**
  * {@code Fragment} that contains {@code TextView} inside {@code ScrollView}
  */
-public class TextFragment extends ScrollableFragment {
+public class TextFragment extends AdvanceFragment {
     
     private static final String TEXT = "text";
     private static final String HIGHLIGHT_LINK = "highlight_text";
-    
+
     private FragmentTextBinding binding;
     private String text;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle bundle) {
         binding = FragmentTextBinding.inflate(inflater, group, false);
-        setViewToScroll(binding.getRoot());
         
-        return super.onCreateView(inflater, group, bundle);
+        return binding.getRoot();
     }
     
     @Override
@@ -51,9 +50,9 @@ public class TextFragment extends ScrollableFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        setScrollableVertically(true);
+        text = getVariable(TEXT);
         setHighlightLinkInternal(getVariable(HIGHLIGHT_LINK, true));
-        
+
         updateUI();
     }
     
@@ -63,34 +62,30 @@ public class TextFragment extends ScrollableFragment {
         updateUI();
     }
     
-    public String getText() {
-        return getVariable(TEXT, "");
-    }
-    
     public void setHighlightLink(boolean highlight) {
         saveVariable(HIGHLIGHT_LINK, highlight);
-        
+
         setHighlightLinkInternal(highlight);
     }
-    
+
     public FragmentTextBinding getBinding() {
         return binding;
     }
     
     private void updateUI() {
         if(getBinding() != null) {
-            getBinding().text.setText(getText());
+            getBinding().text.setText(text);
         }
     }
-    
+
     private void setHighlightLinkInternal(boolean highlight) {
         var binding = getBinding();
         if(binding == null) return;
-        
+
         int value = highlight ? WEB_URLS : 0;
         if(binding.text.getAutoLinkMask() != value) {
             binding.text.setAutoLinkMask(value);
         }
     }
-    
+
 }
