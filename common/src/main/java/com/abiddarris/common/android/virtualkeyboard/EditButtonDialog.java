@@ -19,8 +19,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
-import com.abiddarris.common.android.validations.ValidationEngine;
-import com.abiddarris.common.android.validations.Validator;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -36,6 +34,8 @@ import com.abiddarris.common.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
 import com.abiddarris.common.android.utils.TextListener;
+import com.abiddarris.common.android.validations.ValidationEngine;
+import com.abiddarris.common.android.validations.Validator;
 import com.abiddarris.common.databinding.DialogEditButtonBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
@@ -95,31 +95,57 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         alignmentSpinner.setText(alignmentId);
         alignmentSpinner.setSimpleItems(R.array.alignment);
         alignmentSpinner.setOnItemClickListener((adapterView, view, index, id) -> alignmentIndex = index);
+       
+        Size size = key.getSize();
+        size.calculate();
+        
+        float originalWidth = size.getWidth(), 
+              originalHeight = size.getHeight();
         
         setValue(binding.marginX, alignment.getMarginX());
         setValue(binding.marginY, alignment.getMarginY());
         setValidation(binding.marginX, (text) -> {
             float x = toFloat(text);
-            if(x > pixelToDp(getContext(), keyboard.getWidth()) || x < 0) {
+            if(x > pixelToDp(getContext(), keyboard.getWidth()) - editTextToFloat(binding.width) || x < 0) {
                 return getString(R.string.out_of_bounds_error);
             }
             return null;
         });
         setValidation(binding.marginY, (text) -> {
             float y = toFloat(text);
-            if(y > pixelToDp(getContext(), keyboard.getHeight()) || y < 0) {
+            if(y > pixelToDp(getContext(), keyboard.getHeight()) - editTextToFloat(binding.width) || y < 0) {
+                return getString(R.string.out_of_bounds_error);
+            }
+            return null;
+        });
+        setValidation(binding.width, (text) -> {
+            float width = toFloat(text);
+            float marginX = editTextToFloat(binding.marginX);
+            float maxSize = pixelToDp(getContext(), keyboard.getWidth());
+            float max = (getAlignmentFlag() & RIGHT) == 0 ? maxSize - marginX : marginX + originalWidth;
+                
+            if(width > max || width <= 0) {
+                return getString(R.string.out_of_bounds_error);
+            }
+            return null;
+        });
+        setValidation(binding.height, (text) -> {
+            float height = toFloat(text);
+            float marginY = editTextToFloat(binding.marginY);
+            float maxSize = pixelToDp(getContext(), keyboard.getHeight());
+            float max = (getAlignmentFlag() & BOTTOM) == 0 ? maxSize - marginY : marginY + originalHeight;
+                
+            if(height > max || height <= 0) {
                 return getString(R.string.out_of_bounds_error);
             }
             return null;
         });
         
-        Size size = key.getSize();
-        size.calculate();
         
         int sizeId = getSizeId(size.getType());
         
-        setValue(binding.width, size.getWidth());
-        setValue(binding.height, size.getHeight());
+        setValue(binding.width, originalWidth);
+        setValue(binding.height, originalHeight);
         
         MaterialAutoCompleteTextView sizeSpinner = (MaterialAutoCompleteTextView)binding.size.getEditText();
         sizeSpinner.setText(sizeId);
