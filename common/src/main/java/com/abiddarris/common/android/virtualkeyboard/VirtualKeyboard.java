@@ -15,13 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
-import android.widget.ImageButton;
+import static android.view.MotionEvent.ACTION_UP;
+
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
 
 import android.content.Context;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -45,6 +47,8 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     
     public VirtualKeyboard(Context context) {
         super(context);
+        
+        setClickable(true);
         
         editButton = new ImageButton(getContext());
         editButton.setVisibility(GONE);
@@ -84,6 +88,18 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         }
         return super.onChildTouch(view, event);
     }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(focus == null) return false;
+        switch(event.getAction()) {
+            case ACTION_UP :
+                onLostFocus();
+                return true;
+        }
+        return super.onTouchEvent(event);
+    }
+    
     
     @Override
     public void setEdit(boolean edit) {
