@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
+import android.util.AttributeSet;
 import static android.view.MotionEvent.ACTION_UP;
 
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
@@ -48,6 +49,21 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public VirtualKeyboard(Context context) {
         super(context);
         
+        init(null);
+    }
+    
+    public VirtualKeyboard(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        
+        init(attrs);
+    }
+
+    public VirtualKeyboard(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(attrs);
+    }
+
+    private void init(AttributeSet attrs) {
         setClickable(true);
         
         editButton = new ImageButton(getContext());
