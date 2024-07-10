@@ -19,6 +19,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.abiddarris.common.android.tasks.TaskDialog;
 
+import static com.abiddarris.common.stream.InputStreams.readAll;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +46,7 @@ public class LoadTask extends TaskDialog {
                 new FileInputStream(src))) {
             keyboard = new JSONObject(
                 new String(
-                    inputStream.readAllBytes()
+                    readAll(inputStream)
                 )
             );
         }
