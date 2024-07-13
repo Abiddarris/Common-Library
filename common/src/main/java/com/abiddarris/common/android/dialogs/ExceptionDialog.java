@@ -46,6 +46,7 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         
         var fragment = new TextFragment();
         fragment.setHighlightLink(false);
+        fragment.setScrollableHorizontally(true);
         
         updateUI(fragment);
         setFragment(fragment);
