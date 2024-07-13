@@ -41,8 +41,9 @@ public class TextFragment extends ScrollableFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup group, Bundle bundle) {
         binding = FragmentTextBinding.inflate(inflater, group, false);
+        setViewToScroll(binding.getRoot());
         
-        return binding.getRoot();
+        return super.onCreateView(inflater, group, bundle);
     }
     
     @Override
