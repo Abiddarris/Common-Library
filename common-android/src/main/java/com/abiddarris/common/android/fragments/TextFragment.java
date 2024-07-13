@@ -30,7 +30,7 @@ import com.abiddarris.common.android.databinding.FragmentTextBinding;
 /**
  * {@code Fragment} that contains {@code TextView} inside {@code ScrollView}
  */
-public class TextFragment extends AdvanceFragment {
+public class TextFragment extends ScrollableFragment {
     
     private static final String TEXT = "text";
     private static final String HIGHLIGHT_LINK = "highlight_text";
@@ -51,6 +51,8 @@ public class TextFragment extends AdvanceFragment {
         super.onViewCreated(view, savedInstanceState);
         
         text = getVariable(TEXT);
+        
+        setScrollableVertically(true);
         setHighlightLinkInternal(getVariable(HIGHLIGHT_LINK, true));
 
         updateUI();
