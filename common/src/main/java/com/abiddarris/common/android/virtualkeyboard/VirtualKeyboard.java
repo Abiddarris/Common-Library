@@ -15,12 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
-import android.util.AttributeSet;
 import static android.view.MotionEvent.ACTION_UP;
 
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -71,7 +71,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         editButton.setImageResource(R.drawable.ic_setting);
         editButton.setOnClickListener(v -> {
             var dialog = EditButtonDialog.newInstance(this);
-            dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
+            dialog.showForResult(((FragmentActivity)getContext()).getSupportFragmentManager(), (res) -> {
+                if(focus != null)
+                    onFocusMoved();            
+            });
         });
         
         addView(editButton);
@@ -90,17 +93,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
                     .findFirst()
                     .get();
             
-                LayoutParams params = (LayoutParams)editButton.getLayoutParams();
-                params.height = view.getHeight();
-                
-                updateViewLayout(editButton, params);
-            
-                float x = view.getX() + view.getWidth();
-            
-                editButton.setVisibility(VISIBLE);
-                editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
-                editButton.setY(view.getY());
-                editButton.bringToFront();
+                onFocusMoved();
         }
         return super.onChildTouch(view, event);
     }
@@ -208,5 +201,21 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         focus = null;
             
         editButton.setVisibility(GONE);
+    }
+    
+    private void onFocusMoved() { 
+        View view = focus.getButton();
+        
+        LayoutParams params = (LayoutParams)editButton.getLayoutParams();
+        params.height = view.getHeight();
+                
+        updateViewLayout(editButton, params);
+            
+        float x = view.getX() + view.getWidth();
+            
+        editButton.setVisibility(VISIBLE);
+        editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
+        editButton.setY(view.getY());
+        editButton.bringToFront();
     }
 }
