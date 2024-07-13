@@ -31,7 +31,7 @@ public class LoadTask extends TaskDialog {
    
     private boolean loaded;
     private File src;
-    private JSONException exception;
+    private Exception exception;
     private VirtualKeyboard keyboard;
     
     LoadTask(VirtualKeyboard keyboard, File src) {
@@ -69,7 +69,7 @@ public class LoadTask extends TaskDialog {
     private void loadKeyboard(JSONObject keyboard) {
         try {
             this.keyboard.load(keyboard);
-        } catch (JSONException e) {
+        } catch (Exception e) {
             exception = e;
         } finally {
             synchronized(this) {
