@@ -18,8 +18,6 @@ package com.abiddarris.common.android.dialogs;
 import android.os.Bundle;
 
 import com.abiddarris.common.android.R;
-
-import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.fragments.TextFragment;
 import com.abiddarris.common.utils.Exceptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -48,6 +46,7 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         
         var fragment = new TextFragment();
         fragment.setHighlightLink(false);
+        fragment.setScrollableHorizontally(true);
 
         updateUI(fragment);
         setFragment(fragment);
