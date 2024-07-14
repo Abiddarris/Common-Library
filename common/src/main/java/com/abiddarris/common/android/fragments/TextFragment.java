@@ -51,8 +51,6 @@ public class TextFragment extends ScrollableFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
-        text = getVariable(TEXT);
-        
         setScrollableVertically(true);
         setHighlightLinkInternal(getVariable(HIGHLIGHT_LINK, true));
         
@@ -63,6 +61,10 @@ public class TextFragment extends ScrollableFragment {
         saveVariable(TEXT, text);
         
         updateUI();
+    }
+    
+    public String getText() {
+        return getVariable(TEXT, "");
     }
     
     public void setHighlightLink(boolean highlight) {
@@ -77,7 +79,7 @@ public class TextFragment extends ScrollableFragment {
     
     private void updateUI() {
         if(getBinding() != null) {
-            getBinding().text.setText(text);
+            getBinding().text.setText(getText());
         }
     }
     
