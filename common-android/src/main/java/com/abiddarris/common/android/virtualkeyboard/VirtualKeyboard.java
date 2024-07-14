@@ -188,12 +188,17 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public void load(JSONObject keyboard) throws JSONException {
         clearKeys(); 
         
-        JSONArray keys = keyboard.getJSONArray(KEYS);
-        for(int i = 0; i < keys.length(); ++i) {
-        	Key key = addButton();
-            JSONObject keyJSON = keys.getJSONObject(i);
+        try {
+            JSONArray keys = keyboard.getJSONArray(KEYS);
+            for(int i = 0; i < keys.length(); ++i) {
+                Key key = addButton();
+                JSONObject keyJSON = keys.getJSONObject(i);
             
-            key.load(keyJSON);
+                key.load(keyJSON);
+            }
+        } catch (Throwable e) {
+            clearKeys();
+            throw e;
         }
     }
     
