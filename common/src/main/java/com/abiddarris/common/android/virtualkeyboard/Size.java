@@ -24,11 +24,17 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.TYPE;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.WIDTH;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 
 import android.content.Context;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+
+import com.abiddarris.common.android.view.listeners.AutoRemoveGlobalLayoutListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,11 +103,31 @@ public class Size {
         height = abs(height);
         
         Button button = key.getButton();
-        Context context = button.getContext();
+        ViewGroup group = (ViewGroup)button.getParent();
+        
+        float width0 = width, height0 = height;
+        OnGlobalLayoutListener listener = () -> setSizeInternal(width0, height0);
+        
+        if(group.getWidth() == 0 && group.getHeight() == 0) {
+            calculated = false;
+            new AutoRemoveGlobalLayoutListener(button.getViewTreeObserver(),
+                listener);
+        }
+        
+        listener.onGlobalLayout();
+    }
+    
+    private void setSizeInternal(float width, float height) {
+        Context context = key.getButton().getContext();
+        ViewGroup parent = (ViewGroup) key.getButton()
+            .getParent();
+        
+        width = min(width, pixelToDp(context, parent.getWidth()));
+        height = min(height, pixelToDp(context, parent.getHeight()));
         
         updateSizeInternal(
-            Math.round(dpToPixel(context, width)),
-            Math.round(dpToPixel(context, height))
+            round(dpToPixel(context, width)),
+            round(dpToPixel(context, height))
         );
         
         this.width = width;
