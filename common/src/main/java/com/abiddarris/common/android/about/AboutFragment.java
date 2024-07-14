@@ -20,8 +20,10 @@ import static android.widget.LinearLayout.LayoutParams.MATCH_PARENT;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout.LayoutParams;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.abiddarris.common.android.fragments.TextFragment;
 
 /**
@@ -29,14 +31,14 @@ import com.abiddarris.common.android.fragments.TextFragment;
  */
 public class AboutFragment extends TextFragment {
     
-    private static final String HEADER = "header";
     private static final String ATTRIBUTIONS = "attributions";
     
     public static AboutFragment newAboutFragment(String header, Attribution[] attributions) {
         var fragment = new AboutFragment();
+        fragment.setText(header);
+        
         var args = new Bundle();
         
-        args.putString(HEADER, header);
         args.putParcelableArray(ATTRIBUTIONS, attributions);
         
         fragment.setArguments(args);
@@ -48,7 +50,6 @@ public class AboutFragment extends TextFragment {
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
  
-        String header = getArguments().getString(HEADER);
         Attribution[] attributions = (Attribution[])getArguments()
             .getParcelableArray(ATTRIBUTIONS);
         
@@ -67,8 +68,6 @@ public class AboutFragment extends TextFragment {
         attributionList.setAdapter(adapter);    
         attributionList.setLayoutManager(new LinearLayoutManager(getContext()));     
        
-        setText(header);
-        
         getBinding().scrollViewChild
             .addView(attributionList, new LayoutParams(MATCH_PARENT, MATCH_PARENT));
     }
