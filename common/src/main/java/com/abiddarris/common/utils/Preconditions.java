@@ -19,9 +19,13 @@ public final class Preconditions {
     
     private Preconditions() {}
     
+     public static void checkNonNull(Object object) {
+         checkNonNull(object, "");
+     }
+    
     public static void checkNonNull(Object object, String message) {
     	if(object == null) {
-            throw new NullPointerException(message);
+            throw new NullPointerException(message == null ? "" : message);
         }
     }
     
