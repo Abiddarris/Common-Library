@@ -18,34 +18,15 @@ package com.abiddarris.common.utils;
 public final class Preconditions {
     
     private Preconditions() {}
+    
+     public static void checkNonNull(Object object) {
+         checkNonNull(object, "");
+     }
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
-    }
-    
-    public static void checkNonNull(Object object) {
-        checkNonNull(object, "");
-    }
-    
     public static void checkNonNull(Object object, String message) {
     	if(object == null) {
-            throw new NullPointerException(message == null ? "" : message);
+            throw new NullPointerException(message);
         }
     }
     
-    /**
-     * Check if given argument is not negative.
-     *
-     * @param l Argument to check
-     * @param message Message that will be used for creating 
-     *        the {@code IllegalArgumentException}
-     * @throws IllegalArgumentException if {@code l} is negative
-     * @since 1.0
-     */
-    public static void checkNonNegative(long l, String message) {
-        if(l < 0)
-            throw new IllegalArgumentException(message);
-    }
 }
