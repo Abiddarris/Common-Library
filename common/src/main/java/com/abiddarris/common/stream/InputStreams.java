@@ -153,4 +153,21 @@ public final class InputStreams {
             skipExact(stream, Long.MAX_VALUE);
         } while(stream.read() != -1);
     }
+    
+    /**
+     * Write all bytes from given {@code InputStream} to given {@code OutputStream}
+     *
+     * @param src Bytes source
+     * @param dest Write destination
+     * @throws IOException if an I/O error occurs while reading the stream
+     * @since 1.0
+     */
+    public static void writeAllTo(InputStream src, OutputStream dest) throws IOException {
+        int len;
+        byte[] buf = new byte[8192];
+        while((len = src.read(buf)) != -1) {
+            dest.write(buf, 0, len);
+        }
+        dest.flush();
+    }
 }
