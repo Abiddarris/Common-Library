@@ -10,6 +10,8 @@ import static com.abiddarris.common.stream.Signs.unsign;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.CodingErrorAction.REPORT;
 import static java.util.Arrays.copyOf;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.annotations.PrivateApi;
 
@@ -26,7 +28,7 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static java.util.Collections.EMPTY_LIST;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,7 +168,7 @@ public class Pickle {
             this.stream = stream;
             this.encoding = encoding;
             this.errors = errors;
-            
+                 
             dispatch.put(PROTO, this::load_proto);
             dispatch.put(EMPTY_DICT, this::load_empty_dictionary);
             dispatch.put(BINPUT, this::load_binput);
@@ -506,7 +508,7 @@ public class Pickle {
         dispatch[TUPLE[0]] = load_tuple*/
 
         public void load_empty_tuple() {
-            this.append(EMPTY_LIST);
+            this.append(emptyList());
         }
         
         /*
@@ -594,11 +596,13 @@ public class Pickle {
         
         public void load_newobj() {
             Object args = this.stack.remove(this.stack.size() - 1);
-            Object cls = this.stack.remove(this.stack.size() - 1);
+            PythonObject cls = (PythonObject)this.stack.remove(this.stack.size() - 1);
             
-            throw new UnsupportedOperationException(args + " " + cls);
-            //obj = cls.__new__(cls, *args)
-            //this.append(obj);
+            PythonObject obj = cls.call(
+                (List)args, 
+                emptyMap()
+            );
+            this.append(obj);
         }
         
         /*
@@ -621,7 +625,7 @@ public class Pickle {
             
             String module = new String(sign(moduleBytes), charset);
             String name = new String(sign(nameBytes), charset);
-            Class klass = this.find_class(module, name);
+            PythonObject klass = this.find_class(module, name);
             this.append(klass);
         }
         
@@ -666,7 +670,7 @@ public class Pickle {
             self.append(obj)
         */
 
-        protected Class find_class(String module, String name) {
+        protected PythonObject find_class(String module, String name) {
             throw new UnsupportedOperationException();
             /*# Subclasses may override this.
             sys.audit('pickle.find_class', module, name)
