@@ -42,6 +42,7 @@ public class Pickle {
     private static final int MARK           = '(';   // push special markobject on stack
     private static final int STOP           = '.';   // every pickle ends with STOP
     private static final int BININT         = 'J';   // push four-byte signed int
+    private static final int NONE           = 'N';   // push None
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
     private static final int APPEND         = 'a';   // append stack top to list below it
@@ -186,6 +187,8 @@ public class Pickle {
             dispatch.put(GLOBAL, this::load_global);
             dispatch.put(EMPTY_TUPLE, this::load_empty_tuple);
             dispatch.put(NEWOBJ, this::load_newobj);
+            dispatch.put(NONE, this::load_none);
+        
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -305,11 +308,13 @@ public class Pickle {
             pid = self.stack.pop()
             self.append(self.persistent_load(pid))
         dispatch[BINPERSID[0]] = load_binpersid
+        */
 
-        def load_none(self):
-            self.append(None)
-        dispatch[NONE[0]] = load_none
-
+        protected void load_none() {
+            this.append(null);
+        }
+        
+            /*
         def load_false(self):
             self.append(False)
         dispatch[NEWFALSE[0]] = load_false
