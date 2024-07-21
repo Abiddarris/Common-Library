@@ -92,7 +92,6 @@ public class Magic {
                 Map.of()), 
             Map.of()
         );
-        FakeStrict = object;
         FakeClass = FakeClassType.call(
             List.of(
                 "FakeClass",
@@ -102,7 +101,14 @@ public class Magic {
             ),
             Map.of()
         );
-        //FakeStrict = new PythonObject("FakeStrict", FakeClass);*/
+        FakeStrict = type.call(
+            List.of(
+                "FakeStrict",
+                List.of(FakeClass),
+                Collections.emptyMap()
+            ),
+            Map.of()
+        );
     }
     /*
   
