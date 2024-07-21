@@ -26,8 +26,6 @@ public class PythonObject {
             object.addField("__name__", args.get(1));
             object.addField("__bases__", args.get(2));
             
-                System.out.println(args);
-                
             return object;
         });
         type.addMethod("__call__", (args, kwargs) -> {
