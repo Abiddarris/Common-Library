@@ -91,6 +91,15 @@ public class PythonObject {
         
     public PythonObject invokeStaticMethod(String name, List args, Map kwargs) {
         PythonMethod method = (PythonMethod)getAttr(this, name, null);
+        if(method == null) {
+            throw new NoSuchMethodError(
+                String.format(
+                    "Method %s not found",
+                    name
+                )
+            );
+        }
+        
         return method.call(args, kwargs);
     }
     
