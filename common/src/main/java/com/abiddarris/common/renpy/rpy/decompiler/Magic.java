@@ -88,7 +88,7 @@ public class Magic {
         FakeClassType = type.call(
             List.of(
                 "FakeClassType",
-                List.of(object),
+                List.of(type),
                 Map.of()), 
             Map.of()
         );
