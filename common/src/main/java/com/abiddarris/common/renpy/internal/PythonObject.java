@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -25,6 +26,8 @@ public class PythonObject {
             object.addField("__name__", args.get(1));
             object.addField("__bases__", args.get(2));
             
+                System.out.println(args);
+                
             return object;
         });
         type.addMethod("__call__", (args, kwargs) -> {
@@ -42,7 +45,9 @@ public class PythonObject {
            
             return null;
         });
-        
+        object.addMethod("__new__", (args, kwargs) -> {
+            return new PythonObject();
+        });
     }
     
     protected Map<String, Object> attributes = new HashMap<>();
@@ -60,7 +65,30 @@ public class PythonObject {
     }
     
     public Object getAttribute(String name) {
-        return attributes.get(name);
+        if(attributes.containsKey(name))
+            return attributes.get(name);
+        
+        List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
+        for(var class0 : classes) {
+        	if(class0.hasAttribute(name)) {
+                return class0.getAttribute(name);
+            }
+        }
+        
+        throw new NoSuchElementException();
+    }
+    
+    public boolean hasAttribute(String name) {
+        if(attributes.containsKey(name))
+            return true;
+        
+        List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
+        for(var class0 : classes) {
+        	if(class0.hasAttribute(name))
+                return true;
+        }
+        
+        return false;
     }
         
     public PythonObject invokeStaticMethod(String name, List args, Map kwargs) {
