@@ -242,7 +242,9 @@ public class Magic {
                 klass = type.call(
                     List.of(
                         name, 
-                        this.default0
+                        List.of(
+                            this.default0
+                        )
                     ), 
                     Map.of(
                         "__module__", module
