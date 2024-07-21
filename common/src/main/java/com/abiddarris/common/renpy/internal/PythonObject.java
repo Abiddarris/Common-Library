@@ -67,6 +67,9 @@ public class PythonObject {
             return attributes.get(name);
         
         List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
+        if(classes.isEmpty()) {
+            classes = List.of(object);
+        }
         for(var class0 : classes) {
         	if(class0.hasAttribute(name)) {
                 return class0.getAttribute(name);
@@ -81,6 +84,10 @@ public class PythonObject {
             return true;
         
         List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
+        if(classes.isEmpty()) {
+            classes = List.of(object);
+        }
+        
         for(var class0 : classes) {
         	if(class0.hasAttribute(name))
                 return true;
