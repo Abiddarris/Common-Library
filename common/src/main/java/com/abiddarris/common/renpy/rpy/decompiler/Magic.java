@@ -81,27 +81,28 @@ public class Magic {
      * <p>This is a subclass of :class:`type`.
      */
     public static final PythonObject FakeClassType;
-    //public static final PythonObject FakeClass;
+    public static final PythonObject FakeClass;
     public static final PythonObject FakeStrict;
 
     static {
         FakeClassType = type.call(
             List.of(
-                type,
                 "FakeClassType",
-                Set.of(object),
+                List.of(object),
                 Map.of()), 
             Map.of()
         );
         FakeStrict = object;
-        
-        /*FakeClassType = new PythonObject("FakeClassType", PythonObject.TYPE);
-        FakeClassType.addFunction("__new__", (args, kwargs) -> {
-            return FakeClassType.getParent().invoke("__new__", args, kwargs);
-        });
-        FakeClass = (PythonObject)FakeClassType.newPythonObject(
-            List.of("FakeClass", Collections.emptyList(), Collections.emptyMap()), null);
-        FakeStrict = new PythonObject("FakeStrict", FakeClass);*/
+        FakeClass = FakeClassType.call(
+            List.of(
+                "FakeClass",
+                Collections.emptyList(), 
+                Collections.emptyMap(), 
+                ""
+            ),
+            Map.of()
+        );
+        //FakeStrict = new PythonObject("FakeStrict", FakeClass);*/
     }
     /*
   
