@@ -14,11 +14,16 @@
  * limitations under the License.
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
+import java.util.NoSuchElementException;
 
 public class PythonSyntax {
     
     public static Object getAttr(PythonObject object, String name, Object defaultValue) {
-        return object.attributes.getOrDefault(name, defaultValue);
+        try {
+            return object.getAttribute(name);
+        } catch (NoSuchElementException e) {
+            return defaultValue;
+        }
     }
     
 }
