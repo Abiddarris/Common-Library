@@ -289,13 +289,6 @@ class FakePackageLoader(object):
 
 # Fake unpickler implementation
 
-class FakeUnpicklingError(pickle.UnpicklingError):
-    """
-    Error raised when there is not enough information to perform the fake
-    unpickling process completely. It inherits from :exc:`pickle.UnpicklingError`.
-    """
-    pass
-
 class SafePickler(pickle.Pickler if PY2 else pickle._Pickler):
     """
     A pickler which can repickle object hierarchies containing objects created by SafeUnpickler.
