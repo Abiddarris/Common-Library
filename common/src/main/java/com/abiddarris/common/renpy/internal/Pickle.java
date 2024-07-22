@@ -603,9 +603,13 @@ public class Pickle {
             Object args = this.stack.remove(this.stack.size() - 1);
             PythonObject cls = (PythonObject)this.stack.remove(this.stack.size() - 1);
             
+            List argsList = new ArrayList<>();
+            argsList.add(cls);
+            argsList.addAll((List)args);
+            
             PythonObject obj = cls.invokeStaticMethod(
                 "__new__",
-                (List)args, 
+                argsList, 
                 emptyMap()
             );
             this.append(obj);
