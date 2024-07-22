@@ -110,7 +110,15 @@ public class Magic {
             Map.of()
         );
         FakeStrict.addMethod("__new__", (args, kwargs) -> {
-            
+            PythonObject cls = (PythonObject)args.get(0);
+            PythonObject self = FakeClass.invokeStaticMethod("__new__", List.of(), Map.of());
+                
+            if (!(args.isEmpty() || kwargs.isEmpty()))
+                throw new FakeUnpicklingError(
+                    String.format(
+                        "{0} was instantiated with unexpected arguments {1}, {2}",
+                        cls, args, kwargs));
+            return self;
         });
     }
     /*
@@ -162,11 +170,7 @@ public class Magic {
     }*/
     /*
     class FakeStrict(FakeClass, object):
-    def __new__(cls, *args, **kwargs):
-        self = FakeClass.__new__(cls)
-        if args or kwargs:
-            raise FakeUnpicklingError("{0} was instantiated with unexpected arguments {1}, {2}".format(cls, args, kwargs))
-        return self
+  
 
     def __setstate__(self, state):
         slotstate = None
@@ -319,6 +323,18 @@ public class Magic {
                 setattr(mod, name, klass)
 
             return klass*/
+    }
+    
+    /**
+     * Error raised when there is not enough information to perform the fake
+     * unpickling process completely. It inherits from :exc:`pickle.UnpicklingError`.
+     */
+    public static class FakeUnpicklingError extends Pickle.UnpicklingError {
+        
+        public FakeUnpicklingError(String message) {
+            super(message);
+        }
+        
     }
 
     /**
