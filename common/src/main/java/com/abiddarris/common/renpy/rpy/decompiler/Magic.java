@@ -110,10 +110,10 @@ public class Magic {
             Map.of()
         );
         FakeStrict.addMethod("__new__", (args, kwargs) -> {
-            PythonObject cls = (PythonObject)args.get(0);
+            PythonObject cls = (PythonObject)args.remove(0);
             PythonObject self = FakeClass.invokeStaticMethod("__new__", List.of(), Map.of());
                 
-            if (!(args.isEmpty() || kwargs.isEmpty()))
+            if (!args.isEmpty() || !kwargs.isEmpty())
                 throw new FakeUnpicklingError(
                     String.format(
                         "{0} was instantiated with unexpected arguments {1}, {2}",
