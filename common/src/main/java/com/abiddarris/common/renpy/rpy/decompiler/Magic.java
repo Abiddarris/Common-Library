@@ -109,6 +109,9 @@ public class Magic {
             ),
             Map.of()
         );
+        FakeStrict.addMethod("__new__", (args, kwargs) -> {
+            
+        });
     }
     /*
   
