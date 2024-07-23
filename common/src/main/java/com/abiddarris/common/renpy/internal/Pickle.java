@@ -42,6 +42,7 @@ public class Pickle {
     private static final int MARK           = '(';   // push special markobject on stack
     private static final int STOP           = '.';   // every pickle ends with STOP
     private static final int BININT         = 'J';   // push four-byte signed int
+    private static final int BININT1        = 'K';   // push 1-byte unsigned int
     private static final int NONE           = 'N';   // push None
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
@@ -188,7 +189,8 @@ public class Pickle {
             dispatch.put(EMPTY_TUPLE, this::load_empty_tuple);
             dispatch.put(NEWOBJ, this::load_newobj);
             dispatch.put(NONE, this::load_none);
-        
+            dispatch.put(BININT1, this::load_binint1);
+
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -339,10 +341,10 @@ public class Pickle {
             this.append(unpack("<i", this.read(4))[0]);
         }
         
-        /*def load_binint1(self):
-            self.append(self.read(1)[0])
-        dispatch[BININT1[0]] = load_binint1
-
+        protected void load_binint1() {
+            this.append(this.read(1)[0]);
+        }
+        /*
         def load_binint2(self):
             self.append(unpack('<H', self.read(2))[0])
         dispatch[BININT2[0]] = load_binint2
