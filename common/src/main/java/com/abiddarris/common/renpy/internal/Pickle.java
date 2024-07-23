@@ -49,6 +49,7 @@ public class Pickle {
     private static final int APPEND         = 'a';   // append stack top to list below it
     private static final int GLOBAL         = 'c';   // push self.find_class(modname, name); 2 string args   
     private static final int EMPTY_DICT     = '}';   // push empty dict
+    private static final int BINGET         = 'h';   //   "    "    "    "   "   "  ;   "    " 1-byte arg
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
     private static final int BINPUT         = 'q';   //   "     "    "   "   " ;   "    " 1-byte arg
@@ -190,7 +191,7 @@ public class Pickle {
             dispatch.put(NEWOBJ, this::load_newobj);
             dispatch.put(NONE, this::load_none);
             dispatch.put(BININT1, this::load_binint1);
-
+            dispatch.put(BINGET, this::load_binget);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -728,16 +729,20 @@ public class Pickle {
                 msg = f'Memo value not found at index {i}'
                 raise UnpicklingError(msg) from None
         dispatch[GET[0]] = load_get
-
-        def load_binget(self):
-            i = self.read(1)[0]
-            try:
-                self.append(self.memo[i])
-            except KeyError as exc:
-                msg = f'Memo value not found at index {i}'
-                raise UnpicklingError(msg) from None
-        dispatch[BINGET[0]] = load_binget
         */
+
+        protected void load_binget() {
+            int i = this.read(1)[0];
+            if(!this.memo.containsKey(i)) {
+                throw new UnpicklingError(
+                    String.format(
+                        "Memo value not found at index {i}",
+                        i
+                    )
+                );
+            }
+            this.append(this.memo.get(i));
+        }
         
         private void load_long_binget() {
             long i = unpack("<I", this.read(4))[0].longValue();
