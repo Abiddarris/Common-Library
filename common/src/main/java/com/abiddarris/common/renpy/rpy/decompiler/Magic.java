@@ -92,6 +92,37 @@ public class Magic {
                 Map.of()), 
             Map.of()
         );
+        FakeClassType.addMethod("__new__", (args, kwargs) -> {
+            //def __new__(cls, name, bases, attributes, module=None):
+            PythonObject cls = (PythonObject)args.get(0);
+            String name = (String)args.get(1);
+            List<PythonObject> bases = (List<PythonObject>)args.get(2);
+            Map<String, Object> attributes = (Map<String, Object>)args.get(3);
+            String module = (String)kwargs.get("module");  
+                
+            //This would be a lie
+            attributes.remove("__qualname__");
+
+            //figure out what module we should say we're in
+            //note that if no module is explicitly passed, the current module will be chosen
+            //due to the class statement implicitly specifying __module__ as __name__
+            if (module != null)
+                attributes.put("__module__", module);
+
+            if (!attributes.containsKey("__module__"))
+                 throw new RuntimeException/*TypeError*/(
+                    String.format(
+                        "No module has been specified for FakeClassType %s",
+                        name));
+
+            // assemble instance
+            return type.invokeStaticMethod("__new__", 
+                    List.of(
+                        cls, name, bases, attributes
+                    ),
+                    Map.of()
+            );
+        });
         FakeClass = FakeClassType.call(
             List.of(
                 "FakeClass",
@@ -124,22 +155,7 @@ public class Magic {
     /*
   
         /*
-        def __new__(cls, name, bases, attributes, module=None):
-             # This would be a lie
-             attributes.pop("__qualname__", None)
-
-             # figure out what module we should say we're in
-             # note that if no module is explicitly passed, the current module will be chosen
-             # due to the class statement implicitly specifying __module__ as __name__
-             if module is not None:
-                 attributes["__module__"] = module
-
-             if "__module__" not in attributes:
-                 raise TypeError("No module has been specified for FakeClassType {0}".format(name))
-
-             # assemble instance
-             return type.__new__(cls, name, bases, attributes)
-
+        
         /* def __init__(self, name, bases, attributes, module=None):
              type.__init__(self, name, bases, attributes)
 
