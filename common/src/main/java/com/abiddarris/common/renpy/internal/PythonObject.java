@@ -113,4 +113,10 @@ public class PythonObject {
     public PythonObject call(List args, Map kwargs) {
         return invokeStaticMethod("__call__", args, kwargs);
     }
+    
+    @Override
+    public String toString() {
+        return (String)getAttribute("__name__");
+    }
+    
 }
