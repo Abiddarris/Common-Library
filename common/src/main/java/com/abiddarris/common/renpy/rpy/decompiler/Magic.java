@@ -97,7 +97,9 @@ public class Magic {
             PythonObject cls = (PythonObject)args.get(0);
             String name = (String)args.get(1);
             List<PythonObject> bases = (List<PythonObject>)args.get(2);
-            Map<String, Object> attributes = (Map<String, Object>)args.get(3);
+            Map<String, Object> attributes = new HashMap<>(
+                    (Map<String, Object>)args.get(3)
+            );
             String module = (String)kwargs.get("module");  
                 
             //This would be a lie
