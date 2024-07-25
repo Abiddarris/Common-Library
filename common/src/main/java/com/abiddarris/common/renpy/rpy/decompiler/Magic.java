@@ -147,11 +147,12 @@ public class Magic {
             if (!args.isEmpty() || !kwargs.isEmpty())
                 throw new FakeUnpicklingError(
                     String.format(
-                        "{0} was instantiated with unexpected arguments {1}, {2}",
+                        "%s was instantiated with unexpected arguments %s, %s",
                         cls, args, kwargs));
             return self;
         });
     }
+    
     /*
   
         /*
