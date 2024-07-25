@@ -2,6 +2,9 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
+import com.abiddarris.common.renpy.internal.signature.PythonParameter;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
+import java.lang.reflect.Method;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
@@ -17,8 +20,11 @@ public class PythonObject {
     
     public static final PythonObject object;
     public static final PythonObject type;
+    public static final PythonObject function;
     
     static {
+        function = new PythonObject();
+        
         type = new PythonObject();
         type.addField("__name__", "type");
         type.addMethod("__new__", (args, kwargs) -> {
@@ -116,9 +122,42 @@ public class PythonObject {
         return invokeStaticMethod("__call__", args2, kwargs);
     }
     
+    public PythonObject call(PythonParameter parameter) {
+        throw new UnsupportedOperationException();
+    }
+    
     @Override
     public String toString() {
         return (String)getAttribute("__name__");
+    }
+    
+    public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
+        return new PythonFunction(javaMethod, signature);
+    }
+    
+    private static class PythonFunction extends PythonObject {
+        
+        private Method method;
+        private PythonSignature signature;
+        
+        public PythonFunction(Method method, PythonSignature signature) {
+            this.signature = signature;
+            
+            setAttribute("__class__", function);
+            
+            this.method = method;
+        }
+        
+        @Override
+        public PythonObject call(PythonParameter parameter) {
+            return signature.invoke(method, parameter);
+        }
+        
+        @Override
+        public PythonObject call(List args, Map kwargs) {
+            throw new UnsupportedOperationException();
+        }
+        
     }
     
 }
