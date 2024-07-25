@@ -127,10 +127,9 @@ public class Magic {
             List.of(
                 "FakeClass",
                 Collections.emptyList(), 
-                Collections.emptyMap(), 
-                ""
+                Collections.emptyMap() 
             ),
-            Map.of()
+            Map.of("module", "magic")
         );
         FakeStrict = type.call(
             List.of(
