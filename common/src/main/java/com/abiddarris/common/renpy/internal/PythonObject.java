@@ -29,11 +29,9 @@ public class PythonObject {
             return object;
         });
         type.addMethod("__call__", (args, kwargs) -> {
-            List args2 = new ArrayList<>();
-            args2.add(type);
-            args2.addAll(args);    
+            PythonObject self = (PythonObject)args.get(0);
                 
-            return type.invokeStaticMethod("__new__", args2, kwargs);
+            return self.invokeStaticMethod("__new__", args, kwargs);
         });
         
         object = type.invokeStaticMethod("__new__",
@@ -111,7 +109,11 @@ public class PythonObject {
     }
     
     public PythonObject call(List args, Map kwargs) {
-        return invokeStaticMethod("__call__", args, kwargs);
+        List args2 = new ArrayList<>();
+        args2.add(this);
+        args2.addAll(args);  
+        
+        return invokeStaticMethod("__call__", args2, kwargs);
     }
     
     @Override
