@@ -2,12 +2,13 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
-import com.abiddarris.common.renpy.internal.signature.PythonParameter;
-import com.abiddarris.common.renpy.internal.signature.PythonSignature;
-import java.lang.reflect.Method;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
+import com.abiddarris.common.renpy.internal.signature.PythonParameter;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,9 +24,13 @@ public class PythonObject {
     public static final PythonObject function;
     public static final PythonObject str;
     public static final PythonObject tuple;
+    public static final PythonObject int0;
 
     static {
         str = new PythonObject();
+
+        int0 = new PythonObject();
+        int0.addField("__name__", newPythonString("int"));
 
         function = new PythonObject();
         function.addField("__name__", newPythonString("function"));
@@ -137,7 +142,7 @@ public class PythonObject {
 
     @Override
     public String toString() {
-        return (String) getAttribute("__name__");
+        return getAttribute("__name__").toString();
     }
 
     public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
@@ -157,6 +162,30 @@ public class PythonObject {
 
         return object;
     }
+    
+    public static PythonObject newPythonInt(int value) {
+        PythonObject object = new PythonInt(value);
+        object.setAttribute("__class__", int0);
+
+        return object;
+    }
+    
+    public static int unpackPythonInt(PythonObject integer) {
+        if(!(integer instanceof PythonInt)) {
+            throw new IllegalArgumentException("Cannot unpack non int object");
+        }
+        
+        return ((PythonInt)integer).value;
+    }
+
+    private static class PythonInt extends PythonObject {
+
+        private int value;
+
+        public PythonInt(int value) {
+            this.value = value;
+        }
+    }
 
     private static class PythonTuple extends PythonObject {
 
@@ -165,7 +194,6 @@ public class PythonObject {
         public PythonTuple(PythonObject[] elements) {
             this.elements = elements;
         }
-        
     }
 
     private static class PythonFunction extends PythonObject {
