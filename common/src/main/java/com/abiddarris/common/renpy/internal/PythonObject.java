@@ -21,9 +21,13 @@ public class PythonObject {
     public static final PythonObject object;
     public static final PythonObject type;
     public static final PythonObject function;
+    public static final PythonObject str;
     
     static {
+        str = new PythonObject();
+        
         function = new PythonObject();
+        function.addField("__name__", newPythonString("function"));
         
         type = new PythonObject();
         type.addField("__name__", "type");
@@ -135,6 +139,13 @@ public class PythonObject {
         return new PythonFunction(javaMethod, signature);
     }
     
+    public static PythonObject newPythonString(String string) {
+        PythonString object = new PythonString(string);
+        object.setAttribute("__class__", str);
+        
+        return object;
+    }
+    
     private static class PythonFunction extends PythonObject {
         
         private Method method;
@@ -160,4 +171,18 @@ public class PythonObject {
         
     }
     
+    private static class PythonString extends PythonObject {
+        
+        private String string;
+        
+        public PythonString(String string) {
+            this.string = string;
+        }
+        
+        @Override
+        public String toString() {
+            return string;
+        }
+        
+    }
 }
