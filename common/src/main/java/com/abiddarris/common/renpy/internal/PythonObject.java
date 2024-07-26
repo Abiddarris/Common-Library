@@ -2,6 +2,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public class PythonObject {
 
@@ -37,7 +39,14 @@ public class PythonObject {
 
         tuple = new PythonObject();
         tuple.addField("__name__", newPythonString("tuple"));
-
+        tuple.addField("__getitem__", newFunction(
+            findMethod(PythonTuple.class, "getItem"),
+            new PythonSignatureBuilder()  
+                .addParameter("self")    
+                .addParameter("index")
+                .build()
+        ));
+        
         type = new PythonObject();
         type.addField("__name__", "type");
         type.addMethod(
@@ -75,7 +84,7 @@ public class PythonObject {
     }
 
     protected Map<String, Object> attributes = new HashMap<>();
-
+    
     public void addMethod(String name, PythonMethod func) {
         setAttribute(name, func);
     }
@@ -177,6 +186,23 @@ public class PythonObject {
         
         return ((PythonInt)integer).value;
     }
+    
+    private static Method findMethod(Class source, String name) {
+        Method[] methods = Stream.of(source.getDeclaredMethods())
+            .filter(method -> method.getName().equals(name))
+            .toArray(Method[]::new);
+        
+        if(methods.length > 1) {
+            throw new IllegalArgumentException(methods.length + " found");
+        }
+        
+        if(methods.length == 0) {
+            throw new IllegalArgumentException("Not found");
+        }
+        
+        methods[0].setAccessible(true);
+        return methods[0];
+    }
 
     private static class PythonInt extends PythonObject {
 
@@ -193,6 +219,14 @@ public class PythonObject {
 
         public PythonTuple(PythonObject[] elements) {
             this.elements = elements;
+        }
+        
+        private static PythonObject getItem(PythonObject self, PythonObject pos) {
+            if(!(self instanceof PythonTuple)) {
+                throw new IllegalArgumentException("Error");
+            }
+            
+            return ((PythonTuple)self).elements[unpackPythonInt(pos)];
         }
     }
 
