@@ -100,17 +100,21 @@ public class PythonObject {
     public Object getAttribute(String name) {
         if (attributes.containsKey(name)) return attributes.get(name);
 
-        List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
-        if (classes.isEmpty()) {
+        PythonObject bases = (PythonObject)attributes.get("__bases__");
+        if(bases != null) {
+        }
+        
+        /*if (classes.isEmpty()) {
             classes = List.of(object);
         }
         for (var class0 : classes) {
             if (class0.hasAttribute(name)) {
                 return class0.getAttribute(name);
             }
-        }
-
-        throw new NoSuchElementException();
+        }*/
+        
+        PythonObject type = (PythonObject) attributes.get("__class__");
+        return type.getAttribute(name);
     }
 
     public boolean hasAttribute(String name) {
