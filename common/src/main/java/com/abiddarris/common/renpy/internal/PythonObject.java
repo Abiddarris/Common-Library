@@ -37,6 +37,15 @@ public class PythonObject {
         function = new PythonObject();
         function.addField("__name__", newPythonString("function"));
 
+        object = new PythonObject();
+        object.setAttribute("__name__", newPythonString("object"));
+        object.setAttribute("__new__", newFunction(
+            findMethod(PythonObject.class, "pythonObjectNew"),
+            new PythonSignatureBuilder()
+                .addParameter("cls")
+                .build()
+        ));
+        
         tuple = new PythonObject();
         tuple.addField("__name__", newPythonString("tuple"));
         tuple.addField("__getitem__", newFunction(
@@ -66,21 +75,20 @@ public class PythonObject {
                     return self.invokeStaticMethod("__new__", args, kwargs);
                 });
 
-        object =
-                type.invokeStaticMethod(
-                        "__new__", List.of(type, emptyList(), emptyList(), emptyMap()), emptyMap());
-        object.addMethod(
+        /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
                     object.setAttribute((String) args.get(1), args.get(2));
 
                     return null;
-                });
-        object.addMethod(
-                "__new__",
-                (args, kwargs) -> {
-                    return new PythonObject();
-                });
+                });*/
+    }
+    
+    private static PythonObject pythonObjectNew(PythonObject cls) {
+        PythonObject instance = new PythonObject();
+        instance.setAttribute("__class__", cls);
+        
+        return instance;
     }
 
     protected Map<String, Object> attributes = new HashMap<>();
@@ -157,7 +165,7 @@ public class PythonObject {
     public String toString() {
         return getAttribute("__name__").toString();
     }
-
+    
     public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
         return new PythonFunction(javaMethod, signature);
     }
