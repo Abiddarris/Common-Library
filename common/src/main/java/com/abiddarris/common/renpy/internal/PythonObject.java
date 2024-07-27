@@ -118,6 +118,41 @@ public class PythonObject {
         
         return instance;
     }
+    
+    public static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
+        return findAttribute(self, name.toString());
+    }
+    
+    private static PythonObject findAttribute(PythonObject self, String name) {
+        PythonObject attribute = findAttributeWithoutType(self, name);
+        if(attribute != null) {
+            return attribute;
+        }
+        
+        PythonObject type = (PythonObject)self.attributes.get("__class__");
+        attribute = findAttributeWithoutType(type, name);
+        
+        return attribute;
+    }
+    
+    private static PythonObject findAttributeWithoutType(PythonObject self, String name) {
+        PythonObject attribute = (PythonObject)self.attributes.get(name);
+        if(attribute != null) {
+            return attribute;
+        }
+        
+        PythonTuple bases = (PythonTuple)self.attributes.get("__bases__");
+        if(bases != null) {
+            for(var element : bases.elements) {
+                attribute = findAttributeWithoutType(element, name);
+                if(attribute != null) {
+                    return attribute;
+                }
+            }
+        }
+        
+        return null;
+    }
 
     protected Map<String, Object> attributes = new HashMap<>();
     
@@ -326,6 +361,8 @@ public class PythonObject {
         public PythonString(String string) {
             this.string = string;
         }
+        
+        
 
         @Override
         public String toString() {
