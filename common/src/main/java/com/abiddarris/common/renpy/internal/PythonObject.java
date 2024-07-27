@@ -33,6 +33,7 @@ public class PythonObject {
         type = new PythonObject();
 
         str = new PythonObject();
+        str.setAttribute("__name__", newPythonString("str"));
         str.setAttribute("__class__", type);
         
         int0 = new PythonObject();
