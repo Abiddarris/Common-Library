@@ -56,6 +56,12 @@ public class PythonObject {
                 .addParameter("index")
                 .build()
         ));
+        tuple.setAttribute("__len__", newFunction(
+            findMethod(PythonTuple.class, "len"),
+            new PythonSignatureBuilder()   
+                .addParameter("self") 
+                .build()
+        ));
         
         dict = new PythonObject();
         dict.setAttribute("__name__", newPythonString("dict"));
@@ -132,6 +138,7 @@ public class PythonObject {
 
         PythonObject bases = (PythonObject)attributes.get("__bases__");
         if(bases != null) {
+            
         }
         
         /*if (classes.isEmpty()) {
@@ -281,6 +288,10 @@ public class PythonObject {
             }
             
             return ((PythonTuple)self).elements[unpackPythonInt(pos)];
+        }
+        
+        private static PythonObject len(PythonTuple self) {
+            return newPythonInt(self.elements.length);
         }
     }
 
