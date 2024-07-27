@@ -53,6 +53,14 @@ public class PythonObject {
                 .addParameter("cls")
                 .build()
         ));
+        object.setAttribute("__hash__", 
+            newFunction(
+                findMethod(PythonObject.class, "objectHash"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .build()
+            )
+        );
         
         tuple = new PythonObject();
         tuple.setAttribute("__class__", type);
@@ -135,6 +143,12 @@ public class PythonObject {
         instance.setAttribute("__class__", cls);
         
         return instance;
+    }
+    
+    private static PythonObject objectHash(PythonObject self) {
+        return newPythonInt(
+            self.realHashCode()
+        );
     }
     
     public static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
@@ -235,6 +249,10 @@ public class PythonObject {
 
     public PythonObject call(PythonParameter parameter) {
         throw new UnsupportedOperationException();
+    }
+    
+    private int realHashCode() {
+        return super.hashCode();
     }
 
     @Override
