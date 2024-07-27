@@ -27,7 +27,8 @@ public class PythonObject {
     public static final PythonObject str;
     public static final PythonObject tuple;
     public static final PythonObject int0;
-
+    public static final PythonObject dict;
+    
     static {
         str = new PythonObject();
 
@@ -56,17 +57,29 @@ public class PythonObject {
                 .build()
         ));
         
+        dict = new PythonObject();
+        dict.setAttribute("__name__", newPythonString("dict"));
+        dict.setAttribute("__getitem__", newFunction(
+            findMethod(PythonDict.class, "dictGetItem"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .addParameter("key")
+                .build()
+        ));
+        
         type = new PythonObject();
-        type.addField("__name__", "type");
-        type.addMethod(
-                "__new__",
-                (args, kwargs) -> {
-                    PythonObject object = new PythonObject();
-                    object.addField("__name__", args.get(1));
-                    object.addField("__bases__", args.get(2));
-
-                    return object;
-                });
+        type.setAttribute("__name__", newPythonString("type"));
+        type.setAttribute("__new__", newFunction(
+            findMethod(PythonObject.class, "typeNew"),
+            new PythonSignatureBuilder()
+                .addParameter("cls")
+                .addParameter("name")
+                .addParameter("bases")
+                .addParameter("attributes")
+                .build()
+        ));
+        
+        /*
         type.addMethod(
                 "__call__",
                 (args, kwargs) -> {
@@ -82,6 +95,15 @@ public class PythonObject {
 
                     return null;
                 });*/
+    }
+    
+    private static PythonObject typeNew(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes) {
+        PythonObject self = new PythonObject();
+        self.setAttribute("__class__", cls);
+        self.setAttribute("__name__", name);
+        self.setAttribute("__bases__", bases);
+        
+        return self;
     }
     
     private static PythonObject pythonObjectNew(PythonObject cls) {
@@ -184,6 +206,13 @@ public class PythonObject {
         return object;
     }
     
+    public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
+        PythonObject dict = new PythonDict(map);
+        dict.setAttribute("__class__", PythonObject.dict);
+        
+        return dict;
+    }
+    
     public static PythonObject newPythonInt(int value) {
         PythonObject object = new PythonInt(value);
         object.setAttribute("__class__", int0);
@@ -214,6 +243,19 @@ public class PythonObject {
         
         methods[0].setAccessible(true);
         return methods[0];
+    }
+    
+    private static class PythonDict extends PythonObject {
+        
+        private Map<PythonObject, PythonObject> map;
+        
+        private PythonDict(Map<PythonObject, PythonObject> map) {
+            this.map = map;
+        }
+        
+        private static PythonObject dictGetItem(PythonDict self, PythonObject key) {
+            return self.map.get(key);
+        }
     }
 
     private static class PythonInt extends PythonObject {
