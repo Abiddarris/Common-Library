@@ -83,7 +83,16 @@ public class PythonObject {
                 .addParameter("bases")
                 .addParameter("attributes")
                 .build()
-        ));
+        ));               
+        type.setAttribute("__getattribute__",
+            newFunction(
+                findMethod(PythonObject.class, "typeGetAttribute"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .addParameter("name")
+                    .build()
+            )
+        );
         
         /*
         type.addMethod(
@@ -130,6 +139,7 @@ public class PythonObject {
         }
         
         PythonObject type = (PythonObject)self.attributes.get("__class__");
+        
         attribute = findAttributeWithoutType(type, name);
         
         return attribute;
@@ -153,7 +163,7 @@ public class PythonObject {
         
         return null;
     }
-
+    
     protected Map<String, Object> attributes = new HashMap<>();
     
     public void addMethod(String name, PythonMethod func) {
@@ -168,25 +178,18 @@ public class PythonObject {
         attributes.put(name, obj);
     }
 
-    public Object getAttribute(String name) {
-        if (attributes.containsKey(name)) return attributes.get(name);
-
-        PythonObject bases = (PythonObject)attributes.get("__bases__");
-        if(bases != null) {
-            
-        }
+    public PythonObject getAttribute(String name) {
+        PythonObject type = (PythonObject)attributes.get("__class__");
+        PythonObject getAttributeFunction = findAttribute(type, "__getattribute__");
+        PythonObject attribute = getAttributeFunction.call(
+            new PythonParameter()
+                .addPositionalArgument(this)
+                .addPositionalArgument(
+                    PythonObject.newPythonString(name)
+                )
+        );
         
-        /*if (classes.isEmpty()) {
-            classes = List.of(object);
-        }
-        for (var class0 : classes) {
-            if (class0.hasAttribute(name)) {
-                return class0.getAttribute(name);
-            }
-        }*/
-        
-        PythonObject type = (PythonObject) attributes.get("__class__");
-        return type.getAttribute(name);
+        return attribute;
     }
 
     public boolean hasAttribute(String name) {
