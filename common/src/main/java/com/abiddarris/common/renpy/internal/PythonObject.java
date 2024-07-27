@@ -30,15 +30,21 @@ public class PythonObject {
     public static final PythonObject dict;
     
     static {
-        str = new PythonObject();
+        type = new PythonObject();
 
+        str = new PythonObject();
+        str.setAttribute("__class__", type);
+        
         int0 = new PythonObject();
+        int0.setAttribute("__class__", type);
         int0.addField("__name__", newPythonString("int"));
 
         function = new PythonObject();
+        function.setAttribute("__class__", type);
         function.addField("__name__", newPythonString("function"));
 
         object = new PythonObject();
+        object.setAttribute("__class__", type);
         object.setAttribute("__name__", newPythonString("object"));
         object.setAttribute("__new__", newFunction(
             findMethod(PythonObject.class, "pythonObjectNew"),
@@ -48,6 +54,7 @@ public class PythonObject {
         ));
         
         tuple = new PythonObject();
+        tuple.setAttribute("__class__", type);
         tuple.addField("__name__", newPythonString("tuple"));
         tuple.addField("__getitem__", newFunction(
             findMethod(PythonTuple.class, "getItem"),
@@ -64,6 +71,7 @@ public class PythonObject {
         ));
         
         dict = new PythonObject();
+        dict.setAttribute("__class__", type);
         dict.setAttribute("__name__", newPythonString("dict"));
         dict.setAttribute("__getitem__", newFunction(
             findMethod(PythonDict.class, "dictGetItem"),
@@ -73,7 +81,7 @@ public class PythonObject {
                 .build()
         ));
         
-        type = new PythonObject();
+        type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
         type.setAttribute("__new__", newFunction(
             findMethod(PythonObject.class, "typeNew"),
