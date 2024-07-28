@@ -31,7 +31,7 @@ public class PythonSignature {
     public PythonObject invoke(Method method, PythonParameter parameter) {
         List<PythonObject> arguments = parameter.positionalArguments;
         if(arguments.size() != signature.size()) {
-            throw new IllegalArgumentException("Got unexpected arguments!");
+            throw new IllegalArgumentException("Takes " + signature.size() + " argument (" + arguments.size() + " given)" );
         }
         
         try {
