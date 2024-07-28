@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 
 public class PythonObject {
 
+    private static final PythonObject method;
+    
     public static final PythonObject object;
     public static final PythonObject type;
     public static final PythonObject function;
@@ -111,6 +113,19 @@ public class PythonObject {
             )
         );
         
+        method = type.callAttribute("__new__", 
+            new PythonParameter()
+                .addPositionalArgument(type)
+                .addPositionalArgument(
+                    newPythonString("method")
+                )
+                .addPositionalArgument(
+                    newTuple(object)
+                )
+                .addPositionalArgument(
+                    newDict(emptyMap())
+                )
+        );
         /*
         type.addMethod(
                 "__call__",
@@ -164,6 +179,9 @@ public class PythonObject {
         PythonObject type = (PythonObject)self.attributes.get("__class__");
         
         attribute = findAttributeWithoutType(type, name);
+        if(attribute instanceof PythonFunction) {
+            return new PythonMethod(self, attribute);
+        }
         
         return attribute;
     }
@@ -401,5 +419,25 @@ public class PythonObject {
         public String toString() {
             return string;
         }
+    }
+    
+    private static class PythonMethod extends PythonObject {
+        
+        private PythonObject function;
+        private PythonObject self;
+        
+        public PythonMethod(PythonObject self, PythonObject function) {
+            this.self = self;
+            this.function = function;
+        }
+        
+        @Override
+        public PythonObject call(PythonParameter parameter) {
+            PythonParameter newParams = new PythonParameter(parameter);
+            newParams.insertPositionalArgument(0, self);
+            
+            return function.call(newParams);
+        }
+        
     }
 }
