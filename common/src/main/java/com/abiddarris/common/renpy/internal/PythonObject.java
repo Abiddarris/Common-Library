@@ -241,14 +241,10 @@ public class PythonObject {
     }
 
     public PythonObject getAttribute(String name) {
-        PythonObject type = (PythonObject)attributes.get("__class__");
-        PythonObject getAttributeFunction = findAttributeWithoutTypeAllowConversion(this, type, "__getattribute__");
-        PythonObject attribute = getAttributeFunction.call(
-            new PythonParameter()
-                .addPositionalArgument(
-                    PythonObject.newPythonString(name)
-                )
-        );
+        PythonObject attribute = getTypeAttribute("__getattribute__")
+            .call(new PythonParameter()
+                    .addPositionalArgument(
+                        newPythonString(name)));
         
         return attribute;
     }
@@ -296,6 +292,13 @@ public class PythonObject {
     
     private int realHashCode() {
         return super.hashCode();
+    }
+    
+    private PythonObject getTypeAttribute(String name) {
+        PythonObject type = (PythonObject)attributes.get("__class__");
+        PythonObject attribute = findAttributeWithoutTypeAllowConversion(this, type, name);
+        
+        return attribute;
     }
     
     @Override
