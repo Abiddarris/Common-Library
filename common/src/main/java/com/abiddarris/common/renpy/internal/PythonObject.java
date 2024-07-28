@@ -34,6 +34,7 @@ public class PythonObject {
     static {
         type = new PythonObject();
         object = new PythonObject();
+        tuple = new PythonObject();
 
         str = new PythonObject();
         str.setAttribute("__name__", newPythonString("str"));
@@ -73,7 +74,6 @@ public class PythonObject {
             )
         );
         
-        tuple = new PythonObject();
         tuple.setAttribute("__class__", type);
         tuple.addField("__name__", newPythonString("tuple"));
         tuple.addField("__getitem__", newFunction(
