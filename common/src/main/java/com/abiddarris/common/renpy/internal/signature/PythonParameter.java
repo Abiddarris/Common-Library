@@ -23,6 +23,9 @@ public class PythonParameter {
     
     List<PythonObject> positionalArguments = new ArrayList<>();
     
+    public PythonParameter() {
+    }
+    
     public PythonParameter(PythonParameter parameter) {
         this.positionalArguments = new ArrayList<>(parameter.positionalArguments);
     }
@@ -32,5 +35,6 @@ public class PythonParameter {
         
         return this;
     }
+    
     
 }
