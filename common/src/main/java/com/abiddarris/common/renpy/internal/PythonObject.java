@@ -224,7 +224,6 @@ public class PythonObject {
         PythonObject getAttributeFunction = findAttribute(type, "__getattribute__");
         PythonObject attribute = getAttributeFunction.call(
             new PythonParameter()
-                .addPositionalArgument(this)
                 .addPositionalArgument(
                     PythonObject.newPythonString(name)
                 )
