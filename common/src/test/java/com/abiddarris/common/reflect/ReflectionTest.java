@@ -49,10 +49,21 @@ public class ReflectionTest {
         assertNull(method);
     }
     
+    @Test
+    public void findMultipleNameMethods() {
+        assertThrows(MultipleMethodFoundException.class,
+             () -> Reflections.findMethodByName(Dog.class, "sleep"));
+    }
+    
     class Animal {
         public void blink() {}
     }
     
     class Dog extends Animal {
+        
+        public void sleep() {}
+        
+        public void sleep(long time) {}
+        
     }
 }
