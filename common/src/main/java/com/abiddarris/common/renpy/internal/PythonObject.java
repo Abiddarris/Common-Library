@@ -95,6 +95,7 @@ public class PythonObject {
         ));
         
         dict = new PythonObject();
+        dict.setAttribute("__bases__", defaultBases);
         dict.setAttribute("__class__", type);
         dict.setAttribute("__name__", newPythonString("dict"));
         dict.setAttribute("__getitem__", newFunction(
