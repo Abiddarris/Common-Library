@@ -42,6 +42,13 @@ public class ReflectionTest {
             method);
     }
     
+    @Test
+    public void findNonExistMethod() {
+        Method method = Reflections.findMethodByName(Dog.class, "jump");
+        
+        assertNull(method);
+    }
+    
     class Animal {
         public void blink() {}
     }
