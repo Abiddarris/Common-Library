@@ -297,6 +297,12 @@ public class PythonObject {
     private int realHashCode() {
         return super.hashCode();
     }
+    
+    @Override
+    public int hashCode() {
+        return unpackPythonInt(callAttribute(
+                "__hash__", new PythonParameter()));
+    }
 
     @Override
     public String toString() {
