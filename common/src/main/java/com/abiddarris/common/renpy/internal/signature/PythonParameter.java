@@ -36,5 +36,13 @@ public class PythonParameter {
         return this;
     }
     
+    public PythonParameter insertPositionalArgument(int index, PythonObject argument) {
+        if(index > positionalArguments.size()) {
+            throw new IllegalArgumentException("Cannot insert to index greater than positional argument size!");
+        }
+        positionalArguments.add(index, argument);
+        
+        return this;
+    }
     
 }
