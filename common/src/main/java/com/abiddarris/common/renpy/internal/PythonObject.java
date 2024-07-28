@@ -78,6 +78,7 @@ public class PythonObject {
         );
         
         tuple.setAttribute("__class__", type);
+        tuple.setAttribute("__bases__", defaultBases);
         tuple.addField("__name__", newPythonString("tuple"));
         tuple.addField("__getitem__", newFunction(
             findMethod(PythonTuple.class, "getItem"),
