@@ -246,6 +246,11 @@ public class PythonObject {
 
         return invokeStaticMethod("__call__", args2, kwargs);
     }
+    
+    public PythonObject callAttribute(String name, PythonParameter parameter) {
+        PythonObject object = getAttribute(name);
+        return object.call(parameter);
+    }
 
     public PythonObject call(PythonParameter parameter) {
         throw new UnsupportedOperationException();
@@ -391,8 +396,6 @@ public class PythonObject {
         public PythonString(String string) {
             this.string = string;
         }
-        
-        
 
         @Override
         public String toString() {
