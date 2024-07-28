@@ -23,6 +23,10 @@ public class PythonParameter {
     
     List<PythonObject> positionalArguments = new ArrayList<>();
     
+    public PythonParameter(PythonParameter parameter) {
+        this.positionalArguments = new ArrayList<>(parameter.positionalArguments);
+    }
+    
     public PythonParameter addPositionalArgument(PythonObject argument) {
         positionalArguments.add(argument);
         
