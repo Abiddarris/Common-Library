@@ -178,7 +178,11 @@ public class PythonObject {
         
         PythonObject type = (PythonObject)self.attributes.get("__class__");
         
-        attribute = findAttributeWithoutType(type, name);
+        return findAttributeWithoutTypeAllowConversion(self, type, name);
+    }
+    
+    private static PythonObject findAttributeWithoutTypeAllowConversion(PythonObject self, PythonObject type, String name) {
+        PythonObject attribute = findAttributeWithoutType(type, name);
         if(attribute instanceof PythonFunction) {
             return new PythonMethod(self, attribute);
         }
@@ -221,7 +225,7 @@ public class PythonObject {
 
     public PythonObject getAttribute(String name) {
         PythonObject type = (PythonObject)attributes.get("__class__");
-        PythonObject getAttributeFunction = findAttribute(type, "__getattribute__");
+        PythonObject getAttributeFunction = findAttributeWithoutTypeAllowConversion(type, this, "__getattribute__");
         PythonObject attribute = getAttributeFunction.call(
             new PythonParameter()
                 .addPositionalArgument(
