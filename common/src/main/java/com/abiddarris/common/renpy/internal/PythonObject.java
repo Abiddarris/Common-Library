@@ -39,7 +39,7 @@ public class PythonObject {
         PythonObject defaultBases = newTuple(object);
 
         str = new PythonObject();
-        
+        str.setAttribute("__bases__", defaultBases);
         str.setAttribute("__name__", newPythonString("str"));
         str.setAttribute("__class__", type);
         
