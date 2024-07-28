@@ -108,6 +108,7 @@ public class PythonObject {
                 .build()
         ));
         
+        type.setAttribute("__bases__", defaultBases);
         type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
         type.setAttribute("__new__", newFunction(
