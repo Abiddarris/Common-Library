@@ -33,5 +33,19 @@ public class ReflectionTest {
             method);
     }
     
-
+    @Test
+    public void findMethodInTheClassParent() throws NoSuchMethodException {
+        Method method = Reflections.findMethodByName(Dog.class, "blink");
+        
+        assertEquals(
+            Animal.class.getDeclaredMethod("blink"),
+            method);
+    }
+    
+    class Animal {
+        public void blink() {}
+    }
+    
+    class Dog extends Animal {
+    }
 }
