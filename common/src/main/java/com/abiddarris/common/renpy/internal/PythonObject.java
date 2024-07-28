@@ -234,7 +234,7 @@ public class PythonObject {
 
     public PythonObject getAttribute(String name) {
         PythonObject type = (PythonObject)attributes.get("__class__");
-        PythonObject getAttributeFunction = findAttributeWithoutTypeAllowConversion(type, this, "__getattribute__");
+        PythonObject getAttributeFunction = findAttributeWithoutTypeAllowConversion(this, type, "__getattribute__");
         PythonObject attribute = getAttributeFunction.call(
             new PythonParameter()
                 .addPositionalArgument(
