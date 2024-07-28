@@ -33,6 +33,7 @@ public class PythonObject {
     
     static {
         type = new PythonObject();
+        object = new PythonObject();
 
         str = new PythonObject();
         str.setAttribute("__name__", newPythonString("str"));
@@ -46,7 +47,6 @@ public class PythonObject {
         function.setAttribute("__class__", type);
         function.addField("__name__", newPythonString("function"));
 
-        object = new PythonObject();
         object.setAttribute("__class__", type);
         object.setAttribute("__name__", newPythonString("object"));
         object.setAttribute("__new__", newFunction(
