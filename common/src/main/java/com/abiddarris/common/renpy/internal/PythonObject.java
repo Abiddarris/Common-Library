@@ -306,8 +306,7 @@ public class PythonObject {
     
     @Override
     public int hashCode() {
-        return unpackPythonInt(callAttribute(
-                "__hash__", new PythonParameter()));
+        return unpackPythonInt(callTypeAttribute("__hash__", new PythonParameter()));
     }
 
     @Override
