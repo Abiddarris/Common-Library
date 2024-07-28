@@ -63,6 +63,15 @@ public class PythonObject {
                     .build()
             )
         );
+        object.setAttribute("__getattribute__", 
+            newFunction(
+                findMethod(PythonObject.class, "typeGetAttribute"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .addParameter("name")
+                    .build()
+            )
+        );
         
         tuple = new PythonObject();
         tuple.setAttribute("__class__", type);
