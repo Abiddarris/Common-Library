@@ -241,10 +241,9 @@ public class PythonObject {
     }
 
     public PythonObject getAttribute(String name) {
-        PythonObject attribute = getTypeAttribute("__getattribute__")
-            .call(new PythonParameter()
-                    .addPositionalArgument(
-                        newPythonString(name)));
+        PythonObject attribute = callTypeAttribute("__getattribute__",
+            new PythonParameter()
+                .addPositionalArgument(newPythonString(name)));
         
         return attribute;
     }
@@ -292,6 +291,10 @@ public class PythonObject {
     
     private int realHashCode() {
         return super.hashCode();
+    }
+    
+    private PythonObject callTypeAttribute(String name, PythonParameter parameter) {
+        return getTypeAttribute(name).call(parameter);
     }
     
     private PythonObject getTypeAttribute(String name) {
