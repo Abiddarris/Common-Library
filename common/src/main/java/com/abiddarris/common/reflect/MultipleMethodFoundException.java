@@ -15,6 +15,13 @@
  ***********************************************************************************/
 package com.abiddarris.common.reflect;
 
+/**
+ * This {@code Exception} will be thrown when {@code Reflections} encounters
+ * two methods or more with same name.
+ *
+ * @author Abiddarris
+ * @since 1.0
+ */
 public class MultipleMethodFoundException extends RuntimeException {
     
     public MultipleMethodFoundException() {
