@@ -19,6 +19,7 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class PythonParameter {
     
     List<PythonObject> positionalArguments = new ArrayList<>();
