@@ -17,9 +17,11 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.reflect.Reflections.findMethodByName;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
@@ -28,6 +30,7 @@ import org.junit.jupiter.api.Test;
 public class PythonFunctionTest {
     
     private static boolean noParameterTestFunctionCalled;
+    private static PythonObject oneParameterTestFunctionResult;
     
     @Test
     public void noParameterTest() {
@@ -39,8 +42,28 @@ public class PythonFunctionTest {
         assertTrue(noParameterTestFunctionCalled);
     }
     
+    @Test
+    public void oneParameterTest() {
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "oneParameterTestFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("object")
+                .build());
+        
+        PythonObject arg = newString("Dog");
+        
+        function.call(new PythonArgument()
+            .addPositionalArgument(arg));
+        
+        assertEquals(arg, oneParameterTestFunctionResult);
+    }
+    
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
+    }
+    
+    public static void oneParameterTestFunction(PythonObject object) {
+        oneParameterTestFunctionResult = object;
     }
     
 }
