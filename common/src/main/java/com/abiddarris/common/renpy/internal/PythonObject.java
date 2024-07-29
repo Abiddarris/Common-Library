@@ -318,7 +318,7 @@ public class PythonObject {
         return new PythonFunction(javaMethod, signature);
     }
 
-    public static PythonObject newPythonString(String string) {
+    public static PythonObject newString(String string) {
         PythonString object = new PythonString(string);
         object.setAttribute("__class__", str);
 
@@ -344,6 +344,10 @@ public class PythonObject {
         object.setAttribute("__class__", int0);
 
         return object;
+    }
+    
+    public static PythonObject newPythonString(String string) {
+        return newString(string);
     }
     
     public static PythonObject newPythonInt(int value) {
