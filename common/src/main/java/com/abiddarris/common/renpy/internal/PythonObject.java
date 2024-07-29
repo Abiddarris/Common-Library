@@ -339,11 +339,15 @@ public class PythonObject {
         return dict;
     }
     
-    public static PythonObject newPythonInt(int value) {
+    public static PythonObject newInt(int value) {
         PythonObject object = new PythonInt(value);
         object.setAttribute("__class__", int0);
 
         return object;
+    }
+    
+    public static PythonObject newPythonInt(int value) {
+        return newInt(value);
     }
     
     public static int unpackPythonInt(PythonObject integer) {
