@@ -17,25 +17,46 @@ package com.abiddarris.common.renpy.internal.signature;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class PythonSignature {
     
+    private List<String> keywords;
     private Map<String, PythonObject> signature;
     
     PythonSignature(Map<String, PythonObject> signature) {
         this.signature = signature;
+        
+        keywords = new ArrayList<>(signature.keySet());
     }
     
     public PythonObject invoke(Method method, PythonParameter parameter) {
-        List<PythonObject> arguments = parameter.positionalArguments;
-        if(arguments.size() != signature.size()) {
-            throw new IllegalArgumentException("Takes " + signature.size() + " argument (" + arguments.size() + " given)" );
+        Map<String, PythonObject> arguments = new LinkedHashMap<>();
+        List<PythonObject> positionalArgument = parameter.positionalArguments;
+        
+        for(int i = 0; i < positionalArgument.size(); ++i) {
+        	arguments.put(keywords.get(i), positionalArgument.get(i));
         }
         
+        Map<String, PythonObject> keywordArguments = parameter.keywordArguments;
+        keywordArguments.forEach((keyword, argument) -> {
+            if(!keywords.contains(keyword)) {
+                throw new IllegalArgumentException();
+            }
+            
+            if(arguments.containsKey(keyword)) {
+                throw new IllegalArgumentException();
+            }    
+                
+            arguments.put(keyword, argument);
+        });
+        
         try {
-            return (PythonObject)method.invoke(null, arguments.toArray(Object[]::new));
+            return (PythonObject)method.invoke(null, arguments.values().toArray(Object[]::new));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
