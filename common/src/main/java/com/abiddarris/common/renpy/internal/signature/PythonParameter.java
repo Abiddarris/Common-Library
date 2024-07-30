@@ -17,12 +17,15 @@ package com.abiddarris.common.renpy.internal.signature;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Deprecated
 public class PythonParameter {
     
     List<PythonObject> positionalArguments = new ArrayList<>();
+    Map<String, PythonObject> keywordArguments = new HashMap<>();
     
     public PythonParameter() {
     }
@@ -46,4 +49,9 @@ public class PythonParameter {
         return this;
     }
     
+    public PythonParameter addKeywordArgument(String key, PythonObject argument) {
+        keywordArguments.put(key, argument);
+        
+        return this;
+    }
 }
