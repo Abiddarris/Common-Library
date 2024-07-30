@@ -58,6 +58,25 @@ public class PythonFunctionTest {
         assertEquals(arg, oneParameterTestFunctionResult);
     }
     
+    @Test
+    public void oneParameterUseKeywordArgumentTest() {
+        oneParameterTestFunctionResult = null;
+        
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "oneParameterTestFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("object")
+                .build());
+        
+        PythonObject arg = newString("Dog");
+        
+        function.call(new PythonArgument()
+            .addKeywordArgument("object", arg));
+        
+        assertEquals(arg, oneParameterTestFunctionResult);
+    }
+    
+    
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
     }
