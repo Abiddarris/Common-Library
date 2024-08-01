@@ -83,7 +83,7 @@ public class PythonObject {
         tuple.setAttribute("__bases__", defaultBases);
         tuple.addField("__name__", newPythonString("tuple"));
         tuple.addField("__getitem__", newFunction(
-            findMethod(PythonTuple.class, "getItem"),
+            findMethod(PythonTuple.class, "getitem"),
             new PythonSignatureBuilder()  
                 .addParameter("self")    
                 .addParameter("index")
@@ -346,6 +346,11 @@ public class PythonObject {
         return object;
     }
     
+    public static PythonObject getItem(PythonObject item, PythonObject key) {
+        return item.callAttribute("__getitem__", new PythonParameter()
+            .addPositionalArgument(key));
+    }
+    
     public static PythonObject newPythonString(String string) {
         return newString(string);
     }
@@ -409,7 +414,7 @@ public class PythonObject {
             this.elements = elements;
         }
         
-        private static PythonObject getItem(PythonObject self, PythonObject pos) {
+        private static PythonObject getitem(PythonObject self, PythonObject pos) {
             if(!(self instanceof PythonTuple)) {
                 throw new IllegalArgumentException("Error");
             }
