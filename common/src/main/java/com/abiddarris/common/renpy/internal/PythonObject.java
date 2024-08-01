@@ -355,6 +355,7 @@ public class PythonObject {
         return newString(string);
     }
     
+    @Deprecated
     public static PythonObject newPythonInt(int value) {
         return newInt(value);
     }
