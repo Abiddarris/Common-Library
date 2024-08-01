@@ -18,6 +18,8 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.reflect.Reflections.findMethodByName;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.getItem;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +33,7 @@ public class PythonFunctionTest {
     
     private static boolean noParameterTestFunctionCalled;
     private static PythonObject oneParameterTestFunctionResult;
+    private static PythonObject varPositionalParametersFunction;
     
     @Test
     public void noParameterTest() {
@@ -76,6 +79,30 @@ public class PythonFunctionTest {
         assertEquals(arg, oneParameterTestFunctionResult);
     }
     
+    @Test
+    public void parameters() {
+        varPositionalParametersFunction = null;
+        
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "varPositionalParametersFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("*dict")
+                .build());
+        
+        PythonObject arg = newString("Dog");
+        PythonObject arg1 = newString("Doggy");
+        PythonObject arg2 = newString("Puppy");
+        
+        function.call(new PythonArgument()
+            .addPositionalArgument(arg)
+            .addPositionalArgument(arg1)
+            .addPositionalArgument(arg2));
+        
+        assertEquals(arg, getItem(varPositionalParametersFunction, newInt(0)));
+        assertEquals(arg1, getItem(varPositionalParametersFunction, newInt(1)));
+        assertEquals(arg2, getItem(varPositionalParametersFunction, newInt(2)));
+        
+    }
     
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
@@ -83,6 +110,10 @@ public class PythonFunctionTest {
     
     public static void oneParameterTestFunction(PythonObject object) {
         oneParameterTestFunctionResult = object;
+    }
+    
+    public static void varPositionalParametersFunction(PythonObject dict) {
+        varPositionalParametersFunction = dict;
     }
     
 }
