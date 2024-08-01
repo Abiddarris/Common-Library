@@ -351,6 +351,7 @@ public class PythonObject {
             .addPositionalArgument(key));
     }
     
+    @Deprecated
     public static PythonObject newPythonString(String string) {
         return newString(string);
     }
