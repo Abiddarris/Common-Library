@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -37,23 +39,28 @@ public class PythonSignature {
     public PythonObject invoke(Method method, PythonParameter parameter) {
         Map<String, PythonObject> arguments = new LinkedHashMap<>();
         List<PythonObject> positionalArgument = parameter.positionalArguments;
+        Map<String, PythonObject> keywordArguments = parameter.keywordArguments;
         
-        for(int i = 0; i < positionalArgument.size(); ++i) {
-        	arguments.put(keywords.get(i), positionalArgument.get(i));
+        if(keywords.size() == 0 && (positionalArgument.size() != 0 || keywordArguments.size() != 0)) {
+            throw new IllegalArgumentException("takes 0 positional arguments but " + positionalArgument.size() + " was given");
         }
         
-        Map<String, PythonObject> keywordArguments = parameter.keywordArguments;
-        keywordArguments.forEach((keyword, argument) -> {
-            if(!keywords.contains(keyword)) {
-                throw new IllegalArgumentException();
+        boolean searchInKeywordArguments = false;
+        for(int i = 0; i < keywords.size(); ++i) {
+            String keyword = keywords.get(i);
+            if(i == positionalArgument.size()) {
+                searchInKeywordArguments = true;
             }
             
-            if(arguments.containsKey(keyword)) {
-                throw new IllegalArgumentException();
-            }    
-                
-            arguments.put(keyword, argument);
-        });
+            if(keyword.startsWith("*")) {
+                arguments.put(keyword, newTuple(positionalArgument.subList(i, positionalArgument.size())
+                        .toArray(PythonObject[]::new)));
+                searchInKeywordArguments = true;
+                break;
+            }
+            PythonObject arg = searchInKeywordArguments ? keywordArguments.get(keyword) : positionalArgument.get(i);
+        	arguments.put(keyword, arg);
+        }
         
         try {
             return (PythonObject)method.invoke(null, arguments.values().toArray(Object[]::new));
