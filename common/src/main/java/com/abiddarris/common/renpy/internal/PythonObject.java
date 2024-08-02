@@ -43,6 +43,10 @@ public class PythonObject {
         str.setAttribute("__bases__", defaultBases);
         str.setAttribute("__name__", newPythonString("str"));
         str.setAttribute("__class__", type);
+        str.setAttribute("__hash__", newFunction(findMethod(PythonString.class, "stringHash"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .build()));
         
         int0 = new PythonObject();
         int0.setAttribute("__bases__", defaultBases);
@@ -457,6 +461,10 @@ public class PythonObject {
 
         public PythonString(String string) {
             this.string = string;
+        }
+        
+        private static PythonObject stringHash(PythonString self) {
+            return newInt(self.string.hashCode());
         }
 
         @Override
