@@ -371,6 +371,10 @@ public class PythonObject {
         return object;
     }
     
+    public static PythonObject newBoolean(boolean val) { 
+        return val ? True : False;
+    }
+    
     public static PythonObject getItem(PythonObject item, PythonObject key) {
         return item.callAttribute("__getitem__", new PythonParameter()
             .addPositionalArgument(key));
