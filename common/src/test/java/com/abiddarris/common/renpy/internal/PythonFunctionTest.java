@@ -34,6 +34,7 @@ public class PythonFunctionTest {
     private static boolean noParameterTestFunctionCalled;
     private static PythonObject oneParameterTestFunctionResult;
     private static PythonObject varPositionalParametersFunction;
+    private static PythonObject varKeywordArgument;
     
     @Test
     public void noParameterTest() {
@@ -101,7 +102,27 @@ public class PythonFunctionTest {
         assertEquals(arg, getItem(varPositionalParametersFunction, newInt(0)));
         assertEquals(arg1, getItem(varPositionalParametersFunction, newInt(1)));
         assertEquals(arg2, getItem(varPositionalParametersFunction, newInt(2)));
+    }
+    
+    @Test
+    public void varKeywordArgumentTest() {
+        varKeywordArgument = null;
         
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "varKeywordArgumentFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("**kwargs")
+                .build());
+        
+        PythonObject val1 = newString("12:00");
+        PythonObject val2 = newString("24:00");
+        
+        function.call(new PythonArgument()
+                        .addKeywordArgument("Day", val1)
+                        .addKeywordArgument("Night", val2));
+        
+        assertEquals(val1, getItem(varKeywordArgument, newString("Day")));
+        assertEquals(val2, getItem(varKeywordArgument, newString("Night")));
     }
     
     public static void noParameterTestFunction() {
@@ -116,4 +137,7 @@ public class PythonFunctionTest {
         varPositionalParametersFunction = dict;
     }
     
+    public static void varKeywordArgumentFunction(PythonObject dict) {
+        varKeywordArgument = dict;
+    }
 }
