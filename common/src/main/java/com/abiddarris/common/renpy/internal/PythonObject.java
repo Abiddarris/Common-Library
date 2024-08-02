@@ -35,6 +35,7 @@ public class PythonObject {
         type = new PythonObject();
         object = new PythonObject();
         tuple = new PythonObject();
+        function = new PythonObject();
         
         PythonObject defaultBases = newTuple(object);
 
@@ -48,7 +49,6 @@ public class PythonObject {
         int0.setAttribute("__class__", type);
         int0.addField("__name__", newPythonString("int"));
 
-        function = new PythonObject();
         function.setAttribute("__bases__", defaultBases);
         function.setAttribute("__class__", type);
         function.addField("__name__", newPythonString("function"));
