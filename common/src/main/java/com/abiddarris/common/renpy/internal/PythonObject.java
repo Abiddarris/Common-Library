@@ -178,9 +178,7 @@ public class PythonObject {
     }
     
     private static PythonObject objectHash(PythonObject self) {
-        return newPythonInt(
-            self.realHashCode()
-        );
+        return newPythonInt(self.getHashCode());
     }
     
     public static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
@@ -289,7 +287,7 @@ public class PythonObject {
         throw new UnsupportedOperationException();
     }
     
-    private int realHashCode() {
+    private int getHashCode() {
         return super.hashCode();
     }
     
