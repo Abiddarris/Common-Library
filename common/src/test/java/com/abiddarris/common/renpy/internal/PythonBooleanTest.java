@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.bool;
+import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,5 +44,11 @@ public class PythonBooleanTest {
             .addPositionalArgument(True));
         
         assertEquals(True, result);
+    }
+    
+    @Test
+    public void newBoolean_indirect() {
+        assertEquals(False, newBoolean(false));
+        assertEquals(True, newBoolean(true));
     }
 }
