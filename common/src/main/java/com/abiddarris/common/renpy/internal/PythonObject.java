@@ -157,6 +157,10 @@ public class PythonObject {
             .addPositionalArgument(newString("bool"))
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
+        bool.setAttribute("__bool__", newFunction(findMethod(PythonBoolean.class, "toBoolean"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .build()));
         False = new PythonBoolean();
         True = new PythonBoolean();
         /*
@@ -509,6 +513,10 @@ public class PythonObject {
         
         private PythonBoolean() {
             setAttribute("__class__", bool);
+        }
+        
+        private static PythonObject toBoolean(PythonObject self) {
+            return self;
         }
         
     }
