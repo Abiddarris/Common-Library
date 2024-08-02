@@ -314,6 +314,19 @@ public class PythonObject {
         throw new UnsupportedOperationException();
     }
     
+    public boolean toBoolean() {
+        PythonObject boolMethod = getAttribute("__bool__");
+        if(boolMethod == null) {
+            return true;
+        }
+        
+        PythonObject bool = boolMethod.call(new PythonArgument());
+        if(!(bool instanceof PythonBoolean)) {
+            throw new IllegalArgumentException();
+        }
+        return bool == False ? false : true;
+    }
+    
     private int getHashCode() {
         return super.hashCode();
     }
