@@ -2,6 +2,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -30,6 +31,7 @@ public class PythonObject {
     public static final PythonObject tuple;
     public static final PythonObject int0;
     public static final PythonObject dict;
+    public static final PythonObject bool;
     
     static {
         type = new PythonObject();
@@ -147,6 +149,13 @@ public class PythonObject {
                     newDict(emptyMap())
                 )
         );
+        
+        bool = type.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(type)
+            .addPositionalArgument(newString("bool"))
+            .addPositionalArgument(newTuple(int0))
+            .addPositionalArgument(newDict(emptyMap())));
+        
         /*
         type.addMethod(
                 "__call__",
@@ -466,7 +475,7 @@ public class PythonObject {
         private static PythonObject stringHash(PythonString self) {
             return newInt(self.string.hashCode());
         }
-
+        
         @Override
         public String toString() {
             return string;
