@@ -36,4 +36,12 @@ public class PythonBooleanTest {
         assertEquals(False, result);
     }
     
+    @Test
+    public void newBoolean_fromTrue_directBoolCall() {
+        PythonObject result = bool.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(bool)
+            .addPositionalArgument(True));
+        
+        assertEquals(True, result);
+    }
 }
