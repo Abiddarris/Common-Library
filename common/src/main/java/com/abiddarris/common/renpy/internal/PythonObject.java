@@ -157,10 +157,17 @@ public class PythonObject {
             .addPositionalArgument(newString("bool"))
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
-        bool.setAttribute("__bool__", newFunction(findMethod(PythonBoolean.class, "toBoolean"),
+        bool.setAttribute("__new__", newFunction(findMethod(PythonBoolean.class, "newBoolean"), 
+            new PythonSignatureBuilder()
+                .addParameter("cls")
+                .addParameter("obj")
+                .build()));
+        bool.setAttribute("__bool__", newFunction(
+                findMethod(PythonBoolean.class, "toBoolean"),
                 new PythonSignatureBuilder()
                     .addParameter("self")
                     .build()));
+        
         False = new PythonBoolean();
         True = new PythonBoolean();
         /*
@@ -513,6 +520,14 @@ public class PythonObject {
         
         private PythonBoolean() {
             setAttribute("__class__", bool);
+        }
+        
+        private static PythonObject newBoolean(PythonObject cls, PythonObject obj) {
+            if(obj instanceof PythonBoolean) {
+                return obj;
+            }
+            
+            return obj.callTypeAttribute("__bool__", new PythonParameter());
         }
         
         private static PythonObject toBoolean(PythonObject self) {
