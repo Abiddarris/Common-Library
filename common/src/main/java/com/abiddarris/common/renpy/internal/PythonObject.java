@@ -157,8 +157,8 @@ public class PythonObject {
             .addPositionalArgument(newString("bool"))
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
-        False = new PythonBoolean(false);
-        True = new PythonBoolean(true);
+        False = new PythonBoolean();
+        True = new PythonBoolean();
         /*
         type.addMethod(
                 "__call__",
@@ -507,11 +507,7 @@ public class PythonObject {
     
     private static class PythonBoolean extends PythonObject {
         
-        private boolean jBoolean;
-        
-        private PythonBoolean(boolean jBoolean) {
-            this.jBoolean = jBoolean;
-            
+        private PythonBoolean() {
             setAttribute("__class__", bool);
         }
         
