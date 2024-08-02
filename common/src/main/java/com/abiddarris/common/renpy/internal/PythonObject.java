@@ -32,6 +32,7 @@ public class PythonObject {
     public static final PythonObject int0;
     public static final PythonObject dict;
     public static final PythonObject bool;
+    public static final PythonObject False;
     
     static {
         type = new PythonObject();
@@ -155,7 +156,7 @@ public class PythonObject {
             .addPositionalArgument(newString("bool"))
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
-        
+        False = new PythonBoolean(false);
         /*
         type.addMethod(
                 "__call__",
@@ -498,6 +499,18 @@ public class PythonObject {
             newParams.insertPositionalArgument(0, self);
             
             return function.call(newParams);
+        }
+        
+    }
+    
+    private static class PythonBoolean extends PythonObject {
+        
+        private boolean jBoolean;
+        
+        private PythonBoolean(boolean jBoolean) {
+            this.jBoolean = jBoolean;
+            
+            setAttribute("__class__", bool);
         }
         
     }
