@@ -16,6 +16,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.newPythonString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,14 @@ public class PythonString {
         PythonObject home = newPythonString("Home");
         
         assertEquals(home.toString(), "Home");
+    }
+    
+    @Test
+    public void isHashCodeEquals() {
+        PythonObject dog = newString("Dog");
+        PythonObject dog2 = newString("Dog");
+        
+        assertEquals(dog.hashCode(), dog2.hashCode());
     }
     
 }
