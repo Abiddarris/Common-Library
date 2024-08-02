@@ -15,9 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,33 +40,39 @@ public class PythonSignature {
     }
     
     public PythonObject invoke(Method method, PythonParameter parameter) {
-        Map<String, PythonObject> arguments = new LinkedHashMap<>();
-        List<PythonObject> positionalArgument = parameter.positionalArguments;
-        Map<String, PythonObject> keywordArguments = parameter.keywordArguments;
+        PythonObject[] args = new PythonObject[signature.size()];
+        List<PythonObject> posArgs = new ArrayList<>(parameter.positionalArguments);
+        Map<String, PythonObject> keywordArgs = new HashMap<>(parameter.keywordArguments);
         
-        if(keywords.size() == 0 && (positionalArgument.size() != 0 || keywordArguments.size() != 0)) {
-            throw new IllegalArgumentException("takes 0 positional arguments but " + positionalArgument.size() + " was given");
+        if(keywords.size() == 0 && (posArgs.size() != 0 || keywordArgs.size() != 0)) {
+            throw new IllegalArgumentException("takes 0 positional arguments but " + posArgs.size() + " was given");
         }
         
-        boolean searchInKeywordArguments = false;
         for(int i = 0; i < keywords.size(); ++i) {
             String keyword = keywords.get(i);
-            if(i == positionalArgument.size()) {
-                searchInKeywordArguments = true;
+            
+            if(keyword.startsWith("**")) {
+                Map<PythonObject, PythonObject> dict = new HashMap<>();
+                keywordArgs.forEach((k, v) -> dict.put(newString(k), v));
+                keywordArgs.clear();
+                
+                args[i] = newDict(dict);
+                break;
             }
             
             if(keyword.startsWith("*")) {
-                arguments.put(keyword, newTuple(positionalArgument.subList(i, positionalArgument.size())
-                        .toArray(PythonObject[]::new)));
-                searchInKeywordArguments = true;
-                break;
+                args[i] = newTuple(posArgs.toArray(PythonObject[]::new));
+                posArgs.clear();
+                
+                continue;
             }
-            PythonObject arg = searchInKeywordArguments ? keywordArguments.get(keyword) : positionalArgument.get(i);
-        	arguments.put(keyword, arg);
+            
+            PythonObject arg = posArgs.isEmpty() ? keywordArgs.remove(keyword) : posArgs.remove(0);
+        	args[i] = arg;
         }
         
         try {
-            return (PythonObject)method.invoke(null, arguments.values().toArray(Object[]::new));
+            return (PythonObject)method.invoke(null, (Object[])args);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
