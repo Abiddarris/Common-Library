@@ -33,6 +33,7 @@ public class PythonObject {
     public static final PythonObject dict;
     public static final PythonObject bool;
     public static final PythonObject False;
+    public static final PythonObject True;
     
     static {
         type = new PythonObject();
@@ -157,6 +158,7 @@ public class PythonObject {
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
         False = new PythonBoolean(false);
+        True = new PythonBoolean(true);
         /*
         type.addMethod(
                 "__call__",
