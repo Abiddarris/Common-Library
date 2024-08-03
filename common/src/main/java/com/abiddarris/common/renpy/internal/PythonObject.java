@@ -9,6 +9,7 @@ import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -433,6 +434,10 @@ public class PythonObject {
     
     public static PythonObject newBoolean(boolean val) { 
         return val ? True : False;
+    }
+    
+    public static ExceptFinally tryExcept(Runnable tryRunnable) {
+        return new ExceptFinally(tryRunnable);
     }
     
     public static PythonObject getItem(PythonObject item, PythonObject key) {
