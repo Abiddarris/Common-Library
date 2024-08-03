@@ -360,6 +360,9 @@ public class PythonObject {
             .addPositionalArgument(key));
     }
     
+    public void raise() {
+    }
+    
     private int getHashCode() {
         return super.hashCode();
     }
@@ -622,5 +625,9 @@ public class PythonObject {
             return new PythonBaseException(args);
         }
         
+        @Override
+        public void raise() {
+            throw new PythonException(this, args.toString());
+        }
     }
 }
