@@ -93,6 +93,13 @@ public class PythonObject {
                     .build()
             )
         );
+        object.setAttribute("__eq__", newFunction(
+            findMethod(PythonObject.class, "eq"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .addParameter("obj")
+                .build()
+        ));
         
         tuple.setAttribute("__class__", type);
         tuple.setAttribute("__bases__", defaultBases);
@@ -427,6 +434,10 @@ public class PythonObject {
         }
         
         return ((PythonInt)integer).value;
+    }
+    
+    private static PythonObject eq(PythonObject self, PythonObject obj) {
+        return newBoolean(self == obj);
     }
     
     private static Method findMethod(Class source, String name) {
