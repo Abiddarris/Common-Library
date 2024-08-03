@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 public class PythonFunctionTest {
     
     private static boolean noParameterTestFunctionCalled;
+    private static boolean arg_varPosArg_andVarKeyArg_function_called;
     private static PythonObject oneParameterTestFunctionResult;
     private static PythonObject varPositionalParametersFunction;
     private static PythonObject varKeywordArgument;
@@ -125,6 +126,26 @@ public class PythonFunctionTest {
         assertEquals(val2, getItem(varKeywordArgument, newString("Night")));
     }
     
+    @Test
+    public void arg_varPosArg_andVarKeyArg() {
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "arg_varPosArg_andVarKeyArg_function"),
+            new PythonSignatureBuilder()
+                .addParameter("arg1")
+                .addParameter("*args")
+                .addParameter("**kwargs")
+                .build());
+        
+        function.call(new PythonArgument()
+                .addPositionalArgument(newString("Cat"))
+                .addPositionalArgument(newString("Dog"))
+                .addPositionalArgument(newString("Wolf"))
+                .addKeywordArgument("time", newString("12:00"))
+                .addKeywordArgument("day_count", newString("100")));
+        
+        assertTrue(arg_varPosArg_andVarKeyArg_function_called);
+    }
+    
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
     }
@@ -139,5 +160,15 @@ public class PythonFunctionTest {
     
     public static void varKeywordArgumentFunction(PythonObject dict) {
         varKeywordArgument = dict;
+    }
+    
+    public static void arg_varPosArg_andVarKeyArg_function(PythonObject arg1, PythonObject args, PythonObject kwargs) {
+        arg_varPosArg_andVarKeyArg_function_called = true;
+        
+        assertEquals(newString("Cat"), arg1);
+        assertEquals(newString("Dog"), args.getItem(newInt(0)));
+        assertEquals(newString("Wolf"), args.getItem(newInt(1)));
+        assertEquals(newString("12:00"), kwargs.getItem(newString("time")));
+        assertEquals(newString("100"), kwargs.getItem(newString("day_count")));
     }
 }
