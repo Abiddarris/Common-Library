@@ -341,6 +341,11 @@ public class PythonObject {
         return bool == False ? false : true;
     }
     
+    public PythonObject getItem(PythonObject key) {
+        return callAttribute("__getitem__", new PythonArgument()
+            .addPositionalArgument(key));
+    }
+    
     private int getHashCode() {
         return super.hashCode();
     }
@@ -414,8 +419,7 @@ public class PythonObject {
     }
     
     public static PythonObject getItem(PythonObject item, PythonObject key) {
-        return item.callAttribute("__getitem__", new PythonParameter()
-            .addPositionalArgument(key));
+        return item.getItem(key);
     }
     
     @Deprecated
