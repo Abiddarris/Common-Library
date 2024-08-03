@@ -38,4 +38,11 @@ public class PythonString {
         assertEquals(dog.hashCode(), dog2.hashCode());
     }
     
+    @Test
+    public void equals_toSameString() {
+    	PythonObject dog = newString("Dog");
+        PythonObject dog2 = newString("Dog");
+        
+        assertEquals(dog, dog2);
+    }
 }
