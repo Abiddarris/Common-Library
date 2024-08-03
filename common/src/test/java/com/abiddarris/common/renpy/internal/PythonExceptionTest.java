@@ -16,13 +16,17 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.Exception;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PythonExceptionTest {
     
@@ -36,6 +40,23 @@ public class PythonExceptionTest {
         } catch (PythonException e) {
             assertEquals(exception, e.getException());
         }
+    }
+    
+    @Test
+    public void tryExceptTest() {
+        AtomicBoolean catchCalled = new AtomicBoolean(false);
+        PythonObject except = Exception.callAttribute("__new__", new PythonArgument());
+        tryExcept(() -> {
+            except.raise();
+        })
+        .onExcept((e -> {
+            catchCalled.set(true);
+                
+            assertEquals(except, e);
+        }), Exception)
+        .execute();
+        
+        assertTrue(catchCalled.get());
     }
     
 }
