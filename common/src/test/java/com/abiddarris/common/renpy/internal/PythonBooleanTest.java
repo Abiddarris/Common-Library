@@ -51,4 +51,10 @@ public class PythonBooleanTest {
         assertEquals(False, newBoolean(false));
         assertEquals(True, newBoolean(true));
     }
+    
+    @Test
+    public void boolean_toBoolean() {
+        assertEquals(false, False.toBoolean());
+        assertEquals(true, True.toBoolean());
+    }
 }
