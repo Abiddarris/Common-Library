@@ -51,6 +51,13 @@ public class PythonObject {
             new PythonSignatureBuilder()
                 .addParameter("self")
                 .build()));
+        str.setAttribute("__eq__", newFunction(
+            findMethod(PythonString.class, "stringEq"),
+            new PythonSignatureBuilder() 
+                .addParameter("self")
+                .addParameter("obj")
+                .build()  
+        ));
         
         int0 = new PythonObject();
         int0.setAttribute("__bases__", defaultBases);
@@ -505,6 +512,14 @@ public class PythonObject {
         
         private static PythonObject stringHash(PythonString self) {
             return newInt(self.string.hashCode());
+        }
+        
+        private static PythonObject stringEq(PythonString self, PythonObject eq) {
+            if(!(eq instanceof PythonString)) {
+                return False;
+            }
+            
+            return newBoolean(self.string.equals(((PythonString)eq).string));
         }
         
         @Override
