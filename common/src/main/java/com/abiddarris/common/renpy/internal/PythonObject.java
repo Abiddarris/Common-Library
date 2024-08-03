@@ -2,13 +2,13 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
-import com.abiddarris.common.renpy.internal.signature.PythonArgument;
-import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,6 +34,7 @@ public class PythonObject {
     public static final PythonObject bool;
     public static final PythonObject False;
     public static final PythonObject True;
+    public static final PythonObject Exception;
     
     static {
         type = new PythonObject();
@@ -184,6 +185,19 @@ public class PythonObject {
         
         False = new PythonBoolean();
         True = new PythonBoolean();
+        
+        Exception = type.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(type)
+            .addPositionalArgument(newString("exception"))
+            .addPositionalArgument(newTuple(object))
+            .addPositionalArgument(newDict(emptyMap())));
+        Exception.setAttribute("__new__", newFunction(
+            findMethod(PythonBaseException.class, "newException"),
+            new PythonSignatureBuilder() 
+                .addParameter("*args")  
+                .build() 
+        ));
+        
         /*
         type.addMethod(
                 "__call__",
@@ -590,6 +604,22 @@ public class PythonObject {
         
         private static PythonObject toBoolean(PythonObject self) {
             return self;
+        }
+        
+    }
+    
+    private static class PythonBaseException extends PythonObject {
+        
+        private PythonObject args;
+        
+        private PythonBaseException(PythonObject args) {
+            setAttribute("__class__", Exception);
+            
+            this.args = args;
+        }
+        
+        private static PythonObject newException(PythonObject args) {
+            return new PythonBaseException(args);
         }
         
     }
