@@ -350,6 +350,17 @@ public class PythonObject {
     }
     
     @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof PythonObject)) {
+            return false;
+        }
+        
+        PythonObject result = callTypeAttribute("__eq__", new PythonArgument()
+            .addPositionalArgument((PythonObject)obj));
+        return result.toBoolean();
+    }
+    
+    @Override
     public int hashCode() {
         return unpackPythonInt(callTypeAttribute("__hash__", new PythonParameter()));
     }
