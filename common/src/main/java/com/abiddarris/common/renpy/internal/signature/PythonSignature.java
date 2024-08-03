@@ -21,6 +21,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +74,8 @@ public class PythonSignature {
         
         try {
             return (PythonObject)method.invoke(null, (Object[])args);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e.getCause());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
