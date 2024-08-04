@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -450,6 +451,19 @@ public class PythonObject implements Iterable<PythonObject> {
         dict.setAttribute("__class__", PythonObject.dict);
         
         return dict;
+    }
+    
+    public static PythonObject newDict(PythonObject... objects) {
+        if(objects.length % 2 != 0) {
+            throw new IllegalArgumentException("Missing value for " + objects[objects.length - 1]);
+        }
+        
+        Map<PythonObject, PythonObject> map = new LinkedHashMap<>();
+        for(int i = 0; i < objects.length; i += 2) {
+        	map.put(objects[i], objects[i + 1]);
+        }
+        
+        return newDict(map);
     }
     
     public static PythonObject newInt(int value) {
