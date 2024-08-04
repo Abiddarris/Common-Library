@@ -32,7 +32,8 @@ public class PythonExceptionTest {
     
     @Test
     public void newException() {
-        PythonObject exception = Exception.callAttribute("__new__", new PythonArgument());
+        PythonObject exception = Exception.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(Exception));
         try {
             exception.raise();
             
@@ -45,7 +46,8 @@ public class PythonExceptionTest {
     @Test
     public void tryExceptTest() {
         AtomicBoolean catchCalled = new AtomicBoolean(false);
-        PythonObject except = Exception.callAttribute("__new__", new PythonArgument());
+        PythonObject except = Exception.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(Exception));
         tryExcept(() -> {
             except.raise();
         })
