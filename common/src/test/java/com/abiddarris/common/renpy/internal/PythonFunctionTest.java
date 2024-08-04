@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.getItem;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -144,6 +145,27 @@ public class PythonFunctionTest {
                 .addKeywordArgument("day_count", newString("100")));
         
         assertTrue(arg_varPosArg_andVarKeyArg_function_called);
+    }
+    
+    @Test
+    public void varPosArg_unpackTuple() {
+        varPositionalParametersFunction = null;
+        
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "varPositionalParametersFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("*dict")
+                .build());
+        PythonObject tuple = newTuple(
+            newString("Dog"), newString("Doggy"),
+            newString("Puppy"));
+        
+        function.call(new PythonArgument()
+            .addPositionalArguments(tuple));
+        
+        assertEquals(newString("Dog"), getItem(varPositionalParametersFunction, newInt(0)));
+        assertEquals(newString("Doggy"), getItem(varPositionalParametersFunction, newInt(1)));
+        assertEquals(newString("Puppy"), getItem(varPositionalParametersFunction, newInt(2)));
     }
     
     public static void noParameterTestFunction() {
