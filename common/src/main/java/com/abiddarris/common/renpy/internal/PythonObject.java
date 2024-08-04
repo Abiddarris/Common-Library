@@ -116,6 +116,12 @@ public class PythonObject {
                 .addParameter("self") 
                 .build()
         ));
+        tuple.setAttribute("__iter__", newFunction(
+            findMethod(PythonTuple.class, "iter"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .build()
+        ));
         
         dict = new PythonObject();
         dict.setAttribute("__bases__", defaultBases);
@@ -201,7 +207,8 @@ public class PythonObject {
             .addPositionalArgument(newString("StopIteration"))
             .addPositionalArgument(newTuple(Exception))
             .addPositionalArgument(newDict(emptyMap())));
-        
+       
+        PythonTuple.init();
         /*
         type.addMethod(
                 "__call__",
@@ -510,6 +517,22 @@ public class PythonObject {
 
     private static class PythonTuple extends PythonObject {
 
+        private static PythonObject tuple_iterator;
+        
+        private static void init() {
+            tuple_iterator = type.callAttribute("__new__", new PythonArgument()
+                .addPositionalArgument(type)
+                .addPositionalArgument(newString("tuple_iterator"))
+                .addPositionalArgument(newTuple(object))
+                .addPositionalArgument(newDict(emptyMap())));
+            tuple_iterator.setAttribute("__next__", newFunction(
+                findMethod(TupleIterator.class, "next"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .build()
+            ));
+        }
+        
         private PythonObject[] elements;
 
         public PythonTuple(PythonObject[] elements) {
@@ -524,8 +547,35 @@ public class PythonObject {
             return ((PythonTuple)self).elements[unpackPythonInt(pos)];
         }
         
+        private static PythonObject iter(PythonTuple self) {
+            TupleIterator iterator = new TupleIterator(self);
+            iterator.setAttribute("__class__", tuple_iterator);
+            
+            return iterator;
+        }
+        
         private static PythonObject len(PythonTuple self) {
             return newPythonInt(self.elements.length);
+        }
+        
+        private static class TupleIterator extends PythonObject {
+            
+            private int index;
+            private PythonTuple tuple;
+            
+            private TupleIterator(PythonTuple tuple) {
+                this.tuple = tuple;
+            }
+            
+            private static PythonObject next(TupleIterator self) {
+                PythonObject[] elements = self.tuple.elements;
+                if(elements.length == self.index) {
+                    StopIteration.callAttribute("__new__", new PythonArgument())
+                        .raise();
+                }
+                
+                return elements[self.index++];
+            }
         }
     }
 
