@@ -2,7 +2,6 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -16,9 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class PythonObject {
@@ -36,6 +32,7 @@ public class PythonObject {
     public static final PythonObject False;
     public static final PythonObject True;
     public static final PythonObject Exception;
+    public static final PythonObject StopIteration;
     
     static {
         type = new PythonObject();
@@ -198,6 +195,12 @@ public class PythonObject {
                 .addParameter("*args")  
                 .build() 
         ));
+        
+        StopIteration = type.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(type)
+            .addPositionalArgument(newString("StopIteration"))
+            .addPositionalArgument(newTuple(Exception))
+            .addPositionalArgument(newDict(emptyMap())));
         
         /*
         type.addMethod(
