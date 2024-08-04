@@ -198,6 +198,7 @@ public class PythonObject {
         Exception.setAttribute("__new__", newFunction(
             findMethod(PythonBaseException.class, "newException"),
             new PythonSignatureBuilder() 
+                .addParameter("cls")
                 .addParameter("*args")  
                 .build() 
         ));
@@ -673,14 +674,14 @@ public class PythonObject {
         
         private PythonObject args;
         
-        private PythonBaseException(PythonObject args) {
-            setAttribute("__class__", Exception);
+        private PythonBaseException(PythonObject cls, PythonObject args) {
+            setAttribute("__class__", cls);
             
             this.args = args;
         }
         
-        private static PythonObject newException(PythonObject args) {
-            return new PythonBaseException(args);
+        private static PythonObject newException(PythonObject cls, PythonObject args) {
+            return new PythonBaseException(cls, args);
         }
         
         @Override
