@@ -62,4 +62,12 @@ public class PythonParameter {
         
         return this;
     }
+    
+    public PythonParameter addKeywordArguments(PythonObject dict) {
+        for(PythonObject key : dict) {
+            addKeywordArgument(key.toString(), dict.getItem(key));
+    	}
+        
+        return this;
+    }
 }
