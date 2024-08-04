@@ -54,4 +54,12 @@ public class PythonParameter {
         
         return this;
     }
+    
+    public PythonParameter addPositionalArguments(PythonObject tuple) {
+        for(PythonObject arg : tuple) {
+        	addPositionalArgument(arg);
+        }
+        
+        return this;
+    }
 }
