@@ -13,11 +13,13 @@ import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-public class PythonObject {
+public class PythonObject implements Iterable<PythonObject> {
 
     private static final PythonObject method;
     
@@ -411,6 +413,13 @@ public class PythonObject {
         return getAttribute("__name__").toString();
     }
     
+    @Override
+    public Iterator<PythonObject> iterator() {
+        PythonObject pythonIterator = callTypeAttribute("__iter__", new PythonArgument());
+        
+        return new IteratorWrapper(pythonIterator);
+    }
+    
     public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
         return new PythonFunction(javaMethod, signature);
     }
@@ -571,7 +580,8 @@ public class PythonObject {
             private static PythonObject next(TupleIterator self) {
                 PythonObject[] elements = self.tuple.elements;
                 if(elements.length == self.index) {
-                    StopIteration.callAttribute("__new__", new PythonArgument())
+                    StopIteration.callAttribute("__new__", new PythonArgument()
+                        .addPositionalArgument(StopIteration))
                         .raise();
                 }
                 
@@ -688,5 +698,50 @@ public class PythonObject {
         public void raise() {
             throw new PythonException(this, args.toString());
         }
+    }
+    
+    private static class IteratorWrapper implements Iterator<PythonObject> {
+        
+        private PythonObject iterator;
+        private PythonObject currentElement;
+        private boolean eoi;
+        
+        private IteratorWrapper(PythonObject iterator) {
+            this.iterator = iterator;
+        }
+        
+        @Override
+        public boolean hasNext() {
+            nextInternal();
+            
+            return currentElement != null;
+        }
+        
+        @Override
+        public PythonObject next() {
+            nextInternal();
+            
+            PythonObject element = currentElement;
+            if(element == null) {
+                throw new NoSuchElementException();
+            }
+            currentElement = null;
+            
+            return element;
+        }
+        
+        private void nextInternal() {
+            if(currentElement != null || eoi) {
+                return;
+            }
+            tryExcept(() -> {
+                currentElement = iterator.callAttribute("__next__", new PythonArgument());
+            })
+            .onExcept((e) -> {
+                eoi = true;
+            }, StopIteration)
+            .execute();
+        }
+        
     }
 }
