@@ -136,6 +136,12 @@ public class PythonObject implements Iterable<PythonObject> {
                 .addParameter("key")
                 .build()
         ));
+        dict.setAttribute("__iter__", newFunction(
+            findMethod(PythonDict.class, "iter"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .build()
+        ));
         
         type.setAttribute("__bases__", defaultBases);
         type.setAttribute("__class__", type);
@@ -212,6 +218,7 @@ public class PythonObject implements Iterable<PythonObject> {
             .addPositionalArgument(newDict(emptyMap())));
        
         PythonTuple.init();
+        PythonDict.init();
         /*
         type.addMethod(
                 "__call__",
@@ -505,14 +512,57 @@ public class PythonObject implements Iterable<PythonObject> {
     
     private static class PythonDict extends PythonObject {
         
+        private static PythonObject dict_iterator;
+        
+        private static void init() {
+            dict_iterator = type.callAttribute("__new__", new PythonArgument()
+                .addPositionalArgument(type)
+                .addPositionalArgument(newString("dict_iterator"))
+                .addPositionalArgument(newTuple(object))
+                .addPositionalArgument(newDict(emptyMap())));
+            dict_iterator.setAttribute("__next__", newFunction(
+                findMethod(DictIterator.class, "next"),
+                new PythonSignatureBuilder()
+                    .addParameter("self")
+                    .build()
+            ));
+        }
+        
         private Map<PythonObject, PythonObject> map;
         
         private PythonDict(Map<PythonObject, PythonObject> map) {
             this.map = map;
         }
         
+        private static PythonObject iter(PythonDict self) {
+            return new DictIterator(self.map.keySet().iterator());
+        }
+        
         private static PythonObject dictGetItem(PythonDict self, PythonObject key) {
             return self.map.get(key);
+        }
+        
+        private static class DictIterator extends PythonObject {
+            
+            private Iterator<PythonObject> iterator;
+            
+            private DictIterator(Iterator<PythonObject> iterator) {
+                this.iterator = iterator;
+                
+                setAttribute("__class__", dict_iterator);
+            }
+            
+            private static PythonObject next(DictIterator self) {
+                if(self.iterator.hasNext()) {
+                    return self.iterator.next();
+                }
+                
+                StopIteration.callAttribute("__new__", new PythonArgument()
+                    .addPositionalArgument(StopIteration))
+                    .raise();
+                return null;
+            }
+            
         }
     }
 
