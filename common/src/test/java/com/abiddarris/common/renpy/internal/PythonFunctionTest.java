@@ -16,10 +16,11 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.reflect.Reflections.findMethodByName;
-import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
-import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.getItem;
+import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
+import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -167,6 +168,28 @@ public class PythonFunctionTest {
         assertEquals(newString("Doggy"), getItem(varPositionalParametersFunction, newInt(1)));
         assertEquals(newString("Puppy"), getItem(varPositionalParametersFunction, newInt(2)));
     }
+    
+        
+    @Test
+    public void varKeyArg_unpackDict() {
+        varKeywordArgument = null;
+        
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "varKeywordArgumentFunction"),
+            new PythonSignatureBuilder()
+                .addParameter("**kwargs")
+                .build());
+        
+        PythonObject dict = newDict(newString("Day"), newString("12:00"),
+            newString("Night"), newString("24:00"));
+        
+        function.call(new PythonArgument()
+                        .addKeywordArguments(dict));
+        
+        assertEquals(newString("12:00"), getItem(varKeywordArgument, newString("Day")));
+        assertEquals(newString("24:00"), getItem(varKeywordArgument, newString("Night")));
+    }
+    
     
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
