@@ -70,4 +70,12 @@ public class PythonParameter {
         
         return this;
     }
+    
+    public PythonParameter addPositionalArgumentsFromArray(PythonObject... args) {
+        for(PythonObject arg : args) {
+        	addPositionalArgument(arg);
+        }
+        
+        return this;
+    }
 }
