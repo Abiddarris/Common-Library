@@ -391,7 +391,7 @@ public class PythonObject implements Iterable<PythonObject> {
     }
 
     public PythonObject call(PythonParameter parameter) {
-        throw new UnsupportedOperationException();
+        return callTypeAttribute("__call__", parameter);
     }
     
     public boolean toBoolean() {
