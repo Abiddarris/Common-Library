@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,11 @@ public class PythonObjectTest {
     @Test
     public void object_toBoolean() {
         assertEquals(true, object.toBoolean());
+    }
+    
+    @Test
+    public void object_createNewInstance() {
+        PythonObject obj = object.call(new PythonArgument());
     }
     
 }
