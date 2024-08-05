@@ -374,6 +374,13 @@ public class PythonObject implements Iterable<PythonObject> {
         PythonObject object = getAttribute(name);
         return object.call(parameter);
     }
+    
+    public PythonObject callAttribute(String name, PythonObject... args) {
+        PythonArgument argument = new PythonArgument();
+        argument.addPositionalArgumentsFromArray(args);
+        
+        return callAttribute(name, args);
+    }
 
     public PythonObject call(PythonParameter parameter) {
         throw new UnsupportedOperationException();
