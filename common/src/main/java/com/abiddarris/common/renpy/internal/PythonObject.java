@@ -180,6 +180,14 @@ public class PythonObject implements Iterable<PythonObject> {
                 .addParameter("attributes")
                 .build() 
         ));
+        type.setAttribute("__call__", newFunction(
+            findMethod(PythonObject.class, "typeCall"),
+            new PythonSignatureBuilder()
+                .addParameter("self")
+                .addParameter("*args")
+                .addParameter("**kwargs")
+                .build()
+        ));
         
         method = type.callAttribute("__new__", 
             new PythonParameter()
@@ -533,6 +541,19 @@ public class PythonObject implements Iterable<PythonObject> {
     }
     
     private static void typeInit(PythonObject self, PythonObject name, PythonObject bases, PythonObject dict) {
+    }
+    
+    private static PythonObject typeCall(PythonObject self, PythonObject args, PythonObject kwargs) {
+        PythonObject instance = self.callAttribute("__new__", new PythonArgument()
+            .addPositionalArgument(self)
+            .addPositionalArguments(args)
+            .addKeywordArguments(kwargs));
+        self.callAttribute("__init__", new PythonArgument()
+            .addPositionalArgument(instance)
+            .addPositionalArguments(args)
+            .addKeywordArguments(kwargs));
+        
+        return instance;
     }
     
     private static Method findMethod(Class source, String name) {
