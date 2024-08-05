@@ -387,7 +387,7 @@ public class PythonObject implements Iterable<PythonObject> {
         PythonArgument argument = new PythonArgument();
         argument.addPositionalArgumentsFromArray(args);
         
-        return callAttribute(name, args);
+        return callAttribute(name, argument);
     }
 
     public PythonObject call(PythonParameter parameter) {
