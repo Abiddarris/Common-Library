@@ -243,15 +243,6 @@ public class PythonObject implements Iterable<PythonObject> {
        
         PythonTuple.init();
         PythonDict.init();
-        /*
-        type.addMethod(
-                "__call__",
-                (args, kwargs) -> {
-                    PythonObject self = (PythonObject) args.get(0);
-
-                    return self.invokeStaticMethod("__new__", args, kwargs);
-                });
-
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
@@ -679,6 +670,10 @@ public class PythonObject implements Iterable<PythonObject> {
         
         private static PythonObject len(PythonTuple self) {
             return newPythonInt(self.elements.length);
+        }
+        
+        private static PythonObject bool(PythonTuple self) {
+            newBoolean(self.elements.length != 0);
         }
         
         private static class TupleIterator extends PythonObject {
