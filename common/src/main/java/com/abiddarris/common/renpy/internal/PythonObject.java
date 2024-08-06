@@ -243,6 +243,7 @@ public class PythonObject implements Iterable<PythonObject> {
        
         PythonTuple.init();
         PythonDict.init();
+        
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
@@ -447,6 +448,14 @@ public class PythonObject implements Iterable<PythonObject> {
         PythonObject pythonIterator = callTypeAttribute("__iter__", new PythonArgument());
         
         return new IteratorWrapper(pythonIterator);
+    }
+    
+    public static PythonObject newFunction(Method javaMethod, String... argumentNames) {
+        PythonSignatureBuilder builder = new PythonSignatureBuilder();
+        for(String argumentName : argumentNames) {
+        	builder.addParameter(argumentName);
+        }
+        return newFunction(javaMethod, builder.build());
     }
     
     public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
