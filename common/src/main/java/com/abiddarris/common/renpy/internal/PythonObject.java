@@ -655,6 +655,12 @@ public class PythonObject implements Iterable<PythonObject> {
         public PythonInt(int value) {
             this.value = value;
         }
+        
+        @Override
+        public int toInt() {
+            return value;
+        }
+        
     }
 
     private static class PythonTuple extends PythonObject {
