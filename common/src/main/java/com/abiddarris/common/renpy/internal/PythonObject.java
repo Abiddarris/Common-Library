@@ -688,10 +688,6 @@ public class PythonObject implements Iterable<PythonObject> {
             return newPythonInt(self.elements.length);
         }
         
-        private static PythonObject bool(PythonTuple self) {
-            newBoolean(self.elements.length != 0);
-        }
-        
         private static class TupleIterator extends PythonObject {
             
             private int index;
