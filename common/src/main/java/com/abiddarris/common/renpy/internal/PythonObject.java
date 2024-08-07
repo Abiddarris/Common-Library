@@ -279,7 +279,12 @@ public class PythonObject implements Iterable<PythonObject> {
     }
     
     public static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
-        return findAttribute(self, name.toString());
+        PythonObject attribute = findAttribute(self, name.toString());
+        if(attribute == null) {
+            AttributeError.call().raise();
+        }
+        
+        return attribute;
     }
     
     private static PythonObject findAttribute(PythonObject self, String name) {
