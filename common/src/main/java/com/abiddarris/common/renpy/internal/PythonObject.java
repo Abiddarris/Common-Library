@@ -415,6 +415,10 @@ public class PythonObject implements Iterable<PythonObject> {
     public void raise() {
     }
     
+    public int toInt() {
+        throw new IllegalArgumentException("Cannot unpack non int object");
+    }
+    
     PythonObject callTypeAttribute(String name, PythonObject... args) {
         PythonArgument argument = new PythonArgument();
         argument.addPositionalArgumentsFromArray(args);
