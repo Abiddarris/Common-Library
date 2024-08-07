@@ -19,6 +19,8 @@ import static com.abiddarris.common.renpy.internal.PythonObject.StopIteration;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.len;
+import static com.abiddarris.common.renpy.internal.PythonObject.unpackPythonInt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,5 +46,11 @@ public class PythonTupleTest {
         }
         
         assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void nonEmptyTuple_getLength() {
+        PythonObject tuple = newTuple(newString("I"), newString("You"), newString("We"), newString("He"));
+        assertEquals(4, tuple.length());
     }
 }
