@@ -37,6 +37,8 @@ public class PythonObject implements Iterable<PythonObject> {
     public static final PythonObject Exception;
     public static final PythonObject StopIteration;
     
+    public static final PythonObject len;
+    
     static {
         type = new PythonObject();
         object = new PythonObject();
@@ -243,6 +245,8 @@ public class PythonObject implements Iterable<PythonObject> {
        
         PythonTuple.init();
         PythonDict.init();
+        
+        len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
         
         /*object.addMethod(
                 "__setattr__",
