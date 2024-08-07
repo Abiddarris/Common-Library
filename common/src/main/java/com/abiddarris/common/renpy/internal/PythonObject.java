@@ -407,6 +407,13 @@ public class PythonObject implements Iterable<PythonObject> {
     public void raise() {
     }
     
+    PythonObject callTypeAttribute(String name, PythonObject... args) {
+        PythonArgument argument = new PythonArgument();
+        argument.addPositionalArgumentsFromArray(args);
+       
+        return callTypeAttribute(name, argument);
+    }
+    
     private int getHashCode() {
         return super.hashCode();
     }
