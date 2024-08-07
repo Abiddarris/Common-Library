@@ -385,6 +385,10 @@ public class PythonObject implements Iterable<PythonObject> {
         
         return callAttribute(name, argument);
     }
+    
+    public PythonObject call(PythonObject... args) {
+        return call(new PythonArgument().addPositionalArgumentsFromArray(args));
+    }
 
     public PythonObject call(PythonParameter parameter) {
         return callTypeAttribute("__call__", parameter);
