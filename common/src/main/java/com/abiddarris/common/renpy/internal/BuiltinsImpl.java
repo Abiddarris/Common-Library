@@ -37,7 +37,7 @@ public class BuiltinsImpl {
             tryExcept(() -> {
                 returnValue.setObject(newBoolean(
                                 obj.callTypeAttribute("__len___")
-                                   .toInt() != 0))
+                                   .toInt() != 0));
             }).onExcept((e1) -> {
                 returnValue.setObject(True);
             }, AttributeError);
