@@ -41,7 +41,7 @@ public class BuiltinsImpl {
             }).onExcept((e1) -> {
                 returnValue.setObject(True);
             }, AttributeError);
-        }, AttributeError);
+        }, AttributeError).execute();
         
         return returnValue.getObject();
     }
