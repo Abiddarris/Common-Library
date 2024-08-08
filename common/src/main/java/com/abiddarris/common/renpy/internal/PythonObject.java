@@ -235,6 +235,7 @@ public class PythonObject implements Iterable<PythonObject> {
                 .addParameter("*args")  
                 .build() 
         ));
+        Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
         StopIteration = type.callAttribute("__new__", new PythonArgument()
             .addPositionalArgument(type)
