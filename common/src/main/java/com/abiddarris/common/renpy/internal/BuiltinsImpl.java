@@ -46,4 +46,7 @@ public class BuiltinsImpl {
         return returnValue.getObject();
     }
     
+    private static void typeInit(PythonObject self, PythonObject args) {
+    }
+    
 }
