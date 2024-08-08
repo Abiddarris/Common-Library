@@ -74,6 +74,8 @@ public class PythonObject implements Iterable<PythonObject> {
         function.setAttribute("__class__", type);
         function.addField("__name__", newPythonString("function"));
 
+        len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
+        
         object.setAttribute("__class__", type);
         object.setAttribute("__name__", newPythonString("object"));
         object.setAttribute("__new__", newFunction(
@@ -240,7 +242,7 @@ public class PythonObject implements Iterable<PythonObject> {
         PythonDict.init();
         
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
-        len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
+        
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
         
         /*object.addMethod(
