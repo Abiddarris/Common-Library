@@ -81,4 +81,8 @@ public class BuiltinsImpl {
             .append(" object>")
             .toString());
     }
+    
+    private static PythonObject strNew(PythonObject cls, PythonObject obj) {
+        return obj.callTypeAttribute("__str__");
+    }
 }
