@@ -247,7 +247,7 @@ public class PythonObject implements Iterable<PythonObject> {
         
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
         len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
-        AttributeError = type.call(type, newString("AttributeError"), newTuple(Exception), newDict());
+        AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
         
         /*object.addMethod(
                 "__setattr__",
