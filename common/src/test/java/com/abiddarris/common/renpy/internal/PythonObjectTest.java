@@ -57,4 +57,9 @@ public class PythonObjectTest {
     public void object_type() {
         assertEquals(type, type.call(object));
     }
+    
+   @Test
+    public void objectInstance_type() {
+        assertEquals(object, type.call(object.call()));
+    }
 }
