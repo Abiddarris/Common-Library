@@ -64,6 +64,7 @@ public class PythonObject implements Iterable<PythonObject> {
                 .addParameter("obj")
                 .build()  
         ));
+        str.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "strNew"), "self", "obj"));
         
         int0 = new PythonObject();
         int0.setAttribute("__bases__", defaultBases);
