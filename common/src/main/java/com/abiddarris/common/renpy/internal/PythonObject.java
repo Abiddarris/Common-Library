@@ -211,11 +211,8 @@ public class PythonObject implements Iterable<PythonObject> {
             .addPositionalArgument(newString("bool"))
             .addPositionalArgument(newTuple(int0))
             .addPositionalArgument(newDict(emptyMap())));
-        bool.setAttribute("__new__", newFunction(findMethod(PythonBoolean.class, "newBoolean"), 
-            new PythonSignatureBuilder()
-                .addParameter("cls")
-                .addParameter("obj")
-                .build()));
+        bool.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "boolNew"), 
+                "cls", "obj"));
         bool.setAttribute("__bool__", newFunction(
                 findMethod(PythonBoolean.class, "toBoolean"),
                 new PythonSignatureBuilder()

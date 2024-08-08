@@ -15,12 +15,35 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
+
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 public class BuiltinsImpl {
     
     private static PythonObject len(PythonObject obj) {
         return obj.callTypeAttribute("__len__");
+    }
+    
+    private static PythonObject boolNew(PythonObject cls, PythonObject obj) {
+        ObjectWrapper<PythonObject> returnValue = new ObjectWrapper<>();
+        tryExcept(() -> {
+            returnValue.setObject(obj.callTypeAttribute("__bool__"));
+        }).onExcept((e) -> {
+            tryExcept(() -> {
+                returnValue.setObject(newBoolean(
+                                obj.callTypeAttribute("__len___")
+                                   .toInt() != 0))
+            }).onExcept((e1) -> {
+                returnValue.setObject(True);
+            }, AttributeError);
+        }, AttributeError);
+        
+        return returnValue.getObject();
     }
     
 }
