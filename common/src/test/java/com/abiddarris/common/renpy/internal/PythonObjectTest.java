@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -50,5 +51,10 @@ public class PythonObjectTest {
         }, AttributeError).execute();
 
         assertTrue(thrown.getObject());
+    }
+    
+    @Test
+    public void object_type() {
+        assertEquals(type, type.call(object));
     }
 }
