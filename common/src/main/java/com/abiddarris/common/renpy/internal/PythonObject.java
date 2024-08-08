@@ -158,14 +158,7 @@ public class PythonObject implements Iterable<PythonObject> {
         type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
         type.setAttribute("__new__", newFunction(
-            findMethod(PythonObject.class, "typeNew"),
-            new PythonSignatureBuilder()
-                .addParameter("cls")
-                .addParameter("name")
-                .addParameter("bases")
-                .addParameter("attributes")
-                .build()
-        ));               
+            findMethod(BuiltinsImpl.class, "typeNew"), "cls", "*args"));               
         type.setAttribute("__getattribute__",
             newFunction(
                 findMethod(PythonObject.class, "typeGetAttribute"),
@@ -257,15 +250,6 @@ public class PythonObject implements Iterable<PythonObject> {
 
                     return null;
                 });*/
-    }
-    
-    private static PythonObject typeNew(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes) {
-        PythonObject self = new PythonObject();
-        self.setAttribute("__class__", cls);
-        self.setAttribute("__name__", name);
-        self.setAttribute("__bases__", bases);
-        
-        return self;
     }
     
     private static PythonObject pythonObjectNew(PythonObject cls) {

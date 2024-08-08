@@ -15,10 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
@@ -44,6 +46,28 @@ public class BuiltinsImpl {
         }, AttributeError).execute();
         
         return returnValue.getObject();
+    }
+    
+    private static PythonObject typeNew(PythonObject cls, PythonObject args) {
+        if(args.length() == 1)  {
+            return args.getItem(newInt(0))
+                .getAttribute("__class__");
+        }
+        
+        if(args.length() != 3) {
+            TypeError.call().raise();
+        }
+        
+        PythonObject name = args.getItem(newInt(0));
+        PythonObject bases = args.getItem(newInt(1));
+        PythonObject attributes = args.getItem(newInt(2));
+        
+        PythonObject self = new PythonObject();
+        self.setAttribute("__class__", cls);
+        self.setAttribute("__name__", name);
+        self.setAttribute("__bases__", bases);
+       
+        return self;
     }
     
     private static void typeInit(PythonObject self, PythonObject args) {
