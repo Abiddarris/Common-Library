@@ -15,23 +15,40 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 
 public class PythonObjectTest {
-    
+
     @Test
     public void object_toBoolean() {
         assertEquals(true, object.toBoolean());
     }
-    
+
     @Test
     public void object_createNewInstance() {
         PythonObject obj = object.call(new PythonArgument());
     }
-    
+
+    @Test
+    public void object_getNonExistAttribute() {
+        PythonObject obj = object.call(new PythonArgument());
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>();
+        tryExcept(() -> {
+            obj.getAttribute("c");
+        }).onExcept((e) -> {
+            thrown.setObject(true);
+        }, AttributeError).execute();
+
+        assertTrue(thrown.getObject());
+    }
 }
