@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -73,4 +74,11 @@ public class BuiltinsImpl {
     private static void typeInit(PythonObject self, PythonObject args) {
     }
     
+    private static PythonObject objectStr(PythonObject self) {
+        return newString(new StringBuilder()
+            .append("<")
+            .append(self.getAttribute("__name__").toString())
+            .append(" object>")
+            .toString());
+    }
 }
