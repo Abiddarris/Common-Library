@@ -447,6 +447,9 @@ public class PythonObject implements Iterable<PythonObject> {
     private PythonObject getTypeAttribute(String name) {
         PythonObject type = (PythonObject)attributes.get("__class__");
         PythonObject attribute = findAttributeWithoutTypeAllowConversion(this, type, name);
+        if(attribute == null) {
+            AttributeError.call().raise();
+        }
         
         return attribute;
     }
