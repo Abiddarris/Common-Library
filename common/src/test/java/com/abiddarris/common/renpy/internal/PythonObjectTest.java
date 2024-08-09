@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
@@ -58,8 +59,14 @@ public class PythonObjectTest {
         assertEquals(type, type.call(object));
     }
     
-   @Test
+    @Test
     public void objectInstance_type() {
         assertEquals(object, type.call(object.call()));
+    }
+    
+    @Test
+    public void objectInstance_toString() {
+        PythonObject instance = object.call();
+        assertEquals("<object object>", instance.toString());
     }
 }
