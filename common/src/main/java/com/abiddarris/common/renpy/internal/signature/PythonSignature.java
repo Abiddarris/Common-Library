@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
@@ -26,7 +27,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +71,11 @@ public class PythonSignature {
             
             PythonObject arg = posArgs.isEmpty() ? keywordArgs.remove(keyword) : posArgs.remove(0);
         	args[i] = arg;
+        }
+        if(!posArgs.isEmpty()) {
+            TypeError.call(newString(String.format(
+                "takes %s arguments but %s were given", keywords.size(), keywords.size() + posArgs.size())))
+                .raise();
         }
         
         try {
