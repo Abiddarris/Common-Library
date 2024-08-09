@@ -49,6 +49,9 @@ public class BuiltinsImpl {
         return returnValue.getObject();
     }
     
+    private static void boolInit(PythonObject cls, PythonObject obj) {
+    }
+    
     private static PythonObject typeNew(PythonObject cls, PythonObject args) {
         if(args.length() == 1)  {
             return args.getItem(newInt(0))
@@ -88,4 +91,5 @@ public class BuiltinsImpl {
     
     private static void strInit(PythonObject cls, PythonObject obj) {
     }
+    
 }
