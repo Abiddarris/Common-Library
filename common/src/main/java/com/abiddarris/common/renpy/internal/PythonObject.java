@@ -393,16 +393,10 @@ public class PythonObject implements Iterable<PythonObject> {
     }
     
     public boolean toBoolean() {
-        PythonObject boolMethod = getAttribute("__bool__");
-        if(boolMethod == null) {
-            return true;
-        }
+        PythonObject result = bool.call(this);
+        // FIXME: Validate return value
         
-        PythonObject bool = boolMethod.call(new PythonArgument());
-        if(!(bool instanceof PythonBoolean)) {
-            throw new IllegalArgumentException();
-        }
-        return bool == False ? false : true;
+        return result == False ? false : true;
     }
     
     public PythonObject getItem(PythonObject key) {
