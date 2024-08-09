@@ -40,6 +40,7 @@ public class PythonObject implements Iterable<PythonObject> {
     public static final PythonObject TypeError;
     
     public static final PythonObject len;
+    public static final PythonObject issubclass;
     
     static {
         type = new PythonObject();
@@ -248,8 +249,9 @@ public class PythonObject implements Iterable<PythonObject> {
         PythonDict.init();
         
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
-        
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
+        
+        issubclass = newFunction(findMethod(BuiltinsImpl.class, "isSubclass"), "cls", "base");
         
         /*object.addMethod(
                 "__setattr__",

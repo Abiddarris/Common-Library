@@ -33,6 +33,10 @@ public class BuiltinsImpl {
         return obj.callTypeAttribute("__len__");
     }
     
+    private static PythonObject isSubclass(PythonObject cls, PythonObject base) {
+        return base.callTypeAttribute("__subclasscheck__", cls);
+    }
+    
     private static PythonObject boolNew(PythonObject cls, PythonObject obj) {
         ObjectWrapper<PythonObject> returnValue = new ObjectWrapper<>();
         tryExcept(() -> {
