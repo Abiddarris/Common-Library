@@ -32,4 +32,8 @@ public class IsSubclassTest {
         assertEquals(True, issubclass.call(bool, object));
     }
     
+    @Test
+    public void isSubclass_false() {
+        assertEquals(False, issubclass.call(object, bool));
+    }
 }
