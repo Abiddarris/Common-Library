@@ -458,7 +458,7 @@ public class PythonObject implements Iterable<PythonObject> {
 
     @Override
     public String toString() {
-        return getAttribute("__name__").toString();
+        return callTypeAttribute("__str__").toString();
     }
     
     @Override
