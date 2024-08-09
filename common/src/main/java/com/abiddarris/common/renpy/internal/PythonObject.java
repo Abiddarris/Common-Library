@@ -190,6 +190,7 @@ public class PythonObject implements Iterable<PythonObject> {
                 .addParameter("**kwargs")
                 .build()
         ));
+        type.setAttribute("__subclasscheck__", newFunction(findMethod(BuiltinsImpl.class, "typeSubclassCheck"), "self", "other"));
         
         method = type.callAttribute("__new__", 
             new PythonParameter()
