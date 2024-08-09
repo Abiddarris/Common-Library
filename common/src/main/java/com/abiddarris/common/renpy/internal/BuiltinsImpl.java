@@ -16,6 +16,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
@@ -92,4 +93,29 @@ public class BuiltinsImpl {
     private static void strInit(PythonObject cls, PythonObject obj) {
     }
     
+    private static PythonObject typeSubclassCheck(PythonObject self, PythonObject other) {
+        if (self == other) {
+            return True;
+        }
+        
+        return hasParent(other, self);
+    }
+    
+    private static PythonObject hasParent(PythonObject target, PythonObject parent) {
+        PythonObject parents = target.getAttribute("__bases__");
+        int len = parents.length();
+        for(int i = 0; i < len; ++i) {
+        	PythonObject parent0 = parents.getItem(newInt(i));
+            if(parent0 == parent) {
+                return True;
+            }
+            
+            PythonObject result = hasParent(parent0, parent);
+            if(result.toBoolean()) {
+                return True;
+            }
+        }
+        
+        return False;
+    }
 }
