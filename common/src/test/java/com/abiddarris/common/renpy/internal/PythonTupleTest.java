@@ -15,16 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.StopIteration;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.len;
-import static com.abiddarris.common.renpy.internal.PythonObject.unpackPythonInt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import org.junit.jupiter.api.Test;
 
@@ -52,5 +46,11 @@ public class PythonTupleTest {
     public void nonEmptyTuple_getLength() {
         PythonObject tuple = newTuple(newString("I"), newString("You"), newString("We"), newString("He"));
         assertEquals(4, tuple.length());
+    }
+     
+    @Test
+    public void nonEmptyTuple_toBoolean() {
+        PythonObject tuple = newTuple(newString("I"), newString("You"), newString("We"), newString("He"));
+        assertEquals(true, tuple.toBoolean());
     }
 }
