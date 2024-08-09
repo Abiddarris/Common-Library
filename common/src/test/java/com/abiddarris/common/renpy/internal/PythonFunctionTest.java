@@ -22,12 +22,15 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -168,7 +171,6 @@ public class PythonFunctionTest {
         assertEquals(newString("Doggy"), getItem(varPositionalParametersFunction, newInt(1)));
         assertEquals(newString("Puppy"), getItem(varPositionalParametersFunction, newInt(2)));
     }
-    
         
     @Test
     public void varKeyArg_unpackDict() {
@@ -190,6 +192,19 @@ public class PythonFunctionTest {
         assertEquals(newString("24:00"), getItem(varKeywordArgument, newString("Night")));
     }
     
+    @Test
+    public void tooMuchArguments() {
+        PythonObject function = newFunction(
+            findMethodByName(PythonFunctionTest.class, "oneParameterTestFunction"), "object");
+        
+        PythonObject arg = newString("Dog");
+        ObjectWrapper<Boolean> onExceptCalled = new ObjectWrapper<>();
+        tryExcept(() -> function.call(arg, arg))
+            .onExcept(e -> onExceptCalled.setObject(true), TypeError)
+            .execute();
+        
+        assertTrue(onExceptCalled.getObject());
+    }
     
     public static void noParameterTestFunction() {
         noParameterTestFunctionCalled = true;
