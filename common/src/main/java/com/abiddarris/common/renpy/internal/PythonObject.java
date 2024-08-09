@@ -824,7 +824,11 @@ public class PythonObject implements Iterable<PythonObject> {
         private PythonBaseException(PythonObject cls, PythonObject args) {
             setAttribute("__class__", cls);
             
-            this.args = args;
+            if(args.length() == 1) {
+                this.args = args.getItem(newInt(0));
+            } else {
+                this.args = args;
+            }
         }
         
         private static PythonObject newException(PythonObject cls, PythonObject args) {
