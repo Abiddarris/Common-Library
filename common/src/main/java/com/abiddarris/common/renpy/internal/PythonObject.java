@@ -529,6 +529,14 @@ public class PythonObject implements Iterable<PythonObject> {
         return val ? True : False;
     }
     
+    public static PythonObject newClass(PythonObject _type, String name, PythonObject bases, PythonObject attributes) {
+        if(_type == null) {
+            _type = findType(bases);
+        }
+        
+        return _type.call(newString(name), bases, attributes);
+    }
+    
     public static ExceptFinally tryExcept(Runnable tryRunnable) {
         return new ExceptFinally(tryRunnable);
     }
@@ -553,6 +561,28 @@ public class PythonObject implements Iterable<PythonObject> {
         }
         
         return ((PythonInt)integer).value;
+    }
+    
+    private static PythonObject findType(PythonObject bases) {
+        if(!bases.toBoolean()) {
+            return type;
+        }
+        
+        PythonObject _type = type.call(bases.getItem(newInt(0)));
+        int length = bases.length();
+        if(length == 1) {
+            return _type;
+        }
+        for(int i = 1; i < length; ++i) {
+        	PythonObject meta = type.call(bases.getItem(newInt(i)));
+            if(issubclass.call(meta, type).toBoolean()) {
+                _type = meta;
+            } else if(issubclass.call(_type, meta).toBoolean()) {
+                TypeError.call().raise();
+            }
+        }
+        
+        return _type;
     }
     
     private static PythonObject eq(PythonObject self, PythonObject obj) {
