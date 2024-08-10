@@ -193,6 +193,7 @@ public class PythonObject implements Iterable<PythonObject> {
                 .build()
         ));
         type.setAttribute("__subclasscheck__", newFunction(findMethod(BuiltinsImpl.class, "typeSubclassCheck"), "self", "other"));
+        type.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "typeStr"), "self"));
         
         method = type.callAttribute("__new__", 
             new PythonParameter()
