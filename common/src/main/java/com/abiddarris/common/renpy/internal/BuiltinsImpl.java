@@ -82,6 +82,14 @@ public class BuiltinsImpl {
     private static void typeInit(PythonObject self, PythonObject args) {
     }
     
+    private static PythonObject typeStr(PythonObject self) {
+        return newString(new StringBuilder()
+            .append("<class '")
+            .append(self.getAttribute("__name__").toString())
+            .append("'>")
+            .toString());
+    }
+    
     private static PythonObject objectStr(PythonObject self) {
         return newString(new StringBuilder()
             .append("<")
