@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
@@ -129,5 +130,9 @@ public class BuiltinsImpl {
         }
         
         return False;
+    }
+    
+    private static PythonObject noneTypeNew(PythonObject cls) {
+        return None;
     }
 }
