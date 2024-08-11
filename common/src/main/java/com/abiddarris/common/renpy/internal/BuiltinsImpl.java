@@ -23,6 +23,8 @@ import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -71,6 +73,10 @@ public class BuiltinsImpl {
         PythonObject name = args.getItem(newInt(0));
         PythonObject bases = args.getItem(newInt(1));
         PythonObject attributes = args.getItem(newInt(2));
+        
+        if(bases.length() == 0) {
+            bases = newTuple(object);
+        }
         
         PythonObject self = new PythonObject();
         self.setAttribute("__class__", cls);
