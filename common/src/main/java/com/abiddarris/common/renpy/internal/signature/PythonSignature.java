@@ -50,6 +50,7 @@ public class PythonSignature {
             throw new IllegalArgumentException("takes 0 positional arguments but " + posArgs.size() + " was given");
         }
         
+        List<String> missingArguments = new ArrayList<>();
         for(int i = 0; i < keywords.size(); ++i) {
             String keyword = keywords.get(i);
             
@@ -70,8 +71,30 @@ public class PythonSignature {
             }
             
             PythonObject arg = posArgs.isEmpty() ? keywordArgs.remove(keyword) : posArgs.remove(0);
+            if(arg == null) {
+                missingArguments.add(keyword);
+            }
         	args[i] = arg;
         }
+        if(missingArguments.size() != 0) {
+            StringBuilder builder = new StringBuilder()
+                .append(String.format("missing %s required positional argument", missingArguments.size()));
+            if(missingArguments.size() > 1) {
+                builder.append("s");
+            }
+            builder.append(": ");
+            for(int i = 0; i < missingArguments.size(); ++i) {
+                if(i == missingArguments.size() - 1) {
+                    builder.append("and ");
+                }
+            	builder.append(String.format("'%s'", missingArguments.get(i)));
+                if(i != missingArguments.size() - 1) {
+                	builder.append(", ");
+                }
+            }
+            TypeError.call(newString(builder.toString())).raise();
+        }
+        
         if(!posArgs.isEmpty()) {
             TypeError.call(newString(String.format(
                 "takes %s arguments but %s were given", keywords.size(), keywords.size() + posArgs.size())))
