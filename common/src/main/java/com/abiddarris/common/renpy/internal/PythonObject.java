@@ -39,6 +39,7 @@ public class PythonObject implements Iterable<PythonObject> {
     public static final PythonObject AttributeError;
     public static final PythonObject TypeError;
     public static final PythonObject NoneType;
+    public static final PythonObject None;
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
@@ -257,7 +258,7 @@ public class PythonObject implements Iterable<PythonObject> {
         issubclass = newFunction(findMethod(BuiltinsImpl.class, "isSubclass"), "cls", "base");
         
         NoneType = type.call(newString("NoneType"), newTuple(type), newDict());
-        
+        None = NoneType.call(newString("None"), newTuple(), newDict());
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
