@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 public class PythonObject implements Iterable<PythonObject> {
 
     private static final PythonObject method;
+    private static final PythonObject NoneType;
     
     public static final PythonObject object;
     public static final PythonObject type;
@@ -38,7 +39,6 @@ public class PythonObject implements Iterable<PythonObject> {
     public static final PythonObject StopIteration;
     public static final PythonObject AttributeError;
     public static final PythonObject TypeError;
-    public static final PythonObject NoneType;
     public static final PythonObject None;
     
     public static final PythonObject len;
