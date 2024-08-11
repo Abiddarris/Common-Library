@@ -178,13 +178,7 @@ public class PythonObject implements Iterable<PythonObject> {
             )
         );
         type.setAttribute("__init__", newFunction(
-            findMethod(PythonObject.class, "typeInit"),
-            new PythonSignatureBuilder()
-                .addParameter("cls")
-                .addParameter("name")
-                .addParameter("bases")
-                .addParameter("attributes")
-                .build() 
+            findMethod(BuiltinsImpl.class, "typeInit"), "cls", "*args"
         ));
         type.setAttribute("__call__", newFunction(
             findMethod(PythonObject.class, "typeCall"),
@@ -597,9 +591,6 @@ public class PythonObject implements Iterable<PythonObject> {
     }
     
     private static void objectInit(PythonObject self) {
-    }
-    
-    private static void typeInit(PythonObject self, PythonObject name, PythonObject bases, PythonObject dict) {
     }
     
     private static PythonObject typeCall(PythonObject self, PythonObject args, PythonObject kwargs) {
