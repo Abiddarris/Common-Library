@@ -255,6 +255,7 @@ public class PythonObject implements Iterable<PythonObject> {
         None = NoneType.call(newString("None"), newTuple(), newDict());
         
         NoneType.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeNew"), "cls"));
+        NoneType.setAttribute("__init__", newFunction(findMethod(BiiltinsImpl.class, "noneTypeInit"), "cls"));
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
