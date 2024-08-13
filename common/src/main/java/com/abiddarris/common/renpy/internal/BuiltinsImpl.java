@@ -141,4 +141,6 @@ public class BuiltinsImpl {
     private static PythonObject noneTypeNew(PythonObject cls) {
         return None;
     }
+    
+    private static void noneTypeInit(PythonObject self) {}
 }
