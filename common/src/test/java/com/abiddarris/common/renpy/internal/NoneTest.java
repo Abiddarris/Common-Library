@@ -21,6 +21,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 
@@ -43,6 +44,11 @@ public class NoneTest {
         if(!thrown.getObject()) {
             throw new AssertionError();
         }
+    }
+    
+    @Test
+    public void noneToBoolean() {
+        assertFalse(None.toBoolean());
     }
     
 }
