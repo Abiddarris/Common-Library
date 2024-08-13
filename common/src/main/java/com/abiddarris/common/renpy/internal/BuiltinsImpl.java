@@ -143,4 +143,8 @@ public class BuiltinsImpl {
     }
     
     private static void noneTypeInit(PythonObject self) {}
+    
+    private static void noneTypeCall(PythonObject self) {
+        TypeError.call(newString("NoneType object is not callable")).raise();
+    }
 }
