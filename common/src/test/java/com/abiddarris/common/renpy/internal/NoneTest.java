@@ -16,9 +16,13 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +31,18 @@ public class NoneTest {
     @Test
     public void createNewNone() {
         assertEquals(None, type.call(None).call());
+    }
+    
+    @Test
+    public void callNoneTest() {
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
+        tryExcept(() -> None.call())
+            .onExcept((e) -> thrown.setObject(true), TypeError)
+            .execute();
+        
+        if(!thrown.getObject()) {
+            throw new AssertionError();
+        }
     }
     
 }
