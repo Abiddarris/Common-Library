@@ -559,6 +559,7 @@ public class PythonObject implements Iterable<PythonObject> {
         return newInt(value);
     }
     
+    @Deprecared
     public static int unpackPythonInt(PythonObject integer) {
         if(!(integer instanceof PythonInt)) {
             throw new IllegalArgumentException("Cannot unpack non int object");
