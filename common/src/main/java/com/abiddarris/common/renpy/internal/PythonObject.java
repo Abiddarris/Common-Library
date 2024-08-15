@@ -545,6 +545,7 @@ public class PythonObject implements Iterable<PythonObject> {
         return new ExceptFinally(tryRunnable);
     }
     
+    @Deprecated
     public static PythonObject getItem(PythonObject item, PythonObject key) {
         return item.getItem(key);
     }
