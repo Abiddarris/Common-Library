@@ -16,6 +16,11 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.newClass;
+import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
@@ -68,5 +73,12 @@ public class PythonObjectTest {
     public void objectInstance_toString() {
         PythonObject instance = object.call();
         assertEquals("<object object>", instance.toString());
+    }
+    
+    @Test
+    public void newClass_withAttributes() {
+        PythonObject TestClass = newClass("TestClass", newTuple(), newDict(
+                newString("number"), newInt(42)));
+        assertEquals(42, TestClass.getAttribute("number").toInt());
     }
 }
