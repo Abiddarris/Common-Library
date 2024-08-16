@@ -555,7 +555,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             throw new IllegalArgumentException("Cannot unpack non int object");
         }
         
-        return ((PythonInt)integer).value;
+        return ((PythonInt)integer).toInt();
     }
     
     private static PythonObject findType(PythonObject bases) {
@@ -620,21 +620,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         methods[0].setAccessible(true);
         return methods[0];
-    }
-
-    private static class PythonInt extends PythonObject {
-
-        private int value;
-
-        public PythonInt(int value) {
-            this.value = value;
-        }
-        
-        @Override
-        public int toInt() {
-            return value;
-        }
-        
     }
 
     private static class PythonTuple extends PythonObject {
