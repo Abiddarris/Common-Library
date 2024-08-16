@@ -70,19 +70,17 @@ public class BuiltinsImpl {
             TypeError.call().raise();
         }
         
-        PythonObject name = args.getItem(newInt(0));
-        PythonObject bases = args.getItem(newInt(1));
         PythonObject attributes = args.getItem(newInt(2));
+        PythonObject self = Bootstrap.newClass(cls, args);
         
-        if(bases.length() == 0) {
-            bases = newTuple(object);
-        }
+        attributes.iterator().forEachRemaining(k -> {
+            String key = k.toString();
+            if(key.equals("__name__") || key.equals("__bases__") || key.equals("__class__")) {
+                return;
+            }
+            self.attributes.put(key, attributes.getItem(k));
+        });
         
-        PythonObject self = new PythonObject();
-        self.setAttribute("__class__", cls);
-        self.setAttribute("__name__", name);
-        self.setAttribute("__bases__", bases);
-       
         return self;
     }
     
