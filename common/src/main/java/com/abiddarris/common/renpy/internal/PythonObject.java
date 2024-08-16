@@ -480,7 +480,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static PythonObject newString(String string) {
         PythonString object = new PythonString(string);
         object.setAttribute("__class__", str);
-
+        
         return object;
     }
 
@@ -701,32 +701,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         @Override
         public PythonObject call(List args, Map kwargs) {
             throw new UnsupportedOperationException();
-        }
-    }
-
-    private static class PythonString extends PythonObject {
-
-        private String string;
-
-        public PythonString(String string) {
-            this.string = string;
-        }
-        
-        private static PythonObject stringHash(PythonString self) {
-            return newInt(self.string.hashCode());
-        }
-        
-        private static PythonObject stringEq(PythonString self, PythonObject eq) {
-            if(!(eq instanceof PythonString)) {
-                return False;
-            }
-            
-            return newBoolean(self.string.equals(((PythonString)eq).string));
-        }
-        
-        @Override
-        public String toString() {
-            return string;
         }
     }
     
