@@ -15,7 +15,11 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.findMethod;
+import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
@@ -27,14 +31,8 @@ class PythonDict extends PythonObject {
     private static PythonObject dict_iterator;
         
     static void init() {
-        dict_iterator = type.callAttribute("__new__", new PythonArgument()
-            .addPositionalArgument(type)
-            .addPositionalArgument(newString("dict_iterator"))
-            .addPositionalArgument(newTuple(object))
-            .addPositionalArgument(newDict()));
-        dict_iterator.setAttribute("__next__", newFunction(
-            PythonObject.findMethod(DictIterator.class, "next"), "self"
-        ));
+        dict_iterator = Bootstrap.newClass(type, newTuple(newString("dict_iterator"), newTuple()));
+        dict_iterator.setAttribute("__next__", newFunction(findMethod(DictIterator.class, "next"), "self"));
     }
         
     private Map<PythonObject, PythonObject> map;
