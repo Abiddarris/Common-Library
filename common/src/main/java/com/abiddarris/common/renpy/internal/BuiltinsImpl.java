@@ -103,7 +103,7 @@ public class BuiltinsImpl {
     private static PythonObject objectStr(PythonObject self) {
         return newString(new StringBuilder()
             .append("<")
-            .append(self.getAttribute("__name__").toString())
+            .append(self.getTypeAttribute("__name__").toString())
             .append(" object>")
             .toString());
     }
