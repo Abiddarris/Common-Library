@@ -204,7 +204,9 @@ public class PythonObject implements Iterable<PythonObject> {
         Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
         StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)));
-       
+        
+        PythonDict.init();
+        
         bool = type.callAttribute("__new__", new PythonArgument()
             .addPositionalArgument(type)
             .addPositionalArgument(newString("bool"))
@@ -224,7 +226,6 @@ public class PythonObject implements Iterable<PythonObject> {
         True = new PythonBoolean();
         
         PythonTuple.init();
-        PythonDict.init();
         
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
@@ -238,6 +239,7 @@ public class PythonObject implements Iterable<PythonObject> {
         NoneType.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeInit"), "cls"));
         NoneType.setAttribute("__call__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeCall"), "self"));
         NoneType.setAttribute("__bool__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeBool"), "self"));
+        
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
@@ -583,10 +585,15 @@ public class PythonObject implements Iterable<PythonObject> {
     }
     
     private static PythonObject typeCall(PythonObject self, PythonObject args, PythonObject kwargs) {
-        PythonObject instance = self.callAttribute("__new__", new PythonArgument()
-            .addPositionalArgument(self)
-            .addPositionalArguments(args)
-            .addKeywordArguments(kwargs));
+        PythonObject newFunction = self.getAttribute("__new__");
+        PythonArgument arguments = (PythonArgument) new PythonArgument()
+             .addPositionalArgument(self);
+        
+        if(newFunction != object.getAttribute("__new__")) {
+            arguments.addPositionalArguments(args)
+                .addKeywordArguments(kwargs);
+        }
+        PythonObject instance = newFunction.call(arguments);
         self.callAttribute("__init__", new PythonArgument()
             .addPositionalArgument(instance)
             .addPositionalArguments(args)
