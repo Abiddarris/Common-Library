@@ -15,9 +15,19 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+
 import com.abiddarris.common.annotations.PrivateApi;
 
 @PrivateApi
 class Sys {
     static final int maxsize = Integer.MAX_VALUE;
+    
+    static PythonObject sys;
+    
+    static void init() {
+        sys = Types.ModuleType.call(newString("sys"));
+        sys.setAttribute("modules", newDict(newString("sys"), sys));
+    }
 }
