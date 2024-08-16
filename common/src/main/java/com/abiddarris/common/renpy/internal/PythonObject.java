@@ -518,10 +518,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return object;
     }
     
-    public static PythonObject newBoolean(boolean val) { 
-        return val ? True : False;
-    }
-    
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
         return newClass(null, name, bases, attributes);
     }
