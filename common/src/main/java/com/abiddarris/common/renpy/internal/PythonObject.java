@@ -192,6 +192,16 @@ public class PythonObject implements Iterable<PythonObject> {
         type.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "typeStr"), "self"));
         
         method = Bootstrap.newClass(type, newTuple(newPythonString("method"), newTuple(object)));
+       
+        Exception = Bootstrap.newClass(type, newTuple(newString("exception"), newTuple()));
+        Exception.setAttribute("__new__", newFunction(
+            findMethod(PythonBaseException.class, "newException"),
+            new PythonSignatureBuilder() 
+                .addParameter("cls")
+                .addParameter("*args")  
+                .build() 
+        ));
+        Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
         bool = type.callAttribute("__new__", new PythonArgument()
             .addPositionalArgument(type)
@@ -210,20 +220,6 @@ public class PythonObject implements Iterable<PythonObject> {
         
         False = new PythonBoolean();
         True = new PythonBoolean();
-        
-        Exception = type.callAttribute("__new__", new PythonArgument()
-            .addPositionalArgument(type)
-            .addPositionalArgument(newString("exception"))
-            .addPositionalArgument(newTuple(object))
-            .addPositionalArgument(newDict(emptyMap())));
-        Exception.setAttribute("__new__", newFunction(
-            findMethod(PythonBaseException.class, "newException"),
-            new PythonSignatureBuilder() 
-                .addParameter("cls")
-                .addParameter("*args")  
-                .build() 
-        ));
-        Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
         StopIteration = type.callAttribute("__new__", new PythonArgument()
             .addPositionalArgument(type)
