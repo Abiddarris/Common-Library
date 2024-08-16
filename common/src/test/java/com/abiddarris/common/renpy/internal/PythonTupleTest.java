@@ -53,4 +53,10 @@ public class PythonTupleTest {
         PythonObject tuple = newTuple(newString("I"), newString("You"), newString("We"), newString("He"));
         assertEquals(true, tuple.toBoolean());
     }
+    
+    @Test
+    public void emptyTuple_toBoolean() {
+    	PythonObject tuple = newTuple();
+        assertEquals(false, tuple.toBoolean());
+    }
 }
