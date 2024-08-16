@@ -240,6 +240,8 @@ public class PythonObject implements Iterable<PythonObject> {
         NoneType.setAttribute("__call__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeCall"), "self"));
         NoneType.setAttribute("__bool__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeBool"), "self"));
         
+        Types.init();
+        
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
