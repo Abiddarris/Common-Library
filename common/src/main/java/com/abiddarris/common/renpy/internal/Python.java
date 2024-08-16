@@ -15,12 +15,18 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Python {
     
     Python() {}
+    
+    public static PythonObject newList(PythonObject... elements) {
+        return newList(asList(elements));
+    }
     
     public static PythonObject newList(List<PythonObject> elements) {
         return new PythonList(new ArrayList<>(elements));
