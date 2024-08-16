@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
@@ -23,6 +25,10 @@ import java.util.List;
 public class Python {
     
     Python() {}
+    
+    public static PythonObject newBoolean(boolean val) { 
+        return val ? True : False;
+    }
     
     public static PythonObject newList(PythonObject... elements) {
         return newList(asList(elements));
