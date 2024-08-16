@@ -27,4 +27,8 @@ class PythonList extends PythonObject {
         setAttribute("__class__", list);
     }
     
+    private static PythonObject getItem(PythonList list, PythonObject index) {
+        return list.elements.get(index.toInt());
+    }
+    
 }
