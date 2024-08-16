@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-public class PythonObject implements Iterable<PythonObject> {
+public class PythonObject extends Python implements Iterable<PythonObject> {
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
