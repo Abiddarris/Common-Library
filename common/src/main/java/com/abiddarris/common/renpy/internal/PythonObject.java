@@ -511,13 +511,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return newDict(map);
     }
     
-    public static PythonObject newInt(int value) {
-        PythonObject object = new PythonInt(value);
-        object.setAttribute("__class__", int0);
-
-        return object;
-    }
-    
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
         return newClass(null, name, bases, attributes);
     }
