@@ -595,7 +595,7 @@ public class PythonObject implements Iterable<PythonObject> {
         return instance;
     }
     
-    private static Method findMethod(Class source, String name) {
+    static Method findMethod(Class source, String name) {
         Method[] methods = Stream.of(source.getDeclaredMethods())
             .filter(method -> method.getName().equals(name))
             .toArray(Method[]::new);
