@@ -533,6 +533,10 @@ public class PythonObject implements Iterable<PythonObject> {
         return val ? True : False;
     }
     
+    public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
+        return newClass(null, name, bases, attributes);
+    }
+    
     public static PythonObject newClass(PythonObject _type, String name, PythonObject bases, PythonObject attributes) {
         if(_type == null) {
             _type = findType(bases);
@@ -560,7 +564,7 @@ public class PythonObject implements Iterable<PythonObject> {
         return newInt(value);
     }
     
-    @Deprecared
+    @Deprecated
     public static int unpackPythonInt(PythonObject integer) {
         if(!(integer instanceof PythonInt)) {
             throw new IllegalArgumentException("Cannot unpack non int object");
