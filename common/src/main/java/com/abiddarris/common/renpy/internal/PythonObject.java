@@ -40,6 +40,7 @@ public class PythonObject implements Iterable<PythonObject> {
     public static final PythonObject AttributeError;
     public static final PythonObject TypeError;
     public static final PythonObject None;
+    public static final PythonObject list;
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
@@ -245,6 +246,7 @@ public class PythonObject implements Iterable<PythonObject> {
         Sys.init();
         
         __import__ = newFunction(findMethod(BuiltinsImpl.class, "import0"), "name");
+        list = newClass("list", newTuple(), newDict());
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
