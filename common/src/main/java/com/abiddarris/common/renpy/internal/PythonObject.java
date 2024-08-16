@@ -477,13 +477,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return new PythonFunction(javaMethod, signature);
     }
 
-    public static PythonObject newString(String string) {
-        PythonString object = new PythonString(string);
-        object.setAttribute("__class__", str);
-        
-        return object;
-    }
-
     public static PythonObject newTuple(PythonObject... elements) {
         PythonObject object = new PythonTuple(elements);
         object.setAttribute("__class__", tuple);
