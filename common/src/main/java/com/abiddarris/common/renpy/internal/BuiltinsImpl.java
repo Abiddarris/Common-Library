@@ -26,6 +26,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.Sys.sys;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
@@ -38,6 +39,10 @@ public class BuiltinsImpl {
     
     private static PythonObject isSubclass(PythonObject cls, PythonObject base) {
         return base.callTypeAttribute("__subclasscheck__", cls);
+    }
+    
+    private static PythonObject import0(PythonObject name) {
+    	return sys.getAttribute("modules").getItem(name);
     }
     
     private static PythonObject boolNew(PythonObject cls, PythonObject obj) {

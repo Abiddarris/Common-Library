@@ -43,6 +43,7 @@ public class PythonObject implements Iterable<PythonObject> {
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
+    public static final PythonObject __import__;
     
     static {
         type = new PythonObject();
@@ -243,6 +244,7 @@ public class PythonObject implements Iterable<PythonObject> {
         Types.init();
         Sys.init();
         
+        __import__ = newFunction(findMethod(BuiltinsImpl.class, "import0"), "name");
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
