@@ -191,19 +191,7 @@ public class PythonObject implements Iterable<PythonObject> {
         type.setAttribute("__subclasscheck__", newFunction(findMethod(BuiltinsImpl.class, "typeSubclassCheck"), "self", "other"));
         type.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "typeStr"), "self"));
         
-        method = type.callAttribute("__new__", 
-            new PythonParameter()
-                .addPositionalArgument(type)
-                .addPositionalArgument(
-                    newPythonString("method")
-                )
-                .addPositionalArgument(
-                    newTuple(object)
-                )
-                .addPositionalArgument(
-                    newDict(emptyMap())
-                )
-        );
+        method = Bootstrap.newClass(type, newTuple(newPythonString("method"), newTuple(object)));
         
         bool = type.callAttribute("__new__", new PythonArgument()
             .addPositionalArgument(type)
