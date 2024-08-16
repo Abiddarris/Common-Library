@@ -16,8 +16,10 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.int0;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.int0;
+import static com.abiddarris.common.renpy.internal.PythonObject.str;
+
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
@@ -26,6 +28,13 @@ import java.util.List;
 public class Python {
     
     Python() {}
+    
+    public static PythonObject newString(String string) {
+        PythonString object = new PythonString(string);
+        object.setAttribute("__class__", str);
+        
+        return object;
+    }
     
     public static PythonObject newInt(int value) {
         PythonObject object = new PythonInt(value);
