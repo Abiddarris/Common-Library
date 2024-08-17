@@ -55,4 +55,13 @@ public class ListTest {
         assertEquals(newString("Chicken"), list.getItem(newInt(1)));
     }
     
+    @Test
+    public void insert_outOfBounds() {
+        PythonObject list = newList(newString("Chicken"));
+        list.callAttribute("insert", newInt(3), newString("Wolf"));
+        
+        assertEquals(newString("Wolf"), list.getItem(newInt(1)));
+        assertEquals(newString("Chicken"), list.getItem(newInt(0)));
+    }
+    
 }
