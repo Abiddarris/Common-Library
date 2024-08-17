@@ -41,6 +41,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject TypeError;
     public static final PythonObject None;
     public static final PythonObject list;
+    public static final PythonObject IndexError;
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
@@ -249,6 +250,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         list = newClass("list", newTuple(), newDict(
             newString("__getitem__"), newFunction(findMethod(PythonList.class, "getItem"), "self", "index")
         ));
+        IndexError = newClass("IndexError", newTuple(Exception), newDict());
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
