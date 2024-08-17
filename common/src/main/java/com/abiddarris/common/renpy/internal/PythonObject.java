@@ -761,7 +761,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         @Override
         public void raise() {
-            throw new PythonException(this, args.toString());
+            throw new PythonException(this, getAttribute("__name__") + ": " + args.toString());
         }
     }
     
