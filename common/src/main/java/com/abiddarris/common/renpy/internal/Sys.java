@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
@@ -29,5 +30,6 @@ class Sys {
     static void init() {
         sys = Types.ModuleType.call(newString("sys"));
         sys.setAttribute("modules", newDict(newString("sys"), sys));
+        sys.setAttribute("meta_path", newList());
     }
 }
