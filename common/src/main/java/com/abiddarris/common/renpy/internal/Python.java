@@ -22,6 +22,8 @@ import static com.abiddarris.common.renpy.internal.PythonObject.str;
 
 import static java.util.Arrays.asList;
 
+import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,5 +55,9 @@ public class Python {
     
     public static PythonObject newList(List<PythonObject> elements) {
         return new PythonList(new ArrayList<>(elements));
+    }
+    
+    public static ExceptFinally tryExcept(Runnable tryRunnable) {
+        return new ExceptFinally(tryRunnable);
     }
 }

@@ -520,10 +520,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return _type.call(newString(name), bases, attributes);
     }
     
-    public static ExceptFinally tryExcept(Runnable tryRunnable) {
-        return new ExceptFinally(tryRunnable);
-    }
-    
     @Deprecated
     public static PythonObject getItem(PythonObject item, PythonObject key) {
         return item.getItem(key);
