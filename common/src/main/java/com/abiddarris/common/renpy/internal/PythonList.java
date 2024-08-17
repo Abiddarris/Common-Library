@@ -15,6 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.IndexError;
+
 import java.util.List;
 
 class PythonList extends PythonObject {
@@ -28,7 +31,11 @@ class PythonList extends PythonObject {
     }
     
     private static PythonObject getItem(PythonList list, PythonObject index) {
-        return list.elements.get(index.toInt());
+        int indexInt = index.toInt();
+        if(indexInt < 0 || indexInt >= list.elements.size()) {
+            IndexError.call(newString("list index out of range")).raise();
+        }
+        return list.elements.get(indexInt);
     }
     
 }
