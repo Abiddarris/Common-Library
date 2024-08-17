@@ -38,4 +38,14 @@ class PythonList extends PythonObject {
         return list.elements.get(indexInt);
     }
     
+    private static void insert(PythonList list, PythonObject index, PythonObject element) {
+        int indexInt = index.toInt();
+        if(indexInt < 0 || indexInt > list.elements.size()) {
+            list.elements.add(element);
+            return;
+        }
+        
+        list.elements.add(indexInt, element);
+    }
+    
 }
