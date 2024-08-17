@@ -640,30 +640,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         }
     }
 
-    private static class PythonFunction extends PythonObject {
-
-        private Method method;
-        private PythonSignature signature;
-
-        public PythonFunction(Method method, PythonSignature signature) {
-            this.signature = signature;
-
-            setAttribute("__class__", function);
-
-            this.method = method;
-        }
-
-        @Override
-        public PythonObject call(PythonParameter parameter) {
-            return signature.invoke(method, parameter);
-        }
-
-        @Override
-        public PythonObject call(List args, Map kwargs) {
-            throw new UnsupportedOperationException();
-        }
-    }
-    
     private static class PythonMethod extends PythonObject {
         
         private PythonObject function;
