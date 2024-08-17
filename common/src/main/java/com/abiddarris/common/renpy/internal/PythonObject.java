@@ -745,8 +745,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         private PythonBaseException(PythonObject cls, PythonObject args) {
             setAttribute("__class__", cls);
             
-            if(args.length() == 1) {
+            int len = args.length();
+            if(len == 1) {
                 this.args = args.getItem(newInt(0));
+            } else if(len == 0) {
+                this.args = newString("");
             } else {
                 this.args = args;
             }
