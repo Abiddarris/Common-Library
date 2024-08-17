@@ -6,11 +6,8 @@ import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
-import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
-import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 public class PythonObject extends Python implements Iterable<PythonObject> {
 
@@ -544,23 +540,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             .addKeywordArguments(kwargs));
         
         return instance;
-    }
-    
-    static Method findMethod(Class source, String name) {
-        Method[] methods = Stream.of(source.getDeclaredMethods())
-            .filter(method -> method.getName().equals(name))
-            .toArray(Method[]::new);
-        
-        if(methods.length > 1) {
-            throw new IllegalArgumentException(methods.length + " found");
-        }
-        
-        if(methods.length == 0) {
-            throw new IllegalArgumentException("Not found");
-        }
-        
-        methods[0].setAccessible(true);
-        return methods[0];
     }
 
     private static class PythonTuple extends PythonObject {
