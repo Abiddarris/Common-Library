@@ -17,8 +17,11 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.int0;
+import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.str;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import static java.util.Arrays.asList;
 
@@ -60,4 +63,39 @@ public class Python {
     public static ExceptFinally tryExcept(Runnable tryRunnable) {
         return new ExceptFinally(tryRunnable);
     }
+     
+    public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
+        return newClass(null, name, bases, attributes);
+    }
+    
+    public static PythonObject newClass(PythonObject _type, String name, PythonObject bases, PythonObject attributes) {
+        if(_type == null) {
+            _type = findType(bases);
+        }
+        
+        return _type.call(newString(name), bases, attributes);
+    }
+    
+    private static PythonObject findType(PythonObject bases) {
+        if(!bases.toBoolean()) {
+            return type;
+        }
+        
+        PythonObject _type = type.call(bases.getItem(newInt(0)));
+        int length = bases.length();
+        if(length == 1) {
+            return _type;
+        }
+        for(int i = 1; i < length; ++i) {
+        	PythonObject meta = type.call(bases.getItem(newInt(i)));
+            if(issubclass.call(meta, type).toBoolean()) {
+                _type = meta;
+            } else if(issubclass.call(_type, meta).toBoolean()) {
+                TypeError.call().raise();
+            }
+        }
+        
+        return _type;
+    }
+    
 }
