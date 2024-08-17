@@ -46,4 +46,13 @@ public class ListTest {
         assertEquals(true, thrown.getObject());
     }
     
+    @Test
+    public void insert_onList() {
+        PythonObject list = newList(newString("Chicken"));
+        list.callAttribute("insert", newInt(0), newString("Wolf"));
+        
+        assertEquals(newString("Wolf"), list.getItem(newInt(0)));
+        assertEquals(newString("Chicken"), list.getItem(newInt(1)));
+    }
+    
 }
