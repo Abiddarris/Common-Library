@@ -18,7 +18,10 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.Python.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.IndexError;
 
+import com.abiddarris.common.utils.ObjectWrapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -32,6 +35,15 @@ public class ListTest {
         PythonObject list = newList(newString("Cat"), newString("Rabbit"));
         
         assertEquals(newString("Cat"), list.getItem(newInt(0)));
+    }
+    
+    @Test
+    public void getItem_indexError() {
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
+        tryExcept(() -> newList().getItem(newInt(1)))
+            .onExcept(e -> thrown.setObject(true), IndexError)
+            .execute();
+        assertEquals(true, thrown.getObject());
     }
     
 }
