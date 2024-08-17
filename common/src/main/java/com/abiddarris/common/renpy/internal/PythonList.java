@@ -17,13 +17,22 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.IndexError;
+import static com.abiddarris.common.renpy.internal.PythonObject.StopIteration;
 
 import java.util.List;
 
 class PythonList extends PythonObject {
 
+    private static PythonObject list_iterator;
+    
     private List<PythonObject> elements;
 
+    static void init() {
+        list_iterator = newClass("list_iterator", newTuple(), newDict(
+            newString("__next__"), newFunction(findMethod(ListIteratorObject.class, "next"), "self")
+        ));
+    }
+    
     PythonList(List<PythonObject> elements) {
         this.elements = elements;
         
@@ -48,4 +57,27 @@ class PythonList extends PythonObject {
         list.elements.add(indexInt, element);
     }
     
+    private static PythonObject iter(PythonList self) {
+        return new ListIteratorObject(self);
+    }
+    
+    private static class ListIteratorObject extends PythonObject {
+        
+        private int index;
+        private PythonList list;
+        
+        private ListIteratorObject(PythonList list) {
+            this.list = list;
+            
+            setAttribute("__class__", list_iterator);
+        }
+        
+        private static PythonObject next(ListIteratorObject self) {
+            if(self.index == self.list.elements.size()) {
+                StopIteration.call().raise();
+            }
+            return self.list.getItem(newInt(self.index++));
+        }
+        
+    }
 }

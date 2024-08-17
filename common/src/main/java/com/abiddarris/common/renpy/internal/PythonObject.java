@@ -241,11 +241,13 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         Types.init();
         Sys.init();
+        PythonList.init();
         
         __import__ = newFunction(findMethod(BuiltinsImpl.class, "import0"), "name");
         list = newClass("list", newTuple(), newDict(
             newString("__getitem__"), newFunction(findMethod(PythonList.class, "getItem"), "self", "index"),
-            newString("insert"), newFunction(findMethod(PythonList.class, "insert"), "self", "index", "element") 
+            newString("insert"), newFunction(findMethod(PythonList.class, "insert"), "self", "index", "element"),
+            newString("__iter__"), newFunction(findMethod(PythonList.class, "iter"), "self")
         ));
         IndexError = newClass("IndexError", newTuple(Exception), newDict());
         /*object.addMethod(
