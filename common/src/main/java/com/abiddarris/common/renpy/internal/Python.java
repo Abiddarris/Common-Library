@@ -25,8 +25,11 @@ import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import static java.util.Arrays.asList;
 
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,18 @@ public class Python {
         return new ExceptFinally(tryRunnable);
     }
      
+    public static PythonObject newFunction(Method javaMethod, String... argumentNames) {
+        PythonSignatureBuilder builder = new PythonSignatureBuilder();
+        for(String argumentName : argumentNames) {
+        	builder.addParameter(argumentName);
+        }
+        return newFunction(javaMethod, builder.build());
+    }
+    
+    public static PythonObject newFunction(Method javaMethod, PythonSignature signature) {
+        return new PythonFunction(javaMethod, signature);
+    }
+    
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
         return newClass(null, name, bases, attributes);
     }
