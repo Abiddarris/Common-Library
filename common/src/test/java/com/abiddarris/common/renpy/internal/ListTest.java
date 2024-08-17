@@ -22,6 +22,7 @@ import static com.abiddarris.common.renpy.internal.Python.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.IndexError;
 
 import com.abiddarris.common.utils.ObjectWrapper;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,17 @@ public class ListTest {
         
         assertEquals(newString("Wolf"), list.getItem(newInt(1)));
         assertEquals(newString("Chicken"), list.getItem(newInt(0)));
+    }
+    
+    @Test
+    public void iterationTest() {
+        PythonObject list = newList(newString("Cat"), newString("Rabbit"));
+        List<PythonObject> actual = new ArrayList<>();
+        for(PythonObject element : list) {
+        	actual.add(element);
+        }
+        
+        assertEquals(List.of(newString("Cat"), newString("Rabbit")), actual);
     }
     
 }
