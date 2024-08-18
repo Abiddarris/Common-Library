@@ -15,23 +15,17 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.Python.newList;
-import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
-import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.Types.ModuleType;
+import static com.abiddarris.common.renpy.internal.Sys.sys;
 
-import com.abiddarris.common.annotations.PrivateApi;
-
-@PrivateApi
-class Sys {
-    static final int maxsize = Integer.MAX_VALUE;
+class ImportLib {
     
-    static PythonObject sys;
+    private static PythonObject machinery;
     
     static void init() {
-        sys = Types.ModuleType.call(newString("sys"));
-        sys.setAttribute("modules", newDict(newString("sys"), sys));
-        sys.setAttribute("meta_path", newList());
-        
-        ImportLib.init();
+        machinery = ModuleType.call(newString("importlib.machinery"));
+        machinery.setAttribute("__package__", newString("importlib"));
     }
+    
 }
