@@ -468,13 +468,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return new IteratorWrapper(pythonIterator);
     }
 
-    public static PythonObject newTuple(PythonObject... elements) {
-        PythonObject object = new PythonTuple(elements);
-        object.setAttribute("__class__", tuple);
-
-        return object;
-    }
-    
     public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
         PythonObject dict = new PythonDict(map);
         dict.setAttribute("__class__", PythonObject.dict);
