@@ -161,6 +161,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 .addParameter("self")
                 .build()
         ));
+        dict.setAttribute("__setitem__", newFunction(findMethod(PythonDict.class, "setItem"), "self", "key", "value"));
         
         type.setAttribute("__bases__", defaultBases);
         type.setAttribute("__class__", type);
