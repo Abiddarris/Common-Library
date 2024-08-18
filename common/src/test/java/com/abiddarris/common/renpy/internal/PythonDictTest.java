@@ -45,4 +45,12 @@ public class PythonDictTest {
         
         assertEquals(expected, actual);
     }
+    
+    @Test
+    public void dict_setItem() {
+        PythonObject dict = newDict(newString("T"), newString("D"));
+        dict.setItem(newString("T"), newString("I"));
+        
+        assertEquals(newString("I"), dict.getItem(newString("T")));
+    }
 }
