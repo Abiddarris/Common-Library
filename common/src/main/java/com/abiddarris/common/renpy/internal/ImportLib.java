@@ -15,9 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.findMethod;
+import static com.abiddarris.common.renpy.internal.Python.newClass;
+import static com.abiddarris.common.renpy.internal.Python.newDict;
+import static com.abiddarris.common.renpy.internal.Python.newFunction;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.Types.ModuleType;
+import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
+import static com.abiddarris.common.renpy.internal.Types.ModuleType;
 
 class ImportLib {
     
@@ -26,8 +31,15 @@ class ImportLib {
     static void init() {
         machinery = ModuleType.call(newString("importlib.machinery"));
         machinery.setAttribute("__package__", newString("importlib"));
+        machinery.setAttribute("ModuleSpec", newClass("ModuleSpec", newTuple(), newDict(
+            newString("__init__"), newFunction(findMethod(ImportLib.class, "moduleSpecInit"), "self", "name", "loader")
+        )));
         
         sys.getAttribute("modules").setItem(newString("importlib.machinery"), machinery);
     }
     
+    private static void moduleSpecInit(PythonObject self, PythonObject name, PythonObject loader) {
+        self.setAttribute("name", name);
+        self.setAttribute("loader", loader);
+    }
 }
