@@ -404,6 +404,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             .addPositionalArgument(key));
     }
     
+    public void setItem(PythonObject key, PythonObject value) {
+        callAttribute("__setitem__", key, value);
+    }
+    
     public void raise() {
     }
     
