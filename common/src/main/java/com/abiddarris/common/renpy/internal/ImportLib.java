@@ -26,6 +26,8 @@ class ImportLib {
     static void init() {
         machinery = ModuleType.call(newString("importlib.machinery"));
         machinery.setAttribute("__package__", newString("importlib"));
+        
+        sys.getAttribute("modules").setItem(newString("importlib.machinery"), machinery);
     }
     
 }
