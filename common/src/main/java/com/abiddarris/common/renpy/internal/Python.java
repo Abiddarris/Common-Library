@@ -80,6 +80,13 @@ public class Python {
         return new PythonFunction(javaMethod, signature);
     }
     
+    public static PythonObject newTuple(PythonObject... elements) {
+        PythonObject object = new PythonTuple(elements);
+        object.setAttribute("__class__", tuple);
+
+        return object;
+    }
+    
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
         return newClass(null, name, bases, attributes);
     }
