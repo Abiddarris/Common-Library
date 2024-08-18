@@ -468,26 +468,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return new IteratorWrapper(pythonIterator);
     }
 
-    public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
-        PythonObject dict = new PythonDict(map);
-        dict.setAttribute("__class__", PythonObject.dict);
-        
-        return dict;
-    }
-    
-    public static PythonObject newDict(PythonObject... objects) {
-        if(objects.length % 2 != 0) {
-            throw new IllegalArgumentException("Missing value for " + objects[objects.length - 1]);
-        }
-        
-        Map<PythonObject, PythonObject> map = new LinkedHashMap<>();
-        for(int i = 0; i < objects.length; i += 2) {
-        	map.put(objects[i], objects[i + 1]);
-        }
-        
-        return newDict(map);
-    }
-    
     @Deprecated
     public static PythonObject getItem(PythonObject item, PythonObject key) {
         return item.getItem(key);

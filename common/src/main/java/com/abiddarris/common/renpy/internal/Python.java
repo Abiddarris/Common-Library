@@ -21,6 +21,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.int0;
 import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.str;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import static java.util.Arrays.asList;
@@ -31,7 +32,9 @@ import com.abiddarris.common.renpy.internal.trycatch.ExceptFinally;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class Python {
@@ -85,6 +88,26 @@ public class Python {
         object.setAttribute("__class__", tuple);
 
         return object;
+    }
+    
+    public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
+        PythonObject dict = new PythonDict(map);
+        dict.setAttribute("__class__", PythonObject.dict);
+        
+        return dict;
+    }
+    
+    public static PythonObject newDict(PythonObject... objects) {
+        if(objects.length % 2 != 0) {
+            throw new IllegalArgumentException("Missing value for " + objects[objects.length - 1]);
+        }
+        
+        Map<PythonObject, PythonObject> map = new LinkedHashMap<>();
+        for(int i = 0; i < objects.length; i += 2) {
+        	map.put(objects[i], objects[i + 1]);
+        }
+        
+        return newDict(map);
     }
     
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
