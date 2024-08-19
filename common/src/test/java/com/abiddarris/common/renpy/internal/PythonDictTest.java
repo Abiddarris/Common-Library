@@ -15,10 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -52,5 +56,15 @@ public class PythonDictTest {
         dict.setItem(newString("T"), newString("I"));
         
         assertEquals(newString("I"), dict.getItem(newString("T")));
+    }
+    
+    @Test
+    public void nonExistKey() {
+        ObjectWrapper<Boolean> called = new ObjectWrapper<>(false);
+        tryExcept(() -> newDict().getItem(newString("NotExist"))).
+        onExcept((e) -> called.setObject(true), KeyError).
+        execute();
+        
+        assertEquals(true, called.getObject());
     }
 }
