@@ -39,6 +39,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject list;
     public static final PythonObject IndexError;
     public static final PythonObject ModuleNotFoundError;
+    public static final PythonObject KeyError;
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
@@ -253,6 +254,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         IndexError = newClass("IndexError", newTuple(Exception), newDict());
         ModuleNotFoundError = newClass("ModuleNotFoundError", newTuple(Exception), newDict());
+        KeyError = newClass("KeyError", newTuple(Exception), newDict());
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
