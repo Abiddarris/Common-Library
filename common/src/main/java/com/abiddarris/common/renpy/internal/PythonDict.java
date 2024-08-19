@@ -46,7 +46,12 @@ class PythonDict extends PythonObject {
     }
         
     private static PythonObject dictGetItem(PythonDict self, PythonObject key) {
-        return self.map.get(key);
+        PythonObject value = self.map.get(key);
+        if(value == null) {
+            KeyError.call(key).raise();
+        }
+        
+        return value;
     }
     
     private static void setItem(PythonDict self, PythonObject key, PythonObject value) {
