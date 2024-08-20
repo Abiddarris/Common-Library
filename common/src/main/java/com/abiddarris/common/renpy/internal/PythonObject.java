@@ -329,10 +329,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         setAttribute(name, func);
     }
 
-    private void addField(String name, Object obj) {
-        setAttribute(name, obj);
-    }
-
     public void setAttribute(String name, Object obj) {
         attributes.put(name, obj);
     }
