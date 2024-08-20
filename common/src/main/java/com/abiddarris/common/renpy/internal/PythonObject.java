@@ -74,11 +74,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         int0 = new PythonObject();
         int0.setAttribute("__bases__", defaultBases);
         int0.setAttribute("__class__", type);
-        int0.addField("__name__", newPythonString("int"));
+        int0.setAttribute("__name__", newPythonString("int"));
 
         function.setAttribute("__bases__", defaultBases);
         function.setAttribute("__class__", type);
-        function.addField("__name__", newPythonString("function"));
+        function.setAttribute("__name__", newPythonString("function"));
 
         len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
         
@@ -125,8 +125,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         tuple.setAttribute("__class__", type);
         tuple.setAttribute("__bases__", defaultBases);
-        tuple.addField("__name__", newPythonString("tuple"));
-        tuple.addField("__getitem__", newFunction(
+        tuple.setAttribute("__name__", newPythonString("tuple"));
+        tuple.setAttribute("__getitem__", newFunction(
             findMethod(PythonTuple.class, "getitem"),
             new PythonSignatureBuilder()  
                 .addParameter("self")    
