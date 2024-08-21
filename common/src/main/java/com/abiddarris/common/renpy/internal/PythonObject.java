@@ -275,7 +275,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return newPythonInt(self.getHashCode());
     }
     
-    public static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
+    private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
         PythonObject attribute = findAttribute(self, name.toString());
         if(attribute == null) {
             AttributeError.call().raise();
