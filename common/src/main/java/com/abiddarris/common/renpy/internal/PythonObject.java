@@ -365,14 +365,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return method.call(args, kwargs);
     }
 
-    public PythonObject call(List args, Map kwargs) {
-        List args2 = new ArrayList<>();
-        args2.add(this);
-        args2.addAll(args);
-
-        return invokeStaticMethod("__call__", args2, kwargs);
-    }
-    
     public PythonObject callAttribute(String name, PythonParameter parameter) {
         PythonObject object = getAttribute(name);
         return object.call(parameter);
