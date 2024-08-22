@@ -356,15 +356,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return false;
     }
 
-    public PythonObject invokeStaticMethod(String name, List args, Map kwargs) {
-        PythonMethod method = (PythonMethod) getAttr(this, name, null);
-        if (method == null) {
-            throw new NoSuchMethodError(String.format("Method %s not found", name));
-        }
-
-        return method.call(args, kwargs);
-    }
-
     public PythonObject callAttribute(String name, PythonParameter parameter) {
         PythonObject object = getAttribute(name);
         return object.call(parameter);
