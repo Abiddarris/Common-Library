@@ -40,8 +40,4 @@ class PythonFunction extends PythonObject {
         return signature.invoke(method, parameter);
     }
 
-    @Override
-    public PythonObject call(List args, Map kwargs) {
-        throw new UnsupportedOperationException();
-    }
 }
