@@ -65,6 +65,15 @@ public class ImportTest {
                 .getAttribute("platform").toString());
     }
     
+    @Test
+    public void importOnObject_root() {
+        PythonObject sys = __import__.call(newString("sys"));
+        PythonObject simpleModule = createModule("simplemodule");
+        
+        assertEquals(sys, simpleModule.importModule("sys"));
+        assertEquals(sys, simpleModule.getAttribute("sys"));
+    }
+    
     public static class CustomLoaderImpl {
         
         private static PythonObject ModuleSpec;
