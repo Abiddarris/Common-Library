@@ -142,6 +142,10 @@ public class Python {
         return mod;
     }
     
+    public static PythonObject createModule(String name) {
+        return createModule(newString(name));
+    }
+    
     static Method findMethod(Class source, String name) {
         Method[] methods = Stream.of(source.getDeclaredMethods())
             .filter(method -> method.getName().equals(name))
