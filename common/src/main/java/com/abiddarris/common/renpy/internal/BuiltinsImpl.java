@@ -74,11 +74,14 @@ public class BuiltinsImpl {
             }, AttributeError).execute();
             
             name.setObject(submoduleName);
+            int index = i;
             tryExcept(() -> mod.setObject(
                 sys.getAttribute("modules")
                     .getItem(name.getObject()))).
             onExcept((e) -> {
-                mod.setObject(importFromMetaPath(name.getObject()));
+                PythonObject submodule = importFromMetaPath(name.getObject());
+                mod.getObject().setAttribute(parts[index], submodule);    
+                mod.setObject(submodule);
             }, KeyError).execute();
         }
         
