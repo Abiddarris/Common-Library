@@ -64,7 +64,7 @@ public class BuiltinsImpl {
         }, KeyError).execute();
         
         for (int i = 1; i < parts.length; i++) {
-            PythonObject submoduleName = newString(name.toString() + "." + parts[i]);
+            PythonObject submoduleName = newString(name.getObject() + "." + parts[i]);
             
             tryExcept(() -> mod.getObject().getAttribute("__path__")).
             onExcept((e) -> {
@@ -103,7 +103,7 @@ public class BuiltinsImpl {
         }
         
         ModuleNotFoundError.call(
-            newString(String.format("No module named %s", name.toString()))
+            newString(String.format("No module named %s", name))
         ).raise();
         
         return null;
