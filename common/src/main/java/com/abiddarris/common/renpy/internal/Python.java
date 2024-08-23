@@ -23,6 +23,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import static com.abiddarris.common.renpy.internal.Types.ModuleType;
 
 import static java.util.Arrays.asList;
 
@@ -120,6 +121,14 @@ public class Python {
         }
         
         return _type.call(newString(name), bases, attributes);
+    }
+    
+    public static PythonObject newPackage(PythonObject name) {
+        PythonObject module = ModuleType.call(name);
+        module.setAttribute("__path__", newList());
+        module.setAttribute("__package__", name);
+        
+        return module;
     }
     
     static Method findMethod(Class source, String name) {
