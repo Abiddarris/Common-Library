@@ -87,7 +87,7 @@ public class BuiltinsImpl {
     
     private static PythonObject importFromMetaPath(PythonObject name) {
         for (PythonObject finder : sys.getAttribute("meta_path")) {
-            PythonObject spec = finder.callAttribute("find_spec", name);
+            PythonObject spec = finder.callAttribute("find_spec", name, None, None);
             
             if (!spec.toBoolean()) {
                 continue;
