@@ -405,6 +405,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return len.call(this).toInt();
     }
     
+    public PythonObject importModule(String name) {
+        return importModule(newString(name));
+    }
+    
     public PythonObject importModule(PythonObject name) {
         PythonObject module = __import__.call(name);
         String jName = name.toString();
