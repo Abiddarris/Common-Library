@@ -137,7 +137,7 @@ public class Python {
         String jName = name.toString(); 
         int end = jName.lastIndexOf(".");
         
-        mod.setAttribute("__package__", end != 1 ? jName.substring(0, end) : "");
+        mod.setAttribute("__package__", end != -1 ? jName.substring(0, end) : "");
         
         return mod;
     }
