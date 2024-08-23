@@ -405,6 +405,18 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return len.call(this).toInt();
     }
     
+    public PythonObject importModule(PythonObject name) {
+        PythonObject module = __import__.call(name);
+        String jName = name.toString();
+        int period = jName.indexOf(".");
+        
+        jName = period != -1 ? jName.substring(0, period) : jName;
+        
+        setAttribute(jName, module);
+        
+        return module;
+    }
+    
     PythonObject callTypeAttribute(String name, PythonObject... args) {
         PythonArgument argument = new PythonArgument();
         argument.addPositionalArgumentsFromArray(args);
