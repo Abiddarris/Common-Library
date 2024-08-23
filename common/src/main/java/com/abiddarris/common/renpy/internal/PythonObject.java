@@ -243,7 +243,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         NoneType.setAttribute("__bool__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeBool"), "self"));
         
         Types.init();
-        Sys.init();
         PythonList.init();
         
         __import__ = newFunction(findMethod(BuiltinsImpl.class, "importImpl"), "name");
@@ -252,6 +251,9 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             newString("insert"), newFunction(findMethod(PythonList.class, "insert"), "self", "index", "element"),
             newString("__iter__"), newFunction(findMethod(PythonList.class, "iter"), "self")
         ));
+        
+        Sys.init();
+        
         IndexError = newClass("IndexError", newTuple(Exception), newDict());
         ModuleNotFoundError = newClass("ModuleNotFoundError", newTuple(Exception), newDict());
         KeyError = newClass("KeyError", newTuple(Exception), newDict());
