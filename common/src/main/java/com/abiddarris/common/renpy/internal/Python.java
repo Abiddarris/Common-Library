@@ -123,12 +123,23 @@ public class Python {
         return _type.call(newString(name), bases, attributes);
     }
     
-    public static PythonObject newPackage(PythonObject name) {
+    public static PythonObject createPackage(PythonObject name) {
         PythonObject module = ModuleType.call(name);
         module.setAttribute("__path__", newList());
         module.setAttribute("__package__", name);
         
         return module;
+    }
+    
+    public static PythonObject createModule(PythonObject name) {
+        PythonObject mod = ModuleType.call(name);
+        
+        String jName = name.toString(); 
+        int end = jName.lastIndexOf(".");
+        
+        mod.setAttribute("__package__", end != 1 ? jName.substring(0, end) : "");
+        
+        return mod;
     }
     
     static Method findMethod(Class source, String name) {
