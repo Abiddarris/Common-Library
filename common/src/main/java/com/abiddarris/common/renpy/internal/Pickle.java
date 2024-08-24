@@ -1,6 +1,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newList;
+import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
 import static com.abiddarris.common.stream.InputStreams.readExact;
@@ -518,7 +519,7 @@ public class Pickle {
         dispatch[TUPLE[0]] = load_tuple*/
 
         public void load_empty_tuple() {
-            this.append(emptyList());
+            this.append(newTuple());
         }
         
         /*
