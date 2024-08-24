@@ -123,6 +123,10 @@ public class Python {
         return _type.call(newString(name), bases, attributes);
     }
     
+    public static PythonObject createPackage(String name) {
+        return createPackage(newString(name));
+    }
+    
     public static PythonObject createPackage(PythonObject name) {
         PythonObject module = ModuleType.call(name);
         module.setAttribute("__path__", newList());
