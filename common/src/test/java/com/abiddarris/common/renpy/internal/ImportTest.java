@@ -24,10 +24,14 @@ import static com.abiddarris.common.renpy.internal.Python.newFunction;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+
 import org.junit.jupiter.api.Test;
 
 public class ImportTest {
@@ -73,7 +77,6 @@ public class ImportTest {
         assertEquals(sys, simpleModule.importModule("sys"));
         assertEquals(sys, simpleModule.getAttribute("sys"));
     }
-    
       
     @Test
     public void fromImportOnObject() {
@@ -82,6 +85,19 @@ public class ImportTest {
         
         assertEquals(modules, simpleModule.fromImport("sys", "modules")[0]);
         assertEquals(modules, simpleModule.getAttribute("modules"));
+    }
+    
+    @Test
+    public void javaModuleLoader() {
+        JavaModuleLoader.registerLoader("cio", (name) -> {
+            PythonObject cio = createModule("cio");
+            cio.setAttribute("fast_io_supported", True);
+                
+            return cio;    
+        });
+        
+        PythonObject cio = __import__.call(newString("cio"));
+        assertEquals(True, cio.getAttribute("fast_io_supported"));
     }
     
     public static class CustomLoaderImpl {
