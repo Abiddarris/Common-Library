@@ -37,8 +37,11 @@
  *************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Python.createModule;
+
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
@@ -55,6 +58,14 @@ import java.util.Set;
 
 /** This module provides tools for safely analyizing pickle files programmatically */
 public class Magic {
+    
+    static void initLoader() {
+        JavaModuleLoader.registerLoader("decompiler.magic", (name) -> {
+            PythonObject magic = createModule("decompiler.magic");
+                
+            return magic;    
+        });
+    }
 
     /**
      * The metaclass used to create fake classes. To support comparisons between fake classes and
@@ -85,14 +96,14 @@ public class Magic {
     public static final PythonObject FakeStrict;
 
     static {
-        FakeClassType = type.call(
+        FakeClassType = null;/*type.call(
             List.of(
                 "FakeClassType",
                 List.of(type),
                 Map.of()), 
             Map.of()
-        );
-        FakeClassType.addMethod("__new__", (args, kwargs) -> {
+        );*/
+       /* FakeClassType.addMethod("__new__", (args, kwargs) -> {
             //def __new__(cls, name, bases, attributes, module=None):
             PythonObject cls = (PythonObject)args.get(0);
             String name = (String)args.get(1);
@@ -112,7 +123,7 @@ public class Magic {
                 attributes.put("__module__", module);
 
             if (!attributes.containsKey("__module__"))
-                 throw new RuntimeException/*TypeError*/(
+                 throw new RuntimeException/*TypeError*//*(
                     String.format(
                         "No module has been specified for FakeClassType %s",
                         name));
@@ -124,16 +135,16 @@ public class Magic {
                     ),
                     Map.of()
             );
-        });
-        FakeClass = FakeClassType.call(
+        });*/
+        FakeClass = null;/* FakeClassType.call(
             List.of(
                 "FakeClass",
                 Collections.emptyList(), 
                 Collections.emptyMap() 
             ),
             Map.of("module", "magic")
-        );
-        FakeStrict = type.call(
+        );*/
+        FakeStrict = null; /*type.call(
             List.of(
                 "FakeStrict",
                 List.of(FakeClass),
@@ -141,7 +152,7 @@ public class Magic {
             ),
             Map.of()
         );
-        FakeStrict.addMethod("__new__", (args, kwargs) -> {
+        /*FakeStrict.addMethod("__new__", (args, kwargs) -> {
             PythonObject cls = (PythonObject)args.remove(0);
             PythonObject self = FakeClass.invokeStaticMethod("__new__", List.of(), Map.of());
                 
@@ -151,7 +162,7 @@ public class Magic {
                         "%s was instantiated with unexpected arguments %s, %s",
                         cls, args, kwargs));
             return self;
-        });
+        });*/
     }
     
     /*
@@ -271,7 +282,7 @@ public class Magic {
 
             //if not klass:
                 // generate a new class def which inherits from the default fake class
-                klass = type.call(
+                klass = null;/*type.call(
                     List.of(
                         name, 
                         List.of(
@@ -281,7 +292,7 @@ public class Magic {
                     Map.of(
                         "__module__", module
                     )
-                );
+                );*/
 
             this.class_cache.put(List.of(module, name), klass);
             return klass;
