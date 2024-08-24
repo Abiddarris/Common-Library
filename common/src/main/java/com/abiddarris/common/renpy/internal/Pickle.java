@@ -2,6 +2,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import static com.abiddarris.common.stream.InputStreams.readExact;
 import static com.abiddarris.common.stream.InputStreams.readLine;
 import static com.abiddarris.common.stream.Signs.sign;
@@ -603,18 +604,11 @@ public class Pickle {
         */
         
         public void load_newobj() {
-            Object args = this.stack.remove(this.stack.size() - 1);
+            PythonObject args = (PythonObject) this.stack.remove(this.stack.size() - 1);
             PythonObject cls = (PythonObject)this.stack.remove(this.stack.size() - 1);
             
-            List argsList = new ArrayList<>();
-            argsList.add(cls);
-            argsList.addAll((List)args);
-            
-            PythonObject obj = cls.invokeStaticMethod(
-                "__new__",
-                argsList, 
-                emptyMap()
-            );
+            PythonObject obj = cls.callAttribute("__new__", new PythonArgument()
+                .addPositionalArguments(args));
             this.append(obj);
         }
         
