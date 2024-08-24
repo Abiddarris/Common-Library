@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
@@ -102,7 +103,8 @@ public class PythonSignature {
         }
         
         try {
-            return (PythonObject)method.invoke(null, (Object[])args);
+            PythonObject object = (PythonObject)method.invoke(null, (Object[])args);
+            return object != null ? object : None;
         } catch (InvocationTargetException e) {
             throw toUncheckException(e.getCause());
         } catch (Exception e) {
