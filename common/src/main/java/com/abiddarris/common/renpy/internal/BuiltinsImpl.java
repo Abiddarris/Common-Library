@@ -37,6 +37,11 @@ import static java.util.regex.Pattern.quote;
 
 public class BuiltinsImpl {
     
+    static PythonObject importAs(String name) {
+        return importAsInternal(
+            name.split(quote(".")));
+    }
+    
     private static PythonObject len(PythonObject obj) {
         return obj.callTypeAttribute("__len__");
     }
