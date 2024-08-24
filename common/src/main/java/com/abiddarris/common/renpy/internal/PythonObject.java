@@ -1,8 +1,10 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
+import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
 
 import static java.util.Collections.emptyMap;
+import static java.lang.System.arraycopy;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
@@ -419,6 +421,25 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         setAttribute(jName, module);
         
         return module;
+    }
+    
+    public PythonObject[] fromImport(String modName, String attributeName, String... attributeNames) {
+        PythonObject mod = importAs(modName);
+        
+        String[] attributeNames0 = new String[attributeNames.length + 1];
+        attributeNames0[0] = attributeName;
+        
+        arraycopy(attributeNames, 0, attributeNames0, 1, attributeNames.length);
+        
+        List<PythonObject> attributes = new ArrayList<>();
+        for(String attributeName0 : attributeNames0) {
+        	PythonObject attribute = mod.getAttribute(attributeName0);
+            setAttribute(attributeName0, attribute);
+            
+            attributes.add(attribute);
+        }
+        
+        return attributes.toArray(PythonObject[]::new);
     }
     
     PythonObject callTypeAttribute(String name, PythonObject... args) {
