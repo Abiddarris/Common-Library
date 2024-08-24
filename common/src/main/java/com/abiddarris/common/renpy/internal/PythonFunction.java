@@ -29,10 +29,13 @@ class PythonFunction extends PythonObject {
 
     public PythonFunction(Method method, PythonSignature signature) {
         this.signature = signature;
-
-        setAttribute("__class__", function);
-
         this.method = method;
+        
+        setAttribute("__class__", function);
+        
+        if(!method.isAccessible()) {
+            method.setAccessible(true);
+        }
     }
 
     @Override
