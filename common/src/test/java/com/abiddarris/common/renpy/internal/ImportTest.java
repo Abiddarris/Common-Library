@@ -74,6 +74,16 @@ public class ImportTest {
         assertEquals(sys, simpleModule.getAttribute("sys"));
     }
     
+      
+    @Test
+    public void fromImportOnObject() {
+        PythonObject modules = __import__.call(newString("sys")).getAttribute("modules");
+        PythonObject simpleModule = createModule("simplemodule");
+        
+        assertEquals(modules, simpleModule.fromImport("sys", "modules")[0]);
+        assertEquals(modules, simpleModule.getAttribute("modules"));
+    }
+    
     public static class CustomLoaderImpl {
         
         private static PythonObject ModuleSpec;
