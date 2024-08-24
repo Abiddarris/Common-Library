@@ -261,6 +261,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         IndexError = newClass("IndexError", newTuple(Exception), newDict());
         ModuleNotFoundError = newClass("ModuleNotFoundError", newTuple(Exception), newDict());
         KeyError = newClass("KeyError", newTuple(Exception), newDict());
+        
+        JavaModuleLoader.init();
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
