@@ -71,6 +71,10 @@ public class Python {
     public static ExceptFinally tryExcept(Runnable tryRunnable) {
         return new ExceptFinally(tryRunnable);
     }
+    
+    public static PythonObject newFunction(Class sourceClass, String methodName, String... argumentNames) {
+        return newFunction(findMethod(sourceClass, methodName), argumentNames);
+    }
      
     public static PythonObject newFunction(Method javaMethod, String... argumentNames) {
         PythonSignatureBuilder builder = new PythonSignatureBuilder();
