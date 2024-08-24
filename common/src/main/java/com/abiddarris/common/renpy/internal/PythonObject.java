@@ -3,6 +3,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
 
+import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import static java.util.Collections.emptyMap;
 import static java.lang.System.arraycopy;
 
@@ -251,7 +252,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         list = newClass("list", newTuple(), newDict(
             newString("__getitem__"), newFunction(findMethod(PythonList.class, "getItem"), "self", "index"),
             newString("insert"), newFunction(findMethod(PythonList.class, "insert"), "self", "index", "element"),
-            newString("__iter__"), newFunction(findMethod(PythonList.class, "iter"), "self")
+            newString("__iter__"), newFunction(findMethod(PythonList.class, "iter"), "self"),
+            newString("append"), newFunction(PythonList.class, "append", "self", "append") 
         ));
         
         Sys.init();
