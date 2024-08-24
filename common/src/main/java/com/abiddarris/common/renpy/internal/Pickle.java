@@ -1,8 +1,8 @@
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
-import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import static com.abiddarris.common.stream.InputStreams.readExact;
 import static com.abiddarris.common.stream.InputStreams.readLine;
 import static com.abiddarris.common.stream.Signs.sign;
@@ -15,6 +15,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.annotations.PrivateApi;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -543,7 +544,7 @@ public class Pickle {
         
         
         private void load_empty_list() {
-            this.append(new ArrayList<>());
+            this.append(newList());
         }
         
         private void load_empty_dictionary() {
