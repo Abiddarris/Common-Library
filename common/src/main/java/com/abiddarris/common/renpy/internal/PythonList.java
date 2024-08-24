@@ -57,6 +57,10 @@ class PythonList extends PythonObject {
         list.elements.add(indexInt, element);
     }
     
+    private static void append(PythonList self, PythonObject element) {
+        self.elements.add(element);
+    }
+    
     private static PythonObject iter(PythonList self) {
         return new ListIteratorObject(self);
     }
