@@ -38,7 +38,9 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Python.createModule;
+import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
@@ -48,6 +50,7 @@ import static com.abiddarris.common.stream.Signs.sign;
 import com.abiddarris.common.renpy.internal.Pickle;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 import java.io.ByteArrayInputStream;
@@ -67,7 +70,16 @@ public class Magic {
             PythonObject FakeClassType = magic.addNewClass("FakeClassType", type);
                 
             FakeClassTypeImpl.initObject(FakeClassType);
-                
+            
+            PythonObject FakeClass = FakeClassType.call(
+                new PythonArgument(
+                    newString("FakeClass"), newTuple(), newDict(
+                        newString("__doc__"), newString("A barebones instance of :class:`FakeClassType`. Inherit from this to create fake classes.")
+                    )
+                ).addKeywordArgument("module", magic.getAttribute("__name__"))
+            );
+          
+            magic.setAttribute("FakeClass", FakeClass); 
             return magic;    
         });
     }
@@ -135,18 +147,9 @@ public class Magic {
         
     }
     
-    public static final PythonObject FakeClass;
     public static final PythonObject FakeStrict;
 
     static {
-        FakeClass = null;/* FakeClassType.call(
-            List.of(
-                "FakeClass",
-                Collections.emptyList(), 
-                Collections.emptyMap() 
-            ),
-            Map.of("module", "magic")
-        );*/
         FakeStrict = null; /*type.call(
             List.of(
                 "FakeStrict",
