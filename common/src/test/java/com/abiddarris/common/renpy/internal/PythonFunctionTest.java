@@ -38,6 +38,7 @@ public class PythonFunctionTest {
     
     private static boolean noParameterTestFunctionCalled;
     private static boolean arg_varPosArg_andVarKeyArg_function_called;
+    private static boolean default_pos_argument_called;
     private static PythonObject oneParameterTestFunctionResult;
     private static PythonObject varPositionalParametersFunction;
     private static PythonObject varKeywordArgument;
@@ -204,6 +205,22 @@ public class PythonFunctionTest {
             .execute();
         
         assertTrue(onExceptCalled.getObject());
+    }
+    
+    @Test
+    public void default_pos_argument() {
+        PythonObject func = newFunction(PythonFunctionTest.class, "defaultPosFunction", new PythonSignatureBuilder()
+            .addParameter("obj", newString("My Value"))
+            .build());
+        func.call();
+        
+        assertTrue(default_pos_argument_called);
+    }
+    
+    public static void defaultPosFunction(PythonObject obj) {
+        default_pos_argument_called = true;
+        
+        assertEquals(newString("My Value"), obj);
     }
     
     public static void noParameterTestFunction() {
