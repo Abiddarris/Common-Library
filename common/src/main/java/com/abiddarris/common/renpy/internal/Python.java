@@ -72,6 +72,10 @@ public class Python {
         return new ExceptFinally(tryRunnable);
     }
     
+    public static PythonObject newFunction(Class sourceClass, String methodName, PythonSignature signature) {
+        return newFunction(findMethod(sourceClass, methodName), signature);
+    }
+    
     public static PythonObject newFunction(Class sourceClass, String methodName, String... argumentNames) {
         return newFunction(findMethod(sourceClass, methodName), argumentNames);
     }
