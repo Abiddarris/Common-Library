@@ -42,6 +42,10 @@ public class PythonSignature {
         keywords = new ArrayList<>(signature.keySet());
     }
     
+    public int getParamaterSize() {
+        return keywords.size();
+    }
+    
     public PythonObject invoke(Method method, PythonParameter parameter) {
         PythonObject[] args = new PythonObject[signature.size()];
         List<PythonObject> posArgs = new ArrayList<>(parameter.positionalArguments);
