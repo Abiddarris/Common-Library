@@ -103,6 +103,10 @@ public class Magic {
                  new PythonSignatureBuilder("cls", "name", "bases", "attributes")
                     .addParameter("module", None)
                     .build());
+            FakeClassType.addNewFunction("__init__", FakeClassTypeImpl.class, "init",
+                 new PythonSignatureBuilder("self", "name", "bases", "attributes")
+                    .addParameter("module", None)
+                    .build());
         }
         
         private static PythonObject new0(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
@@ -123,6 +127,10 @@ public class Magic {
                
             // assemble instance
             return type.callAttribute("__new__", cls, name, bases, attributes);
+        }
+        
+        private static PythonObject init(PythonObject self, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
+            return type.callAttribute("__init__", self, name, bases, attributes);
         }
         
     }
@@ -161,12 +169,6 @@ public class Magic {
     }
     
     /*
-  
-        /*
-        
-        /* def __init__(self, name, bases, attributes, module=None):
-             type.__init__(self, name, bases, attributes)
-
          # comparison logic
 
          def __eq__(self, other):
