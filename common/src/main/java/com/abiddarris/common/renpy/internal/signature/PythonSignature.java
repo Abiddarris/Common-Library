@@ -110,7 +110,11 @@ public class PythonSignature {
             PythonObject object = (PythonObject)method.invoke(null, (Object[])args);
             return object != null ? object : None;
         } catch (InvocationTargetException e) {
-            throw toUncheckException(e.getCause());
+            Throwable cause = e.getCause();
+            if(cause instanceof Error) {
+                throw (Error)cause;
+            }
+            throw toUncheckException(cause);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
