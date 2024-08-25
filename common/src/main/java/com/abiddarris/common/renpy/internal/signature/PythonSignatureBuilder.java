@@ -26,6 +26,15 @@ public class PythonSignatureBuilder {
     private String kwargsName;
     private Map<String, PythonObject> signature = new LinkedHashMap<>();
     
+    public PythonSignatureBuilder() {
+    }
+    
+    public PythonSignatureBuilder(String... args) {
+        for(var arg : args) {
+        	addParameter(arg);
+        }
+    }
+    
     public PythonSignatureBuilder addParameter(String name) {
         return addParameter(name, null);
     }
