@@ -15,9 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import com.abiddarris.common.renpy.internal.PythonObject;
+
 public class PythonArgument extends PythonParameter {
     
     public PythonArgument() {
+    }
+    
+    public PythonArgument(PythonObject... args) {
+        addPositionalArgumentsFromArray(args);
     }
     
     public PythonArgument(PythonParameter parameter) {
