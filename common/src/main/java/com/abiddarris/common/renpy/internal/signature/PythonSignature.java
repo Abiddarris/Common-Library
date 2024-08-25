@@ -77,8 +77,12 @@ public class PythonSignature {
             
             PythonObject arg = posArgs.isEmpty() ? keywordArgs.remove(keyword) : posArgs.remove(0);
             if(arg == null) {
+                arg = signature.get(keyword);
+            }
+            if(arg == null) {
                 missingArguments.add(keyword);
             }
+            
         	args[i] = arg;
         }
         if(missingArguments.size() != 0) {
