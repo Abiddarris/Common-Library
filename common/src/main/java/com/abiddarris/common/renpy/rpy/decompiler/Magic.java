@@ -38,15 +38,17 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Python.createModule;
-
+import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
-import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
 import com.abiddarris.common.renpy.internal.PythonObject;
-import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -62,11 +64,14 @@ public class Magic {
     static void initLoader() {
         JavaModuleLoader.registerLoader("decompiler.magic", (name) -> {
             PythonObject magic = createModule("decompiler.magic");
+            PythonObject FakeClassType = magic.addNewClass("FakeClassType", type);
+                
+            FakeClassTypeImpl.initObject(FakeClassType);
                 
             return magic;    
         });
     }
-
+    
     /**
      * The metaclass used to create fake classes. To support comparisons between fake classes and
      * :class:`FakeModule` instances custom behaviour is defined here which follows this logic:
@@ -91,51 +96,41 @@ public class Magic {
      *
      * <p>This is a subclass of :class:`type`.
      */
-    public static final PythonObject FakeClassType;
+    private static class FakeClassTypeImpl {
+        
+        private static void initObject(PythonObject FakeClassType) {
+            FakeClassType.addNewFunction("__new__", FakeClassTypeImpl.class, "new0",
+                 new PythonSignatureBuilder("cls", "name", "bases", "attributes")
+                    .addParameter("module", None)
+                    .build());
+        }
+        
+        private static PythonObject new0(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
+            // This would be a lie
+            //attributes.pop("__qualname__", None)
+
+            // figure out what module we should say we're in
+            // note that if no module is explicitly passed, the current module will be chosen
+            // due to the class statement implicitly specifying __module__ as __name__
+            if (module != None) 
+                attributes.setItem(newString("__module__"), module);
+
+            if (!attributes.jin(newString("__module__"))) {
+                TypeError.call(newString(String.format(
+                    "No module has been specified for FakeClassType %s", name)))
+                    .raise();
+            }
+               
+            // assemble instance
+            return type.callAttribute("__new__", cls, name, bases, attributes);
+        }
+        
+    }
+    
     public static final PythonObject FakeClass;
     public static final PythonObject FakeStrict;
 
     static {
-        FakeClassType = null;/*type.call(
-            List.of(
-                "FakeClassType",
-                List.of(type),
-                Map.of()), 
-            Map.of()
-        );*/
-       /* FakeClassType.addMethod("__new__", (args, kwargs) -> {
-            //def __new__(cls, name, bases, attributes, module=None):
-            PythonObject cls = (PythonObject)args.get(0);
-            String name = (String)args.get(1);
-            List<PythonObject> bases = (List<PythonObject>)args.get(2);
-            Map<String, Object> attributes = new HashMap<>(
-                    (Map<String, Object>)args.get(3)
-            );
-            String module = (String)kwargs.get("module");  
-                
-            //This would be a lie
-            attributes.remove("__qualname__");
-
-            //figure out what module we should say we're in
-            //note that if no module is explicitly passed, the current module will be chosen
-            //due to the class statement implicitly specifying __module__ as __name__
-            if (module != null)
-                attributes.put("__module__", module);
-
-            if (!attributes.containsKey("__module__"))
-                 throw new RuntimeException/*TypeError*//*(
-                    String.format(
-                        "No module has been specified for FakeClassType %s",
-                        name));
-
-            // assemble instance
-            return type.invokeStaticMethod("__new__", 
-                    List.of(
-                        cls, name, bases, attributes
-                    ),
-                    Map.of()
-            );
-        });*/
         FakeClass = null;/* FakeClassType.call(
             List.of(
                 "FakeClass",
