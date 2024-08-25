@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import com.abiddarris.common.renpy.internal.signature.BadSignatureError;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
@@ -30,6 +31,14 @@ class PythonFunction extends PythonObject {
     public PythonFunction(Method method, PythonSignature signature) {
         this.signature = signature;
         this.method = method;
+        
+        int paramCount = method.getParameterCount();
+        int signatureParamCount = signature.getParamaterSize();
+        if(paramCount != signatureParamCount) {
+            throw new BadSignatureError(String.format("Method %s takes %s %s but given signature takes %s %s",
+                    method.getName(), paramCount, paramCount > 1 ? "arguments" : "argument",
+                    signatureParamCount, signatureParamCount > 1 ? "arguments" : "argument"));
+        }
         
         setAttribute("__class__", function);
         
