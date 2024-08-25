@@ -4,6 +4,7 @@ import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
 
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import static java.util.Collections.emptyMap;
 import static java.lang.System.arraycopy;
 
@@ -411,6 +412,14 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return len.call(this).toInt();
     }
     
+    public PythonObject addNewClass(String name, PythonObject... parents) {
+        PythonObject class0 = newClass(name, newTuple(parents), newDict());
+      
+        setAttribute(name, class0);
+        
+        return class0;
+    }
+   
     public PythonObject importModule(String name) {
         return importModule(newString(name));
     }
