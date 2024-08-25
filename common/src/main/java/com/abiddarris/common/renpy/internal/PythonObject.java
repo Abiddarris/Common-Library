@@ -413,6 +413,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return len.call(this).toInt();
     }
     
+    public boolean jin(PythonObject value) {
+        return in(value).toBoolean();
+    }
+    
     public PythonObject in(PythonObject value) {
         return callTypeAttribute("__contains__", value);
     }
