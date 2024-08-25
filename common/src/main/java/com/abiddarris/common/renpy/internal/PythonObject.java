@@ -413,6 +413,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return len.call(this).toInt();
     }
     
+    public PythonObject in(PythonObject value) {
+        return callTypeAttribute("__contains__", value);
+    }
+    
     public PythonObject addNewClass(String name, PythonObject... parents) {
         PythonObject class0 = newClass(name, newTuple(parents), newDict());
       
