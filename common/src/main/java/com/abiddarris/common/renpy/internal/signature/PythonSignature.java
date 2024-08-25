@@ -89,7 +89,7 @@ public class PythonSignature {
             }
             builder.append(": ");
             for(int i = 0; i < missingArguments.size(); ++i) {
-                if(i == missingArguments.size() - 1) {
+                if(i == missingArguments.size() - 1 && missingArguments.size() != 1) {
                     builder.append("and ");
                 }
             	builder.append(String.format("'%s'", missingArguments.get(i)));
