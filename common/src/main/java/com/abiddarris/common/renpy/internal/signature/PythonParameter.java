@@ -32,6 +32,7 @@ public class PythonParameter {
     
     public PythonParameter(PythonParameter parameter) {
         this.positionalArguments = new ArrayList<>(parameter.positionalArguments);
+        this.keywordArguments.putAll(parameter.keywordArguments);
     }
     
     public PythonParameter addPositionalArgument(PythonObject argument) {
