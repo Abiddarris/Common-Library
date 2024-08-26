@@ -17,9 +17,10 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.bool;
+import static com.abiddarris.common.renpy.internal.PythonObject.dict;
+import static com.abiddarris.common.renpy.internal.PythonObject.int0;
 import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
 import static com.abiddarris.common.renpy.internal.PythonObject.list;
-import static com.abiddarris.common.renpy.internal.PythonObject.int0;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,5 +48,10 @@ public class InstanceCheckTest {
     @Test
     public void tupleClassInstance() {
         assertTrue(isinstance.call(True, newTuple(list, int0)).toBoolean());
+    }
+    
+    @Test
+    public void tupleClassInstance_noMatching() {
+        assertFalse(isinstance.call(True, newTuple(list, dict)).toBoolean());
     }
 }
