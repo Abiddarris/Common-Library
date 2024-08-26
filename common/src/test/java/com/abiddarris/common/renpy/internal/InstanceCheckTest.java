@@ -15,7 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.bool;
 import static com.abiddarris.common.renpy.internal.PythonObject.dict;
 import static com.abiddarris.common.renpy.internal.PythonObject.int0;
@@ -25,6 +28,8 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 
@@ -53,5 +58,15 @@ public class InstanceCheckTest {
     @Test
     public void tupleClassInstance_noMatching() {
         assertFalse(isinstance.call(True, newTuple(list, dict)).toBoolean());
+    }
+    
+    @Test
+    public void passClsWithNonClass() {
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
+
+        tryExcept(() -> isinstance.call(True, False)).
+        onExcept((e) -> thrown.setObject(true), TypeError).execute();
+        
+        assertTrue(thrown.getObject());
     }
 }
