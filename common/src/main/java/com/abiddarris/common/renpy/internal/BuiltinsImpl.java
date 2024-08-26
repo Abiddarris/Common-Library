@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Bootstrap.isInstanceBootstrap;
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
@@ -28,10 +29,10 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
-import static com.abiddarris.common.renpy.internal.Bootstrap.isInstanceBootstrap;
 
 import static java.util.regex.Pattern.quote;
 
@@ -56,6 +57,9 @@ public class BuiltinsImpl {
     private static PythonObject isInstance(PythonObject instance, PythonObject cls) {
         if (isInstanceBootstrap(cls, type).toBoolean()) {
             return isInstanceBootstrap(instance, cls);
+        }
+        if (!isInstanceBootstrap(cls, tuple).toBoolean()) {
+            TypeError.call(newString("isinstance() arg 2 must be a type, a tuple of types, or a union")).raise();
         }
         
         for (PythonObject cls0 : cls) {
