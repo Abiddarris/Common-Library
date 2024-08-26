@@ -48,6 +48,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject len;
     public static final PythonObject issubclass;
     public static final PythonObject __import__;
+    public static final PythonObject isinstance;
     
     static {
         type = new PythonObject();
@@ -266,6 +267,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         KeyError = newClass("KeyError", newTuple(Exception), newDict());
         
         JavaModuleLoader.init();
+        
+        isinstance = newFunction(BuiltinsImpl.class, "isInstance", "instance", "class");
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
