@@ -18,7 +18,9 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.bool;
 import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
+import static com.abiddarris.common.renpy.internal.PythonObject.list;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,11 @@ public class InstanceCheckTest {
     @Test
     public void sameClassInstance() {
         assertTrue(isinstance.call(True, bool).toBoolean());
+    }
+    
+    @Test
+    public void differentClassInstance() {
+        assertFalse(isinstance.call(True, list).toBoolean());
     }
     
 }
