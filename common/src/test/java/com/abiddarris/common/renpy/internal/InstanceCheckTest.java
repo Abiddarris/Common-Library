@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.bool;
 import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
 import static com.abiddarris.common.renpy.internal.PythonObject.list;
 import static com.abiddarris.common.renpy.internal.PythonObject.int0;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,4 +44,8 @@ public class InstanceCheckTest {
         assertTrue(isinstance.call(True, int0).toBoolean());
     }
     
+    @Test
+    public void tupleClassInstance() {
+        assertTrue(isinstance.call(True, newTuple(list, int0)).toBoolean());
+    }
 }
