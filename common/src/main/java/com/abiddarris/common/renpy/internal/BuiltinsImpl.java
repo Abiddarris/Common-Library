@@ -17,23 +17,25 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
+import static com.abiddarris.common.renpy.internal.PythonObject.ModuleNotFoundError;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
-import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
-import static com.abiddarris.common.renpy.internal.PythonObject.ModuleNotFoundError;
+
+import static java.util.regex.Pattern.quote;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
-
-import static java.util.regex.Pattern.quote;
 
 public class BuiltinsImpl {
     
@@ -178,6 +180,10 @@ public class BuiltinsImpl {
             .append(self.getTypeAttribute("__name__").toString())
             .append(" object>")
             .toString());
+    }
+    
+    private static PythonObject objectInstanceCheck(PythonObject self, PythonObject other) {
+        return issubclass.call(type.call(other), self);
     }
     
     private static PythonObject strNew(PythonObject cls, PythonObject obj) {
