@@ -37,4 +37,8 @@ class Bootstrap {
         return self;
     }
     
+    static PythonObject isInstanceBootstrap(PythonObject instance, PythonObject cls) {
+        return cls.callAttribute("__instancecheck__", cls, instance);
+    }
+    
 }

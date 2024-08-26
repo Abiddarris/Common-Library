@@ -31,6 +31,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
+import static com.abiddarris.common.renpy.internal.Bootstrap.isInstanceBootstrap;
 
 import static java.util.regex.Pattern.quote;
 
@@ -50,6 +51,20 @@ public class BuiltinsImpl {
     
     private static PythonObject isSubclass(PythonObject cls, PythonObject base) {
         return base.callTypeAttribute("__subclasscheck__", cls);
+    }
+    
+    private static PythonObject isInstance(PythonObject instance, PythonObject cls) {
+        if (isInstanceBootstrap(cls, type).toBoolean()) {
+            return isInstanceBootstrap(instance, cls);
+        }
+        
+        for (PythonObject cls0 : type) {
+            if (isInstanceBootstrap(instance, cls0).toBoolean()) {
+                return True;
+            }
+        }
+        
+        return False;
     }
     
     private static PythonObject importImpl(PythonObject name) {
