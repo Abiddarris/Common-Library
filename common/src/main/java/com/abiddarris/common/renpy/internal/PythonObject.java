@@ -292,10 +292,19 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
         PythonObject attribute = findAttribute(self, name.toString());
         if(attribute == null) {
-            AttributeError.call().raise();
+            throwAttributeError(self, name);
         }
         
         return attribute;
+    }
+    
+    private static void throwAttributeError(PythonObject object, Object attributeName) {
+        String message = isinstance.call(object, type).toBoolean() ? "type object %s" : "%s object";
+        message += " has no attribute %s";
+            
+        AttributeError.call(newString(String.format(
+            message, object.getAttribute("__name__"), attributeName
+        ))).raise();
     }
     
     private static PythonObject findAttribute(PythonObject self, String name) {
