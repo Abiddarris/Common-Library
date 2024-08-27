@@ -71,6 +71,14 @@ public class BuiltinsImpl {
         return False;
     }
     
+    private static PythonObject hasAttr(PythonObject obj, PythonObject name) {
+        ObjectWrapper<PythonObject> hasAttribute = new ObjectWrapper(True);
+        tryExcept(() -> obj.getAttribute(name.toString())).
+        onExcept((e) -> hasAttribute.setObject(False), AttributeError).execute();
+        
+        return hasAttribute.getObject();
+    }
+    
     private static PythonObject importImpl(PythonObject name) {
         String[] parts = name.toString().split(quote("."));
         importAsInternal(parts);
