@@ -127,7 +127,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         object.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "objectStr"), "self"));
         object.setAttribute("__bases__", newTuple());
-        object.setAttribute("__instancecheck__", newFunction(BuiltinsImpl.class, "objectInstanceCheck", "self", "other"));
         
         tuple.setAttribute("__class__", type);
         tuple.setAttribute("__bases__", defaultBases);
@@ -199,6 +198,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         type.setAttribute("__subclasscheck__", newFunction(findMethod(BuiltinsImpl.class, "typeSubclassCheck"), "self", "other"));
         type.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "typeStr"), "self"));
+        type.setAttribute("__instancecheck__", newFunction(BuiltinsImpl.class, "objectInstanceCheck", "self", "other"));
         
         method = Bootstrap.newClass(type, newTuple(newPythonString("method"), newTuple(object)));
        
