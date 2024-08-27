@@ -19,6 +19,7 @@ import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -33,4 +34,10 @@ public class HasAttrTest {
         assertTrue(hasattr.call(obj, newString("name")).toBoolean());
     }
     
+    @Test
+    public void doesNotExistAttributeTest() {
+        PythonObject obj = object.call();
+        
+        assertFalse(hasattr.call(obj, newString("name")).toBoolean());
+    }
 }
