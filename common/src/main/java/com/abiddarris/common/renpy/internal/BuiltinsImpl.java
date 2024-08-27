@@ -213,6 +213,10 @@ public class BuiltinsImpl {
         return issubclass.call(type.call(other), self);
     }
     
+    private static PythonObject objectNe(PythonObject self, PythonObject other) {
+        return newBoolean(!self.equals(other));
+    }
+    
     private static PythonObject strNew(PythonObject cls, PythonObject obj) {
         return obj.callTypeAttribute("__str__");
     }
