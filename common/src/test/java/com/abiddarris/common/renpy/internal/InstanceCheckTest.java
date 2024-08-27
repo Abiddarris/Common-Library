@@ -69,4 +69,14 @@ public class InstanceCheckTest {
         
         assertTrue(thrown.getObject());
     }
+    
+    @Test
+    public void tupleClassInstance_containsNonClassObj() {
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
+
+        tryExcept(() -> isinstance.call(True, newTuple(list, False))).
+        onExcept((e) -> thrown.setObject(true), TypeError).execute();
+        
+        assertTrue(thrown.getObject());
+    }
 }
