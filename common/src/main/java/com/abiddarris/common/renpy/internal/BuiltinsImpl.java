@@ -63,7 +63,7 @@ public class BuiltinsImpl {
         }
         
         for (PythonObject cls0 : cls) {
-            if (isInstanceBootstrap(instance, cls0).toBoolean()) {
+            if (isInstance(instance, cls0).toBoolean()) {
                 return True;
             }
         }
