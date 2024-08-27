@@ -49,6 +49,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject issubclass;
     public static final PythonObject __import__;
     public static final PythonObject isinstance;
+    public static final PythonObject hasattr;
     
     static {
         type = new PythonObject();
@@ -269,6 +270,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         JavaModuleLoader.init();
         
         isinstance = newFunction(BuiltinsImpl.class, "isInstance", "instance", "class");
+        hasattr = newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
