@@ -27,6 +27,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -80,5 +81,12 @@ public class PythonObjectTest {
         PythonObject TestClass = newClass("TestClass", newTuple(), newDict(
                 newString("number"), newInt(42)));
         assertEquals(42, TestClass.getAttribute("number").toInt());
+    }
+    
+    @Test
+    public void notEqualsTest_onEqualsObject() {
+        PythonObject object1 = object.call();
+        
+        assertFalse(object1.jNotEquals(object1));
     }
 }
