@@ -89,4 +89,12 @@ public class PythonObjectTest {
         
         assertFalse(object1.jNotEquals(object1));
     }
+    
+    @Test
+    public void notEqualsTest_onNotEqualsObject() {
+        PythonObject object1 = object.call();
+        PythonObject object2 = object.call();
+        
+        assertTrue(object1.jNotEquals(object2));
+    }
 }
