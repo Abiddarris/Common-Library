@@ -437,6 +437,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return callTypeAttribute("__contains__", value);
     }
     
+    public PythonObject notEquals(PythonObject other) {
+        return callTypeAttribute("__ne__", other);
+    }
+    
     public PythonObject addNewClass(String name, PythonObject... parents) {
         PythonObject class0 = newClass(name, newTuple(parents), newDict());
       
