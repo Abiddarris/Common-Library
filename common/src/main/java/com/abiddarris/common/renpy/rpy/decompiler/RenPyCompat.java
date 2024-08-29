@@ -33,8 +33,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
+
+import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+
+import com.abiddarris.common.renpy.internal.PythonObject;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,8 +52,17 @@ import java.util.Set;
  */
 public class RenPyCompat {
     
-    public static final Magic.FakeClassFactory CLASS_FACTORY = new Magic.FakeClassFactory(Collections.EMPTY_LIST,/*SPECIAL_CLASSES*/ Magic.FakeStrict);
-
+    public static final List<PythonObject> SPECIAL_CLASSES = new ArrayList<>();
+    
+    public static final Magic.FakeClassFactory CLASS_FACTORY;
+    
+    static {
+        PythonObject decompiler = __import__.call(newString("decompiler.magic"));
+        PythonObject magic = decompiler.getAttribute("magic");
+        
+        CLASS_FACTORY = new Magic.FakeClassFactory(Collections.EMPTY_LIST,/*SPECIAL_CLASSES*/ magic.getAttribute("FakeStrict"));
+    }
+    
     public static Object pickle_safe_loads(int[] buffer) {
         return Magic.safe_loads(buffer, CLASS_FACTORY,
              new HashSet<>(Set.of("collections")), false, "ASCII", "strict");
