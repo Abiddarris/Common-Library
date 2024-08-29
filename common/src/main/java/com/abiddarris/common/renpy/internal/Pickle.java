@@ -609,7 +609,7 @@ public class Pickle {
             PythonObject args = (PythonObject) this.stack.remove(this.stack.size() - 1);
             PythonObject cls = (PythonObject)this.stack.remove(this.stack.size() - 1);
             
-            PythonObject obj = cls.callAttribute("__new__", new PythonArgument()
+            PythonObject obj = cls.callAttribute("__new__", new PythonArgument(cls)
                 .addPositionalArguments(args));
             this.append(obj);
         }
