@@ -3,6 +3,8 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
 
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import static java.util.Collections.emptyMap;
@@ -443,6 +445,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     
     public PythonObject notEquals(PythonObject other) {
         return callTypeAttribute("__ne__", other);
+    }
+    
+    public ClassDefiner defineClass(String name, PythonObject... bases) {
+        return new ClassDefiner(name, bases, getAttribute("__name__"), new ModuleTarget(this));
     }
     
     public PythonObject addNewClass(String name, PythonObject... parents) {
