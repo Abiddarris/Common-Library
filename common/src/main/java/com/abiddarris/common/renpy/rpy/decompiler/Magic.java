@@ -235,7 +235,7 @@ public class Magic {
      */
     public static class FakeClassFactory {
 
-        private Object default0;
+        private PythonObject default0;
         private Map<List<String>, PythonObject> class_cache = new HashMap<>();
         
         /**
@@ -265,7 +265,7 @@ public class Magic {
         }
         
         public FakeClassFactory(
-                List /*ImmutableList*/ special_cases /*=()*/, Object default_class /*=FakeStrict*/) {
+                List /*ImmutableList*/ special_cases /*=()*/, PythonObject default_class /*=FakeStrict*/) {
             //self.special_cases = dict( ((i.__module__, i.__name__), i) for i in special_cases)
             this.default0 = default_class;
         }
@@ -290,17 +290,8 @@ public class Magic {
 
             //if not klass:
                 // generate a new class def which inherits from the default fake class
-                klass = null;/*type.call(
-                    List.of(
-                        name, 
-                        List.of(
-                            this.default0
-                        )
-                    ), 
-                    Map.of(
-                        "__module__", module
-                    )
-                );*/
+                klass = type.call(new PythonArgument(newString(name), newTuple(this.default0), newDict())
+                    .addKeywordArgument("__module__", newString(module)));
 
             this.class_cache.put(List.of(module, name), klass);
             return klass;
