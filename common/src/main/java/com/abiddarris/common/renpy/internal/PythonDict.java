@@ -61,6 +61,10 @@ class PythonDict extends PythonObject {
     private static PythonObject contains(PythonDict self, PythonObject value) {
         return newBoolean(self.map.containsKey(value));
     }
+    
+    private static PythonObject len(PythonDict self) {
+        return newInt(self.map.size());
+    }
         
     private static class DictIterator extends PythonObject {
             
