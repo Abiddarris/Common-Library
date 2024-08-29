@@ -45,6 +45,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
@@ -79,7 +80,9 @@ public class Magic {
                 ).addKeywordArgument("module", magic.getAttribute("__name__"))
             );
           
-            magic.setAttribute("FakeClass", FakeClass); 
+            magic.setAttribute("FakeClass", FakeClass);
+                
+            PythonObject FakeStrict = FakeStrictImpl.define(magic, FakeClass); 
             return magic;    
         });
     }
@@ -147,28 +150,33 @@ public class Magic {
         
     }
     
-    public static final PythonObject FakeStrict;
-
-    static {
-        FakeStrict = null; /*type.call(
-            List.of(
-                "FakeStrict",
-                List.of(FakeClass),
-                Collections.emptyMap()
-            ),
-            Map.of()
-        );
-        /*FakeStrict.addMethod("__new__", (args, kwargs) -> {
-            PythonObject cls = (PythonObject)args.remove(0);
-            PythonObject self = FakeClass.invokeStaticMethod("__new__", List.of(), Map.of());
-                
-            if (!args.isEmpty() || !kwargs.isEmpty())
+    private static class FakeStrictImpl {
+        
+        private static PythonObject magic;
+        
+        private static PythonObject define(PythonObject magic, PythonObject FakeClass) {
+            FakeStrictImpl.magic = magic;
+            
+            ClassDefiner definer = magic.defineClass("FakeStrict", FakeClass);
+            definer.defineFunction("__new__", FakeStrictImpl.class, "new0", "cls", "*args", "**kwargs");
+            
+            return definer.define();
+        }
+        
+        private static PythonObject new0(PythonObject cls, PythonObject args, PythonObject kwargs) {
+            PythonObject self = magic.getAttribute("FakeClass")
+                .callAttribute("__new__", cls);
+            
+            if (args.toBoolean() || kwargs.toBoolean()) {
                 throw new FakeUnpicklingError(
                     String.format(
                         "%s was instantiated with unexpected arguments %s, %s",
                         cls, args, kwargs));
+            }
+                
             return self;
-        });*/
+        }
+        
     }
     
     /*
