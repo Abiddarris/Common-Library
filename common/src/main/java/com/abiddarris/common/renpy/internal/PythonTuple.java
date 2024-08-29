@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import java.util.Arrays;
 
 class PythonTuple extends PythonObject {
 
@@ -59,6 +60,14 @@ class PythonTuple extends PythonObject {
 
     private static PythonObject len(PythonTuple self) {
         return newInt(self.elements.length);
+    }
+    
+    private static PythonObject str(PythonTuple self) {
+        String jString = Arrays.toString(self.elements);
+        jString = jString.substring(1, jString.length() - 1);
+        jString = "(" + jString + ")";
+        
+        return newString(jString);
     }
 
     private static class TupleIterator extends PythonObject {

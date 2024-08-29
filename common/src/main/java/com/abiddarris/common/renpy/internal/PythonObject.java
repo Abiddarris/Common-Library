@@ -154,6 +154,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 .addParameter("self")
                 .build()
         ));
+        tuple.setAttribute("__str__", newFunction(PythonTuple.class, "str", "self"));
         
         dict = new PythonObject();
         dict.setAttribute("__bases__", defaultBases);
