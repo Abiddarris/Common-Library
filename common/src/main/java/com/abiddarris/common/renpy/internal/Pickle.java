@@ -826,9 +826,9 @@ public class Pickle {
         
         private void load_setitems() {
             List<Object> items = this.pop_mark();
-            Map<Object, Object> dict = (Map)this.stack.get(this.stack.size() -1);
+            PythonObject dict = (PythonObject)this.stack.get(this.stack.size() -1);
             for(int i = 0; i < items.size(); i+= 2) {
-                dict.put(items.get(i), items.get(i + 1));
+                dict.setItem((PythonObject)items.get(i), (PythonObject) items.get(i + 1));
             }
         }
         
