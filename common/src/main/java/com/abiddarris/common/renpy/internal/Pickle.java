@@ -2,6 +2,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
 import static com.abiddarris.common.stream.InputStreams.readExact;
@@ -346,7 +347,7 @@ public class Pickle {
         }
         
         protected void load_binint1() {
-            this.append(this.read(1)[0]);
+            this.append(newInt(this.read(1)[0]));
         }
         /*
         def load_binint2(self):
