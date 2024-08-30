@@ -34,8 +34,11 @@
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Python.createModule;
+import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
@@ -52,19 +55,37 @@ import java.util.Set;
  */
 public class RenPyCompat {
     
-    public static final List<PythonObject> SPECIAL_CLASSES = new ArrayList<>();
+    static void initLoader() {
+        registerLoader("decompiler.renpycompat", (name) -> {
+            PythonObject renpycompat = createModule(name);
+            PythonObject magic = renpycompat.fromImport("decompiler", "magic")[0];   
+                
+            PythonObject SPECIAL_CLASSES = renpycompat.addNewAttribute("SPECIAL_CLASSES", newList());
+                
+            return renpycompat;
+        });
+    }
     
-    public static final Magic.FakeClassFactory CLASS_FACTORY;
+    private static Magic.FakeClassFactory CLASS_FACTORY;
     
-    static {
-        PythonObject decompiler = __import__.call(newString("decompiler.magic"));
-        PythonObject magic = decompiler.getAttribute("magic");
+    private static Magic.FakeClassFactory getClassFactory() {
+        if(CLASS_FACTORY != null) {
+            return CLASS_FACTORY;
+        }
         
-        CLASS_FACTORY = new Magic.FakeClassFactory(Collections.EMPTY_LIST,/*SPECIAL_CLASSES*/ magic.getAttribute("FakeStrict"));
+        PythonObject renpycompat = __import__.call(newString("decompiler.renpycompat")).getAttribute("renpycompat");
+        List<PythonObject> SPECIAL_CLASSES = new ArrayList<>();
+        for(PythonObject clazz : renpycompat.getAttribute("SPECIAL_CLASSES")) {
+        	SPECIAL_CLASSES.add(clazz);
+        }
+        
+        CLASS_FACTORY = new Magic.FakeClassFactory(SPECIAL_CLASSES, renpycompat.getAttribute("magic")
+                                                                        .getAttribute("FakeStrict"));
+        return CLASS_FACTORY;
     }
     
     public static Object pickle_safe_loads(int[] buffer) {
-        return Magic.safe_loads(buffer, CLASS_FACTORY,
+        return Magic.safe_loads(buffer, getClassFactory(),
              new HashSet<>(Set.of("collections")), false, "ASCII", "strict");
     }
     

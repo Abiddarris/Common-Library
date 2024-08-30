@@ -29,6 +29,7 @@ public class Decompiler {
             return decompiler;    
         });
         Magic.initLoader();
+        RenPyCompat.initLoader();
     }
     
 }
