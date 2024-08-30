@@ -23,6 +23,7 @@ import static com.abiddarris.common.renpy.internal.Python.newDict;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,6 +52,10 @@ public class ClassDefiner {
     
     public PythonObject defineFunction(String name, Class source, String methodName, String... parameters) {
         return initFunction(name, newFunction(source, methodName, parameters));
+    }
+    
+    public PythonObject defineFunction(String name, Class source, String methodName, PythonSignature signature) {
+        return initFunction(name, newFunction(source, methodName, signature));
     }
     
     public ClassDefiner defineClass(String name, PythonObject... bases) {
