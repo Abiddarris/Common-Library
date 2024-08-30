@@ -58,6 +58,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -236,6 +237,7 @@ public class Magic {
     public static class FakeClassFactory {
 
         private PythonObject default0;
+        private Map<List<String>, PythonObject> special_cases = new LinkedHashMap<>();
         private Map<List<String>, PythonObject> class_cache = new HashMap<>();
         
         /**
@@ -265,8 +267,13 @@ public class Magic {
         }
         
         public FakeClassFactory(
-                List /*ImmutableList*/ special_cases /*=()*/, PythonObject default_class /*=FakeStrict*/) {
-            //self.special_cases = dict( ((i.__module__, i.__name__), i) for i in special_cases)
+                List<PythonObject> /*ImmutableList*/ special_cases /*=()*/, PythonObject default_class /*=FakeStrict*/) {
+            for(PythonObject i : special_cases) {
+            	this.special_cases.put(List.of(
+                    i.getAttribute("__module__").toString(),
+                    i.getAttribute("__name__").toString()
+                ), i);
+            }
             this.default0 = default_class;
         }
 
@@ -280,19 +287,18 @@ public class Magic {
          */
         public PythonObject __call__(String name, String module) {
             // Check if we've got this class cached
-            PythonObject klass;
-            
-            klass = this.class_cache.get(List.of(module, name));
+            PythonObject klass = this.class_cache.get(List.of(module, name));
             if(klass != null)
                 return klass;
 
-            //klass = self.special_cases.get((module, name), None)
+            klass = this.special_cases.getOrDefault(List.of(module, name), None);
 
-            //if not klass:
+            if (!klass.toBoolean()) {
                 // generate a new class def which inherits from the default fake class
                 klass = type.call(new PythonArgument(newString(name), newTuple(this.default0), newDict())
                     .addKeywordArgument("__module__", newString(module)));
-
+            }
+            
             this.class_cache.put(List.of(module, name), klass);
             return klass;
         }
