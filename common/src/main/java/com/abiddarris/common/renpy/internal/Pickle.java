@@ -64,6 +64,7 @@ public class Pickle {
     //Protocol 2
     private static final int PROTO          = 0x80;  // identify pickle protocol
     private static final int NEWOBJ         = 0x81;  // build object by applying cls.__new__ to argtuple
+    private static final int TUPLE2         = 0x86;  // build 2-tuple from two topmost stack items
     private static final int TUPLE3         = 0x87;  // build 3-tuple from three topmost stack items    
     private static final int LONG1          = 0x8a;  // push long from < 256 bytes
     
@@ -197,6 +198,7 @@ public class Pickle {
             dispatch.put(NONE, this::load_none);
             dispatch.put(BININT1, this::load_binint1);
             dispatch.put(BINGET, this::load_binget);
+            dispatch.put(TUPLE2, this::load_tuple2);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -529,11 +531,16 @@ public class Pickle {
         def load_tuple1(self):
             self.stack[-1] = (self.stack[-1],)
         dispatch[TUPLE1[0]] = load_tuple1
-
-        def load_tuple2(self):
-            self.stack[-2:] = [(self.stack[-2], self.stack[-1])]
-        dispatch[TUPLE2[0]] = load_tuple2
         */
+        
+        private void load_tuple2() {
+            int stackSize = this.stack.size();
+         
+            PythonObject o2 = (PythonObject)this.stack.remove(stackSize - 1);
+            PythonObject o = (PythonObject)this.stack.remove(stackSize - 2);
+            
+            this.stack.add(newTuple(o, o2));
+        }
         
         private void load_tuple3() {
             int stackSize = this.stack.size();
