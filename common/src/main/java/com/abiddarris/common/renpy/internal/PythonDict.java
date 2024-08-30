@@ -65,6 +65,22 @@ class PythonDict extends PythonObject {
     private static PythonObject len(PythonDict self) {
         return newInt(self.map.size());
     }
+    
+    private static PythonObject str(PythonDict self) {
+        StringBuilder builder = new StringBuilder("{");
+        self.map.forEach((k, v) -> builder.append(k)
+            .append(": ")
+            .append(v)
+            .append(", "));
+        
+        if (self.map.size() > 1) {
+            builder.delete(builder.length() - 2, builder.length());
+        }
+        
+        builder.append("}");
+        
+        return newString(builder.toString());
+    }
         
     private static class DictIterator extends PythonObject {
             
