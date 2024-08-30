@@ -535,11 +535,11 @@ public class Pickle {
         private void load_tuple3() {
             int stackSize = this.stack.size();
          
-            Object o3 = this.stack.remove(stackSize - 1);
-            Object o2 = this.stack.remove(stackSize - 2);
-            Object o1 = this.stack.remove(stackSize - 3);
+            PythonObject o3 = (PythonObject)this.stack.remove(stackSize - 1);
+            PythonObject o2 = (PythonObject)this.stack.remove(stackSize - 2);
+            PythonObject o1 = (PythonObject)this.stack.remove(stackSize - 3);
             
-            List<Object> tuple3 = List.of(o1, o2, o3);
+            PythonObject tuple3 = newTuple(o1, o2, o3);
             this.stack.add(tuple3);
         }
         
