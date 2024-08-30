@@ -404,9 +404,9 @@ public class Pickle {
             decoder.onMalformedInput(getError(this.errors));
                 
             try {
-                return decoder.decode(
+                return newString(decoder.decode(
                     ByteBuffer.wrap(sign(value))
-                );
+                ).toString());
             } catch (CharacterCodingException e) {
                 throw new RuntimeException(e);
             }
