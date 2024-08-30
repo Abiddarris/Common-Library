@@ -343,7 +343,8 @@ public class Pickle {
         */
         
         private void load_binint() {
-            this.append(unpack("<i", this.read(4))[0]);
+            // FIXME: Integer overflow lol
+            this.append(newInt(unpack("<i", this.read(4))[0].intValue()));
         }
         
         protected void load_binint1() {
