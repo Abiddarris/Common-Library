@@ -1,8 +1,9 @@
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.Python.newList;
-import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
+import static com.abiddarris.common.renpy.internal.Python.newList;
+import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
 import static com.abiddarris.common.stream.InputStreams.readExact;
@@ -446,12 +447,12 @@ public class Pickle {
                 throw new UnpicklingError(
                     String.format("BINUNICODE exceeds system's maximum size " +
                                       "of %d bytes", maxsize));
-            this.append(
+            this.append(newString(
                 new String(
                     sign(this.read(len)),
                     StandardCharsets.UTF_8
                 )
-            );
+            ));
         }
         
         /*def load_binunicode8(self):
