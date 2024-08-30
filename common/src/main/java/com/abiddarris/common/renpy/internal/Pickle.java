@@ -1,5 +1,6 @@
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newString;
@@ -559,7 +560,7 @@ public class Pickle {
         }
         
         private void load_empty_dictionary() {
-            this.append(new HashMap<>());
+            this.append(newDict());
         }
             
         /*def load_empty_set(self):
