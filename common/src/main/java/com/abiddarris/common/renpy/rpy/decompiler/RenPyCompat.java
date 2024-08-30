@@ -36,11 +36,15 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Python.createModule;
 import static com.abiddarris.common.renpy.internal.Python.newList;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,9 +65,42 @@ public class RenPyCompat {
             PythonObject magic = renpycompat.fromImport("decompiler", "magic")[0];   
                 
             PythonObject SPECIAL_CLASSES = renpycompat.addNewAttribute("SPECIAL_CLASSES", newList());
+            SPECIAL_CLASSES.callAttribute("append", PyExprImpl.define(renpycompat, magic));
+                
+            renpycompat.setAttribute("PyExpr", None);
                 
             return renpycompat;
         });
+    }
+    
+    private static class PyExprImpl {
+        
+        private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
+            ClassDefiner definer = renpycompat.defineClass("PyExpr", magic.getAttribute("FakeStrict"), str);
+            definer.defineAttribute("__module__", newString("renpy.ast"));
+            definer.defineFunction("__new__", PyExprImpl.class, "new0", new PythonSignatureBuilder("cls", "s", "filename", "linenumber")
+                .addParameter("py", None)
+                .build());
+            
+            return definer.define();
+        }
+        
+        /*
+        def __getnewargs__(self):
+            if self.py is not None:
+                return str(self), self.filename, self.linenumber, self.py
+            else:
+                return str(self), self.filename, self.linenumber
+        */
+        
+        private static PythonObject new0(PythonObject cls, PythonObject s, PythonObject filename, PythonObject linenumber, PythonObject py) {
+            PythonObject self = str.callAttribute("__new__", cls, s);
+            self.setAttribute("filename", filename);
+            self.setAttribute("linenumber", linenumber);
+            self.setAttribute("py", py);
+            
+            return self;
+        }
     }
     
     private static Magic.FakeClassFactory CLASS_FACTORY;

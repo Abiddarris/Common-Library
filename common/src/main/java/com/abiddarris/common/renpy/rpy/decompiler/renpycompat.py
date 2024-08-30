@@ -63,22 +63,6 @@ oldfrozenset.__name__ = "frozenset"
 SPECIAL_CLASSES.append(oldfrozenset)
 
 
-@SPECIAL_CLASSES.append
-class PyExpr(magic.FakeStrict, str):
-    __module__ = "renpy.ast"
-
-    def __new__(cls, s, filename, linenumber, py=None):
-        self = str.__new__(cls, s)
-        self.filename = filename
-        self.linenumber = linenumber
-        self.py = py
-        return self
-
-    def __getnewargs__(self):
-        if self.py is not None:
-            return str(self), self.filename, self.linenumber, self.py
-        else:
-            return str(self), self.filename, self.linenumber
 
 
 @SPECIAL_CLASSES.append
