@@ -453,6 +453,12 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return new ClassDefiner(name, bases, getAttribute("__name__"), new ModuleTarget(this));
     }
     
+    public PythonObject addNewAttribute(String name, PythonObject attribute) {
+        setAttribute(name, attribute);
+        
+        return attribute;
+    }
+    
     public PythonObject addNewClass(String name, PythonObject... parents) {
         PythonObject class0 = newClass(name, newTuple(parents), newDict());
       
