@@ -50,12 +50,7 @@ public class ClassDefiner {
     }
     
     public PythonObject defineFunction(String name, Class source, String methodName, String... parameters) {
-        PythonObject function = newFunction(source, methodName, parameters);
-        function.setAttribute("__module__", moduleName);
-        
-        attributes.put(name, function);
-        
-        return function;
+        return initFunction(name, newFunction(source, methodName, parameters));
     }
     
     public ClassDefiner defineClass(String name, PythonObject... bases) {
@@ -76,4 +71,11 @@ public class ClassDefiner {
         return clazz;
     }
     
+    private PythonObject initFunction(String name, PythonObject function) {
+        function.setAttribute("__module__", moduleName);
+        
+        attributes.put(name, function);
+        
+        return function;
+    }
 }
