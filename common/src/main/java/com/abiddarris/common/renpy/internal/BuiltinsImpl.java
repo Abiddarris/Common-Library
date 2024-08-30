@@ -29,6 +29,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
@@ -218,7 +219,10 @@ public class BuiltinsImpl {
     }
     
     private static PythonObject strNew(PythonObject cls, PythonObject obj) {
-        return obj.callTypeAttribute("__str__");
+        PythonString string = new PythonString(obj.toString());
+        string.setAttribute("__class__", cls);
+        
+        return string;
     }
     
     private static void strInit(PythonObject cls, PythonObject obj) {
