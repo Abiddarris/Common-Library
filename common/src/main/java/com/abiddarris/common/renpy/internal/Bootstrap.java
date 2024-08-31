@@ -19,9 +19,15 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
+import com.abiddarris.common.renpy.internal.model.AttributeHolder;
+
 class Bootstrap {
     
     static PythonObject newClass(PythonObject cls, PythonObject args) {
+        return newClass(cls, args, null);
+    }
+    
+    static PythonObject newClass(PythonObject cls, PythonObject args, AttributeHolder attributeHolder) {
         PythonObject name = args.getItem(newInt(0));
         PythonObject bases = args.getItem(newInt(1));
         
@@ -29,7 +35,7 @@ class Bootstrap {
             bases = newTuple(object);
         }
         
-        PythonObject self = new PythonObject();
+        PythonObject self = new PythonObject(attributeHolder);
         self.setAttribute("__class__", cls);
         self.setAttribute("__name__", name);
         self.setAttribute("__bases__", bases);
