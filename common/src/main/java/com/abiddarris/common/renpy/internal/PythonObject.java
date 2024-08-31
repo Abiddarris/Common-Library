@@ -61,14 +61,14 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject hasattr;
     
     static {
-        type = new PythonObject();
-        object = new PythonObject();
-        tuple = new PythonObject();
-        function = new PythonObject();
+        type = newBootstrapObject();
+        object = newBootstrapObject();
+        tuple = newBootstrapObject();
+        function = newBootstrapObject();
         
         PythonObject defaultBases = newTuple(object);
 
-        str = new PythonObject();
+        str = newBootstrapObject();
         str.setAttribute("__bases__", defaultBases);
         str.setAttribute("__name__", newPythonString("str"));
         str.setAttribute("__class__", type);
@@ -86,7 +86,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         str.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "strNew"), "self", "obj"));
         str.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "strInit"), "self", "obj"));
         
-        int0 = new PythonObject();
+        int0 = newBootstrapObject();
         int0.setAttribute("__bases__", defaultBases);
         int0.setAttribute("__class__", type);
         int0.setAttribute("__name__", newPythonString("int"));
@@ -163,7 +163,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         tuple.setAttribute("__str__", newFunction(PythonTuple.class, "str", "self"));
         
-        dict = new PythonObject();
+        dict = newBootstrapObject();
         dict.setAttribute("__bases__", defaultBases);
         dict.setAttribute("__class__", type);
         dict.setAttribute("__name__", newPythonString("dict"));
@@ -296,6 +296,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 });*/
     }
     
+    private static PythonObject newBootstrapObject() {
+        return new PythonObject(new BootstrapAttributeHolder());
+    }
+    
     private static PythonObject pythonObjectNew(PythonObject cls) {
         PythonObject instance = new PythonObject();
         instance.setAttribute("__class__", cls);
@@ -332,7 +336,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             holder = new PythonAttributeHolder();
         } 
         
-        new AttributeManager(this, holder);
+        attributes = new AttributeManager(this, holder);
     }
     
     public PythonObject() {
