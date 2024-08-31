@@ -21,6 +21,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
+import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import java.util.Iterator;
@@ -38,6 +39,8 @@ class PythonDict extends PythonObject {
     private Map<PythonObject, PythonObject> map;
     
     PythonDict(Map<PythonObject, PythonObject> map) {
+        super(new BootstrapAttributeHolder());
+        
         this.map = map;
     }
         
