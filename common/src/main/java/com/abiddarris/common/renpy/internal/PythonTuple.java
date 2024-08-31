@@ -42,6 +42,10 @@ public class PythonTuple extends PythonObject {
     PythonTuple(PythonObject[] elements) {
         this.elements = elements;
     }
+    
+    public PythonObject[] getElements() {
+        return elements;
+    }
 
     private static PythonObject getitem(PythonObject self, PythonObject pos) {
         if (!(self instanceof PythonTuple)) {
