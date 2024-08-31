@@ -352,21 +352,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return returnValue.getObject();
     }
 
-    public boolean hasAttribute(String name) {
-        if (attributes.containsKey(name)) return true;
-
-        List<PythonObject> classes = (List<PythonObject>) attributes.get("__bases__");
-        if (classes.isEmpty()) {
-            classes = List.of(object);
-        }
-
-        for (var class0 : classes) {
-            if (class0.hasAttribute(name)) return true;
-        }
-
-        return false;
-    }
-
     public PythonObject callAttribute(String name, PythonParameter parameter) {
         PythonObject object = getAttribute(name);
         return object.call(parameter);
