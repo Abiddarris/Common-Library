@@ -3,6 +3,9 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
 import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 
+import com.abiddarris.common.renpy.internal.model.AttributeHolder;
+import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.model.PythonAttributeHolder;
 import static java.lang.System.arraycopy;
 import static java.util.Collections.emptyMap;
 
@@ -322,7 +325,19 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ))).raise();
     }
     
-    AttributeManager attributes = new AttributeManager(this);
+    AttributeManager attributes;
+    
+    public PythonObject(AttributeHolder holder) {
+        if(holder == null) {
+            holder = new PythonAttributeHolder();
+        } 
+        
+        new AttributeManager(this, holder);
+    }
+    
+    public PythonObject() {
+        this(null);
+    }
     
     public AttributeManager getAttributes() {
         return attributes;
