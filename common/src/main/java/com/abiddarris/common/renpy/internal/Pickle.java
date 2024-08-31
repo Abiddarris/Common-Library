@@ -5,6 +5,10 @@ import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
+import static com.abiddarris.common.renpy.internal.PythonObject.len;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
 import static com.abiddarris.common.stream.InputStreams.readExact;
@@ -53,6 +57,7 @@ public class Pickle {
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
     private static final int APPEND         = 'a';   // append stack top to list below it
+    private static final int BUILD          = 'b';   // call __setstate__ or __dict__.update()
     private static final int GLOBAL         = 'c';   // push self.find_class(modname, name); 2 string args   
     private static final int EMPTY_DICT     = '}';   // push empty dict
     private static final int BINGET         = 'h';   //   "    "    "    "   "   "  ;   "    " 1-byte arg
@@ -200,6 +205,7 @@ public class Pickle {
             dispatch.put(BININT1, this::load_binint1);
             dispatch.put(BINGET, this::load_binget);
             dispatch.put(TUPLE2, this::load_tuple2);
+            dispatch.put(BUILD, this::load_build);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -843,31 +849,48 @@ public class Pickle {
                 for item in items:
                     add(item)
         dispatch[ADDITEMS[0]] = load_additems
-
-        def load_build(self):
-            stack = self.stack
-            state = stack.pop()
-            inst = stack[-1]
-            setstate = getattr(inst, "__setstate__", None)
-            if setstate is not None:
-                setstate(state)
-                return
-            slotstate = None
-            if isinstance(state, tuple) and len(state) == 2:
-                state, slotstate = state
-            if state:
-                inst_dict = inst.__dict__
+        */
+        
+        
+        protected void load_build() {
+            List stack = this.stack;
+            PythonObject state = (PythonObject)stack.remove(stack.size() - 1);
+            PythonObject inst = (PythonObject)stack.get(stack.size() - 1);
+            
+            PythonObject setstate = inst.getAttribute("__setstate__", None);
+            
+            if (setstate != None) {
+                setstate.call(state);
+                return;
+            }
+            
+            PythonObject slotstate = None;
+            if (isinstance.call(state, tuple).toBoolean() && len.call(state).toInt() == 2) {
+                slotstate = state.getItem(newInt(1));
+                state = state.getItem(newInt(0));
+            }
+                
+            if (state.toBoolean()) {
+                // FIXME: Unsupported branch
+                throw new RuntimeException("Unsupported branch");
+                /*inst_dict = inst.__dict__
                 intern = sys.intern
                 for k, v in state.items():
                     if type(k) is str:
                         inst_dict[intern(k)] = v
                     else:
-                        inst_dict[k] = v
-            if slotstate:
-                for k, v in slotstate.items():
-                    setattr(inst, k, v)
-        dispatch[BUILD[0]] = load_build
-        */
+                        inst_dict[k] = v*/
+            }
+            
+            if (slotstate.toBoolean()) {
+                // FIXME: It should use slotstate.items();
+                
+                for (PythonObject k : slotstate) {
+                    // FIXME: k shouldn't be converted to string
+                    inst.setAttribute(k.toString(), slotstate.getItem(k));
+                }
+            }
+        }
         
         private void load_mark() {
             this.metastack.add(this.stack);
