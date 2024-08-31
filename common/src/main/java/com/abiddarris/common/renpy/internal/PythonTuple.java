@@ -84,6 +84,8 @@ public class PythonTuple extends PythonObject {
         private PythonTuple tuple;
 
         private TupleIterator(PythonTuple tuple) {
+            super(new BootstrapAttributeHolder());
+            
             this.tuple = tuple;
         }
 
