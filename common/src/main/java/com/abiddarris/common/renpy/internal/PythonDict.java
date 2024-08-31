@@ -50,6 +50,7 @@ class PythonDict extends PythonObject {
         
     private static PythonObject dictGetItem(PythonDict self, PythonObject key) {
         PythonObject value = self.map.get(key);
+               
         if(value == null) {
             KeyError.call(key).raise();
         }
@@ -90,6 +91,8 @@ class PythonDict extends PythonObject {
         private Iterator<PythonObject> iterator;
             
         private DictIterator(Iterator<PythonObject> iterator) {
+            super(new BootstrapAttributeHolder());
+            
             this.iterator = iterator;
                 
             setAttribute("__class__", dict_iterator);
