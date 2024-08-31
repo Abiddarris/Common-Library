@@ -9,6 +9,8 @@ import static java.util.Collections.emptyMap;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.model.AttributeManager;
+import com.abiddarris.common.renpy.internal.object.PythonMethod;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
@@ -294,7 +296,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     private static PythonObject pythonObjectNew(PythonObject cls) {
         PythonObject instance = new PythonObject();
         instance.setAttribute("__class__", cls);
-        
+
         return instance;
     }
     
@@ -303,7 +305,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
     
     private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
-        PythonObject attribute = findAttribute(self, name.toString());
+        PythonObject attribute = self.attributes.findAttribute(name.toString());
         if(attribute == null) {
             throwAttributeError(self, name);
         }
@@ -320,46 +322,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ))).raise();
     }
     
-    private static PythonObject findAttribute(PythonObject self, String name) {
-        PythonObject attribute = findAttributeWithoutType(self, name);
-        if(attribute != null) {
-            return attribute;
-        }
-        
-        PythonObject type = (PythonObject)self.attributes.get("__class__");
-        
-        return findAttributeWithoutTypeAllowConversion(self, type, name);
-    }
+    AttributeManager attributes = new AttributeManager(this);
     
-    private static PythonObject findAttributeWithoutTypeAllowConversion(PythonObject self, PythonObject type, String name) {
-        PythonObject attribute = findAttributeWithoutType(type, name);
-        if(attribute instanceof PythonFunction) {
-            return new PythonMethod(self, attribute);
-        }
-        
-        return attribute;
+    public AttributeManager getAttributes() {
+        return attributes;
     }
-    
-    private static PythonObject findAttributeWithoutType(PythonObject self, String name) {
-        PythonObject attribute = (PythonObject)self.attributes.get(name);
-        if(attribute != null) {
-            return attribute;
-        }
-        
-        PythonTuple bases = (PythonTuple)self.attributes.get("__bases__");
-        if(bases != null) {
-            for(var element : bases.elements) {
-                attribute = findAttributeWithoutType(element, name);
-                if(attribute != null) {
-                    return attribute;
-                }
-            }
-        }
-        
-        return null;
-    }
-    
-    protected Map<String, Object> attributes = new HashMap<>();
     
     public void addMethod(String name, PythonMethod func) {
         setAttribute(name, func);
@@ -547,7 +514,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     
     PythonObject getTypeAttribute(String name) {
         PythonObject type = (PythonObject)attributes.get("__class__");
-        PythonObject attribute = findAttributeWithoutTypeAllowConversion(this, type, name);
+        PythonObject attribute = attributes.findAttributeWithoutTypeAllowConversion(type, name);
         if(attribute == null) {
             AttributeError.call().raise();
         }
@@ -632,26 +599,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return instance;
     }
 
-    private static class PythonMethod extends PythonObject {
-        
-        private PythonObject function;
-        private PythonObject self;
-        
-        public PythonMethod(PythonObject self, PythonObject function) {
-            this.self = self;
-            this.function = function;
-        }
-        
-        @Override
-        public PythonObject call(PythonParameter parameter) {
-            PythonParameter newParams = new PythonParameter(parameter);
-            newParams.insertPositionalArgument(0, self);
-            
-            return function.call(newParams);
-        }
-        
-    }
-    
     private static class PythonBoolean extends PythonObject {
         
         private PythonBoolean() {
