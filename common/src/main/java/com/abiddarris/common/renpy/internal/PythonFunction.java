@@ -20,8 +20,6 @@ import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 public class PythonFunction extends PythonObject {
 
