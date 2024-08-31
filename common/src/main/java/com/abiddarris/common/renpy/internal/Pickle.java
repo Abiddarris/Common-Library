@@ -64,6 +64,7 @@ public class Pickle {
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
     private static final int BINPUT         = 'q';   //   "     "    "   "   " ;   "    " 1-byte arg
+    private static final int TUPLE          = 't';   // build tuple from topmost stack items
     private static final int EMPTY_TUPLE    = ')';   // push empty tuple
     private static final int SETITEMS       = 'u';   // modify dict by adding topmost key+value pairs
     
@@ -206,6 +207,8 @@ public class Pickle {
             dispatch.put(BINGET, this::load_binget);
             dispatch.put(TUPLE2, this::load_tuple2);
             dispatch.put(BUILD, this::load_build);
+            dispatch.put(TUPLE, this::load_tuple);
+
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -524,12 +527,14 @@ public class Pickle {
             len = self.read(1)[0]
             self.append(str(self.read(len), 'utf-8', 'surrogatepass'))
         dispatch[SHORT_BINUNICODE[0]] = load_short_binunicode
-
-        def load_tuple(self):
-            items = self.pop_mark()
-            self.append(tuple(items))
-        dispatch[TUPLE[0]] = load_tuple*/
-
+        */
+        
+        private void load_tuple() {
+            List items = this.pop_mark();
+            
+            this.append(newTuple((PythonObject[])items.toArray(PythonObject[]::new)));
+        }
+        
         public void load_empty_tuple() {
             this.append(newTuple());
         }
