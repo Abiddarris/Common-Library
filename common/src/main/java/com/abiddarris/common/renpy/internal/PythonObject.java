@@ -1,18 +1,19 @@
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
 import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
+import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
+
+import static java.lang.System.arraycopy;
+import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
-import com.abiddarris.common.renpy.internal.signature.PythonSignature;
-import static java.util.Collections.emptyMap;
-import static java.lang.System.arraycopy;
-
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -370,6 +371,14 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 .addPositionalArgument(newPythonString(name)));
         
         return attribute;
+    }
+    
+    public PythonObject getAttribute(String name, PythonObject defaultValue) {
+        ObjectWrapper<PythonObject> returnValue = new ObjectWrapper<>(defaultValue);
+        tryExcept(() -> returnValue.setObject(getAttribute(name))).
+        onExcept((e) -> {}, AttributeError).execute();
+        
+        return returnValue.getObject();
     }
 
     public boolean hasAttribute(String name) {
