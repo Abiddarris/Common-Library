@@ -26,10 +26,16 @@ public class AttributeManager {
 
     private CriticalAttribute criticalAttribute = new CriticalAttribute();
     private PythonObject owner;
-    private AttributeHolder attributes = new BootstrapAttributeHolder();
-
+    private AttributeHolder attributes;
+    
     public AttributeManager(PythonObject owner) {
+        this(owner, new BootstrapAttributeHolder());
+    }
+    
+    public AttributeManager(PythonObject owner, AttributeHolder holder) {
         this.owner = owner;
+        
+        attributes = holder;
     }
     
     public PythonObject get(String name) {
