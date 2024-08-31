@@ -19,7 +19,7 @@ import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import java.util.Arrays;
 
-class PythonTuple extends PythonObject {
+public class PythonTuple extends PythonObject {
 
     private static PythonObject tuple_iterator;
 
