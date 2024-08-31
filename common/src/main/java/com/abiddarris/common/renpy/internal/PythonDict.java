@@ -32,7 +32,7 @@ class PythonDict extends PythonObject {
     private static PythonObject dict_iterator;
         
     static void init() {
-        dict_iterator = Bootstrap.newClass(type, newTuple(newString("dict_iterator"), newTuple()));
+        dict_iterator = Bootstrap.newClass(type, newTuple(newString("dict_iterator"), newTuple()), new BootstrapAttributeHolder());
         dict_iterator.setAttribute("__next__", newFunction(findMethod(DictIterator.class, "next"), "self"));
     }
         
@@ -50,7 +50,7 @@ class PythonDict extends PythonObject {
         
     private static PythonObject dictGetItem(PythonDict self, PythonObject key) {
         PythonObject value = self.map.get(key);
-               
+        
         if(value == null) {
             KeyError.call(key).raise();
         }
