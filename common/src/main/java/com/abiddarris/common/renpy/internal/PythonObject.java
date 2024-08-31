@@ -47,6 +47,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject IndexError;
     public static final PythonObject ModuleNotFoundError;
     public static final PythonObject KeyError;
+    public static final PythonObject builtins;
     
     public static final PythonObject len;
     public static final PythonObject issubclass;
@@ -258,6 +259,9 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         NoneType.setAttribute("__bool__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeBool"), "self"));
         
         Types.init();
+        
+        builtins = createModule("builtins");
+        
         PythonList.init();
         
         __import__ = newFunction(findMethod(BuiltinsImpl.class, "importImpl"), "name");
