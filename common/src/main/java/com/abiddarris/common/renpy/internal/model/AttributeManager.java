@@ -24,6 +24,7 @@ import java.util.Map;
 
 public class AttributeManager {
 
+    private CriticalAttribute criticalAttribute = new CriticalAttribute();
     private PythonObject owner;
     private Map<String, PythonObject> attributes = new HashMap<>();
 
@@ -32,11 +33,18 @@ public class AttributeManager {
     }
     
     public PythonObject get(String name) {
+        PythonObject attribute = criticalAttribute.getAttribute(name);
+        if (attribute != null) {
+            return attribute;
+        }
         return attributes.get(name);
     }
     
-    public PythonObject put(String name, PythonObject attribute) {
-        return attributes.put(name, attribute);
+    public void put(String name, PythonObject attribute) {
+        if(criticalAttribute.setAttribute(name, attribute)) {
+            return;
+        }
+        attributes.put(name, attribute);
     }
     
     public PythonObject findAttribute(String name) {
@@ -45,7 +53,7 @@ public class AttributeManager {
             return attribute;
         }
 
-        PythonObject type = attributes.get("__class__");
+        PythonObject type = criticalAttribute.getType();
 
         return findAttributeWithoutTypeAllowConversion(type, name);
     }
@@ -64,12 +72,12 @@ public class AttributeManager {
     }
     
     private static PythonObject findAttributeWithoutType(PythonObject type, String name) {
-        PythonObject attribute = type.getAttributes().attributes.get(name);
+        PythonObject attribute = type.getAttributes().get(name);
         if (attribute != null) {
             return attribute;
         }
 
-        PythonTuple bases = (PythonTuple)type.getAttributes().attributes.get("__bases__");
+        PythonTuple bases = (PythonTuple)type.getAttributes().get("__bases__");
         if (bases != null) {
             for (var element : bases.getElements()) {
                 attribute = findAttributeWithoutType(element, name);
