@@ -26,12 +26,7 @@ public class PythonTuple extends PythonObject {
     private static PythonObject tuple_iterator;
 
     static void init() {
-        tuple_iterator = type.callAttribute("__new__",
-            new PythonArgument()
-                .addPositionalArgument(type)
-                .addPositionalArgument(newString("tuple_iterator"))
-                .addPositionalArgument(newTuple(object))
-                .addPositionalArgument(newDict()));
+        tuple_iterator = Bootstrap.newClass(type, newTuple(newString("tuple_iterator"), newTuple(object)), new BootstrapAttributeHolder());
         tuple_iterator.setAttribute("__next__", newFunction(
             findMethod(TupleIterator.class, "next"),
             new PythonSignatureBuilder()
