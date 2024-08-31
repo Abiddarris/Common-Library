@@ -15,8 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+
 import java.util.Arrays;
 
 public class PythonTuple extends PythonObject {
@@ -40,6 +42,8 @@ public class PythonTuple extends PythonObject {
     PythonObject[] elements;
 
     PythonTuple(PythonObject[] elements) {
+        super(new BootstrapAttributeHolder());
+        
         this.elements = elements;
     }
     
