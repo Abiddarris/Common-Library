@@ -23,7 +23,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-class PythonFunction extends PythonObject {
+public class PythonFunction extends PythonObject {
 
     private Method method;
     private PythonSignature signature;
