@@ -26,7 +26,7 @@ public class AttributeManager {
 
     private CriticalAttribute criticalAttribute = new CriticalAttribute();
     private PythonObject owner;
-    private Map<String, PythonObject> attributes = new HashMap<>();
+    private AttributeHolder attributes = new BootstrapAttributeHolder();
 
     public AttributeManager(PythonObject owner) {
         this.owner = owner;
@@ -44,7 +44,7 @@ public class AttributeManager {
         if(criticalAttribute.setAttribute(name, attribute)) {
             return;
         }
-        attributes.put(name, attribute);
+        attributes.store(name, attribute);
     }
     
     public PythonObject findAttribute(String name) {
