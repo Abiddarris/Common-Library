@@ -227,6 +227,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
         StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)));
+        KeyError = Bootstrap.newClass(type, newTuple(newString("KeyError"), newTuple(Exception)), new BootstrapAttributeHolder());
         
         PythonDict.init();
         
@@ -281,7 +282,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         IndexError = newClass("IndexError", newTuple(Exception), newDict());
         ModuleNotFoundError = newClass("ModuleNotFoundError", newTuple(Exception), newDict());
-        KeyError = newClass("KeyError", newTuple(Exception), newDict());
         
         JavaModuleLoader.init();
         
