@@ -331,7 +331,7 @@ public class Pickle {
         */
 
         protected void load_none() {
-            this.append(null);
+            this.append(None);
         }
         
             /*
