@@ -67,6 +67,10 @@ public class RenPyCompat {
             SPECIAL_CLASSES.callAttribute("append", PyCodeImpl.define(renpycompat, magic));
          
             renpycompat.setAttribute("PyCode", None);
+                
+            SPECIAL_CLASSES.callAttribute("append", RevertableDictOldImpl.define(renpycompat, magic));
+         
+            renpycompat.setAttribute("RevertableDict", None);
 
             return renpycompat;
         });
@@ -127,6 +131,21 @@ public class RenPyCompat {
             self.setAttribute("bytecode", None);
         }
     }      
+    
+    private static class RevertableDictOldImpl {
+       
+        private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
+            ClassDefiner definer = renpycompat.defineClass("RevertableDict", magic.getAttribute("FakeStrict"), dict);
+            definer.defineAttribute("__module__", newString("renpy.python"));
+            definer.defineFunction("__new__", RevertableDictOldImpl.class, "new0", "cls");
+            
+            return definer.define();
+        }
+
+        private static PythonObject new0(PythonObject cls) {
+            return dict.callAttribute("__new__", cls);
+        }
+    }
 
     private static Magic.FakeClassFactory CLASS_FACTORY;
     
