@@ -43,6 +43,10 @@ class PythonDict extends PythonObject {
         
         this.map = map;
     }
+    
+    private static PythonObject new0(PythonObject cls) {
+        return newDict();
+    }
         
     private static PythonObject iter(PythonDict self) {
         return new DictIterator(self.map.keySet().iterator());

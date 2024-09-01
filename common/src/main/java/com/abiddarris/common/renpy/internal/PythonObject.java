@@ -189,6 +189,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         dict.setAttribute("__len__", newFunction(PythonDict.class, "len", "self"));
         dict.setAttribute("__str__", newFunction(PythonDict.class, "str", "self"));
         dict.setAttribute("update", newFunction(PythonDict.class, "update", "self", "other"));
+        dict.setAttribute("__new__", newFunction(PythonDict.class, "new0", "cls"));
         
         type.setAttribute("__bases__", defaultBases);
         type.setAttribute("__class__", type);
