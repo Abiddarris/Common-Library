@@ -34,12 +34,7 @@
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import static com.abiddarris.common.renpy.internal.Python.createModule;
-import static com.abiddarris.common.renpy.internal.Python.newList;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
-import static com.abiddarris.common.renpy.internal.PythonObject.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.str;
+import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -69,6 +64,10 @@ public class RenPyCompat {
                 
             renpycompat.setAttribute("PyExpr", None);
                 
+            SPECIAL_CLASSES.callAttribute("append", PyCodeImpl.define(renpycompat, magic));
+         
+            renpycompat.setAttribute("PyCode", None);
+
             return renpycompat;
         });
     }
@@ -103,6 +102,32 @@ public class RenPyCompat {
         }
     }
     
+    private static class PyCodeImpl {
+        
+        private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
+            ClassDefiner definer = renpycompat.defineClass("PyCode", magic.getAttribute("FakeStrict"));
+            definer.defineAttribute("__module__", newString("renpy.ast"));
+            definer.defineFunction("__setstate__", PyCodeImpl.class, "setState", "self", "state");
+            
+            return definer.define();
+        }
+
+        private static void setState(PythonObject self, PythonObject state) {
+            if (len.call(state).toInt() == 4) {
+                self.setAttribute("source", state.getItem(newInt(1)));
+                self.setAttribute("location", state.getItem(newInt(2)));
+                self.setAttribute("mode", state.getItem(newInt(3)));
+                self.setAttribute("py", None);
+            } else {
+                self.setAttribute("source", state.getItem(newInt(1)));
+                self.setAttribute("location", state.getItem(newInt(2)));
+                self.setAttribute("mode", state.getItem(newInt(3)));
+                self.setAttribute("py", state.getItem(newInt(4)));
+            }
+            self.setAttribute("bytecode", None);
+        }
+    }      
+
     private static Magic.FakeClassFactory CLASS_FACTORY;
     
     private static Magic.FakeClassFactory getClassFactory() {
