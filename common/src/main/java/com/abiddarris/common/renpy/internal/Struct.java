@@ -49,6 +49,9 @@ public class Struct {
                 case 'i' :
                     number.add(buffer.getInt());
                     break;
+                case 'H' :
+                    number.add(buffer.getShort() & 0xFFFF);
+                    break;
                 default :
                     throw new IllegalArgumentException("Unknown format : " + c);
             }
