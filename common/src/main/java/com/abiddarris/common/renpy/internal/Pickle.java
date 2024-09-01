@@ -45,6 +45,7 @@ public class Pickle {
     private static final int STOP           = '.';   // every pickle ends with STOP
     private static final int BININT         = 'J';   // push four-byte signed int
     private static final int BININT1        = 'K';   // push 1-byte unsigned int
+    private static final int BININT2        = 'M';   // push 2-byte unsigned int
     private static final int NONE           = 'N';   // push None
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
@@ -208,6 +209,8 @@ public class Pickle {
             dispatch.put(NEWTRUE, this::load_true);
             dispatch.put(APPENDS, this::load_appends);
             dispatch.put(LONG_BINPUT, this::load_long_binput);
+            dispatch.put(BININT2, this::load_binint2);
+
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -361,11 +364,13 @@ public class Pickle {
         protected void load_binint1() {
             this.append(newInt(this.read(1)[0]));
         }
+        
+        protected void load_binint2() {
+            this.append(newInt(
+                    unpack("<H", this.read(2))[0].intValue()));
+        }
+        
         /*
-        def load_binint2(self):
-            self.append(unpack('<H', self.read(2))[0])
-        dispatch[BININT2[0]] = load_binint2
-
         def load_long(self):
             val = self.readline()[:-1]
             if val and val[-1] == b'L'[0]:
