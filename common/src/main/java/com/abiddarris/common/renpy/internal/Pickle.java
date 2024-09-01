@@ -876,15 +876,16 @@ public class Pickle {
             }
                 
             if (state.toBoolean()) {
-                // FIXME: Unsupported branch
-                throw new RuntimeException("Unsupported branch");
-                /*inst_dict = inst.__dict__
-                intern = sys.intern
-                for k, v in state.items():
-                    if type(k) is str:
-                        inst_dict[intern(k)] = v
-                    else:
-                        inst_dict[k] = v*/
+                // FIXME: sys.intern not supported
+                
+                PythonObject inst_dict = inst.getAttribute("__dict__");
+                //intern = sys.intern
+                for (PythonObject k : state) {
+                    //if type(k) is str:
+                    //    inst_dict[intern(k)] = v
+                    //else:
+                        inst_dict.setItem(k, inst_dict.getItem(k));
+                }
             }
             
             if (slotstate.toBoolean()) {
