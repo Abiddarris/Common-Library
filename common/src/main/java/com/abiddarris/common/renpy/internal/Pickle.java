@@ -52,6 +52,7 @@ public class Pickle {
     private static final int BUILD          = 'b';   // call __setstate__ or __dict__.update()
     private static final int GLOBAL         = 'c';   // push self.find_class(modname, name); 2 string args   
     private static final int EMPTY_DICT     = '}';   // push empty dict
+    private static final int APPENDS        = 'e';   // extend list on stack by topmost stack slice
     private static final int BINGET         = 'h';   //   "    "    "    "   "   "  ;   "    " 1-byte arg
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
@@ -204,6 +205,7 @@ public class Pickle {
             dispatch.put(TUPLE, this::load_tuple);
             dispatch.put(NEWFALSE, this::load_false);
             dispatch.put(NEWTRUE, this::load_true);
+            dispatch.put(APPENDS, this::load_appends);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -801,25 +803,28 @@ public class Pickle {
             list.callAttribute("append", value);
         }
         
-        /*
-        def load_appends(self):
-            items = self.pop_mark()
-            list_obj = self.stack[-1]
-            try:
+        protected void load_appends() {
+            List items = this.pop_mark();
+            PythonObject list_obj = (PythonObject)this.stack.get(this.stack.size() - 1);
+            
+            // FIXME: Unsupported extend
+            /*try:
                 extend = list_obj.extend
             except AttributeError:
                 pass
             else:
                 extend(items)
-                return
-            # Even if the PEP 307 requires extend() and append() methods,
-            # fall back on append() if the object has no extend() method
-            # for backward compatibility.
-            append = list_obj.append
-            for item in items:
-                append(item)
-        dispatch[APPENDS[0]] = load_appends
-
+                return*/
+            // Even if the PEP 307 requires extend() and append() methods,
+            // fall back on append() if the object has no extend() method
+            // for backward compatibility.
+            PythonObject append = list_obj.getAttribute("append");
+            for (Object item : items) {
+                append.call((PythonObject)item);
+            }
+        }
+        
+        /*
         def load_setitem(self):
             stack = self.stack
             value = stack.pop()
