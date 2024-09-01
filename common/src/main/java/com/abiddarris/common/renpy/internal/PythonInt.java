@@ -22,6 +22,10 @@ class PythonInt extends PythonObject {
     PythonInt(int value) {
         this.value = value;
     }
+    
+    private static PythonObject hash(PythonInt self) {
+        return this;
+    }
 
     @Override
     public int toInt() {
