@@ -628,6 +628,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         private PythonObject args;
         
         private PythonBaseException(PythonObject cls, PythonObject args) {
+            super(new BootstrapAttributeHolder());
+            
             setAttribute("__class__", cls);
             
             int len = args.length();
