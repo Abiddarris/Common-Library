@@ -52,6 +52,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject IndexError;
     public static final PythonObject ModuleNotFoundError;
     public static final PythonObject KeyError;
+    public static final PythonObject ValueError;
+    
     public static final PythonObject builtins;
     
     public static final PythonObject len;
@@ -286,6 +288,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         isinstance = newFunction(BuiltinsImpl.class, "isInstance", "instance", "class");
         hasattr = newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
+        
+        ValueError = builtins.defineClass("ValueError", Exception).define();
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
