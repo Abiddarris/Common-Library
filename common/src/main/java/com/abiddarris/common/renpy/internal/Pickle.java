@@ -65,6 +65,7 @@ public class Pickle {
     private static final int NEWOBJ         = 0x81;  // build object by applying cls.__new__ to argtuple
     private static final int TUPLE2         = 0x86;  // build 2-tuple from two topmost stack items
     private static final int TUPLE3         = 0x87;  // build 3-tuple from three topmost stack items    
+    private static final int NEWTRUE        = 0x88;  // push True
     private static final int NEWFALSE       = 0x89;  // push False
     private static final int LONG1          = 0x8a;  // push long from < 256 bytes
     
@@ -202,7 +203,7 @@ public class Pickle {
             dispatch.put(BUILD, this::load_build);
             dispatch.put(TUPLE, this::load_tuple);
             dispatch.put(NEWFALSE, this::load_false);
-
+            dispatch.put(NEWTRUE, this::load_true);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -332,10 +333,10 @@ public class Pickle {
             this.append(False);
         }
         
-        /*def load_true(self):
-            self.append(True)
-        dispatch[NEWTRUE[0]] = load_true
-
+        protected void load_true() {
+            this.append(True);
+        }
+        /*
         def load_int(self):
             data = self.readline()
             if data == FALSE[1:]:
