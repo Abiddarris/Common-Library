@@ -41,15 +41,12 @@ import static com.abiddarris.common.renpy.internal.Python.createModule;
 import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
-import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
@@ -160,6 +157,7 @@ public class Magic {
             
             ClassDefiner definer = magic.defineClass("FakeStrict", FakeClass);
             definer.defineFunction("__new__", FakeStrictImpl.class, "new0", "cls", "*args", "**kwargs");
+            definer.defineFunction("__setstate__", FakeStrictImpl.class, "setState", "self", "state");
             
             return definer.define();
         }
@@ -178,6 +176,31 @@ public class Magic {
             return self;
         }
         
+        private static void setState(PythonObject self, PythonObject state) {
+            PythonObject slotstate = None;
+
+            if (isinstance.call(state, tuple).toBoolean() && len.call(state).toInt() == 2 &&
+                (state.getItem(newInt(0)) == None || isinstance.call(state.getItem(newInt(0)), dict).toBoolean()) &&
+                (state.getItem(newInt(1)) == None || isinstance.call(state.getItem(newInt(1)), dict).toBoolean())) {
+                slotstate = state.getItem(newInt(1));
+                state = state.getItem(newInt(0));
+            }
+                
+            if (state.toBoolean()) {
+                // Don't have to check for slotstate here since it's either None or a dict
+                if (!isinstance.call(state, dict).toBoolean()) {
+                    throw new FakeUnpicklingError(String.format("%s.__setstate__() got unexpected arguments %s", self.getAttribute("__class__"), state));
+                } else {
+                    self.getAttribute("__dict__")
+                        .callAttribute("update", state);
+                }
+            }
+            
+            if (slotstate.toBoolean()) {
+                self.getAttribute("__dict__")
+                    .callAttribute("update", slotstate);
+            }
+        }
     }
     
     /*
@@ -210,23 +233,7 @@ public class Magic {
     class FakeStrict(FakeClass, object):
   
 
-    def __setstate__(self, state):
-        slotstate = None
-
-        if (isinstance(state, tuple) and len(state) == 2 and
-            (state[0] is None or isinstance(state[0], dict)) and
-            (state[1] is None or isinstance(state[1], dict))):
-            state, slotstate = state
-
-        if state:
-            # Don't have to check for slotstate here since it's either None or a dict
-            if not isinstance(state, dict):
-                raise FakeUnpicklingError("{0}.__setstate__() got unexpected arguments {1}".format(self.__class__, state))
-            else:
-                self.__dict__.update(state)
-
-        if slotstate:
-            self.__dict__.update(slotstate)
+    
     */
     
     
