@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal.model;
 
 import static com.abiddarris.common.renpy.internal.Python.*;
 
+import com.abiddarris.common.renpy.internal.PythonException;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class PythonAttributeHolder implements AttributeHolder {
@@ -33,7 +34,14 @@ public class PythonAttributeHolder implements AttributeHolder {
         if (name.equals("__dict__")) {
             return dict;
         }
-        return dict.getItem(newString(name));
+        
+        try {
+            // FIXME: Ugly trick, in the future this trick could fuck we up!
+            return dict.getItem(newString(name));
+        } catch (PythonException e) {
+        }
+        
+        return null;
     }
     
 }
