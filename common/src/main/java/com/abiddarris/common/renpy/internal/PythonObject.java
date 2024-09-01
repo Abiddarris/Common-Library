@@ -231,11 +231,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         PythonDict.init();
         
-        bool = type.callAttribute("__new__", new PythonArgument()
-            .addPositionalArgument(type)
-            .addPositionalArgument(newString("bool"))
-            .addPositionalArgument(newTuple(int0))
-            .addPositionalArgument(newDict(emptyMap())));
+        bool = Bootstrap.newClass(type, newTuple(newString("bool"), newTuple(int0)), new BootstrapAttributeHolder());
         bool.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "boolNew"), 
                 "cls", "obj"));
         bool.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "boolInit"), 
