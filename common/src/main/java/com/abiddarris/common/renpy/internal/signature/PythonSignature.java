@@ -27,6 +27,7 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,6 +120,8 @@ public class PythonSignature {
                 throw (Error)cause;
             }
             throw toUncheckException(cause);
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
