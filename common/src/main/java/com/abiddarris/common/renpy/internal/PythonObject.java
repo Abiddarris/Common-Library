@@ -226,7 +226,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
         
-        StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)));
+        StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)), new BootstrapAttributeHolder());
         KeyError = Bootstrap.newClass(type, newTuple(newString("KeyError"), newTuple(Exception)), new BootstrapAttributeHolder());
         
         PythonDict.init();
