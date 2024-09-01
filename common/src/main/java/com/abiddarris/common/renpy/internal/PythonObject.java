@@ -216,7 +216,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         method = Bootstrap.newClass(type, newTuple(newPythonString("method"), newTuple(object)));
        
-        Exception = Bootstrap.newClass(type, newTuple(newString("exception"), newTuple()));
+        Exception = Bootstrap.newClass(type, newTuple(newString("exception"), newTuple()), new BootstrapAttributeHolder());
         Exception.setAttribute("__new__", newFunction(
             findMethod(PythonBaseException.class, "newException"),
             new PythonSignatureBuilder() 
