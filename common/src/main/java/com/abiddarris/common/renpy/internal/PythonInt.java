@@ -24,7 +24,14 @@ class PythonInt extends PythonObject {
     }
     
     private static PythonObject hash(PythonInt self) {
-        return this;
+        return self;
+    }
+    
+    private static PythonObject eq(PythonInt self, PythonObject other) {
+        if (!(other instanceof PythonInt)) {
+            return False;
+        } 
+        return newBoolean(self.value == ((PythonInt)other).value);
     }
 
     @Override
