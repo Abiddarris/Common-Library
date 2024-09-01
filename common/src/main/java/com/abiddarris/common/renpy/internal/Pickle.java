@@ -1,14 +1,6 @@
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.Python.newDict;
-import static com.abiddarris.common.renpy.internal.Python.newInt;
-import static com.abiddarris.common.renpy.internal.Python.newList;
-import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
-import static com.abiddarris.common.renpy.internal.PythonObject.len;
-import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.Struct.unpack;
 import static com.abiddarris.common.renpy.internal.Sys.maxsize;
 import static com.abiddarris.common.stream.InputStreams.readExact;
@@ -73,6 +65,7 @@ public class Pickle {
     private static final int NEWOBJ         = 0x81;  // build object by applying cls.__new__ to argtuple
     private static final int TUPLE2         = 0x86;  // build 2-tuple from two topmost stack items
     private static final int TUPLE3         = 0x87;  // build 3-tuple from three topmost stack items    
+    private static final int NEWFALSE       = 0x89;  // push False
     private static final int LONG1          = 0x8a;  // push long from < 256 bytes
     
     public static Object loads(InputStream stream) {
@@ -208,6 +201,7 @@ public class Pickle {
             dispatch.put(TUPLE2, this::load_tuple2);
             dispatch.put(BUILD, this::load_build);
             dispatch.put(TUPLE, this::load_tuple);
+            dispatch.put(NEWFALSE, this::load_false);
 
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
@@ -334,12 +328,11 @@ public class Pickle {
             this.append(None);
         }
         
-            /*
-        def load_false(self):
-            self.append(False)
-        dispatch[NEWFALSE[0]] = load_false
-
-        def load_true(self):
+        protected void load_false() {
+            this.append(False);
+        }
+        
+        /*def load_true(self):
             self.append(True)
         dispatch[NEWTRUE[0]] = load_true
 
