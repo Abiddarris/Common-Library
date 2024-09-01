@@ -62,22 +62,6 @@ class oldfrozenset(frozenset):
 oldfrozenset.__name__ = "frozenset"
 SPECIAL_CLASSES.append(oldfrozenset)
 
-
-
-
-@SPECIAL_CLASSES.append
-class PyCode(magic.FakeStrict):
-    __module__ = "renpy.ast"
-
-    def __setstate__(self, state):
-        if len(state) == 4:
-            (_, self.source, self.location, self.mode) = state
-            self.py = None
-        else:
-            (_, self.source, self.location, self.mode, self.py) = state
-        self.bytecode = None
-
-
 @SPECIAL_CLASSES.append
 class Sentinel(magic.FakeStrict):
     __module__ = "renpy.object"
