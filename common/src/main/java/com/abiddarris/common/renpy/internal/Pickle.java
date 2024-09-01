@@ -802,9 +802,9 @@ public class Pickle {
         
         private void load_append() {
             List<Object> stack = this.stack;
-            Object value = stack.remove(stack.size() - 1);
-            List list = (List)stack.get(stack.size() - 1);
-            list.add(value);
+            PythonObject value = (PythonObject) stack.remove(stack.size() - 1);
+            PythonObject list = (PythonObject)stack.get(stack.size() - 1);
+            list.callAttribute("append", value);
         }
         
         /*
