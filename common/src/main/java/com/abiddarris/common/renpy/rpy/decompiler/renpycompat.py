@@ -112,14 +112,6 @@ class RevertableList(magic.FakeStrict, list):
 
 
 @SPECIAL_CLASSES.append
-class RevertableDict(magic.FakeStrict, dict):
-    __module__ = "renpy.python"
-
-    def __new__(cls):
-        return dict.__new__(cls)
-
-
-@SPECIAL_CLASSES.append
 class RevertableSet(magic.FakeStrict, set):
     __module__ = "renpy.python"
 
