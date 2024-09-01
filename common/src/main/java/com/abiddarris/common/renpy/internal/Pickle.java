@@ -884,7 +884,7 @@ public class Pickle {
                     //if type(k) is str:
                     //    inst_dict[intern(k)] = v
                     //else:
-                        inst_dict.setItem(k, inst_dict.getItem(k));
+                        inst_dict.setItem(k, state.getItem(k));
                 }
             }
             
