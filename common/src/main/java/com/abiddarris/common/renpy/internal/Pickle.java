@@ -57,6 +57,7 @@ public class Pickle {
     private static final int LONG_BINGET    = 'j';   // push item from memo on stack; index is 4-byte arg
     private static final int EMPTY_LIST     = ']';   // push empty list
     private static final int BINPUT         = 'q';   //   "     "    "   "   " ;   "    " 1-byte arg
+    private static final int LONG_BINPUT    = 'r';   //   "     "    "   "   " ;   "    " 4-byte arg
     private static final int TUPLE          = 't';   // build tuple from topmost stack items
     private static final int EMPTY_TUPLE    = ')';   // push empty tuple
     private static final int SETITEMS       = 'u';   // modify dict by adding topmost key+value pairs
@@ -206,6 +207,7 @@ public class Pickle {
             dispatch.put(NEWFALSE, this::load_false);
             dispatch.put(NEWTRUE, this::load_true);
             dispatch.put(APPENDS, this::load_appends);
+            dispatch.put(LONG_BINPUT, this::load_long_binput);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -783,13 +785,13 @@ public class Pickle {
             this.memo.put(i, this.stack.get(this.stack.size() - 1));
         }
 
-        /*def load_long_binput(self):
-            i, = unpack('<I', self.read(4))
-            if i > maxsize:
-                raise ValueError("negative LONG_BINPUT argument")
-            self.memo[i] = self.stack[-1]
-        dispatch[LONG_BINPUT[0]] = load_long_binput
-
+        protected void load_long_binput() {
+            long i = unpack("<I", this.read(4))[0].longValue();
+            if (i > maxsize) {
+                ValueError.call(newString("negative LONG_BINPUT argument")).raise();
+            }
+            this.memo.put(i, this.stack.get(this.stack.size() - 1));
+        }/*
         def load_memoize(self):
             memo = self.memo
             memo[len(memo)] = self.stack[-1]
