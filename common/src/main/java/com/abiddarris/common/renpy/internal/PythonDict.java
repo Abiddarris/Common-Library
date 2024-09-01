@@ -70,6 +70,12 @@ class PythonDict extends PythonObject {
         return newInt(self.map.size());
     }
     
+    private static void update(PythonDict self, PythonObject dict) {
+        for(PythonObject k : dict) {
+        	self.map.put(k, dict.getItem(k));
+        }
+    }
+    
     private static PythonObject str(PythonDict self) {
         StringBuilder builder = new StringBuilder("{");
         self.map.forEach((k, v) -> builder.append(k)
