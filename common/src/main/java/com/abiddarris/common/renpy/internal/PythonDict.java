@@ -25,6 +25,7 @@ import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 class PythonDict extends PythonObject {
@@ -45,7 +46,10 @@ class PythonDict extends PythonObject {
     }
     
     private static PythonObject new0(PythonObject cls) {
-        return newDict();
+        PythonDict dict = new PythonDict(new LinkedHashMap<>());
+        dict.setAttribute("__class__", cls);
+        
+        return dict;
     }
         
     private static PythonObject iter(PythonDict self) {
