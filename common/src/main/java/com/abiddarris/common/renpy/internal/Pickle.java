@@ -43,6 +43,7 @@ public class Pickle {
     
     private static final int MARK           = '(';   // push special markobject on stack
     private static final int STOP           = '.';   // every pickle ends with STOP
+    private static final int INT            = 'I';   // push integer or bool; decimal string argument
     private static final int BININT         = 'J';   // push four-byte signed int
     private static final int BININT1        = 'K';   // push 1-byte unsigned int
     private static final int BININT2        = 'M';   // push 2-byte unsigned int
@@ -63,6 +64,9 @@ public class Pickle {
     private static final int EMPTY_TUPLE    = ')';   // push empty tuple
     private static final int SETITEMS       = 'u';   // modify dict by adding topmost key+value pairs
     
+    private static final byte[] TRUE           = "I01\n".getBytes(); // not an opcode; see INT docs in pickletools.py
+    private static final byte[] FALSE          = "I00\n".getBytes(); // not an opcode; see INT docs in pickletools.py
+
     //Protocol 2
     private static final int PROTO          = 0x80;  // identify pickle protocol
     private static final int NEWOBJ         = 0x81;  // build object by applying cls.__new__ to argtuple
@@ -210,7 +214,7 @@ public class Pickle {
             dispatch.put(APPENDS, this::load_appends);
             dispatch.put(LONG_BINPUT, this::load_long_binput);
             dispatch.put(BININT2, this::load_binint2);
-
+            dispatch.put(INT, this::load_int);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -343,18 +347,20 @@ public class Pickle {
         protected void load_true() {
             this.append(True);
         }
-        /*
-        def load_int(self):
-            data = self.readline()
-            if data == FALSE[1:]:
-                val = False
-            elif data == TRUE[1:]:
-                val = True
-            else:
-                val = int(data, 0)
-            self.append(val)
-        dispatch[INT[0]] = load_int
-        */
+        
+        protected void load_int() {
+            byte[] data = sign(this.readline());
+          
+            PythonObject val;
+            if (Arrays.equals(data, Arrays.copyOfRange(FALSE, 1, FALSE.length))) {
+                val = False;
+            } else if (Arrays.equals(data, Arrays.copyOfRange(TRUE, 1, TRUE.length))) {
+                val = True;
+            } else {
+                val = newInt(Long.parseLong(new String(Arrays.copyOf(data, data.length - 1))));
+            }
+            this.append(val);
+        }
         
         private void load_binint() {
             // FIXME: Integer overflow lol
