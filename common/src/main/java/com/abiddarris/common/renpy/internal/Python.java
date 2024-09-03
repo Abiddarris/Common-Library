@@ -49,7 +49,7 @@ public class Python {
         return object;
     }
     
-    public static PythonObject newInt(int value) {
+    public static PythonObject newInt(long value) {
         PythonObject object = new PythonInt(value);
         object.setAttribute("__class__", int0);
 
