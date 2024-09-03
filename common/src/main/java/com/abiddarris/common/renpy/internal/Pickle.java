@@ -60,6 +60,7 @@ public class Pickle {
     private static final int EMPTY_LIST     = ']';   // push empty list
     private static final int BINPUT         = 'q';   //   "     "    "   "   " ;   "    " 1-byte arg
     private static final int LONG_BINPUT    = 'r';   //   "     "    "   "   " ;   "    " 4-byte arg
+    private static final int SETITEM        = 's';   // add key+value pair to dict
     private static final int TUPLE          = 't';   // build tuple from topmost stack items
     private static final int EMPTY_TUPLE    = ')';   // push empty tuple
     private static final int SETITEMS       = 'u';   // modify dict by adding topmost key+value pairs
@@ -215,6 +216,7 @@ public class Pickle {
             dispatch.put(LONG_BINPUT, this::load_long_binput);
             dispatch.put(BININT2, this::load_binint2);
             dispatch.put(INT, this::load_int);
+            dispatch.put(SETITEM, this::load_setitem);
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -837,15 +839,14 @@ public class Pickle {
             }
         }
         
-        /*
-        def load_setitem(self):
-            stack = self.stack
-            value = stack.pop()
-            key = stack.pop()
-            dict = stack[-1]
-            dict[key] = value
-        dispatch[SETITEM[0]] = load_setitem
-        */
+        protected void load_setitem() {
+            List stack = this.stack;
+            PythonObject value = (PythonObject)stack.remove(stack.size() - 1);
+            PythonObject key = (PythonObject)stack.remove(stack.size() - 1);
+            PythonObject dict = (PythonObject)stack.get(stack.size() -1);
+           
+            dict.setItem(key, value);
+        }
         
         private void load_setitems() {
             List<Object> items = this.pop_mark();
