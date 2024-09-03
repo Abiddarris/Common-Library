@@ -17,9 +17,9 @@ package com.abiddarris.common.renpy.internal;
 
 class PythonInt extends PythonObject {
 
-    private int value;
+    private long value;
 
-    PythonInt(int value) {
+    PythonInt(long value) {
         this.value = value;
     }
     
@@ -36,6 +36,6 @@ class PythonInt extends PythonObject {
 
     @Override
     public int toInt() {
-        return value;
+        return Math.toIntExact(value);
     }
 }
