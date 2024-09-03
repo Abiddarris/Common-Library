@@ -30,6 +30,7 @@ public class Decompiler {
         });
         Magic.initLoader();
         RenPyCompat.initLoader();
+        Util.initLoader();
     }
     
 }
