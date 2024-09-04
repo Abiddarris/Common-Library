@@ -22,7 +22,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import com.abiddarris.common.annotations.PrivateApi;
 
 @PrivateApi
-class Sys {
+public class Sys {
     static final int maxsize = Integer.MAX_VALUE;
     
     static PythonObject sys;
