@@ -33,5 +33,6 @@ public class Sys {
         sys.setAttribute("meta_path", newList());
         
         ImportLib.init();
+        Types.mountModule(sys.getAttribute("modules"));
     }
 }
