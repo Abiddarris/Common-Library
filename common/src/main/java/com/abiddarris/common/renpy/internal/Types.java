@@ -32,6 +32,13 @@ class Types {
         ));
     }
     
+    static void mountModule(PythonObject modules) {
+        PythonObject types = ModuleType.call(newString("types"));
+        types.setAttribute("ModuleType", ModuleType);
+        
+        modules.setItem(newString("types"), types);
+    }
+    
     private static void moduleInit(PythonObject self, PythonObject name) {
         self.setAttribute("__name__", name);
     }
