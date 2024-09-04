@@ -1,18 +1,15 @@
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.BuiltinsImpl.importAs;
-import static com.abiddarris.common.renpy.internal.PythonSyntax.getAttr;
-
-import com.abiddarris.common.renpy.internal.model.AttributeHolder;
-import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
-import com.abiddarris.common.renpy.internal.model.PythonAttributeHolder;
-import static java.lang.System.arraycopy;
-import static java.util.Collections.emptyMap;
+import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
+import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.model.AttributeHolder;
 import com.abiddarris.common.renpy.internal.model.AttributeManager;
+import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.model.PythonAttributeHolder;
 import com.abiddarris.common.renpy.internal.object.PythonMethod;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
@@ -20,12 +17,7 @@ import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import com.abiddarris.common.utils.ObjectWrapper;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PythonObject extends Python implements Iterable<PythonObject> {
@@ -487,22 +479,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
     
     public PythonObject[] fromImport(String modName, String attributeName, String... attributeNames) {
-        PythonObject mod = importAs(modName);
-        
-        String[] attributeNames0 = new String[attributeNames.length + 1];
-        attributeNames0[0] = attributeName;
-        
-        arraycopy(attributeNames, 0, attributeNames0, 1, attributeNames.length);
-        
-        List<PythonObject> attributes = new ArrayList<>();
-        for(String attributeName0 : attributeNames0) {
-        	PythonObject attribute = mod.getAttribute(attributeName0);
-            setAttribute(attributeName0, attribute);
-            
-            attributes.add(attribute);
-        }
-        
-        return attributes.toArray(PythonObject[]::new);
+        return importFrom(modName, new PythonObjectLoadTarget(this), attributeName, attributeNames);
     }
     
     PythonObject callTypeAttribute(String name, PythonObject... args) {
