@@ -19,6 +19,8 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class NullLoadTarget implements LoadTarget {
 
+    public static final NullLoadTarget INSTANCE = new NullLoadTarget();
+    
     @Override
     public void onImport(String name, PythonObject importedAttribute) {}
 }
