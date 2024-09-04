@@ -18,13 +18,40 @@ package com.abiddarris.common.renpy.internal.imp;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
 
+import static java.lang.System.arraycopy;
 import static java.util.regex.Pattern.quote;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Imports {
         
+    public static PythonObject[] importFrom(String modName, String attributeName, String... attributeNames) {
+        return importFrom(modName, NullLoadTarget.INSTANCE, attributeName, attributeNames);
+    }
+    
+    public static PythonObject[] importFrom(String modName, LoadTarget target, String attributeName, String... attributeNames) {
+        PythonObject mod = importAs(modName);
+        
+        String[] attributeNames0 = new String[attributeNames.length + 1];
+        attributeNames0[0] = attributeName;
+        
+        arraycopy(attributeNames, 0, attributeNames0, 1, attributeNames.length);
+        
+        List<PythonObject> attributes = new ArrayList<>();
+        for(String attributeName0 : attributeNames0) {
+        	PythonObject attribute = mod.getAttribute(attributeName0);
+            target.onImport(attributeName0, attribute);
+            
+            attributes.add(attribute);
+        }
+        
+        return attributes.toArray(PythonObject[]::new);
+    }
+    
     public static PythonObject importAs(String name) {
         return importAsInternal(
             name.split(quote(".")));
