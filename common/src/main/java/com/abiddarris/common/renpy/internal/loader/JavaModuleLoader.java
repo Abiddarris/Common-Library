@@ -30,11 +30,12 @@ import java.util.Map;
 
 public class JavaModuleLoader {
     
+    static PythonObject sys;
+    
     private static boolean initialized;
-    private static Map<String, ModuleLoader> loaders = new HashMap<>();
+    private static Map<String, LoadStrategy> loaders = new HashMap<>();
     
     private static PythonObject JavaModuleLoader0;
-    private static PythonObject sys;
     private static PythonObject ModuleSpec;
     
     public static void init() {
@@ -59,7 +60,7 @@ public class JavaModuleLoader {
         checkNonNull(moduleName, "module name cannot be null");
         checkNonNull(loader, "Loader cannot be null");
         
-        loaders.put(moduleName, loader);
+        loaders.put(moduleName, new OldLoadStrategy(moduleName, loader));
     }
     
     private static PythonObject findSpec(PythonObject name, PythonObject path, PythonObject target) {
@@ -71,9 +72,7 @@ public class JavaModuleLoader {
     
     private static PythonObject loadModule(PythonObject name) {
         String jName = name.toString();
-        PythonObject module = loaders.get(jName).loadModule(jName);
-        sys.getAttribute("modules")
-            .setItem(name, module);
+        PythonObject module = loaders.get(jName).loadModule();
        
         return module;
     }
