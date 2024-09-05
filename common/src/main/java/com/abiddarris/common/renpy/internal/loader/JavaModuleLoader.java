@@ -56,6 +56,13 @@ public class JavaModuleLoader {
             .callAttribute("append", JavaModuleLoader0);
     }
     
+    public static void registerLoader(String moduleName, ModuleFactory factory, ModuleExecutor executor) {
+        if (factory == null) {
+            factory = DefaultModuleFactory.INSTANCE;
+        }
+        loaders.put(moduleName, new ModernLoadStrategy(moduleName, factory, executor));
+    }
+    
     public static void registerLoader(String moduleName, ModuleLoader loader) {
         checkNonNull(moduleName, "module name cannot be null");
         checkNonNull(loader, "Loader cannot be null");
