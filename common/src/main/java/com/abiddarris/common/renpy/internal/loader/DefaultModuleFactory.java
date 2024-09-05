@@ -22,6 +22,8 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class DefaultModuleFactory implements ModuleFactory {
 
+    public static final DefaultModuleFactory INSTANCE = new DefaultModuleFactory();
+    
     @Override
     public PythonObject createModule(String name) {
         return Python.createModule(name);
