@@ -25,12 +25,6 @@ from io import StringIO
 from contextlib import contextmanager
 
 
-class OptionBase:
-    def __init__(self, indentation="    ", log=None):
-        self.indentation = indentation
-        self.log = [] if log is None else log
-
-
 class DecompilerBase:
     def __init__(self, out_file=None, options=OptionBase()):
         # the file object that the decompiler outputs to
