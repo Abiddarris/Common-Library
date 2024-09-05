@@ -35,19 +35,42 @@
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import com.abiddarris.common.renpy.internal.PythonObject;
-
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+
+import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class Util {
     
     static void initLoader() {
         registerLoader("decompiler.util", (name) -> {
             PythonObject util = createModule(name);
+            
+            OptionBaseImpl.define(util);  
                 
             return util;
         });
+    }
+    
+    private static class OptionBaseImpl {
+        
+        private static PythonObject define(PythonObject util) {
+            ClassDefiner definer = util.defineClass("OptionBase");
+            definer.defineFunction("__init__", OptionBaseImpl.class, "init",
+                 new PythonSignatureBuilder("self")
+                    .addParameter("indentation", newString("    "))
+                    .addParameter("log", None)
+                    .build());
+            
+            return definer.define();
+        }
+        
+        private static void init(PythonObject self, PythonObject indentation, PythonObject log) {
+            self.setAttribute("indentation", indentation);
+            self.setAttribute("log", log == None ? newList() : log);
+        }
     }
     
 }
