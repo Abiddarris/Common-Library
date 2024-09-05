@@ -20,7 +20,9 @@ import static com.abiddarris.common.renpy.internal.Python.createPackage;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class PackageModuleFactory implements ModuleFactory {
-
+    
+    public static final PackageModuleFactory INSTANCE = new PackageModuleFactory();
+    
     @Override
     public PythonObject createModule(String name) {
         return createPackage(name);
