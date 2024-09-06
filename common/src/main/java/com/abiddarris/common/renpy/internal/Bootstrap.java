@@ -19,7 +19,12 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
+import static java.util.Arrays.asList;
+
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 class Bootstrap {
     
@@ -35,11 +40,25 @@ class Bootstrap {
             bases = newTuple(object);
         }
         
+        // FIXME: This will be a problem if the tuple is not default tuple
+        
         PythonObject self = new PythonObject(attributeHolder);
         self.setAttribute("__class__", cls);
         self.setAttribute("__name__", name);
         self.setAttribute("__bases__", bases);
-       
+        
+        Set<PythonObject> mro = new LinkedHashSet<>();
+        mro.add(self);
+        for(PythonObject parent : ((PythonTuple)bases).getElements()) {
+        	PythonObject[] parentMro = ((PythonTuple)parent.getAttributes().get("__mro__")).getElements();
+            for(PythonObject mro0 : parentMro) {
+            	mro.remove(mro0);
+                mro.add(mro0);
+            }
+        }
+        
+        self.setAttribute("__mro__", newTuple(mro.toArray(PythonObject[]::new)));
+        
         return self;
     }
     
