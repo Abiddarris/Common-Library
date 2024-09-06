@@ -79,6 +79,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         str.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "strNew"), "self", "obj"));
         str.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "strInit"), "self", "obj"));
+        str.setAttribute("__mro__", newTuple(str, object));
         
         int0 = newBootstrapObject();
         int0.setAttribute("__bases__", defaultBases);
