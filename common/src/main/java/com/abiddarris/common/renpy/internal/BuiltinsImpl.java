@@ -37,6 +37,7 @@ import static com.abiddarris.common.renpy.internal.Sys.sys;
 
 import static java.util.regex.Pattern.quote;
 
+import com.abiddarris.common.renpy.internal.core.Types;
 import com.abiddarris.common.renpy.internal.imp.Imports;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
@@ -109,8 +110,7 @@ public class BuiltinsImpl {
     
     private static PythonObject typeNew(PythonObject cls, PythonObject args) {
         if(args.length() == 1)  {
-            return args.getItem(newInt(0))
-                .getAttribute("__class__");
+            return Types.type(args.getItem(newInt(0)));
         }
         
         if(args.length() != 3) {
