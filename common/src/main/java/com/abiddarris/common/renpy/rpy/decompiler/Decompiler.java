@@ -15,18 +15,13 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import static com.abiddarris.common.renpy.internal.Python.createPackage;
-
-import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 
 public class Decompiler {
     
     public static void initLoader() {
-        JavaModuleLoader.registerLoader("decompiler", (name) -> {
-            PythonObject decompiler = createPackage("decompiler");
-                
-            return decompiler;    
+        JavaModuleLoader.registerPackageLoader("decompiler", (decompiler) -> {
+            decompiler.importModule("decompiler.util");
         });
         Magic.initLoader();
         RenPyCompat.initLoader();
