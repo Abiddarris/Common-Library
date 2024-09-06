@@ -39,17 +39,18 @@ package com.abiddarris.common.renpy.rpy;
 
 import static com.abiddarris.common.files.Files.changeExtension;
 import static com.abiddarris.common.files.Files.getExtension;
+import static com.abiddarris.common.renpy.internal.Python.*;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_detect_python2;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_safe_loads;
-import static com.abiddarris.common.stream.InputStreams.readAll;
 import static com.abiddarris.common.stream.Compresses.decompress;
-import static com.abiddarris.common.stream.Signs.unsign;
+import static com.abiddarris.common.stream.InputStreams.readAll;
 import static com.abiddarris.common.stream.Signs.sign;
+import static com.abiddarris.common.stream.Signs.unsign;
 
-import java.util.Arrays;
 import static java.util.Arrays.copyOf;
 import static java.util.Arrays.copyOfRange;
 
+import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.Struct;
 
 import java.io.BufferedInputStream;
@@ -58,6 +59,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,7 +188,7 @@ public class Unrpyc {
                 "    decompilation might occur. ");
         }
 
-        Object stmts = pickle_safe_loads(contents)/*[1]*/;
+        PythonObject stmts = ((PythonObject)pickle_safe_loads(contents)).getItem(newInt(1));
         return stmts;
     }
     
