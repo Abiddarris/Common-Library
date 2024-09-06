@@ -78,18 +78,18 @@ public class AttributeManager {
     }
     
     private static PythonObject findAttributeWithoutType(PythonObject type, String name) {
-        PythonObject attribute = type.getAttributes().get(name);
-        if (attribute != null) {
+        AttributeManager attributeManager = type.getAttributes();
+        PythonTuple bases = (PythonTuple)attributeManager.get("__mro__");
+        
+        if (bases == null) {
+            PythonObject attribute = attributeManager.get(name);
             return attribute;
         }
-
-        PythonTuple bases = (PythonTuple)type.getAttributes().get("__bases__");
-        if (bases != null) {
-            for (var element : bases.getElements()) {
-                attribute = findAttributeWithoutType(element, name);
-                if (attribute != null) {
-                    return attribute;
-                }
+        
+        for (PythonObject parent : bases.getElements()) {
+            PythonObject attribute = parent.getAttributes().get(name);
+            if (attribute != null) {
+                return attribute;
             }
         }
 
