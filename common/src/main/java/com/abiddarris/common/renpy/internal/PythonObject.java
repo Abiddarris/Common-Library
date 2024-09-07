@@ -249,8 +249,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                     .addParameter("self")
                     .build()));
         
-        False = new PythonBoolean();
-        True = new PythonBoolean();
+        False = new PythonBoolean(0);
+        True = new PythonBoolean(1);
         
         PythonTuple.init();
         
@@ -592,9 +592,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return instance;
     }
 
-    private static class PythonBoolean extends PythonObject {
+    private static class PythonBoolean extends PythonInt {
         
-        private PythonBoolean() {
+        private PythonBoolean(int val) {
+            super(val);
+            
             setAttribute("__class__", bool);
         }
         
