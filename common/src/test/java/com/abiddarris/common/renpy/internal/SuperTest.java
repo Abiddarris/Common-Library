@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Python.*;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 
+import com.abiddarris.common.utils.ObjectWrapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -58,12 +59,16 @@ public class SuperTest {
         private static PythonObject define(PythonObject supertest, PythonObject Parent) {
         	ClassDefiner definer = supertest.defineClass("Child", Parent);
             definer.defineFunction("set_number", ChildImpl.class, "setNumber", "self");
+            definer.defineFunction("do_something", ChildImpl.class, "doSomething", "self");
             
             return definer.define();
         }
         
         private static void setNumber(PythonObject self) {
             self.setAttribute("a", newInt(100));
+        }
+        
+        private static void doSomething(PythonObject self) {
         }
     }
     
@@ -77,5 +82,17 @@ public class SuperTest {
         child.getSuper().callAttribute("set_number");
         
         assertEquals(newInt(10), child.getAttribute("a"));
+    }
+    
+    @Test
+    public void getNonExistMethodOnParent() {
+        PythonObject child = Child.call();
+   
+        ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
+        
+        tryExcept(() -> child.getSuper().callAttribute("do_something")).
+        onExcept((e) -> thrown.setObject(true), AttributeError).execute();
+        
+        assertTrue(thrown.getObject());
     }
 }
