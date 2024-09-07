@@ -16,6 +16,7 @@
 package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -55,7 +56,7 @@ public class Super {
         
         PythonObject attribute = instance.getAttributes().searchAttribute(searchStart, selfClass, name.toString());
         if (attribute == null) {
-            
+            raiseAttributeError(self, name);
         }
         
         return attribute;
