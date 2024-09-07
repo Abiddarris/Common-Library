@@ -18,9 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import DecompilerBase, First, WordConcatenator, reconstruct_paraminfo, \
+from .util import , First, WordConcatenator, reconstruct_paraminfo, \
                   reconstruct_arginfo, string_escape, split_logical_lines, Dispatcher, \
-                  say_get_code, OptionBase
+                  say_get_code, 
 from .renpycompat import renpy
 
 from operator import itemgetter
@@ -50,18 +50,6 @@ class Decompiler(DecompilerBase):
     # This dictionary is a mapping of Class: unbount_method, which is used to determine
     # what method to call for which ast class
     dispatch = Dispatcher()
-
-    def __init__(self, out_file, options):
-        super(Decompiler, self).__init__(out_file, options)
-
-        self.paired_with = False
-        self.say_inside_menu = None
-        self.label_inside_menu = None
-        self.in_init = False
-        self.missing_init = False
-        self.init_offset = 0
-        self.most_lines_behind = 0
-        self.last_lines_behind = 0
 
     def advance_to_line(self, linenumber):
         self.last_lines_behind = max(
