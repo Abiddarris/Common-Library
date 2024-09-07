@@ -39,7 +39,8 @@ package com.abiddarris.common.renpy.rpy;
 
 import static com.abiddarris.common.files.Files.changeExtension;
 import static com.abiddarris.common.files.Files.getExtension;
-import static com.abiddarris.common.renpy.internal.Python.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_detect_python2;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_safe_loads;
 import static com.abiddarris.common.stream.Compresses.decompress;
@@ -52,6 +53,7 @@ import static java.util.Arrays.copyOfRange;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.Struct;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -65,6 +67,12 @@ import java.util.List;
 import java.util.Map;
 
 public class Unrpyc {
+    
+    private static final PythonObject decompiler;
+    
+    static {
+        decompiler = importModule("decompiler");
+    }
     
     public static class Context {
         
@@ -208,8 +216,8 @@ public class Unrpyc {
 
     
     public static void decompile_rpyc(File file, Context context, boolean overwrite/*=False*/, boolean try_harder/*=False*/, boolean dump/*=False*/,
-                   boolean comparable/*=False*/, boolean no_pyexpr/*=False*/, Object translator/*null*/, boolean init_offset/*=False*/,
-                   Object sl_custom_names/*=None*/) throws IOException {
+                   boolean comparable/*=False*/, boolean no_pyexpr/*=False*/, PythonObject translator/*null*/, boolean init_offset/*=False*/,
+                   PythonObject sl_custom_names/*=None*/) throws IOException {
         // Output filename is input filename but with .rpy extension
         String ext = getExtension(file);
         if (dump) {
@@ -232,15 +240,19 @@ public class Unrpyc {
             
         context.log(String.format("Decompiling %s to %s ...", file, outputFile.getName()));
         Object ast = get_ast(file, try_harder, context);
-        /* 
-        with out_filename.open('w', encoding='utf-8') as out_file:
-            if dump:
-                astdump.pprint(out_file, ast, comparable=comparable, no_pyexpr=no_pyexpr)
-            else:
-                options = decompiler.Options(log=context.log_contents, translator=translator,
-                                            init_offset=init_offset, sl_custom_names=sl_custom_names)
+        
+        //with out_filename.open('w', encoding='utf-8') as out_file:
+            //if dump:
+                //astdump.pprint(out_file, ast, comparable=comparable, no_pyexpr=no_pyexpr)
+            //else:
+                /* FIXME: log=context.log_contents**/
+                PythonObject options = decompiler.getAttribute("Options").call(new PythonArgument()
+                    .addKeywordArgument("log", None)
+                    .addKeywordArgument("translator", translator)
+                    .addKeywordArgument("init_offset", newBoolean(init_offset))
+                    .addKeywordArgument("sl_custom_names", sl_custom_names));
 
-                decompiler.pprint(out_file, ast, options)*/
+                //decompiler.pprint(out_file, ast, options)*/
 
         //context.set_state('ok')
     }
