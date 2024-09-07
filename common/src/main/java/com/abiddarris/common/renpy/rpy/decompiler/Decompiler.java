@@ -47,8 +47,12 @@ import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class Decompiler {
     
+    private static PythonObject decompiler;
+    
     public static void initLoader() {
         JavaModuleLoader.registerPackageLoader("decompiler", (decompiler) -> {
+            Decompiler.decompiler = decompiler;
+                
             PythonObject[] imported = decompiler.fromImport("decompiler.util", "OptionBase");
             PythonObject OptionBase = imported[0];
                 
@@ -92,5 +96,30 @@ public class Decompiler {
             self.setAttribute("sl_custom_names", sl_custom_names);
         }
     
+    }
+    
+    private static class DecompilerImpl {
+        
+        private static PythonObject decompiler;
+        
+        private static PythonObject define(PythonObject decompiler, PythonObject DecompilerBase) {
+            ClassDefiner definer = decompiler.defineClass("Decompiler", DecompilerBase);
+            definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
+            
+            return definer.define();
+        }
+        
+        private static void init(PythonObject self, PythonObject out_file, PythonObject options) {
+            super0.call(decompiler.getAttribute("Decompiler"), self).callAttribute("__init__", out_file, options);
+            
+            self.setAttribute("paired_with", False);
+            self.setAttribute("say_inside_menu", None);
+            self.setAttribute("label_inside_menu", None);
+            self.setAttribute("in_init", False);
+            self.setAttribute("missing_init", False);
+            self.setAttribute("init_offset", newInt(0));
+            self.setAttribute("most_lines_behind", newInt(0));
+            self.setAttribute("last_lines_behind", newInt(0));
+        }
     }
 }
