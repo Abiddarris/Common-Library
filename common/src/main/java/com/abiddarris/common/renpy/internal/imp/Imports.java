@@ -52,6 +52,13 @@ public class Imports {
         return attributes.toArray(PythonObject[]::new);
     }
     
+    public static PythonObject importModule(String name) {
+    	String[] parts = name.split(quote("."));
+        importAs(name);
+        
+        return sys.getAttribute("modules").getItem(newString(parts[0]));
+    }
+    
     public static PythonObject importAs(String name) {
         return importAsInternal(
             name.split(quote(".")));
