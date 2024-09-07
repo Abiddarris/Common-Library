@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.model;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.object;
+
 import com.abiddarris.common.renpy.internal.PythonFunction;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.PythonTuple;
@@ -66,15 +68,60 @@ public class AttributeManager {
 
     public PythonObject findAttributeWithoutTypeAllowConversion(PythonObject type, String name) {
         PythonObject attribute = findAttributeWithoutType(type, name);
-        if (attribute instanceof PythonFunction) {
-            return new PythonMethod(owner, attribute);
-        }
+        attribute = boundFunction(attribute);
 
         return attribute;
     }
 
     public PythonObject findAttributeWithoutType(String name) {
         return findAttributeWithoutType(owner, name);
+    }
+    
+    public PythonObject searchAttribute(PythonObject startClass, PythonObject instanceClass, String name) {
+        PythonObject attribute = searchAttributeInternal(startClass, instanceClass, name);
+        attribute = boundFunction(attribute);
+        
+        return attribute;
+    }
+    
+    private PythonObject boundFunction(PythonObject attribute) {
+        if (attribute instanceof PythonFunction) {
+            return new PythonMethod(owner, attribute);
+        }
+        
+        return attribute;
+    }
+    
+    private PythonObject searchAttributeInternal(PythonObject startClass, PythonObject instanceClass, String name) {
+        if (startClass == object) {
+            return null;
+        }
+        
+        AttributeManager attributeManager = instanceClass.getAttributes();
+        PythonTuple mro = (PythonTuple)attributeManager.get("__mro__");
+        
+        if (mro == null) {
+            // FIXME: instanceClass is not class if MRO is null
+        }
+        
+        boolean startSearch = false;
+        for (PythonObject parent : mro.getElements()) {
+            if (parent == startClass) {
+                startSearch = true;
+                continue;
+            }
+            
+            if (!startSearch) {
+                continue;
+            }
+            
+            PythonObject attribute = parent.getAttributes().get(name);
+            if (attribute != null) {
+                return attribute;
+            }
+        }
+        
+        return null;
     }
     
     private static PythonObject findAttributeWithoutType(PythonObject type, String name) {
