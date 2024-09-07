@@ -36,17 +36,6 @@ __all__ = ["astdump", "magic", "sl2decompiler", "testcasedecompiler", "translate
 
 # Main API
 
-# Object that carries configurable decompilation options
-class Options(OptionBase):
-    def __init__(self, indentation="    ", log=None,
-                 translator=None, init_offset=False,
-                 sl_custom_names=None):
-        super(Options, self).__init__(indentation=indentation, log=log)
-
-        # decompilation options
-        self.translator = translator
-        self.init_offset = init_offset
-        self.sl_custom_names = sl_custom_names
 
 def pprint(out_file, ast, options=Options()):
     Decompiler(out_file, options).dump(ast)
