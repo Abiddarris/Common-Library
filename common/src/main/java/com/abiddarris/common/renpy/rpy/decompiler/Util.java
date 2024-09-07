@@ -47,8 +47,9 @@ public class Util {
     static void initLoader() {
         registerLoader("decompiler.util", (name) -> {
             PythonObject util = createModule(name);
+            PythonObject OptionBase = OptionBaseImpl.define(util);  
             
-            OptionBaseImpl.define(util);  
+            DecompilerBaseImpl.define(util, OptionBase);
                 
             return util;
         });
@@ -70,6 +71,47 @@ public class Util {
         private static void init(PythonObject self, PythonObject indentation, PythonObject log) {
             self.setAttribute("indentation", indentation);
             self.setAttribute("log", log == None ? newList() : log);
+        }
+    }
+    
+    private static class DecompilerBaseImpl {
+        
+        private static PythonObject define(PythonObject util, PythonObject OptionBase) {
+            ClassDefiner definer = util.defineClass("DecompilerBase");
+            definer.defineFunction("__init__", DecompilerBaseImpl.class, "init", new PythonSignatureBuilder("self")
+                .addParameter("out_file", None)
+                .addParameter("options", OptionBase.call())
+                .build());
+            
+            return definer.define();
+        }
+        
+        private static void init(PythonObject self, PythonObject out_file, PythonObject options) {
+            // the file object that the decompiler outputs to
+            // FIXME: sys.stdout not supported
+            self.setAttribute("out_file", out_file); //or sys.stdout
+            // Decompilation options
+            self.setAttribute("options", options);
+            // the string we use for indentation
+            self.setAttribute("indentation", options.getAttribute("indentation"));
+
+
+            // properties used for keeping track of where we are
+            // the current line we're writing.
+            self.setAttribute("linenumber", newInt(0));
+            // the indentation level we're at
+            self.setAttribute("indent_level", newInt(0));
+            // a boolean that can be set to make the next call to indent() not insert a newline and
+            // indent useful when a child node can continue on the same line as the parent node
+            // advance_to_line will also cancel this if it changes the lineno
+            self.setAttribute("skip_indent_until_write", False);
+
+            // properties used for keeping track what level of block we're in
+            self.setAttribute("block_stack", newList());
+            self.setAttribute("index_stack", newList());
+
+            // storage for any stuff that can be emitted whenever we have a blank line
+            self.setAttribute("blank_line_queue", newList());
         }
     }
     
