@@ -1,10 +1,11 @@
 package com.abiddarris.common.renpy.internal;
 
-import com.abiddarris.common.renpy.internal.core.Super;
+import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
+import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
@@ -320,19 +321,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
         PythonObject attribute = self.attributes.findAttribute(name.toString());
         if(attribute == null) {
-            throwAttributeError(self, name);
+            raiseAttributeError(self, name);
         }
         
         return attribute;
-    }
-    
-    private static void throwAttributeError(PythonObject object, Object attributeName) {
-        String message = isinstance.call(object, type).toBoolean() ? "type object %s" : "%s object";
-        message += " has no attribute %s";
-            
-        AttributeError.call(newString(String.format(
-            message, object.getAttribute("__name__"), attributeName
-        ))).raise();
     }
     
     AttributeManager attributes;
