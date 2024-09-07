@@ -60,6 +60,10 @@ public class JavaModuleLoader {
         registerLoader(moduleName, PackageModuleFactory.INSTANCE, executor);
     }
     
+    public static void registerLoader(String moduleName, ModuleExecutor executor) {
+        registerLoader(moduleName, null, executor);
+    }
+    
     public static void registerLoader(String moduleName, ModuleFactory factory, ModuleExecutor executor) {
         if (factory == null) {
             factory = DefaultModuleFactory.INSTANCE;
