@@ -1,5 +1,6 @@
 package com.abiddarris.common.renpy.internal;
 
+import com.abiddarris.common.renpy.internal.core.Super;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -45,6 +46,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject ModuleNotFoundError;
     public static final PythonObject KeyError;
     public static final PythonObject ValueError;
+    public static final PythonObject super0;
     
     public static final PythonObject builtins;
     
@@ -289,6 +291,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         hasattr = newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
         
         ValueError = builtins.defineClass("ValueError", Exception).define();
+        
+        super0 = Super.define(builtins);
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {

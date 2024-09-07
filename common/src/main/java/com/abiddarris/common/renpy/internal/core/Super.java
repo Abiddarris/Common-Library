@@ -19,6 +19,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.*;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.model.AttributeManager;
 
 public class Super {
     
@@ -31,11 +32,32 @@ public class Super {
         init = true;
         
         ClassDefiner definer = builtins.defineClass("super");
+        definer.defineFunction("__init__", Super.class, "init", "self", "cls", "instance");
+        definer.defineFunction("__getattribute__", Super.class, "getAttribute", "self", "name");
         
         return definer.define();
     }
     
     private static void init(PythonObject self, PythonObject cls, PythonObject instance) {
+        PythonObject instanceType = Types.type(instance);
         
+        self.setAttribute("__thisclass__", cls);
+        self.setAttribute("__self__", instance);
+        self.setAttribute("__self_class__", instanceType);
+    }
+    
+    private static PythonObject getAttribute(PythonObject self, PythonObject name) {
+        AttributeManager attributeManager = self.getAttributes();
+        
+        PythonObject searchStart = attributeManager.findAttribute("__thisclass__");
+        PythonObject selfClass = attributeManager.findAttribute("__self_class__");
+        PythonObject instance = attributeManager.findAttribute("__self__");
+        
+        PythonObject attribute = instance.getAttributes().searchAttribute(searchStart, selfClass, name.toString());
+        if (attribute == null) {
+            
+        }
+        
+        return attribute;
     }
 }
