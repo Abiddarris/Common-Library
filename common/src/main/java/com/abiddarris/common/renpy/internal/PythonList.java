@@ -40,14 +40,9 @@ class PythonList extends PythonObject {
     }
     
     private static PythonObject getItem(PythonList list, PythonObject index) {
-        int indexInt = index.toInt();
-        int size = list.elements.size();
+        int indexInt = getRawIndex(list, index);
 
-        if (indexInt < 0) {
-            indexInt += size;
-        }
-
-        if(indexInt < 0 || indexInt >= size) {
+        if(indexInt < 0 || indexInt >= list.elements.size()) {
             IndexError.call(newString("list index out of range")).raise();
         }
         return list.elements.get(indexInt);
@@ -84,7 +79,18 @@ class PythonList extends PythonObject {
     private static PythonObject len(PythonList self) {
         return newInt(self.elements.size());
     }
-    
+
+    private static int getRawIndex(PythonList self, PythonObject index) {
+        int indexInt = index.toInt();
+        int size = self.elements.size();
+
+        if (indexInt < 0) {
+            indexInt += size;
+        }
+
+        return indexInt;
+    }
+
     private static class ListIteratorObject extends PythonObject {
         
         private int index;

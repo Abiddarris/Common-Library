@@ -38,6 +38,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -97,7 +98,11 @@ public class Util {
                     .build());
 
             IndentationContextManagerImpl.define(definer);
-            
+
+            definer.defineFunction("print_nodes", DecompilerBaseImpl.class, "printNodes", new PythonSignatureBuilder("self", "ast")
+                    .addParameter("extra_indent", newInt(0))
+                    .build());
+
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
             
             return DecompilerBase = definer.define();
@@ -150,6 +155,26 @@ public class Util {
 
         private static PythonObject increaseIndent(PythonObject self, PythonObject amount) {
             return DecompilerBase.callAttribute("IndentationContextManager", self, amount);
+        }
+
+        private static void printNodes(PythonObject self, PythonObject ast, PythonObject extra_indent) {
+            // This node is a list of nodes
+            // Print every node
+            with(self.callAttribute("increase_indent", extra_indent), () -> {
+                self.getAttribute("block_stack").callAttribute("append", ast);
+                self.getAttribute("index_stack").callAttribute("append", newInt(0));
+
+                for (PythonObject tuple : enumerate.call(ast)) {
+                    PythonObject i = tuple.getItem(newInt(0));
+                    PythonObject node = tuple.getItem(newInt(1));
+
+                    self.getAttribute("index_stack").setItem(newInt(-1), i);
+                    self.callAttribute("print_node", node);
+                }
+
+                self.getAttribute("block_stack").callAttribute("pop");
+                self.getAttribute("index_stack").callAttribute("pop");
+            });
         }
 
         private static void printNode(PythonObject self, PythonObject ast) {
