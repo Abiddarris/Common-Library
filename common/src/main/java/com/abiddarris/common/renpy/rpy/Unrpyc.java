@@ -123,7 +123,7 @@ public class Unrpyc {
         
     }
     
-    public static Object read_ast_from_file(InputStream in_file, Context context) throws IOException {
+    public static PythonObject read_ast_from_file(InputStream in_file, Context context) throws IOException {
         // Reads rpyc v1 or v2 file
         // v1 files are just a zlib compressed pickle blob containing some data and the ast
         // v2 files contain a basic archive structure that can be parsed to find the same blob
@@ -205,10 +205,10 @@ public class Unrpyc {
      * If try_harder is True, an attempt will be made to work around obfuscation techniques.
      * Else, it is loaded as a normal rpyc file.
      */
-    public static Object get_ast(File src, boolean try_harder, Context context) throws IOException {
+    public static PythonObject get_ast(File src, boolean try_harder, Context context) throws IOException {
         try (var stream = new FileInputStream(src)) {
             InputStream bufStream = new BufferedInputStream(stream);
-            Object ast = try_harder ? null/*deobfuscate.read_ast(in_file, context)*/ :
+            PythonObject ast = try_harder ? null/*deobfuscate.read_ast(in_file, context)*/ :
                          read_ast_from_file(bufStream, context);
             return ast;
         } 
@@ -239,7 +239,7 @@ public class Unrpyc {
         }
             
         context.log(String.format("Decompiling %s to %s ...", file, outputFile.getName()));
-        Object ast = get_ast(file, try_harder, context);
+        PythonObject ast = get_ast(file, try_harder, context);
         
         //with out_filename.open('w', encoding='utf-8') as out_file:
             //if dump:
@@ -251,8 +251,8 @@ public class Unrpyc {
                     .addKeywordArgument("translator", translator)
                     .addKeywordArgument("init_offset", newBoolean(init_offset))
                     .addKeywordArgument("sl_custom_names", sl_custom_names));
-
-                //decompiler.pprint(out_file, ast, options)*/
+                
+                decompiler.callAttribute("pprint", None/*out_file*/, ast, options);
 
         //context.set_state('ok')
     }
