@@ -36,6 +36,7 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -82,6 +83,11 @@ public class Util {
                 .addParameter("out_file", None)
                 .addParameter("options", OptionBase.call())
                 .build());
+            definer.defineFunction("dump", DecompilerBaseImpl.class, "dump", new PythonSignatureBuilder("self", "ast")
+                .addParameter("indent_level", newInt(0))
+                .addParameter("linenumber", newInt(1))
+                .addParameter("skip_indent_until_write", False)
+                .build());
             
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
             
@@ -114,6 +120,23 @@ public class Util {
 
             // storage for any stuff that can be emitted whenever we have a blank line
             self.setAttribute("blank_line_queue", newList());
+        }
+        
+        /**
+         * Write the decompiled representation of `ast` into the opened file given in the constructor
+         */
+        private static PythonObject dump(PythonObject self, PythonObject ast, PythonObject indent_level, PythonObject linenumber, PythonObject skip_indent_until_write) {
+            self.setAttribute("indent_level", indent_level);
+            self.setAttribute("linenumber", linenumber);
+            self.setAttribute("skip_indent_until_write", skip_indent_until_write);
+            
+            if (!isInstance(ast, newTuple(tuple, list)).toBoolean()) {
+                ast = newList(ast);
+            }
+            
+            self.callAttribute("print_nodes", ast);
+            
+            return self.getAttribute("linenumber");
         }
         
         private static void printNode(PythonObject self, PythonObject ast) {
