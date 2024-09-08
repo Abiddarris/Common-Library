@@ -36,10 +36,6 @@ __all__ = ["astdump", "magic", "sl2decompiler", "testcasedecompiler", "translate
 
 # Main API
 
-
-def pprint(out_file, ast, options=Options()):
-    Decompiler(out_file, options).dump(ast)
-
 # Implementation
 
 class Decompiler(DecompilerBase):
