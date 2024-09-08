@@ -80,6 +80,10 @@ class PythonList extends PythonObject {
 
         return elements.remove(size - 1);
     }
+
+    private static PythonObject len(PythonList self) {
+        return newInt(self.elements.size());
+    }
     
     private static class ListIteratorObject extends PythonObject {
         
