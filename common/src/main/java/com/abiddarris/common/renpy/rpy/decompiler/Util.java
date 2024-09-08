@@ -76,6 +76,8 @@ public class Util {
     }
     
     private static class DecompilerBaseImpl {
+
+        private static PythonObject DecompilerBase;
         
         private static PythonObject define(PythonObject util, PythonObject OptionBase) {
             ClassDefiner definer = util.defineClass("DecompilerBase");
@@ -83,15 +85,22 @@ public class Util {
                 .addParameter("out_file", None)
                 .addParameter("options", OptionBase.call())
                 .build());
+
             definer.defineFunction("dump", DecompilerBaseImpl.class, "dump", new PythonSignatureBuilder("self", "ast")
                 .addParameter("indent_level", newInt(0))
                 .addParameter("linenumber", newInt(1))
                 .addParameter("skip_indent_until_write", False)
                 .build());
+
+            definer.defineFunction("increase_indent", DecompilerBaseImpl.class, "increaseIndent", new PythonSignatureBuilder("self")
+                    .addParameter("amount", newInt(1))
+                    .build());
+
+            IndentationContextManagerImpl.define(definer);
             
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
             
-            return definer.define();
+            return DecompilerBase = definer.define();
         }
         
         private static void init(PythonObject self, PythonObject out_file, PythonObject options) {
@@ -138,10 +147,50 @@ public class Util {
             
             return self.getAttribute("linenumber");
         }
-        
+
+        private static PythonObject increaseIndent(PythonObject self, PythonObject amount) {
+            return DecompilerBase.callAttribute("IndentationContextManager", self, amount);
+        }
+
         private static void printNode(PythonObject self, PythonObject ast) {
             NotImplementedError.call().raise();
         }
+
+        private static class IndentationContextManagerImpl {
+
+            private static PythonObject define(ClassDefiner decompilerBaseDefiner) {
+                ClassDefiner definer = decompilerBaseDefiner.defineClass("IndentationContextManager");
+                definer.defineFunction("__init__", IndentationContextManagerImpl.class, "init", "self", "decompiler_base", "amount");
+                definer.defineFunction("__enter__", IndentationContextManagerImpl.class, "enter", "self");
+                definer.defineFunction("__exit__", IndentationContextManagerImpl.class, "exit", "self", "p1", "p2", "p3");
+
+                return definer.define();
+            }
+
+            private static void init(PythonObject self, PythonObject decompiler_base, PythonObject amount) {
+                self.setAttribute("decompiler_base", decompiler_base);
+                self.setAttribute("amount", amount);
+            }
+
+            private static void enter(PythonObject self) {
+                PythonObject decompiler_base = self.getAttribute("decompiler_base");
+                PythonObject amount = self.getAttribute("amount");
+
+                PythonObject indent_level = decompiler_base.getAttribute("indent_level");
+
+                decompiler_base.setAttribute("indent_level", newInt(indent_level.toInt() + amount.toInt()));
+            }
+
+            private static void exit(PythonObject self, PythonObject p1, PythonObject p2, PythonObject p3) {
+                PythonObject decompiler_base = self.getAttribute("decompiler_base");
+                PythonObject amount = self.getAttribute("amount");
+
+                PythonObject indent_level = decompiler_base.getAttribute("indent_level");
+
+                decompiler_base.setAttribute("indent_level", newInt(indent_level.toInt() - amount.toInt()));
+            }
+        }
+
     }
     
 }

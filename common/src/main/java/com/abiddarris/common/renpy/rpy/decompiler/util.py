@@ -26,14 +26,6 @@ from contextlib import contextmanager
 
 
 class DecompilerBase:
-    @contextmanager
-    def increase_indent(self, amount=1):
-        self.indent_level += amount
-        try:
-            yield
-        finally:
-            self.indent_level -= amount
-
     def write(self, string):
         """
         Shorthand method for writing `string` to the file
