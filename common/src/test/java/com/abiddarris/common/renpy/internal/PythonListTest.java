@@ -38,4 +38,13 @@ public class PythonListTest {
         assertEquals(newInt(14), list.callAttribute("pop"));
         assertEquals(2, list.length());
     }
+
+    @Test
+    public void setItemWithNegativeIndex() {
+        PythonObject list = newList(newInt(12), newInt(13), newInt(14));
+
+        list.setItem(newInt(-1), newInt(89));
+
+        assertEquals(newInt(89), list.getItem(newInt(2)));
+    }
 }
