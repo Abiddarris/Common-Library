@@ -46,12 +46,19 @@ public class PythonTuple extends PythonObject {
         return elements;
     }
 
-    private static PythonObject getitem(PythonObject self, PythonObject pos) {
-        if (!(self instanceof PythonTuple)) {
-            throw new IllegalArgumentException("Error");
+    private static PythonObject getitem(PythonTuple self, PythonObject pos) {
+        int indexInt = pos.toInt();
+        int size = self.elements.length;
+
+        if (indexInt < 0) {
+            indexInt += size;
         }
 
-        return ((PythonTuple) self).elements[unpackPythonInt(pos)];
+        if(indexInt < 0 || indexInt >= size) {
+            IndexError.call(newString("tuple index out of range")).raise();
+        }
+
+        return self.elements[indexInt];
     }
 
     private static PythonObject iter(PythonTuple self) {
