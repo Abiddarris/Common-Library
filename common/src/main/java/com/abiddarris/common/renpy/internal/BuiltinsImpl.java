@@ -15,7 +15,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.Bootstrap.isInstanceBootstrap;
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
@@ -54,23 +53,6 @@ public class BuiltinsImpl {
     
     private static PythonObject isSubclass(PythonObject cls, PythonObject base) {
         return base.callTypeAttribute("__subclasscheck__", cls);
-    }
-    
-    private static PythonObject isInstance(PythonObject instance, PythonObject cls) {
-        if (isInstanceBootstrap(cls, type).toBoolean()) {
-            return isInstanceBootstrap(instance, cls);
-        }
-        if (!isInstanceBootstrap(cls, tuple).toBoolean()) {
-            TypeError.call(newString("isinstance() arg 2 must be a type, a tuple of types, or a union")).raise();
-        }
-        
-        for (PythonObject cls0 : cls) {
-            if (isInstance(instance, cls0).toBoolean()) {
-                return True;
-            }
-        }
-        
-        return False;
     }
     
     private static PythonObject hasAttr(PythonObject obj, PythonObject name) {
