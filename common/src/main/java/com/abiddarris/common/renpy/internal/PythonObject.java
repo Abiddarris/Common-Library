@@ -285,7 +285,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 newString("__iter__"), newFunction(findMethod(PythonList.class, "iter"), "self"),
                 newString("append"), newFunction(PythonList.class, "append", "self", "append"),
                 newString("pop"), newFunction(PythonList.class, "pop", "self"),
-                newString("__len__"), newFunction(PythonList.class, "len", "self")
+                newString("__len__"), newFunction(PythonList.class, "len", "self"),
+                newString("__setitem__"), newFunction(findMethod(PythonList.class, "setItem"), "self", "key", "value")
         ));
         
         Sys.init();

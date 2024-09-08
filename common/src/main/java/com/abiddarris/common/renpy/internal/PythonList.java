@@ -47,6 +47,16 @@ class PythonList extends PythonObject {
         }
         return list.elements.get(indexInt);
     }
+
+    private static void setItem(PythonList self, PythonObject key, PythonObject value) {
+        int index = getRawIndex(self, key);
+
+        if(index < 0 || index >= self.elements.size()) {
+            IndexError.call(newString("list assignment index out of range")).raise();
+        }
+
+        self.elements.set(index, value);
+    }
     
     private static void insert(PythonList list, PythonObject index, PythonObject element) {
         int indexInt = index.toInt();
