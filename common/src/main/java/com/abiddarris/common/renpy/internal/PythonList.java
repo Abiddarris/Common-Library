@@ -70,6 +70,16 @@ class PythonList extends PythonObject {
     private static PythonObject iter(PythonList self) {
         return new ListIteratorObject(self);
     }
+
+    private static PythonObject pop(PythonList self) {
+        List<PythonObject> elements = self.elements;
+        int size = elements.size();
+        if (size == 0) {
+            IndexError.call(newString("pop index out of range"));
+        }
+
+        return elements.remove(size - 1);
+    }
     
     private static class ListIteratorObject extends PythonObject {
         
