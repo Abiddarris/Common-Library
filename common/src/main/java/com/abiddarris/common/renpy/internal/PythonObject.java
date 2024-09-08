@@ -1,6 +1,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
+import com.abiddarris.common.renpy.internal.core.Functions;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -290,7 +291,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         JavaModuleLoader.init();
         
-        isinstance = newFunction(BuiltinsImpl.class, "isInstance", "instance", "class");
+        isinstance = newFunction(Functions.class, "isInstance", "instance", "class");
         hasattr = newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
         
         ValueError = builtins.defineClass("ValueError", Exception).define();

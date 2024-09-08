@@ -62,8 +62,4 @@ class Bootstrap {
         return self;
     }
     
-    static PythonObject isInstanceBootstrap(PythonObject instance, PythonObject cls) {
-        return cls.callTypeAttribute("__instancecheck__", instance);
-    }
-    
 }
