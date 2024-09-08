@@ -33,4 +33,8 @@ public class Attributes {
         return target;
     }
 
+    public static PythonObject callNestedAttribute(PythonObject target, String attributePath, PythonObject... args) {
+        return getNestedAttribute(target, attributePath).call(args);
+    }
+
 }
