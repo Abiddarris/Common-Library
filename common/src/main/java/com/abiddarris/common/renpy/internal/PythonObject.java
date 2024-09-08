@@ -1,11 +1,12 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
-import com.abiddarris.common.renpy.internal.core.Functions;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
+import com.abiddarris.common.renpy.internal.core.Enumerate;
+import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
@@ -51,6 +52,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject super0;
     public static final PythonObject RuntimeError;
     public static final PythonObject NotImplementedError;
+    public static final PythonObject enumerate;
     
     public static final PythonObject builtins;
     
@@ -300,7 +302,9 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         RuntimeError = builtins.defineClass("RuntimeError", Exception).define();
         NotImplementedError = builtins.defineClass("NotImplementedError", RuntimeError).define();
-        
+
+        enumerate = Enumerate.define(builtins);
+
         /*object.addMethod(
                 "__setattr__",
                 (args, kwargs) -> {
