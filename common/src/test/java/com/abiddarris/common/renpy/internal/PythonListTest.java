@@ -31,4 +31,11 @@ public class PythonListTest {
         assertEquals(newInt(14), list.getItem(newInt(-1)));
     }
 
+    @Test
+    public void popTest() {
+        PythonObject list = newList(newInt(12), newInt(13), newInt(14));
+
+        assertEquals(newInt(14), list.callAttribute("pop"));
+        assertEquals(2, list.length());
+    }
 }
