@@ -496,7 +496,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return importFrom(modName, new PythonObjectLoadTarget(this), attributeName, attributeNames);
     }
     
-    PythonObject callTypeAttribute(String name, PythonObject... args) {
+    public PythonObject callTypeAttribute(String name, PythonObject... args) {
         PythonArgument argument = new PythonArgument();
         argument.addPositionalArgumentsFromArray(args);
        
