@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
+import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
@@ -58,5 +60,12 @@ public class PythonTupleTest {
     public void emptyTuple_toBoolean() {
     	PythonObject tuple = newTuple();
         assertEquals(false, tuple.toBoolean());
+    }
+
+    @Test
+    public void negativeIndexTest() {
+        PythonObject list = newTuple(newInt(12), newInt(13), newInt(14));
+
+        assertEquals(newInt(14), list.getItem(newInt(-1)));
     }
 }
