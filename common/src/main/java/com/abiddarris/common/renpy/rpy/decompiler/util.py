@@ -107,20 +107,6 @@ class DecompilerBase:
         if not self.skip_indent_until_write:
             self.write('\n' + self.indentation * self.indent_level)
 
-    def print_nodes(self, ast, extra_indent=0):
-        # This node is a list of nodes
-        # Print every node
-        with self.increase_indent(extra_indent):
-            self.block_stack.append(ast)
-            self.index_stack.append(0)
-
-            for i, node in enumerate(ast):
-                self.index_stack[-1] = i
-                self.print_node(node)
-
-            self.block_stack.pop()
-            self.index_stack.pop()
-
     @property
     def block(self):
         return self.block_stack[-1]
