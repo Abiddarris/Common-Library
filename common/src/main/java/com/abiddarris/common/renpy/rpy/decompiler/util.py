@@ -165,10 +165,7 @@ class DecompilerBase:
 
     def print_unknown(self, ast):
         # If we encounter a placeholder note, print a warning and insert a placeholder
-        self.write_failure(f'Unknown AST node: {type(ast)!s}')
-
-    def print_node(self, ast):
-        raise NotImplementedError()
+        self.write_failure(f'Unknown AST node: {type(ast)!s}
 
 class First:
     # An often used pattern is that on the first item

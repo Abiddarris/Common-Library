@@ -83,6 +83,8 @@ public class Util {
                 .addParameter("options", OptionBase.call())
                 .build());
             
+            definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
+            
             return definer.define();
         }
         
@@ -112,6 +114,10 @@ public class Util {
 
             // storage for any stuff that can be emitted whenever we have a blank line
             self.setAttribute("blank_line_queue", newList());
+        }
+        
+        private static void printNode(PythonObject self, PythonObject ast) {
+            NotImplementedError.call().raise();
         }
     }
     
