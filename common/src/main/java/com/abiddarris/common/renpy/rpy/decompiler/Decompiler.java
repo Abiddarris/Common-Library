@@ -53,10 +53,18 @@ public class Decompiler {
         JavaModuleLoader.registerPackageLoader("decompiler", (decompiler) -> {
             Decompiler.decompiler = decompiler;
                 
-            PythonObject[] imported = decompiler.fromImport("decompiler.util", "OptionBase");
-            PythonObject OptionBase = imported[0];
+            PythonObject[] imported = decompiler.fromImport("decompiler.util", "DecompilerBase", "OptionBase");
+            PythonObject DecompilerBase = imported[0];
+            PythonObject OptionBase = imported[1];
                 
-            OptionsImpl.define(decompiler, OptionBase);  
+            PythonObject Options = OptionsImpl.define(decompiler, OptionBase);
+                
+            decompiler.addNewFunction("pprint", Decompiler.class, "pprint", new PythonSignatureBuilder("out_file", "ast")
+                        .addParameter("options", Options.call())
+                        .build());  
+                
+            PythonObject Decompiler0 = DecompilerImpl.define(decompiler, DecompilerBase);
+            System.out.println(Decompiler0.getAttribute("__mro__"));
         });
         Magic.initLoader();
         RenPyCompat.initLoader();
@@ -96,6 +104,10 @@ public class Decompiler {
             self.setAttribute("sl_custom_names", sl_custom_names);
         }
     
+    }
+    
+    private static void pprint(PythonObject out_file, PythonObject ast, PythonObject options) {
+        decompiler.getAttribute("Decompiler").call(out_file, options).callAttribute("dump", ast);
     }
     
     private static class DecompilerImpl {
