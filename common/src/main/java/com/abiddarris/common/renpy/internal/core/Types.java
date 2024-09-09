@@ -89,4 +89,7 @@ public class Types {
 
         return self;
     }
+
+    private static void typeInit(PythonObject self, PythonObject args) {
+    }
 }

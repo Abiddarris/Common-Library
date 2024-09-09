@@ -199,8 +199,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         type.setAttribute("__bases__", defaultBases);
         type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
+
+        Class typesClass = com.abiddarris.common.renpy.internal.core.Types.class;
+
         type.setAttribute("__new__", newFunction(
-            findMethod(com.abiddarris.common.renpy.internal.core.Types.class, "typeNew"), "cls", "*args"));
+            findMethod(typesClass, "typeNew"), "cls", "*args"));
         type.setAttribute("__getattribute__",
             newFunction(
                 findMethod(PythonObject.class, "typeGetAttribute"),
@@ -211,7 +214,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             )
         );
         type.setAttribute("__init__", newFunction(
-            findMethod(BuiltinsImpl.class, "typeInit"), "cls", "*args"
+            findMethod(typesClass, "typeInit"), "cls", "*args"
         ));
         type.setAttribute("__call__", newFunction(
             findMethod(PythonObject.class, "typeCall"),
