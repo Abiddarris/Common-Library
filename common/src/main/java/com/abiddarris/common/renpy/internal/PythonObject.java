@@ -239,7 +239,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 .addParameter("*args")  
                 .build() 
         ));
-        Exception.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "typeInit"), "self", "*args"));
+        Exception.setAttribute("__init__", newFunction(findMethod(PythonBaseException.class, "init"), "self", "*args"));
         
         StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)), new BootstrapAttributeHolder());
         KeyError = Bootstrap.newClass(type, newTuple(newString("KeyError"), newTuple(Exception)), new BootstrapAttributeHolder());
@@ -652,6 +652,9 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         private static PythonObject newException(PythonObject cls, PythonObject args) {
             return new PythonBaseException(cls, args);
+        }
+
+        private static void init(PythonObject self, PythonObject args) {
         }
         
         @Override
