@@ -90,32 +90,6 @@ public class BuiltinsImpl {
     private static void boolInit(PythonObject cls, PythonObject obj) {
     }
     
-    private static PythonObject typeNew(PythonObject cls, PythonObject args) {
-        if(args.length() == 1)  {
-            return Types.type(args.getItem(newInt(0)));
-        }
-        
-        if(args.length() != 3) {
-            TypeError.call().raise();
-        }
-        
-        PythonObject attributes = args.getItem(newInt(2));
-        PythonObject self = Bootstrap.newClass(cls, args);
-        
-        attributes.iterator().forEachRemaining(k -> {
-            String key = k.toString();
-            if(key.equals("__name__") || key.equals("__bases__") || key.equals("__class__")) {
-                return;
-            }
-            self.attributes.put(key, attributes.getItem(k));
-        });
-        
-        return self;
-    }
-    
-    private static void typeInit(PythonObject self, PythonObject args) {
-    }
-    
     private static PythonObject typeStr(PythonObject self) {
         return newString(new StringBuilder()
             .append("<class '")
