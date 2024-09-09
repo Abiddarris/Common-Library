@@ -21,6 +21,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
 import static java.util.Arrays.asList;
 
+import com.abiddarris.common.renpy.internal.core.Types;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
 
 import java.util.LinkedHashSet;
@@ -33,33 +34,7 @@ class Bootstrap {
     }
     
     static PythonObject newClass(PythonObject cls, PythonObject args, AttributeHolder attributeHolder) {
-        PythonObject name = args.getItem(newInt(0));
-        PythonObject bases = args.getItem(newInt(1));
-        
-        if(bases.length() == 0) {
-            bases = newTuple(object);
-        }
-        
-        // FIXME: This will be a problem if the tuple is not default tuple
-        
-        PythonObject self = new PythonObject(attributeHolder);
-        self.setAttribute("__class__", cls);
-        self.setAttribute("__name__", name);
-        self.setAttribute("__bases__", bases);
-        
-        Set<PythonObject> mro = new LinkedHashSet<>();
-        mro.add(self);
-        for(PythonObject parent : ((PythonTuple)bases).getElements()) {
-        	PythonObject[] parentMro = ((PythonTuple)parent.getAttributes().get("__mro__")).getElements();
-            for(PythonObject mro0 : parentMro) {
-            	mro.remove(mro0);
-                mro.add(mro0);
-            }
-        }
-        
-        self.setAttribute("__mro__", newTuple(mro.toArray(PythonObject[]::new)));
-        
-        return self;
+        return Types.newClass(cls, args, attributeHolder);
     }
     
 }
