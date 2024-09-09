@@ -9,6 +9,7 @@ import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
+import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
@@ -260,10 +261,12 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         True = new PythonBoolean(1);
         
         PythonTuple.init();
-        
+
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
-        
+
+        DelegateType.activate();
+
         issubclass = newFunction(findMethod(Functions.class, "issubclass"), "cls", "base");
         
         NoneType = type.call(newString("NoneType"), newTuple(type), newDict());
