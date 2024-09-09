@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -30,6 +31,10 @@ public class Types {
     
     public static PythonObject type(PythonObject instance) {
         return instance.getAttributes().get("__class__");
+    }
+
+    static PythonObject newClass(PythonObject cls, PythonObject args) {
+        return newClass(cls, args, null);
     }
 
     public static PythonObject newClass(PythonObject cls, PythonObject args, AttributeHolder attributeHolder) {
@@ -58,6 +63,29 @@ public class Types {
         }
 
         self.setAttribute("__mro__", newTuple(mro.toArray(PythonObject[]::new)));
+
+        return self;
+    }
+
+    private static PythonObject typeNew(PythonObject cls, PythonObject args) {
+        if(args.length() == 1)  {
+            return Types.type(args.getItem(newInt(0)));
+        }
+
+        if(args.length() != 3) {
+            TypeError.call().raise();
+        }
+
+        PythonObject attributes = args.getItem(newInt(2));
+        PythonObject self = newClass(cls, args);
+
+        attributes.iterator().forEachRemaining(k -> {
+            String key = k.toString();
+            if(key.equals("__name__") || key.equals("__bases__") || key.equals("__class__")) {
+                return;
+            }
+            self.getAttributes().put(key, attributes.getItem(k));
+        });
 
         return self;
     }

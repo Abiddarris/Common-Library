@@ -200,7 +200,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
         type.setAttribute("__new__", newFunction(
-            findMethod(BuiltinsImpl.class, "typeNew"), "cls", "*args"));               
+            findMethod(com.abiddarris.common.renpy.internal.core.Types.class, "typeNew"), "cls", "*args"));
         type.setAttribute("__getattribute__",
             newFunction(
                 findMethod(PythonObject.class, "typeGetAttribute"),
