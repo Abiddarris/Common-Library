@@ -8,6 +8,7 @@ import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Super;
+import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
@@ -200,10 +201,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
 
-        Class typesClass = com.abiddarris.common.renpy.internal.core.Types.class;
-
         type.setAttribute("__new__", newFunction(
-            findMethod(typesClass, "typeNew"), "cls", "*args"));
+            findMethod(Classes.class, "typeNew"), "cls", "*args"));
         type.setAttribute("__getattribute__",
             newFunction(
                 findMethod(PythonObject.class, "typeGetAttribute"),
@@ -214,7 +213,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             )
         );
         type.setAttribute("__init__", newFunction(
-            findMethod(typesClass, "typeInit"), "cls", "*args"
+            findMethod(Classes.class, "typeInit"), "cls", "*args"
         ));
         type.setAttribute("__call__", newFunction(
             findMethod(PythonObject.class, "typeCall"),

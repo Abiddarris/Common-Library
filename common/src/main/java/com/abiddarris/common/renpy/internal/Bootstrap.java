@@ -15,17 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
-import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-
-import static java.util.Arrays.asList;
-
-import com.abiddarris.common.renpy.internal.core.Types;
+import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 class Bootstrap {
     
@@ -34,7 +25,7 @@ class Bootstrap {
     }
     
     static PythonObject newClass(PythonObject cls, PythonObject args, AttributeHolder attributeHolder) {
-        return Types.newClass(cls, args, attributeHolder);
+        return Classes.newClass(cls, args, attributeHolder);
     }
     
 }
