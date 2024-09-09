@@ -41,6 +41,8 @@ public class Functions {
         
         return False;
     }
-    
-    
+
+    public static PythonObject issubclass(PythonObject cls, PythonObject base) {
+        return base.callTypeAttribute("__subclasscheck__", cls);
+    }
 }

@@ -265,7 +265,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());
         
-        issubclass = newFunction(findMethod(BuiltinsImpl.class, "isSubclass"), "cls", "base");
+        issubclass = newFunction(findMethod(Functions.class, "issubclass"), "cls", "base");
         
         NoneType = type.call(newString("NoneType"), newTuple(type), newDict());
         None = NoneType.call(newString("None"), newTuple(), newDict());
