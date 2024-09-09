@@ -51,10 +51,6 @@ public class BuiltinsImpl {
         return obj.callTypeAttribute("__len__");
     }
     
-    private static PythonObject isSubclass(PythonObject cls, PythonObject base) {
-        return base.callTypeAttribute("__subclasscheck__", cls);
-    }
-    
     private static PythonObject hasAttr(PythonObject obj, PythonObject name) {
         ObjectWrapper<PythonObject> hasAttribute = new ObjectWrapper(True);
         tryExcept(() -> obj.getAttribute(name.toString())).
