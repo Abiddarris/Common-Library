@@ -137,7 +137,7 @@ public class Magic {
                     "No module has been specified for FakeClassType %s", name)))
                     .raise();
             }
-               
+
             // assemble instance
             return type.callAttribute("__new__", cls, name, bases, attributes);
         }
@@ -302,8 +302,7 @@ public class Magic {
 
             if (!klass.toBoolean()) {
                 // generate a new class def which inherits from the default fake class
-                klass = type.call(new PythonArgument(newString(name), newTuple(this.default0), newDict())
-                    .addKeywordArgument("__module__", newString(module)));
+                klass = type.call(newString(name), newTuple(this.default0), newDict(newString("__module__"), newString(module)));
             }
             
             this.class_cache.put(List.of(module, name), klass);
