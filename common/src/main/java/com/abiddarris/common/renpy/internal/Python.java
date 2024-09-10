@@ -125,7 +125,7 @@ public class Python {
     
     public static PythonObject newClass(PythonObject _type, String name, PythonObject bases, PythonObject attributes) {
         if(_type == null) {
-            _type = findType(bases);
+            _type = type;
         }
         
         return _type.call(newString(name), bases, attributes);
@@ -174,27 +174,5 @@ public class Python {
         methods[0].setAccessible(true);
         return methods[0];
     }
-    
-    private static PythonObject findType(PythonObject bases) {
-        if(!bases.toBoolean()) {
-            return type;
-        }
-        
-        PythonObject _type = type.call(bases.getItem(newInt(0)));
-        int length = bases.length();
-        if(length == 1) {
-            return _type;
-        }
-        for(int i = 1; i < length; ++i) {
-        	PythonObject meta = type.call(bases.getItem(newInt(i)));
-            if(issubclass.call(meta, type).toBoolean()) {
-                _type = meta;
-            } else if(issubclass.call(_type, meta).toBoolean()) {
-                TypeError.call().raise();
-            }
-        }
-        
-        return _type;
-    }
-    
+
 }
