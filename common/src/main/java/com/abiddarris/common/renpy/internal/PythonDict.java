@@ -47,7 +47,7 @@ class PythonDict extends PythonObject {
     
     private static PythonObject new0(PythonObject cls) {
         PythonDict dict = new PythonDict(new LinkedHashMap<>());
-        dict.setAttribute("__class__", cls);
+        dict.setAttributeDirectly("__class__", cls);
         
         return dict;
     }
@@ -109,7 +109,7 @@ class PythonDict extends PythonObject {
             
             this.iterator = iterator;
                 
-            setAttribute("__class__", dict_iterator);
+            setAttributeDirectly("__class__", dict_iterator);
         }
             
         private static PythonObject next(DictIterator self) {

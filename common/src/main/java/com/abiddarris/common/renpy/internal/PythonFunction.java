@@ -38,7 +38,7 @@ public class PythonFunction extends PythonObject {
                     signatureParamCount, signatureParamCount > 1 ? "arguments" : "argument"));
         }
         
-        setAttribute("__class__", function);
+        setAttributeDirectly("__class__", function);
         
         if(!method.isAccessible()) {
             method.setAccessible(true);

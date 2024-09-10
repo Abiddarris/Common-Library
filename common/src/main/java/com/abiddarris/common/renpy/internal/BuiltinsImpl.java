@@ -112,7 +112,7 @@ public class BuiltinsImpl {
     
     private static PythonObject strNew(PythonObject cls, PythonObject obj) {
         PythonString string = new PythonString(obj.toString());
-        string.setAttribute("__class__", cls);
+        string.setAttributeDirectly("__class__", cls);
         
         return string;
     }

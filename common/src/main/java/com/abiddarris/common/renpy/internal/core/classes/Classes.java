@@ -54,7 +54,7 @@ public class Classes {
         // FIXME: This will be a problem if the tuple is not default tuple
 
         PythonObject self = new PythonObject(attributeHolder);
-        self.setAttribute("__class__", cls);
+        self.setAttributeDirectly("__class__", cls);
         self.setAttribute("__name__", name);
         self.setAttribute("__bases__", bases);
 
