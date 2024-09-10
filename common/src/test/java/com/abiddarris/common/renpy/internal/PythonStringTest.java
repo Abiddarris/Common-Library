@@ -45,4 +45,11 @@ public class PythonStringTest {
         
         assertEquals(dog, dog2);
     }
+    
+    @Test
+    public void inTestTrue() {
+        PythonObject text = newString("This is a text.");
+        
+        assertTrue(text.jin(newString("is")));
+    }
 }
