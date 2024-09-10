@@ -63,7 +63,7 @@ public class PythonTuple extends PythonObject {
 
     private static PythonObject iter(PythonTuple self) {
         TupleIterator iterator = new TupleIterator(self);
-        iterator.setAttribute("__class__", tuple_iterator);
+        iterator.setAttributeDirectly("__class__", tuple_iterator);
 
         return iterator;
     }

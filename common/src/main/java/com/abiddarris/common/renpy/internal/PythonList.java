@@ -36,7 +36,7 @@ class PythonList extends PythonObject {
     PythonList(List<PythonObject> elements) {
         this.elements = elements;
         
-        setAttribute("__class__", list);
+        setAttributeDirectly("__class__", list);
     }
     
     private static PythonObject getItem(PythonList list, PythonObject index) {
@@ -109,7 +109,7 @@ class PythonList extends PythonObject {
         private ListIteratorObject(PythonList list) {
             this.list = list;
             
-            setAttribute("__class__", list_iterator);
+            setAttributeDirectly("__class__", list_iterator);
         }
         
         private static PythonObject next(ListIteratorObject self) {

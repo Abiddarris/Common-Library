@@ -44,14 +44,14 @@ public class Python {
     
     public static PythonObject newString(String string) {
         PythonString object = new PythonString(string);
-        object.setAttribute("__class__", str);
+        object.setAttributeDirectly("__class__", str);
         
         return object;
     }
     
     public static PythonObject newInt(long value) {
         PythonObject object = new PythonInt(value);
-        object.setAttribute("__class__", int0);
+        object.setAttributeDirectly("__class__", int0);
 
         return object;
     }
@@ -94,14 +94,14 @@ public class Python {
     
     public static PythonObject newTuple(PythonObject... elements) {
         PythonObject object = new PythonTuple(elements);
-        object.setAttribute("__class__", tuple);
+        object.setAttributeDirectly("__class__", tuple);
 
         return object;
     }
     
     public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
         PythonObject dict = new PythonDict(map);
-        dict.setAttribute("__class__", PythonObject.dict);
+        dict.setAttributeDirectly("__class__", PythonObject.dict);
         
         return dict;
     }

@@ -7,6 +7,7 @@ import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
+import com.abiddarris.common.renpy.internal.core.Objects;
 import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
@@ -69,43 +70,51 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         object = newBootstrapObject();
         tuple = newBootstrapObject();
         function = newBootstrapObject();
-        
+
         PythonObject defaultBases = newTuple(object);
 
+        object.setAttributeDirectly("__class__", type);
+        object.setAttributeDirectly("__setattr__", newFunction(Objects.class, "setAttribute", "self", "name", "value"));
+        object.setAttributeDirectly("__getattribute__", newFunction(PythonObject.class, "typeGetAttribute", "self","name"));
+
+        type.setAttributeDirectly("__class__", type);
+        type.setAttributeDirectly("__bases__", defaultBases);
+        type.setAttributeDirectly("__mro__", newTuple(type, object));
+
         str = newBootstrapObject();
+        str.setAttributeDirectly("__class__", type);
         str.setAttribute("__bases__", defaultBases);
         str.setAttribute("__name__", newPythonString("str"));
-        str.setAttribute("__class__", type);
         str.setAttribute("__hash__", newFunction(findMethod(PythonString.class, "stringHash"),
             new PythonSignatureBuilder()
                 .addParameter("self")
                 .build()));
         str.setAttribute("__eq__", newFunction(
             findMethod(PythonString.class, "stringEq"),
-            new PythonSignatureBuilder() 
+            new PythonSignatureBuilder()
                 .addParameter("self")
                 .addParameter("obj")
-                .build()  
+                .build()
         ));
         str.setAttribute("__new__", newFunction(findMethod(BuiltinsImpl.class, "strNew"), "self", "obj"));
         str.setAttribute("__init__", newFunction(findMethod(BuiltinsImpl.class, "strInit"), "self", "obj"));
         str.setAttribute("__mro__", newTuple(str, object));
-        
+
         int0 = newBootstrapObject();
+        int0.setAttributeDirectly("__class__", type);
         int0.setAttribute("__bases__", defaultBases);
-        int0.setAttribute("__class__", type);
         int0.setAttribute("__name__", newPythonString("int"));
         int0.setAttribute("__hash__", newFunction(PythonInt.class, "hash", "self"));
         int0.setAttribute("__eq__", newFunction(PythonInt.class, "eq", "self", "other"));
         int0.setAttribute("__mro__", newTuple(int0, object));
-        
+
+        function.setAttributeDirectly("__class__", type);
         function.setAttribute("__bases__", defaultBases);
-        function.setAttribute("__class__", type);
         function.setAttribute("__name__", newPythonString("function"));
+        function.setAttribute("__mro__", newTuple(function, object));
 
         len = newFunction(findMethod(BuiltinsImpl.class, "len"), "obj");
-        
-        object.setAttribute("__class__", type);
+
         object.setAttribute("__name__", newPythonString("object"));
         object.setAttribute("__new__", newFunction(
             findMethod(PythonObject.class, "pythonObjectNew"),
@@ -113,20 +122,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 .addParameter("cls")
                 .build()
         ));
-        object.setAttribute("__hash__", 
+        object.setAttribute("__hash__",
             newFunction(
                 findMethod(PythonObject.class, "objectHash"),
                 new PythonSignatureBuilder()
                     .addParameter("self")
-                    .build()
-            )
-        );
-        object.setAttribute("__getattribute__", 
-            newFunction(
-                findMethod(PythonObject.class, "typeGetAttribute"),
-                new PythonSignatureBuilder()
-                    .addParameter("self")
-                    .addParameter("name")
                     .build()
             )
         );
@@ -147,8 +147,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         object.setAttribute("__bases__", newTuple());
         object.setAttribute("__ne__", newFunction(BuiltinsImpl.class, "objectNe", "self", "other"));
         object.setAttribute("__mro__", newTuple(object));
-        
-        tuple.setAttribute("__class__", type);
+
+        tuple.setAttributeDirectly("__class__", type);
         tuple.setAttribute("__bases__", defaultBases);
         tuple.setAttribute("__name__", newPythonString("tuple"));
         tuple.setAttribute("__getitem__", newFunction(
@@ -172,10 +172,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         ));
         tuple.setAttribute("__str__", newFunction(PythonTuple.class, "str", "self"));
         tuple.setAttribute("__mro__", newTuple(tuple, object));
-        
+
         dict = newBootstrapObject();
+        dict.setAttributeDirectly("__class__", type);
         dict.setAttribute("__bases__", defaultBases);
-        dict.setAttribute("__class__", type);
         dict.setAttribute("__name__", newPythonString("dict"));
         dict.setAttribute("__getitem__", newFunction(
             findMethod(PythonDict.class, "dictGetItem"),
@@ -197,9 +197,6 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         dict.setAttribute("update", newFunction(PythonDict.class, "update", "self", "other"));
         dict.setAttribute("__new__", newFunction(PythonDict.class, "new0", "cls"));
         dict.setAttribute("__mro__", newTuple(dict, object));
-        
-        type.setAttribute("__bases__", defaultBases);
-        type.setAttribute("__class__", type);
         type.setAttribute("__name__", newPythonString("type"));
 
         type.setAttribute("__new__", newFunction(
@@ -227,8 +224,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         type.setAttribute("__subclasscheck__", newFunction(findMethod(BuiltinsImpl.class, "typeSubclassCheck"), "self", "other"));
         type.setAttribute("__str__", newFunction(findMethod(BuiltinsImpl.class, "typeStr"), "self"));
         type.setAttribute("__instancecheck__", newFunction(BuiltinsImpl.class, "objectInstanceCheck", "self", "other"));
-        type.setAttribute("__mro__", newTuple(type, object));
-        
+
         method = Bootstrap.newClass(type, newTuple(newPythonString("method"), newTuple(object)));
        
         Exception = Bootstrap.newClass(type, newTuple(newString("exception"), newTuple()), new BootstrapAttributeHolder());
@@ -328,7 +324,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     
     private static PythonObject pythonObjectNew(PythonObject cls) {
         PythonObject instance = new PythonObject();
-        instance.setAttribute("__class__", cls);
+        instance.setAttributeDirectly("__class__", cls);
 
         return instance;
     }
@@ -369,7 +365,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
 
     public void setAttribute(String name, PythonObject obj) {
-        attributes.put(name, obj);
+        callTypeAttribute("__setattr__", newString(name), obj);
+    }
+
+    public void setAttributeDirectly(String name, PythonObject value) {
+        attributes.put(name, value);
     }
 
     public PythonObject getAttribute(String name) {
@@ -616,7 +616,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         private PythonBoolean(int val) {
             super(val);
             
-            setAttribute("__class__", bool);
+            setAttributeDirectly("__class__", bool);
         }
         
         private static PythonObject newBoolean(PythonObject cls, PythonObject obj) {
@@ -640,7 +640,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         private PythonBaseException(PythonObject cls, PythonObject args) {
             super(new BootstrapAttributeHolder());
             
-            setAttribute("__class__", cls);
+            setAttributeDirectly("__class__", cls);
             
             int len = args.length();
             if(len == 1) {
