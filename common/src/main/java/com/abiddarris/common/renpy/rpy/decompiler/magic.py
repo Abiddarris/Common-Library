@@ -312,31 +312,6 @@ def safe_dumps(obj, protocol=pickle.HIGHEST_PROTOCOL):
     SafePickler(file, protocol).dump(obj)
     return file.getvalue()
 
-def fake_package(name):
-    """
-    Mounts a fake package tree with the name *name*. This causes any attempt to import
-    module *name*, attributes of the module or submodules will return a :class:`FakePackage`
-    instance which implements the same behaviour. These :class:`FakePackage` instances compare
-    properly with :class:`FakeClassType` instances allowing you to code using FakePackages as
-    if the modules and their attributes actually existed.
-
-    This is implemented by creating a :class:`FakePackageLoader` instance with root *name*
-    and inserting it in the first spot in :data:`sys.meta_path`. This ensures that importing the
-    module and submodules will work properly. Further the :class:`FakePackage` instances take
-    care of generating submodules as attributes on request.
-
-    If a fake package tree with the same *name* is already registered, no new fake package
-    tree will be mounted.
-
-    This returns the :class:`FakePackage` instance *name*.
-    """
-    if name in sys.modules and isinstance(sys.modules[name], FakePackage):
-        return sys.modules[name]
-    else:
-        loader = FakePackageLoader(name)
-        sys.meta_path.insert(0, loader)
-        return __import__(name)
-
 def remove_fake_package(name):
     """
     Removes the fake package tree mounted at *name*.
