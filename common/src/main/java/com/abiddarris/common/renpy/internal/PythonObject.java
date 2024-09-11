@@ -274,6 +274,12 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         NoneType.setAttribute("__call__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeCall"), "self"));
         NoneType.setAttribute("__bool__", newFunction(findMethod(BuiltinsImpl.class, "noneTypeBool"), "self"));
         
+        str.setAttribute("rsplit", newFunction(PythonString.class, "rsplit", 
+                new PythonSignatureBuilder("self")
+                    .addParameter("sep", None)
+                    .addParameter("maxsplit", newInt(-1))
+                    .build()));
+        
         Types.init();
         
         builtins = createModule("builtins");

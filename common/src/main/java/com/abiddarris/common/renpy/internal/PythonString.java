@@ -18,6 +18,11 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Python.newBoolean;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 
+import static java.util.regex.Pattern.quote;
+
+import java.util.ArrayList;
+import java.util.List;
+
 class PythonString extends PythonObject {
 
     private String string;
@@ -40,6 +45,45 @@ class PythonString extends PythonObject {
         }
 
         return newBoolean(self.string.equals(((PythonString) eq).string));
+    }
+    
+    private static PythonObject rsplit(PythonString self, PythonObject sep, PythonObject maxsplit) {
+        int jMaxSplit = maxsplit.toInt();
+        if (jMaxSplit == 0) {
+            return newList(self);
+        }
+        
+        String jSep = sep.toString();
+        if (jMaxSplit == -1) {
+            String[] jResult = self.string.split(quote(jSep));
+            List<PythonObject> result = new ArrayList<>();
+            
+            for(String component : jResult) {
+            	result.add(newString(component));
+            }
+            
+            return newList(result);
+        }
+        
+        List<PythonObject> result = new ArrayList<>();
+        int searchStart = self.string.length();
+        int sepLength = jSep.length();
+        int lastStartPos = searchStart;
+        
+        for(int i = 0; i < jMaxSplit; ++i) {
+        	int startPos = self.string.lastIndexOf(jSep, searchStart);
+            if (startPos == -1) {
+                continue;
+            }
+            
+            String component = self.string.substring(startPos + sepLength, lastStartPos);
+            result.add(0, newString(component));
+            
+            lastStartPos = startPos;
+        }
+        result.add(0, newString(self.string.substring(0, lastStartPos)));
+        
+        return newList(result);
     }
 
     @Override
