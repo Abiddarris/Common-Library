@@ -76,6 +76,8 @@ public class Magic {
             magic.importModule("sys");
             magic.importModule("types");
 
+            magic.fromImport("importlib.machinery", "ModuleSpec");
+
             PythonObject FakeClassType = magic.addNewClass("FakeClassType", type);
                 
             FakeClassTypeImpl.initObject(FakeClassType);

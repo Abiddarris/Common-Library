@@ -29,12 +29,6 @@ import types
 import pickle
 import struct
 
-try:
-    # only available (and needed) from 3.4 onwards.
-    from importlib.machinery import ModuleSpec
-except:
-    pass
-
 if PY3:
     from io import BytesIO as StringIO
 else:
