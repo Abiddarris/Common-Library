@@ -111,53 +111,6 @@ class FakeIgnore(FakeClass, object):
 # Fake module implementation
 
 class FakeModule(types.ModuleType):
-    """
-    An object which pretends to be a module.
-
-    *name* is the name of the module and should be a ``"."`` separated
-    alphanumeric string.
-
-    On initialization the module is added to sys.modules so it can be
-    imported properly. Further if *name* is a submodule and if its parent
-    does not exist, it will automatically create a parent :class:`FakeModule`.
-    This operates recursively until the parent is a top-level module or
-    when the parent is an existing module.
-
-    If any fake submodules are removed from this module they will
-    automatically be removed from :data:`sys.modules`.
-
-    Just as :class:`FakeClassType`, it supports comparison with
-    :class:`FakeClassType` instances, using the following logic:
-
-    If the object does not have ``other.__name__`` set, they are not equal.
-
-    Else if the other object does not have ``other.__module__`` set, they are equal if:
-    ``self.__name__ == other.__name__``
-
-    Else, they are equal if:
-    ``self.__name__ == other.__module__ + "." + other.__name__``
-
-    Using this behaviour, ``==``, ``!=``, ``hash()``, ``isinstance()`` and ``issubclass()``
-    are implemented allowing comparison between :class:`FakeClassType` instances
-    and :class:`FakeModule` instances to succeed if they are pretending to bein the same
-    place in the python module hierarchy.
-
-    It inherits from :class:`types.ModuleType`.
-    """
-    def __init__(self, name):
-        super(FakeModule, self).__init__(name)
-        sys.modules[name] = self
-
-        if "." in name:
-            parent_name, child_name = name.rsplit(".", 1)
-
-            try:
-                __import__(parent_name)
-                parent = sys.modules[parent_name]
-            except:
-                parent = FakeModule(parent_name)
-            setattr(parent, child_name, self)
-
     def __repr__(self):
         return "<module '{0}' (fake)>".format(self.__name__)
 

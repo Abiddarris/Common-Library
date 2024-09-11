@@ -42,6 +42,8 @@ import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
@@ -50,6 +52,7 @@ import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -66,6 +69,9 @@ public class Magic {
     static void initLoader() {
         JavaModuleLoader.registerLoader("decompiler.magic", (name) -> {
             PythonObject magic = createModule("decompiler.magic");
+            magic.importModule("sys");
+            magic.importModule("types");
+
             PythonObject FakeClassType = magic.addNewClass("FakeClassType", type);
                 
             FakeClassTypeImpl.initObject(FakeClassType);
@@ -80,7 +86,9 @@ public class Magic {
           
             magic.setAttribute("FakeClass", FakeClass);
                 
-            PythonObject FakeStrict = FakeStrictImpl.define(magic, FakeClass); 
+            PythonObject FakeStrict = FakeStrictImpl.define(magic, FakeClass);
+            FakeModuleImpl.define(magic);
+
             return magic;    
         });
     }
@@ -229,14 +237,74 @@ public class Magic {
                       any(self.__subclasscheck__(base) for base in subclass.__bases__)))
          
     }*/
-    /*
-    class FakeStrict(FakeClass, object):
-  
 
-    
-    */
-    
-    
+    /**
+     * An object which pretends to be a module.
+     *
+     * *name* is the name of the module and should be a ``"."`` separated
+     * alphanumeric string.
+     *
+     * On initialization the module is added to sys.modules so it can be
+     * imported properly. Further if *name* is a submodule and if its parent
+     * does not exist, it will automatically create a parent :class:`FakeModule`.
+     * This operates recursively until the parent is a top-level module or
+     * when the parent is an existing module.
+     *
+     * If any fake submodules are removed from this module they will
+     * automatically be removed from :data:`sys.modules`.
+     *
+     * Just as :class:`FakeClassType`, it supports comparison with
+     * :class:`FakeClassType` instances, using the following logic:
+     *
+     * If the object does not have ``other.__name__`` set, they are not equal.
+     *
+     * Else if the other object does not have ``other.__module__`` set, they are equal if:
+     * ``self.__name__ == other.__name__``
+     *
+     * Else, they are equal if:
+     * ``self.__name__ == other.__module__ + "." + other.__name__``
+     *
+     * Using this behaviour, ``==``, ``!=``, ``hash()``, ``isinstance()`` and ``issubclass()``
+     * are implemented allowing comparison between :class:`FakeClassType` instances
+     * and :class:`FakeModule` instances to succeed if they are pretending to bein the same
+     * place in the python module hierarchy.
+     *
+     * It inherits from :class:`types.ModuleType`.
+     */
+    private static class FakeModuleImpl {
+
+        private static PythonObject magic;
+
+        private static PythonObject define(PythonObject magic) {
+            FakeModuleImpl.magic = magic;
+
+            ClassDefiner define = magic.defineClass("FakeModule", getNestedAttribute(magic, "types.ModuleType"));
+            define.defineFunction("__init__", FakeModuleImpl.class, "init", "self", "name");
+
+            return define.define();
+        }
+
+        private static void init(PythonObject self, PythonObject name) {
+            super0.call(magic.getAttribute("FakeModule"), self).callAttribute("__init__", name);
+
+            getNestedAttribute(magic, "sys.modules").setItem(name, self);
+
+            if (name.jin(newString("."))) {
+                PythonObject names = name.callAttribute("rsplit", newString("."), newInt(1));
+                PythonObject parent_name = names.getItem(newInt(0));
+                PythonObject child_name = names.getItem(newInt(1));
+
+                ObjectWrapper<PythonObject> parent = new ObjectWrapper<>();
+                tryExcept(() -> {
+                    __import__.call(parent_name);
+                    parent.setObject(getNestedAttribute(magic, "sys.modules").getItem(parent_name));
+                }).onExcept((e) -> parent.setObject(magic.getAttribute("FakeModule").call(parent_name)), KeyError).execute();
+
+                parent.getObject().setAttribute(child_name, self);
+            }
+        }
+    }
+
     /**
      * Factory of fake classses. It will create fake class definitions on demand based on the passed
      * arguments
