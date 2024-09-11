@@ -90,6 +90,24 @@ class PythonString extends PythonObject {
         return newList(result);
     }
 
+    private static PythonObject count(PythonString self, PythonString sub) {
+        int occurances = 0;
+        int searchStart = 0;
+        int subLen = sub.string.length();
+
+        while (true) {
+            searchStart = self.string.indexOf(sub.string, searchStart);
+            if (searchStart == -1) {
+                break;
+            }
+
+            searchStart += subLen;
+            occurances++;
+        }
+
+        return newInt(occurances);
+    }
+
     private static PythonObject startsWith(PythonString self, PythonObject prefix) {
         return newBoolean(self.string.startsWith(prefix.toString()));
     }
