@@ -57,8 +57,12 @@ public class RenPyCompat {
     static void initLoader() {
         registerLoader("decompiler.renpycompat", (name) -> {
             PythonObject renpycompat = createModule(name);
-            PythonObject magic = renpycompat.fromImport("decompiler", "magic")[0];   
-                
+            PythonObject magic = renpycompat.fromImport("decompiler", "magic")[0];
+
+            magic.callAttribute("fake_package", newString("renpy"));
+
+            renpycompat.importModule("renpy");
+
             PythonObject SPECIAL_CLASSES = renpycompat.addNewAttribute("SPECIAL_CLASSES", newList());
             SPECIAL_CLASSES.callAttribute("append", PyExprImpl.define(renpycompat, magic));
                 

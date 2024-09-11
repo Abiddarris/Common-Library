@@ -23,8 +23,6 @@
 # to avoid middle-of-file imports.
 
 from . import magic
-magic.fake_package("renpy")
-import renpy  # noqa
 
 import pickletools
 
