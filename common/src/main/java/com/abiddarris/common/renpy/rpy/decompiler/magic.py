@@ -166,15 +166,6 @@ class FakeModule(types.ModuleType):
                  any(self.__subclasscheck__(base) for base in subclass.__bases__)))
 
 class FakePackage(FakeModule):
-    """
-    A :class:`FakeModule` subclass which lazily creates :class:`FakePackage`
-    instances on its attributes when they're requested.
-
-    This ensures that any attribute of this module is a valid FakeModule
-    which can be used to compare against fake classes.
-    """
-    __path__ = []
-
     def __call__(self, *args, **kwargs):
         # This mainly exists to print a nicer error message when
         # someone tries to call a FakePackage instance

@@ -88,6 +88,7 @@ public class Magic {
                 
             PythonObject FakeStrict = FakeStrictImpl.define(magic, FakeClass);
             FakeModuleImpl.define(magic);
+            FakePackageImpl.define(magic);
 
             return magic;    
         });
@@ -302,6 +303,23 @@ public class Magic {
 
                 parent.getObject().setAttribute(child_name, self);
             }
+        }
+    }
+
+    /**
+     * <p>A :class:`FakeModule` subclass which lazily creates :class:`FakePackage`
+     * instances on its attributes when they're requested.
+     *
+     * <p>This ensures that any attribute of this module is a valid FakeModule
+     * which can be used to compare against fake classes.
+     */
+    private static class FakePackageImpl {
+
+        private static PythonObject define(PythonObject magic) {
+            ClassDefiner definer = magic.defineClass("FakePackage", magic.getAttribute("FakeModule"));
+            definer.defineAttribute("__path__", newList());
+
+            return definer.define();
         }
     }
 
