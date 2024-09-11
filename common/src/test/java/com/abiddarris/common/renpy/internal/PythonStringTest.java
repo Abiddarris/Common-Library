@@ -62,4 +62,12 @@ public class PythonStringTest {
         assertEquals(newString("java.util"), splitedString.getItem(newInt(0)));
         assertEquals(newString("ArrayList"), splitedString.getItem(newInt(1)));
     }
+
+    @Test
+    public void testSplitNotExistSep() {
+        PythonObject string = newString("ArrayList");
+        PythonObject splitedString = string.callAttribute("rsplit", newString("."), newInt(1));
+
+        assertEquals(newString("ArrayList"), splitedString.getItem(newInt(0)));
+    }
 }
