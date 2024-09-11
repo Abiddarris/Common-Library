@@ -372,7 +372,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
 
     public void setAttribute(String name, PythonObject obj) {
-        callTypeAttribute("__setattr__", newString(name), obj);
+        setAttribute(newString(name), obj);
+    }
+
+    public void setAttribute(PythonObject name, PythonObject value) {
+        callTypeAttribute("__setattr__", name, value);
     }
 
     public void setAttributeDirectly(String name, PythonObject value) {
