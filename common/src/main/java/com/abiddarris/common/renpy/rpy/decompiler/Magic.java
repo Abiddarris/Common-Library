@@ -348,6 +348,9 @@ public class Magic {
         private static PythonObject define(PythonObject magic) {
             ClassDefiner definer = magic.defineClass("FakePackageLoader");
             definer.defineFunction("__init__", FakePackageLoaderImpl.class, "init", "self", "root");
+            definer.defineFunction("find_spec", FakePackageLoaderImpl.class, "findSpec", new PythonSignatureBuilder("self", "fullname", "path")
+                    .addParameter("target", None)
+                    .build());
 
             return definer.define();
         }
@@ -355,6 +358,19 @@ public class Magic {
         private static void init(PythonObject self, PythonObject root) {
             self.setAttribute("root", root);
         }
+
+        /**
+         * the new way of loading modules. It returns a ModuleSpec, that has
+         * the loader attribute set to this class.
+         */
+        private static PythonObject findSpec(PythonObject self, PythonObject fullname, PythonObject path, PythonObject target) {
+            if (fullname.equals(self.getAttribute("root")) || fullname.callAttribute("startswith", self.getAttribute("root").add(newString("."))).toBoolean()) {
+                return magic.getAttribute("ModuleSpec").call(fullname, self);
+            } else {
+                return None;
+            }
+        }
+
 
     }
 

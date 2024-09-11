@@ -193,15 +193,6 @@ class FakePackageLoader(object):
         else:
             return None
 
-    # the new way of loading modules. It returns a ModuleSpec, that has
-    # the loader attribute set to this class.
-
-    def find_spec(self, fullname, path, target=None):
-        if fullname == self.root or fullname.startswith(self.root + "."):
-            return ModuleSpec(fullname, self)
-        else:
-            return None
-
     # loader methods. This loads the module.
 
     def load_module(self, fullname):
