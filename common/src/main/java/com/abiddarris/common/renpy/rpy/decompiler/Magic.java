@@ -43,12 +43,14 @@ import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
@@ -65,10 +67,12 @@ import java.util.Set;
 
 /** This module provides tools for safely analyizing pickle files programmatically */
 public class Magic {
-    
+
+    private static PythonObject magic;
+
     static void initLoader() {
         JavaModuleLoader.registerLoader("decompiler.magic", (name) -> {
-            PythonObject magic = createModule("decompiler.magic");
+            magic = createModule("decompiler.magic");
             magic.importModule("sys");
             magic.importModule("types");
 
@@ -91,6 +95,8 @@ public class Magic {
             FakeModuleImpl.define(magic);
             FakePackageImpl.define(magic);
             FakePackageLoaderImpl.define(magic);
+
+            magic.addNewFunction("fake_package", Magic.class, "fakePackage", "name");
 
             return magic;    
         });
@@ -350,6 +356,35 @@ public class Magic {
             self.setAttribute("root", root);
         }
 
+    }
+
+    /**
+     * <p>Mounts a fake package tree with the name *name*. This causes any attempt to import
+     * module *name*, attributes of the module or submodules will return a :class:`FakePackage`
+     * instance which implements the same behaviour. These :class:`FakePackage` instances compare
+     * properly with :class:`FakeClassType` instances allowing you to code using FakePackages as
+     * if the modules and their attributes actually existed.
+     *
+     * <p>This is implemented by creating a :class:`FakePackageLoader` instance with root *name*
+     * and inserting it in the first spot in :data:`sys.meta_path`. This ensures that importing the
+     * module and submodules will work properly. Further the :class:`FakePackage` instances take
+     * care of generating submodules as attributes on request.
+     *
+     * <p>If a fake package tree with the same *name* is already registered, no new fake package
+     * tree will be mounted.
+     *
+     * <p>This returns the :class:`FakePackage` instance *name*.
+     */
+    private static PythonObject fakePackage(PythonObject name) {
+        if (getNestedAttribute(magic, "sys.modules").jin(name) &&
+                isInstance(getNestedAttribute(magic, "sys.modules").getItem(name), magic.getAttribute("FakePackage")).toBoolean()) {
+            return getNestedAttribute(magic, "sys.modules").getItem(name);
+        } else {
+            PythonObject loader = magic.getAttribute("FakePackageLoader").call(name);
+
+            getNestedAttribute(magic, "sys.meta_path").callAttribute("insert", newInt(0), loader);
+            return __import__.call(name);
+        }
     }
 
     /**
