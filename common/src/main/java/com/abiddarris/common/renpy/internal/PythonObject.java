@@ -279,6 +279,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                     .addParameter("sep", None)
                     .addParameter("maxsplit", newInt(-1))
                     .build()));
+        str.setAttribute("__add__", newFunction(PythonString.class, "add", "self", "value"));
         
         Types.init();
         
