@@ -30,7 +30,11 @@ class PythonString extends PythonObject {
     PythonString(String string) {
         this.string = string;
     }
-    
+
+    private static PythonObject add(PythonString self, PythonObject value) {
+        return newString(self.string + value);
+    }
+
     private static PythonObject contains(PythonString self, PythonObject key) {
         return newBoolean(self.string.contains(key.toString()));
     }
