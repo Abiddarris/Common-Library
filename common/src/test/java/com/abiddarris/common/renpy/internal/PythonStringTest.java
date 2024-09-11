@@ -70,4 +70,12 @@ public class PythonStringTest {
 
         assertEquals(newString("ArrayList"), splitedString.getItem(newInt(0)));
     }
+
+    @Test
+    public void countOneChar() {
+        PythonObject string = newString("java.util.ArrayList");
+        PythonObject count = string.callAttribute("count", newString("."));
+
+        assertEquals(newInt(2), count);
+    }
 }
