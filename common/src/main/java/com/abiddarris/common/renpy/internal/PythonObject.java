@@ -458,7 +458,11 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public boolean jNotEquals(PythonObject other) {
         return notEquals(other).toBoolean();
     }
-    
+
+    public PythonObject add(PythonObject value) {
+        return callTypeAttribute("__add__", value);
+    }
+
     public PythonObject getSuper() {
         return super0.call(
             com.abiddarris.common.renpy.internal.core.Types.type(this),
