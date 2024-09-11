@@ -187,11 +187,6 @@ class FakePackageLoader(object):
         else:
             return None
 
-    # loader methods. This loads the module.
-
-    def load_module(self, fullname):
-        return FakePackage(fullname)
-
 
 # Fake unpickler implementation
 
