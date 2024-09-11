@@ -87,8 +87,10 @@ public class Magic {
             magic.setAttribute("FakeClass", FakeClass);
                 
             PythonObject FakeStrict = FakeStrictImpl.define(magic, FakeClass);
+
             FakeModuleImpl.define(magic);
             FakePackageImpl.define(magic);
+            FakePackageLoaderImpl.define(magic);
 
             return magic;    
         });
@@ -321,6 +323,33 @@ public class Magic {
 
             return definer.define();
         }
+    }
+
+    /**
+     * <p>A :term:`loader` of :class:`FakePackage` modules. When added to
+     * :data:`sys.meta_path` it will ensure that any attempt to import
+     * module *root* or its submodules results in a FakePackage.
+     *
+     * <p>Together with the attribute creation from :class:`FakePackage`
+     * this ensures that any attempt to get a submodule from module *root*
+     * results in a FakePackage, creating the illusion that *root* is an
+     * actual package tree.
+     *
+     * <p>This class is both a `finder` and a `loader`
+     */
+    private static class FakePackageLoaderImpl {
+
+        private static PythonObject define(PythonObject magic) {
+            ClassDefiner definer = magic.defineClass("FakePackageLoader");
+            definer.defineFunction("__init__", FakePackageLoaderImpl.class, "init", "self", "root");
+
+            return definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject root) {
+            self.setAttribute("root", root);
+        }
+
     }
 
     /**

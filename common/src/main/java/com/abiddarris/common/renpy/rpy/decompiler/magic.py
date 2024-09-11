@@ -184,21 +184,6 @@ class FakePackage(FakeModule):
         return mod
 
 class FakePackageLoader(object):
-    """
-    A :term:`loader` of :class:`FakePackage` modules. When added to
-    :data:`sys.meta_path` it will ensure that any attempt to import
-    module *root* or its submodules results in a FakePackage.
-
-    Together with the attribute creation from :class:`FakePackage`
-    this ensures that any attempt to get a submodule from module *root*
-    results in a FakePackage, creating the illusion that *root* is an
-    actual package tree.
-
-    This class is both a `finder` and a `loader`
-    """
-    def __init__(self, root):
-        self.root = root
-
     # the old way of loading modules. find_module returns a loader for the
     # given module. In this case, that is this object itself again.
 
