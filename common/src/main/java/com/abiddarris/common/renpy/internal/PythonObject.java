@@ -280,7 +280,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                     .addParameter("maxsplit", newInt(-1))
                     .build()));
         str.setAttribute("__add__", newFunction(PythonString.class, "add", "self", "value"));
-        
+        str.setAttribute("startswith", newFunction(PythonString.class, "startsWith", "self", "prefix"));
+
         Types.init();
         
         builtins = createModule("builtins");

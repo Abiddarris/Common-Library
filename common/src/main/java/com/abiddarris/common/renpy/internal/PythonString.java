@@ -90,6 +90,10 @@ class PythonString extends PythonObject {
         return newList(result);
     }
 
+    private static PythonObject startsWith(PythonString self, PythonObject prefix) {
+        return newBoolean(self.string.startsWith(prefix.toString()));
+    }
+
     @Override
     public String toString() {
         return string;
