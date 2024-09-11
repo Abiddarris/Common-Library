@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newPythonString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,5 +52,14 @@ public class PythonStringTest {
         PythonObject text = newString("This is a text.");
         
         assertTrue(text.jin(newString("is")));
+    }
+
+    @Test
+    public void testSplitOnExistSep() {
+        PythonObject string = newString("java.util.ArrayList");
+        PythonObject splitedString = string.callAttribute("rsplit", newString("."), newInt(1));
+
+        assertEquals(newString("java.util"), splitedString.getItem(newInt(0)));
+        assertEquals(newString("ArrayList"), splitedString.getItem(newInt(1)));
     }
 }
