@@ -353,6 +353,7 @@ public class Magic {
             definer.defineFunction("find_spec", FakePackageLoaderImpl.class, "findSpec", new PythonSignatureBuilder("self", "fullname", "path")
                     .addParameter("target", None)
                     .build());
+            definer.defineFunction("load_module", FakePackageLoaderImpl.class, "loadModule", "self", "fullname");
 
             return definer.define();
         }
@@ -373,7 +374,12 @@ public class Magic {
             }
         }
 
-
+        /**
+         * loader methods. This loads the module.
+         */
+        private static PythonObject loadModule(PythonObject self, PythonObject fullname) {
+            return magic.getAttribute("FakePackage").call(fullname);
+        }
     }
 
     /**
