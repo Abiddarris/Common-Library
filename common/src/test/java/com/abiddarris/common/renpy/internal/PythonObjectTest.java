@@ -98,4 +98,12 @@ public class PythonObjectTest {
         assertTrue(object1.jNotEquals(object2));
     }
 
+    @Test
+    public void testSplitOnExistSep() {
+        PythonObject string = newString("java.util.ArrayList");
+        PythonObject splitedString = string.callAttribute("rsplit", newString("."), newInt(1));
+
+        assertEquals(newString("java.util"), splitedString.getItem(newInt(0)));
+        assertEquals(newString("ArrayList"), splitedString.getItem(newInt(1)));
+    }
 }
