@@ -108,6 +108,17 @@ class PythonString extends PythonObject {
         return newInt(occurances);
     }
 
+    private static PythonObject multiply(PythonString self, PythonInt value) {
+        int repeat = Math.max(value.toInt(), 0);
+
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < repeat; i++) {
+            builder.append(self.string);
+        }
+
+        return newString(builder.toString());
+    }
+
     private static PythonObject startsWith(PythonString self, PythonObject prefix) {
         return newBoolean(self.string.startsWith(prefix.toString()));
     }
