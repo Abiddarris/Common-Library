@@ -38,6 +38,9 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -112,12 +115,11 @@ public class Decompiler {
     
     private static class DecompilerImpl {
         
-        private static PythonObject decompiler;
-        
         private static PythonObject define(PythonObject decompiler, PythonObject DecompilerBase) {
             ClassDefiner definer = decompiler.defineClass("Decompiler", DecompilerBase);
             definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
-            
+            definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
+
             return definer.define();
         }
         
@@ -132,6 +134,27 @@ public class Decompiler {
             self.setAttribute("init_offset", newInt(0));
             self.setAttribute("most_lines_behind", newInt(0));
             self.setAttribute("last_lines_behind", newInt(0));
+        }
+
+        private static void dump(PythonObject self, PythonObject ast) {
+            if (getNestedAttribute(self, "options.translator").toBoolean()) {
+                callNestedAttribute(self, "options.translator.translate_dialogue", ast);
+            }
+            if (getNestedAttribute(self,"options.init_offset").toBoolean() && isInstance(ast, newTuple(tuple, list)).toBoolean()) {
+                self.callAttribute("set_best_init_offset",ast);
+            }
+            // skip_indent_until_write avoids an initial blank line
+
+           super0.call(decompiler.getAttribute("Decompiler"), self).callAttribute("dump", new PythonArgument(ast)
+                   .addKeywordArgument("skip_indent_until_write", True));
+
+            // if there's anything we wanted to write out but didn't yet, do it now
+
+            for (PythonObject m : self.getAttribute("blank_line_queue")) {
+                m.call(None);
+            }
+            self.callAttribute("write", newString("\n# Decompiled by unrpyc: https://github.com/CensoredUsername/unrpyc\n"));
+            //assert not self.missing_init, "A required init, init label, or translate block was missing"
         }
     }
 }

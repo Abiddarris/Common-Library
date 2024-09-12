@@ -71,21 +71,6 @@ class Decompiler(DecompilerBase):
         self.last_lines_behind = state[7]
         super(Decompiler, self).rollback_state(state[0])
 
-    def dump(self, ast):
-        if self.options.translator:
-            self.options.translator.translate_dialogue(ast)
-
-        if self.options.init_offset and isinstance(ast, (tuple, list)):
-            self.set_best_init_offset(ast)
-
-        # skip_indent_until_write avoids an initial blank line
-        super(Decompiler, self).dump(ast, skip_indent_until_write=True)
-        # if there's anything we wanted to write out but didn't yet, do it now
-        for m in self.blank_line_queue:
-            m(None)
-        self.write("\n# Decompiled by unrpyc: https://github.com/CensoredUsername/unrpyc\n")
-        assert not self.missing_init, "A required init, init label, or translate block was missing"
-
     def print_node(self, ast):
         # We special-case line advancement for some types in their print
         # methods, so don't advance lines for them here.
