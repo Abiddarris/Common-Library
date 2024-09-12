@@ -22,16 +22,20 @@ class PythonInt extends PythonObject {
     PythonInt(long value) {
         this.value = value;
     }
-    
+
     private static PythonObject hash(PythonInt self) {
         return self;
     }
-    
+
     private static PythonObject eq(PythonInt self, PythonObject other) {
         if (!(other instanceof PythonInt)) {
             return False;
-        } 
+        }
         return newBoolean(self.value == ((PythonInt)other).value);
+    }
+
+    private static PythonObject greaterThan(PythonInt self, PythonInt value) {
+        return newBoolean(self.value > value.value);
     }
 
     @Override
