@@ -464,6 +464,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return notEquals(other).toBoolean();
     }
 
+    public boolean jLessThan(PythonObject value) {
+        return lessThan(value).toBoolean();
+    }
+    
     public PythonObject lessThan(PythonObject value) {
         return callTypeAttribute("__lt__", value);
     }
