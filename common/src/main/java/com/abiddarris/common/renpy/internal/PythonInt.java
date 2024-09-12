@@ -42,6 +42,9 @@ class PythonInt extends PythonObject {
         return newBoolean(self.value < value.value);
     }
 
+    private static PythonObject subtract(PythonInt self, PythonInt value) {
+        return newInt(self.value - value.value);
+    }
 
     @Override
     public int toInt() {

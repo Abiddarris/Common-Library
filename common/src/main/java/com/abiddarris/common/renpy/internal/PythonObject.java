@@ -110,6 +110,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         int0.setAttribute("__mro__", newTuple(int0, object));
         int0.setAttribute("__gt__", newFunction(PythonInt.class, "greaterThan", "self", "value"));
         int0.setAttribute("__lt__", newFunction(PythonInt.class, "lessThan", "self", "value"));
+        int0.setAttribute("__sub__", newFunction(PythonInt.class, "subtract", "self", "value"));
 
         function.setAttributeDirectly("__class__", type);
         function.setAttribute("__bases__", defaultBases);
