@@ -38,6 +38,11 @@ class PythonInt extends PythonObject {
         return newBoolean(self.value > value.value);
     }
 
+    private static PythonObject lessThan(PythonInt self, PythonInt value) {
+        return newBoolean(self.value < value.value);
+    }
+
+
     @Override
     public int toInt() {
         return Math.toIntExact(value);
