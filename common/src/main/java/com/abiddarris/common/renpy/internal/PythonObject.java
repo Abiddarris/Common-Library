@@ -468,6 +468,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return callTypeAttribute("__add__", value);
     }
 
+    public PythonObject subtract(PythonObject value) {
+        return callTypeAttribute("__sub__", value);
+    }
+
     public PythonObject getSuper() {
         return super0.call(
             com.abiddarris.common.renpy.internal.core.Types.type(this),
