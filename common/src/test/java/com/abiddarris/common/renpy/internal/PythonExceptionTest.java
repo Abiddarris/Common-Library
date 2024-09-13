@@ -88,4 +88,14 @@ public class PythonExceptionTest {
         assertFalse(elseStatementCalled.getObject());
     }
 
+    @Test
+    public void defaultExceptionTest() {
+        ObjectWrapper<Boolean> elseStatementCalled = new ObjectWrapper<>(false);
+
+        tryExcept(() -> AttributeError.call().raise())
+                .onExcept(() -> elseStatementCalled.setObject(true))
+                .execute();
+
+        assertTrue(elseStatementCalled.getObject());
+    }
 }
