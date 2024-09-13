@@ -15,24 +15,18 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.trycatch;
 
-import com.abiddarris.common.renpy.internal.PythonObject;
+class StateValidator {
 
-public class ExceptFinally {
+    private boolean invalid;
 
-    private TryStatement statement;
-    private StateValidator validator = new StateValidator();
-
-    public ExceptFinally(Runnable tryRunnable) {
-        statement = new TryStatement(tryRunnable);
+    void invalidate() {
+        invalid = true;
     }
-    
-    public ExceptFinallyElseExecutable onExcept(ExceptionHandler handler, PythonObject... exceptionsType) {
-        validator.checkValid();
-        validator.invalidate();
 
-        statement.addExceptStatement(handler, exceptionsType);
-        
-        return new ExceptFinallyElseExecutable(statement);
+    void checkValid() {
+        if (invalid) {
+            throw new IllegalStateException("Attempt to call invalid object");
+        }
     }
-    
+
 }

@@ -22,28 +22,17 @@ import java.util.stream.Stream;
 
 public class ExceptFinallyElseExecutable {
 
-    private ExceptFinally parent;
+    private TryStatement statement;
+    private StateValidator validator = new StateValidator();
 
-    ExceptFinallyElseExecutable(ExceptFinally parent) {
-        this.parent = parent;
+    ExceptFinallyElseExecutable(TryStatement statement) {
+        this.statement = statement;
     }
 
     public void execute() {
-        try {
-        	parent.tryRunnable.run();
-        } catch(PythonException e) {
-            PythonObject exception = e.getException();
-            PythonObject exceptionClass = exception.getAttribute("__class__");
-        	parent.exceptionHandlers.forEach(except -> {
-                if(!Stream.of(except.getExceptions())   
-                        .anyMatch(except0 -> except0 == exceptionClass)) {
-                    throw e;    
-                }
-                    
-                except.getExceptionHandler()
-                    .accept(exception);    
-            });
-        }
-        
+        validator.checkValid();
+        validator.invalidate();
+
+        statement.execute();
     }
 }
