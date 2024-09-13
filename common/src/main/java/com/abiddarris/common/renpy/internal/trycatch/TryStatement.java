@@ -26,6 +26,7 @@ class TryStatement {
 
     private Runnable tryStatement;
     private List<Except> exceptionStatements = new ArrayList<>();
+    private Runnable defaultExceptionStatement;
     private Runnable finallyStatement;
     private Runnable elseStatement;
 
@@ -35,6 +36,10 @@ class TryStatement {
 
     void addExceptStatement(ExceptionHandler handler, PythonObject... exceptionsType) {
         exceptionStatements.add(new Except(handler, exceptionsType));
+    }
+
+    void setDefaultExceptionStatement(Runnable defaultExceptionStatement) {
+        this.defaultExceptionStatement = defaultExceptionStatement;
     }
 
     void setElseStatement(Runnable statement) {
@@ -55,6 +60,12 @@ class TryStatement {
                             .accept(exception);
                     return;
                 }
+            }
+
+            if (defaultExceptionStatement != null) {
+                defaultExceptionStatement.run();
+
+                return;
             }
             throw e;
         }
