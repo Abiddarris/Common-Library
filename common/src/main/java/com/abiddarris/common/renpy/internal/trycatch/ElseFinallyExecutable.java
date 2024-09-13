@@ -24,6 +24,15 @@ public class ElseFinallyExecutable {
         this.statement = statement;
     }
 
+    public FinallyExecutable onElse(Runnable statement) {
+        validator.checkValid();
+        validator.invalidate();
+
+        this.statement.setElseStatement(statement);
+
+        return new FinallyExecutable(this.statement);
+    }
+
     public void execute() {
         validator.checkValid();
         validator.invalidate();
