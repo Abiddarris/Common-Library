@@ -165,18 +165,6 @@ class FakePackage(FakeModule):
         # someone tries to call a FakePackage instance
         raise TypeError("'{0}' FakePackage object is not callable".format(self.__name__))
 
-    def __getattr__(self, name):
-        modname = self.__name__ + "." + name
-        mod = sys.modules.get(modname, None)
-        if mod is None:
-            try:
-                __import__(modname)
-            except:
-                mod = FakePackage(modname)
-            else:
-                mod = sys.modules[modname]
-        return mod
-
 class FakePackageLoader(object):
     # the old way of loading modules. find_module returns a loader for the
     # given module. In this case, that is this object itself again.
