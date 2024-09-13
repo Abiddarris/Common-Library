@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.Exception;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -74,5 +75,17 @@ public class PythonExceptionTest {
 
         assertTrue(elseStatementCalled.getObject());
     }
-    
+
+    @Test
+    public void elseStatementOnErrorThrownTest() {
+        ObjectWrapper<Boolean> elseStatementCalled = new ObjectWrapper<>(false);
+
+        tryExcept(() -> AttributeError.call().raise())
+                .onExcept((e) -> {}, AttributeError)
+                .onElse(() -> elseStatementCalled.setObject(true))
+                .execute();
+
+        assertFalse(elseStatementCalled.getObject());
+    }
+
 }
