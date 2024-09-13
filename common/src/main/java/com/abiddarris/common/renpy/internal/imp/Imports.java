@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal.imp;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
+import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 
 import static java.lang.System.arraycopy;
 import static java.util.regex.Pattern.quote;
@@ -28,7 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Imports {
-        
+
+    private static final PythonObject ModuleType = importFrom("types", "ModuleType")[0];
+
     public static PythonObject[] importFrom(String modName, String attributeName, String... attributeNames) {
         return importFrom(modName, NullLoadTarget.INSTANCE, attributeName, attributeNames);
     }
@@ -42,11 +45,29 @@ public class Imports {
         arraycopy(attributeNames, 0, attributeNames0, 1, attributeNames.length);
         
         List<PythonObject> attributes = new ArrayList<>();
+        ObjectWrapper<PythonObject> attribute = new ObjectWrapper<>();
         for(String attributeName0 : attributeNames0) {
-        	PythonObject attribute = mod.getAttribute(attributeName0);
-            target.onImport(attributeName0, attribute);
+            attribute.setObject(null);
+
+            tryExcept(() -> attribute.setObject(mod.getAttribute(attributeName0))).
+                    onExcept((e) -> {}, AttributeError).
+                    execute();
+
+            if (attribute.getObject() == null && isInstance(mod, ModuleType).toBoolean() && hasattr.call(mod, newString("__path__")).toBoolean()) {
+                tryExcept(() -> attribute.setObject(importAs(modName + "." + attributeName0))).
+                        onExcept((e) -> {}, ModuleNotFoundError).
+                        execute();
+            }
+
+            if (attribute.getObject() == null) {
+                ImportError.call(newString(
+                        String.format("cannot import name '%s' from '%s'", attributeName0, modName)
+                )).raise();
+            }
+
+            target.onImport(attributeName0, attribute.getObject());
             
-            attributes.add(attribute);
+            attributes.add(attribute.getObject());
         }
         
         return attributes.toArray(PythonObject[]::new);
