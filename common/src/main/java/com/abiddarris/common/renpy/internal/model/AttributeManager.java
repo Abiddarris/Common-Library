@@ -126,14 +126,14 @@ public class AttributeManager {
     
     private static PythonObject findAttributeWithoutType(PythonObject type, String name) {
         AttributeManager attributeManager = type.getAttributes();
-        PythonTuple bases = (PythonTuple)attributeManager.get("__mro__");
+        PythonTuple mro = (PythonTuple)attributeManager.get("__mro__");
         
-        if (bases == null) {
+        if (mro == null) {
             PythonObject attribute = attributeManager.get(name);
             return attribute;
         }
         
-        for (PythonObject parent : bases.getElements()) {
+        for (PythonObject parent : mro.getElements()) {
             PythonObject attribute = parent.getAttributes().get(name);
             if (attribute != null) {
                 return attribute;
