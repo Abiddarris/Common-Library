@@ -56,6 +56,7 @@ class TryStatement {
                 except.getExceptionHandler()
                         .accept(exception);
             });
+            return;
         }
 
         if (elseStatement != null) {
