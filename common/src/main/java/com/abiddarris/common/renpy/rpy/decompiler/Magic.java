@@ -42,6 +42,7 @@ import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
@@ -328,9 +329,30 @@ public class Magic {
         private static PythonObject define(PythonObject magic) {
             ClassDefiner definer = magic.defineClass("FakePackage", magic.getAttribute("FakeModule"));
             definer.defineAttribute("__path__", newList());
+            definer.defineFunction("__getattr__", FakePackageImpl.class, "getAttr", "self", "name");
 
             return definer.define();
         }
+
+        private static PythonObject getAttr(PythonObject self, PythonObject name) {
+            PythonObject modname = self.getAttribute("__name__")
+                        .add(newString(".")).add(name);
+            PythonObject mod = callNestedAttribute(magic, "sys.modules.get")
+                    .call(modname, None);
+
+            ObjectWrapper<PythonObject> wMod = new ObjectWrapper<>();
+            if (mod == None) {
+                tryExcept(() -> __import__.call(modname))
+                        .onExcept(() -> wMod.setObject(magic.getAttribute("FakePackage")))
+                        .onElse(() -> wMod.setObject(getNestedAttribute(magic, "sys.modules")
+                                .getItem(modname)))
+                        .execute();
+
+                mod = wMod.getObject();
+            }
+            return mod;
+        }
+
     }
 
     /**
