@@ -20,8 +20,7 @@
 
 from .util import , First, WordConcatenator, reconstruct_paraminfo, \
                   reconstruct_arginfo, string_escape, split_logical_lines, Dispatcher, \
-                  say_get_code, 
-from .renpycompat import renpy
+                  say_get_code,
 
 from operator import itemgetter
 from io import StringIO
@@ -71,16 +70,6 @@ class Decompiler(DecompilerBase):
         self.last_lines_behind = state[7]
         super(Decompiler, self).rollback_state(state[0])
 
-    def print_node(self, ast):
-        # We special-case line advancement for some types in their print
-        # methods, so don't advance lines for them here.
-        if hasattr(ast, 'linenumber') and not isinstance(
-                ast, (renpy.ast.TranslateString, renpy.ast.With, renpy.ast.Label,
-                      renpy.ast.Pass, renpy.ast.Return)
-                ):
-            self.advance_to_line(ast.linenumber)
-
-        self.dispatch.get(type(ast), type(self).print_unknown)(self, ast)
 
     # ATL subdecompiler hook
 

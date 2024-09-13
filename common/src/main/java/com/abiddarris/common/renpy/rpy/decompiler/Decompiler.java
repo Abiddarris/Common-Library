@@ -60,6 +60,8 @@ public class Decompiler {
             PythonObject[] imported = decompiler.fromImport("decompiler.util", "DecompilerBase", "OptionBase");
             PythonObject DecompilerBase = imported[0];
             PythonObject OptionBase = imported[1];
+
+            decompiler.fromImport("decompiler.renpycompat", "renpy");
                 
             PythonObject Options = OptionsImpl.define(decompiler, OptionBase);
                 
