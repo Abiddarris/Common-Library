@@ -56,6 +56,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject RuntimeError;
     public static final PythonObject NotImplementedError;
     public static final PythonObject enumerate;
+    public static final PythonObject ImportError;
     
     public static final PythonObject builtins;
     
@@ -319,6 +320,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         super0 = Super.define(builtins);
         
         RuntimeError = builtins.defineClass("RuntimeError", Exception).define();
+        ImportError = builtins.defineClass("ImportError", Exception).define();
         NotImplementedError = builtins.defineClass("NotImplementedError", RuntimeError).define();
 
         enumerate = Enumerate.define(builtins);
