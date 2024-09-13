@@ -15,32 +15,19 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.trycatch;
 
-import com.abiddarris.common.renpy.internal.PythonObject;
-
-public class ExceptFinally {
+public class ElseFinallyExecutable {
 
     private TryStatement statement;
     private StateValidator validator = new StateValidator();
 
-    public ExceptFinally(Runnable tryRunnable) {
-        statement = new TryStatement(tryRunnable);
+    ElseFinallyExecutable(TryStatement statement) {
+        this.statement = statement;
     }
-    
-    public ExceptFinallyElseExecutable onExcept(ExceptionHandler handler, PythonObject... exceptionsType) {
+
+    public void execute() {
         validator.checkValid();
         validator.invalidate();
 
-        statement.addExceptStatement(handler, exceptionsType);
-        
-        return new ExceptFinallyElseExecutable(statement);
-    }
-
-    public ElseFinallyExecutable onExcept(Runnable statement) {
-        validator.checkValid();
-        validator.invalidate();
-
-        this.statement.setDefaultExceptionStatement(statement);
-
-        return new ElseFinallyExecutable(this.statement);
+        statement.execute();
     }
 }
