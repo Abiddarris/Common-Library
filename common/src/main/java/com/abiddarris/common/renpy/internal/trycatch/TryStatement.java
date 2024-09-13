@@ -37,6 +37,10 @@ class TryStatement {
         exceptionStatements.add(new Except(handler, exceptionsType));
     }
 
+    void setElseStatement(Runnable statement) {
+        this.elseStatement = statement;
+    }
+
     void execute() {
         try {
             tryStatement.run();
@@ -54,5 +58,8 @@ class TryStatement {
             });
         }
 
+        if (elseStatement != null) {
+            elseStatement.run();
+        }
     }
 }

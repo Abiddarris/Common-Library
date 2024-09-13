@@ -15,22 +15,13 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.trycatch;
 
-public class ExceptFinallyElseExecutable {
+public class FinallyExecutable {
 
     private TryStatement statement;
     private StateValidator validator = new StateValidator();
 
-    ExceptFinallyElseExecutable(TryStatement statement) {
+    FinallyExecutable(TryStatement statement) {
         this.statement = statement;
-    }
-
-    public FinallyExecutable onElse(Runnable statement) {
-        validator.checkValid();
-        validator.invalidate();
-
-        this.statement.setElseStatement(statement);
-
-        return new FinallyExecutable(this.statement);
     }
 
     public void execute() {
