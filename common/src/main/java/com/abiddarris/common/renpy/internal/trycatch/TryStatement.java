@@ -47,16 +47,16 @@ class TryStatement {
         } catch(PythonException e) {
             PythonObject exception = e.getException();
             PythonObject exceptionClass = exception.getAttribute("__class__");
-            exceptionStatements.forEach(except -> {
-                if(!Stream.of(except.getExceptions())
-                        .anyMatch(except0 -> except0 == exceptionClass)) {
-                    throw e;
-                }
 
-                except.getExceptionHandler()
-                        .accept(exception);
-            });
-            return;
+            for (Except except : exceptionStatements) {
+                if(Stream.of(except.getExceptions())
+                        .anyMatch(except0 -> except0 == exceptionClass)) {
+                    except.getExceptionHandler()
+                            .accept(exception);
+                    return;
+                }
+            }
+            throw e;
         }
 
         if (elseStatement != null) {
