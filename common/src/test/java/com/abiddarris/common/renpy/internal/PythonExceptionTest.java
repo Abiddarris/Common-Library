@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.Exception;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
@@ -59,6 +61,18 @@ public class PythonExceptionTest {
         .execute();
         
         assertTrue(catchCalled.get());
+    }
+
+    @Test
+    public void elseStatementExecutedTest() {
+        ObjectWrapper<Boolean> elseStatementCalled = new ObjectWrapper<>(false);
+
+        tryExcept(() -> {})
+                .onExcept((e) -> {}, AttributeError)
+                .onElse(() -> elseStatementCalled.setObject(true))
+                .execute();
+
+        assertTrue(elseStatementCalled.getObject());
     }
     
 }
