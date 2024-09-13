@@ -41,6 +41,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
+import static com.abiddarris.common.renpy.internal.core.Types.type;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -119,6 +120,7 @@ public class Decompiler {
             ClassDefiner definer = decompiler.defineClass("Decompiler", DecompilerBase);
             definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
+            definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
             return definer.define();
         }
@@ -155,6 +157,26 @@ public class Decompiler {
             }
             self.callAttribute("write", newString("\n# Decompiled by unrpyc: https://github.com/CensoredUsername/unrpyc\n"));
             //assert not self.missing_init, "A required init, init label, or translate block was missing"
+        }
+
+        private static void printNode(PythonObject self, PythonObject ast) {
+            // We special-case line advancement for some types in their print
+            // methods, so don't advance lines for them here.
+            if (hasattr.call(ast, newString("linenumber")).toBoolean() && !isInstance(
+                    ast, newTuple(
+                            getNestedAttribute(decompiler, "renpy.ast.TranslateString"),
+                            getNestedAttribute(decompiler, "renpy.ast.With"),
+                            getNestedAttribute(decompiler, "renpy.ast.Label"),
+                            getNestedAttribute(decompiler, "renpy.ast.Pass"),
+                            getNestedAttribute(decompiler, "renpy.ast.Return")
+                        )
+                    ).toBoolean()) {
+
+                self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+            }
+
+            callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
+                    .call(self, ast);
         }
     }
 }
