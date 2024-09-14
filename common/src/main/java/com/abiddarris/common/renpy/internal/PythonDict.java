@@ -23,6 +23,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
 import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -68,6 +69,15 @@ class PythonDict extends PythonObject {
     
     private static void setItem(PythonDict self, PythonObject key, PythonObject value) {
         self.map.put(key, value);
+    }
+
+    private static PythonObject get(PythonDict self, PythonObject key, PythonObject default0) {
+        ObjectWrapper<PythonObject> result = new ObjectWrapper<>(default0);
+        tryExcept(() -> result.setObject(self.getItem(key)))
+                .onExcept((e) -> {}, KeyError)
+                .execute();
+
+        return result.getObject();
     }
     
     private static PythonObject contains(PythonDict self, PythonObject value) {
