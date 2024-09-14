@@ -123,6 +123,47 @@ class PythonString extends PythonObject {
         return newBoolean(self.string.startsWith(prefix.toString()));
     }
 
+    private static PythonObject format(PythonString self, PythonObject args) {
+        StringBuilder builder = new StringBuilder(self.string);
+        int start = 0, startCount = 0;
+        for (int i = 0; i < builder.length(); i++) {
+            char c = builder.charAt(i);
+            if (c == '{') {
+                start = i;
+                startCount++;
+            }
+
+            if (c == '}') {
+                startCount--;
+                if (startCount < 0) {
+                    ValueError.call(newString("Single '}' encountered in format string"))
+                            .raise();
+                } else if (startCount > 0) {
+                    continue;
+                }
+                String key = builder.substring(start + 1, i);
+                if (key.contains("{")) {
+                    ValueError.call(newString("unexpected '{' in field name"))
+                            .raise();
+                }
+
+                PythonObject pKey = newInt(Integer.parseInt(key));
+                String value = args.getItem(pKey).toString();
+                builder.delete(start, i + 1);
+                builder.insert(start, value);
+
+                i = start + value.length();
+            }
+        }
+
+        if (startCount > 0) {
+            ValueError.call(newString("Single '{' encountered in format string"))
+                    .raise();
+        }
+
+        return newString(builder.toString());
+    }
+
     @Override
     public String toString() {
         return string;
