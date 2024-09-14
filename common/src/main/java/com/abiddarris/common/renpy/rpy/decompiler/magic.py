@@ -151,9 +151,6 @@ class FakeModule(types.ModuleType):
     def __hash__(self):
         return hash(self.__name__)
 
-    def __instancecheck__(self, instance):
-        return self.__subclasscheck__(instance.__class__)
-
     def __subclasscheck__(self, subclass):
         return (self == subclass or
                 (bool(subclass.__bases__) and
