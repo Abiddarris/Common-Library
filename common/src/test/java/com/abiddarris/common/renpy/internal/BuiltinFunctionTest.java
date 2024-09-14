@@ -32,4 +32,8 @@ public class BuiltinFunctionTest {
         assertEquals(False, any(newTuple(False, None, newInt(0))));
     }
 
+    @Test
+    public void any_true() {
+        assertEquals(True, any(newTuple(False, None, newInt(0))));
+    }
 }
