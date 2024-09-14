@@ -292,6 +292,7 @@ public class Magic {
 
             ClassDefiner define = magic.defineClass("FakeModule", getNestedAttribute(magic, "types.ModuleType"));
             define.defineFunction("__init__", FakeModuleImpl.class, "init", "self", "name");
+            define.defineFunction("__instancecheck__", FakeModuleImpl.class, "instanceCheck", "self", "instance");
 
             return define.define();
         }
@@ -314,6 +315,10 @@ public class Magic {
 
                 parent.getObject().setAttribute(child_name, self);
             }
+        }
+
+        private static PythonObject instanceCheck(PythonObject self, PythonObject instance) {
+            return self.callAttribute("__subclasscheck__", instance.getAttribute("__class__"));
         }
     }
 
