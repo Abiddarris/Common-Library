@@ -67,14 +67,29 @@ public class AttributeManager {
     }
 
     public PythonObject findAttributeWithoutTypeAllowConversion(PythonObject type, String name) {
-        PythonObject attribute = findAttributeWithoutType(type, name);
+        PythonObject attribute = type.getAttributes()
+                .findAttributeWithoutType(name);
         attribute = boundFunction(attribute);
 
         return attribute;
     }
 
     public PythonObject findAttributeWithoutType(String name) {
-        return findAttributeWithoutType(owner, name);
+        PythonTuple mro = (PythonTuple)get("__mro__");
+
+        if (mro == null) {
+            PythonObject attribute = get(name);
+            return attribute;
+        }
+
+        for (PythonObject parent : mro.getElements()) {
+            PythonObject attribute = parent.getAttributes().get(name);
+            if (attribute != null) {
+                return attribute;
+            }
+        }
+
+        return null;
     }
     
     public PythonObject searchAttribute(PythonObject startClass, PythonObject instanceClass, String name) {
@@ -123,23 +138,5 @@ public class AttributeManager {
         
         return null;
     }
-    
-    private static PythonObject findAttributeWithoutType(PythonObject type, String name) {
-        AttributeManager attributeManager = type.getAttributes();
-        PythonTuple mro = (PythonTuple)attributeManager.get("__mro__");
-        
-        if (mro == null) {
-            PythonObject attribute = attributeManager.get(name);
-            return attribute;
-        }
-        
-        for (PythonObject parent : mro.getElements()) {
-            PythonObject attribute = parent.getAttributes().get(name);
-            if (attribute != null) {
-                return attribute;
-            }
-        }
 
-        return null;
-    }
 }
