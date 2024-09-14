@@ -81,4 +81,12 @@ public class Functions {
         return False;
     }
 
+    public static PythonObject hasattr(PythonObject obj, PythonObject name) {
+        ObjectWrapper<PythonObject> hasAttribute = new ObjectWrapper<>(True);
+        tryExcept(() -> obj.getAttribute(name.toString())).
+                onExcept((e) -> hasAttribute.setObject(False), AttributeError).execute();
+
+        return hasAttribute.getObject();
+    }
+
 }
