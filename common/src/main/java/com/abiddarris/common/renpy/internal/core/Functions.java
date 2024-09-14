@@ -15,7 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
+import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;
@@ -62,6 +70,15 @@ public class Functions {
         }, AttributeError).execute();
 
         return returnValue.getObject();
+    }
+
+    public static PythonObject any(PythonObject iterable) {
+        for (PythonObject element : iterable) {
+            if (element.toBoolean()) {
+                return True;
+            }
+        }
+        return False;
     }
 
 }
