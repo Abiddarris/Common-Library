@@ -495,6 +495,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
             com.abiddarris.common.renpy.internal.core.Types.type(this),
             this);
     }
+
+    public PythonObject pEquals(PythonObject other) {
+        return callTypeAttribute("__eq__", other);
+    }
     
     public PythonObject notEquals(PythonObject other) {
         return callTypeAttribute("__ne__", other);
