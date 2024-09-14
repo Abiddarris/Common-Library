@@ -26,7 +26,7 @@ public class Functions {
     }
     
     public static PythonObject isInstance(PythonObject instance, PythonObject cls) {
-        if (isInstanceBootstrap(cls, type).toBoolean()) {
+        if (hasattr.call(cls, newString("__instancecheck__")).toBoolean()) {
             return isInstanceBootstrap(instance, cls);
         }
         if (!isInstanceBootstrap(cls, tuple).toBoolean()) {
