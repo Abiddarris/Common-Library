@@ -15,14 +15,13 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.model;
 
+import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 
 import com.abiddarris.common.renpy.internal.PythonFunction;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.PythonTuple;
 import com.abiddarris.common.renpy.internal.object.PythonMethod;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AttributeManager {
 
@@ -62,8 +61,17 @@ public class AttributeManager {
         }
 
         PythonObject type = criticalAttribute.getType();
+        attribute = findAttributeWithoutTypeAllowConversion(type, name);
+        if (attribute != null){
+            return attribute;
+        }
 
-        return findAttributeWithoutTypeAllowConversion(type, name);
+        PythonObject getattr = findAttributeWithoutTypeAllowConversion(type, "__getattr__");
+        if (getattr == null) {
+            return null;
+        }
+
+        return getattr.call(newString(name));
     }
 
     public PythonObject findAttributeWithoutTypeAllowConversion(PythonObject type, String name) {
