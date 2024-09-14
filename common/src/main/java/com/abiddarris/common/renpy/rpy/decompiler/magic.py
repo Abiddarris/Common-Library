@@ -136,15 +136,6 @@ class FakeModule(types.ModuleType):
                 del self.__dict__[i]
         del sys.modules[self.__name__]
 
-    def __eq__(self, other):
-        if not hasattr(other, "__name__"):
-            return False
-        othername = other.__name__
-        if hasattr(other, "__module__"):
-            othername = other.__module__ + "." + other.__name__
-
-        return self.__name__ == othername
-
     def __ne__(self, other):
         return not self == other
 
