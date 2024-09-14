@@ -337,8 +337,7 @@ public class Magic {
         private static PythonObject getAttr(PythonObject self, PythonObject name) {
             PythonObject modname = self.getAttribute("__name__")
                         .add(newString(".")).add(name);
-            PythonObject mod = callNestedAttribute(magic, "sys.modules.get")
-                    .call(modname, None);
+            PythonObject mod = callNestedAttribute(magic, "sys.modules.get", modname, None);
 
             ObjectWrapper<PythonObject> wMod = new ObjectWrapper<>();
             if (mod == None) {
