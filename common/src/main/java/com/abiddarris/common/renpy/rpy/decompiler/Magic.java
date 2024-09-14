@@ -46,6 +46,7 @@ import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAtt
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.any;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
+import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.stream.Signs.sign;
@@ -298,6 +299,8 @@ public class Magic {
             define.defineFunction("__init__", FakeModuleImpl.class, "init", "self", "name");
             define.defineFunction("__instancecheck__", FakeModuleImpl.class, "instanceCheck", "self", "instance");
             define.defineFunction("__subclasscheck__", FakeModuleImpl.class, "subclassCheck", "self", "subclass");
+            define.defineFunction("__eq__", FakeModuleImpl.class, "eq", "self", "other");
+
             return define.define();
         }
 
@@ -319,6 +322,21 @@ public class Magic {
 
                 parent.getObject().setAttribute(child_name, self);
             }
+        }
+
+        private static PythonObject eq(PythonObject self, PythonObject other) {
+            if (!hasattr(other, newString("__name__")).toBoolean()) {
+                return False;
+            }
+
+            PythonObject othername = other.getAttribute("__name__");
+            if (hasattr(other, newString("__module__")).toBoolean()) {
+                othername = other.getAttribute("__module__")
+                        .add(newString("."))
+                        .add(other.getAttribute("__name__"));
+            }
+
+            return self.getAttribute("__name__").pEquals(othername);
         }
 
         private static PythonObject instanceCheck(PythonObject self, PythonObject instance) {
