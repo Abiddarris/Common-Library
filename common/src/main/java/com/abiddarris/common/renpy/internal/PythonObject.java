@@ -287,6 +287,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         str.setAttribute("__add__", newFunction(PythonString.class, "add", "self", "value"));
         str.setAttribute("startswith", newFunction(PythonString.class, "startsWith", "self", "prefix"));
         str.setAttribute("count", newFunction(PythonString.class, "count", "self", "sub"));
+        str.setAttribute("format", newFunction(PythonString.class, "format", "self", "*args"));
 
         Types.init();
         
