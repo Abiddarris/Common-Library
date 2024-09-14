@@ -44,11 +44,14 @@ import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Functions.any;
+import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
+import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.core.Functions;
@@ -78,6 +81,7 @@ public class Magic {
             magic.importModule("types");
 
             magic.fromImport("importlib.machinery", "ModuleSpec");
+            magic.fromImport("decompiler.unrpyccompat", "FakeModuleSubclassCheckGenerator");
 
             PythonObject FakeClassType = magic.addNewClass("FakeClassType", type);
                 
@@ -293,7 +297,7 @@ public class Magic {
             ClassDefiner define = magic.defineClass("FakeModule", getNestedAttribute(magic, "types.ModuleType"));
             define.defineFunction("__init__", FakeModuleImpl.class, "init", "self", "name");
             define.defineFunction("__instancecheck__", FakeModuleImpl.class, "instanceCheck", "self", "instance");
-
+            define.defineFunction("__subclasscheck__", FakeModuleImpl.class, "subclassCheck", "self", "subclass");
             return define.define();
         }
 
@@ -320,6 +324,15 @@ public class Magic {
         private static PythonObject instanceCheck(PythonObject self, PythonObject instance) {
             return self.callAttribute("__subclasscheck__", instance.getAttribute("__class__"));
         }
+
+        private static PythonObject subclassCheck(PythonObject self, PythonObject subclass) {
+            return newBoolean(
+                    self.equals(subclass) ||
+                            (bool(subclass.getAttribute("__bases__")).toBoolean() &&
+                                    any(magic.callAttribute("FakeModuleSubclassCheckGenerator", subclass.getAttribute("__bases__"), self)).toBoolean())
+            );
+        }
+
     }
 
     /**

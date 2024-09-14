@@ -151,11 +151,6 @@ class FakeModule(types.ModuleType):
     def __hash__(self):
         return hash(self.__name__)
 
-    def __subclasscheck__(self, subclass):
-        return (self == subclass or
-                (bool(subclass.__bases__) and
-                 any(self.__subclasscheck__(base) for base in subclass.__bases__)))
-
 class FakePackage(FakeModule):
     def __call__(self, *args, **kwargs):
         # This mainly exists to print a nicer error message when
