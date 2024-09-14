@@ -17,8 +17,6 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
-import static com.abiddarris.common.renpy.internal.PythonObject.ModuleNotFoundError;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
@@ -26,19 +24,13 @@ import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.str;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
-
+import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static java.util.regex.Pattern.quote;
 
-import com.abiddarris.common.renpy.internal.core.Types;
 import com.abiddarris.common.renpy.internal.imp.Imports;
-import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
 
 public class BuiltinsImpl {
@@ -67,22 +59,9 @@ public class BuiltinsImpl {
     }
     
     private static PythonObject boolNew(PythonObject cls, PythonObject obj) {
-        ObjectWrapper<PythonObject> returnValue = new ObjectWrapper<>();
-        tryExcept(() -> {
-            returnValue.setObject(obj.callTypeAttribute("__bool__"));
-        }).onExcept((e) -> {
-            tryExcept(() -> {
-                returnValue.setObject(newBoolean(
-                                obj.callTypeAttribute("__len__")
-                                   .toInt() != 0));
-            }).onExcept((e1) -> {
-                returnValue.setObject(True);
-            }, AttributeError).execute();
-        }, AttributeError).execute();
-        
-        return returnValue.getObject();
+        return bool(obj);
     }
-    
+
     private static void boolInit(PythonObject cls, PythonObject obj) {
     }
     

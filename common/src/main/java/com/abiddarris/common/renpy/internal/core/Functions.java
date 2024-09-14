@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal.core;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.utils.ObjectWrapper;
 
 public class Functions {
     
@@ -45,4 +46,22 @@ public class Functions {
     public static PythonObject issubclass(PythonObject cls, PythonObject base) {
         return base.callTypeAttribute("__subclasscheck__", cls);
     }
+
+    public static PythonObject bool(PythonObject obj) {
+        ObjectWrapper<PythonObject> returnValue = new ObjectWrapper<>();
+        tryExcept(() -> {
+            returnValue.setObject(obj.callTypeAttribute("__bool__"));
+        }).onExcept((e) -> {
+            tryExcept(() -> {
+                returnValue.setObject(newBoolean(
+                        obj.callTypeAttribute("__len__")
+                                .toInt() != 0));
+            }).onExcept((e1) -> {
+                returnValue.setObject(True);
+            }, AttributeError).execute();
+        }, AttributeError).execute();
+
+        return returnValue.getObject();
+    }
+
 }
