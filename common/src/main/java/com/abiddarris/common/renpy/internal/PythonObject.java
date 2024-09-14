@@ -289,6 +289,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         str.setAttribute("count", newFunction(PythonString.class, "count", "self", "sub"));
         str.setAttribute("format", newFunction(PythonString.class, "format", "self", "*args"));
 
+        dict.addNewFunction("get", PythonDict.class, "get", new PythonSignatureBuilder("self", "key")
+                .addParameter("default", None)
+                .build());
+
         Types.init();
         
         builtins = createModule("builtins");
