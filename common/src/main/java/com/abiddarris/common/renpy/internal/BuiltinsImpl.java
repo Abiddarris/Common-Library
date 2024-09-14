@@ -28,6 +28,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
+import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static java.util.regex.Pattern.quote;
 
 import com.abiddarris.common.renpy.internal.imp.Imports;
@@ -44,11 +45,7 @@ public class BuiltinsImpl {
     }
     
     private static PythonObject hasAttr(PythonObject obj, PythonObject name) {
-        ObjectWrapper<PythonObject> hasAttribute = new ObjectWrapper(True);
-        tryExcept(() -> obj.getAttribute(name.toString())).
-        onExcept((e) -> hasAttribute.setObject(False), AttributeError).execute();
-        
-        return hasAttribute.getObject();
+        return hasattr(obj, name);
     }
     
     private static PythonObject importImpl(PythonObject name) {
