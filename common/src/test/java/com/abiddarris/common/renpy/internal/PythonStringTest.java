@@ -78,4 +78,13 @@ public class PythonStringTest {
 
         assertEquals(newInt(2), count);
     }
+
+
+    @Test
+    public void formatTest() {
+        PythonObject string = newString("{0}.util.{1}");
+        PythonObject result = string.callAttribute("format", newString("java"), newString("AbstractMap"));
+
+        assertEquals(newString("java.util.AbstractMap"), result);
+    }
 }
