@@ -9,6 +9,7 @@ import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Objects;
 import com.abiddarris.common.renpy.internal.core.Super;
+import com.abiddarris.common.renpy.internal.core.classes.AttributeSetter;
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
@@ -261,11 +262,13 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
                 new PythonSignatureBuilder()
                     .addParameter("self")
                     .build()));
-        
+
         False = new PythonBoolean(0);
         True = new PythonBoolean(1);
-        
+
         PythonTuple.init();
+
+        AttributeSetter.activate();
 
         TypeError = type.call(newString("TypeError"), newTuple(Exception), newDict());
         AttributeError = type.call(newString("AttributeError"), newTuple(Exception), newDict());

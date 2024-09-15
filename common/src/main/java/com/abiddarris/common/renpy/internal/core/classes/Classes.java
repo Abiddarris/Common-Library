@@ -22,6 +22,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
 import static com.abiddarris.common.renpy.internal.core.Functions.issubclass;
+import static com.abiddarris.common.renpy.internal.core.classes.AttributeSetter.setAttributes;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateInit;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateNew;
 
@@ -58,6 +59,8 @@ public class Classes {
         self.setAttribute("__name__", name);
         self.setAttribute("__bases__", bases);
 
+        setAttributes(self, args);
+
         Set<PythonObject> mro = new LinkedHashSet<>();
         mro.add(self);
         for (PythonObject parent : ((PythonTuple) bases).getElements()) {
@@ -82,17 +85,7 @@ public class Classes {
             TypeError.call().raise();
         }
 
-        PythonObject attributes = args.getItem(newInt(2));
         PythonObject self = newClass(cls, args);
-
-        attributes.iterator().forEachRemaining(k -> {
-            String key = k.toString();
-            if (key.equals("__name__") || key.equals("__bases__") || key.equals("__class__")) {
-                return;
-            }
-            self.getAttributes().put(key, attributes.getItem(k));
-        });
-
         return self;
     }
 
