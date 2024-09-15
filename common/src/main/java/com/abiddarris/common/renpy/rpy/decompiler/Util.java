@@ -105,6 +105,7 @@ public class Util {
                     .addParameter("amount", newInt(1))
                     .build());
 
+            definer.defineFunction("write", DecompilerBaseImpl.class, "write", "self", "string");
             definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
 
             IndentationContextManagerImpl.define(definer);
@@ -170,6 +171,20 @@ public class Util {
 
         private static PythonObject increaseIndent(PythonObject self, PythonObject amount) {
             return DecompilerBase.callAttribute("IndentationContextManager", self, amount);
+        }
+
+        /**
+         * Shorthand method for writing `string` to the file
+         */
+        private static void write(PythonObject self, PythonObject string) {
+            string = str.call(string);
+
+            self.setAttribute("linenumber", self.getAttribute("linenumber").add(
+                    string.callAttribute("count", newString("\n"))
+            ));
+            self.getAttribute("skip_indent_until_write", False);
+
+            callNestedAttribute(self, "out_file.write", string);
         }
 
         private static void advanceToLine(PythonObject self, PythonObject linenumber) {
