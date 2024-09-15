@@ -136,9 +136,6 @@ class FakeModule(types.ModuleType):
                 del self.__dict__[i]
         del sys.modules[self.__name__]
 
-    def __ne__(self, other):
-        return not self == other
-
     def __hash__(self):
         return hash(self.__name__)
 
