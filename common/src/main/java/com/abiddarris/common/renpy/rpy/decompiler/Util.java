@@ -45,11 +45,15 @@ import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class Util {
-    
+
+    private static PythonObject util;
+
     static void initLoader() {
         registerLoader("decompiler.util", (name) -> {
-            PythonObject util = createModule(name);
-            PythonObject OptionBase = OptionBaseImpl.define(util);  
+            util = createModule(name);
+            util.fromImport("decompiler.unrpyccompat", "DecompilerBaseAdvanceToLineGenerator");
+
+            PythonObject OptionBase = OptionBaseImpl.define(util);
             
             DecompilerBaseImpl.define(util, OptionBase);
                 
@@ -96,6 +100,8 @@ public class Util {
             definer.defineFunction("increase_indent", DecompilerBaseImpl.class, "increaseIndent", new PythonSignatureBuilder("self")
                     .addParameter("amount", newInt(1))
                     .build());
+
+            definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
 
             IndentationContextManagerImpl.define(definer);
 
@@ -155,6 +161,20 @@ public class Util {
 
         private static PythonObject increaseIndent(PythonObject self, PythonObject amount) {
             return DecompilerBase.callAttribute("IndentationContextManager", self, amount);
+        }
+
+        private static void advanceToLine(PythonObject self, PythonObject linenumber) {
+            // If there was anything that we wanted to do as soon as we found a blank line,
+            // try to do it now.
+            self.setAttribute("blank_line_queue", util.callAttribute("DecompilerBaseAdvanceToLineGenerator",
+                    self.getAttribute("blank_line_queue"), linenumber));
+
+            if (self.getAttribute("linenumber").jLessThan(linenumber)) {
+                // Stop one line short, since the call to indent() will advance the last line.
+                // Note that if self.linenumber == linenumber - 1, this will write the empty string.
+                // This is to make sure that skip_indent_until_write is cleared in that case.
+                self.callAttribute("write", newString("\n").multiply(linenumber.subtract(self.getAttribute("linenumber")).subtract(newInt(1))));
+            }
         }
 
         private static void printNodes(PythonObject self, PythonObject ast, PythonObject extra_indent) {

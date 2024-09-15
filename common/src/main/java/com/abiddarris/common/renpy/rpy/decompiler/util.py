@@ -80,16 +80,6 @@ class DecompilerBase:
          self.indent_level,
          self.blank_line_queue) = state
 
-    def advance_to_line(self, linenumber):
-        # If there was anything that we wanted to do as soon as we found a blank line,
-        # try to do it now.
-        self.blank_line_queue = [m for m in self.blank_line_queue if m(linenumber)]
-        if self.linenumber < linenumber:
-            # Stop one line short, since the call to indent() will advance the last line.
-            # Note that if self.linenumber == linenumber - 1, this will write the empty string.
-            # This is to make sure that skip_indent_until_write is cleared in that case.
-            self.write("\n" * (linenumber - self.linenumber - 1))
-
     def do_when_blank_line(self, m):
         """
         Do something the next time we find a blank line. m should be a method that takes one
