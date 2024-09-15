@@ -111,4 +111,14 @@ public class PythonExceptionTest {
         assertTrue(finallyCalled.getObject());
         assertTrue(exceptionThrown.getObject());
     }
+
+    @Test
+    public void finallyTestWhenNothingIsThrown() {
+        ObjectWrapper<Boolean> finallyCalled = new ObjectWrapper<>(false);
+
+        tryExcept(() -> {})
+                .onFinally(() -> finallyCalled.setObject(true));
+
+        assertTrue(finallyCalled.getObject());
+    }
 }
