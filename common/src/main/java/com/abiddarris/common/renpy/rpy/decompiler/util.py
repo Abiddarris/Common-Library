@@ -89,15 +89,6 @@ class DecompilerBase:
         """
         self.blank_line_queue.append(m)
 
-    def indent(self):
-        """
-        Shorthand method for pushing a newline and indenting to the proper indent level
-        Setting skip_indent_until_write causes calls to this method to be ignored until something
-        calls the write method
-        """
-        if not self.skip_indent_until_write:
-            self.write('\n' + self.indentation * self.indent_level)
-
     @property
     def block(self):
         return self.block_stack[-1]

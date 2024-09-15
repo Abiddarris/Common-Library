@@ -109,6 +109,8 @@ public class Util {
 
             IndentationContextManagerImpl.define(definer);
 
+            definer.defineFunction("indent", DecompilerBaseImpl.class, "indent", "self");
+
             definer.defineFunction("print_nodes", DecompilerBaseImpl.class, "printNodes", new PythonSignatureBuilder("self", "ast")
                     .addParameter("extra_indent", newInt(0))
                     .build());
@@ -181,6 +183,19 @@ public class Util {
                 // Note that if self.linenumber == linenumber - 1, this will write the empty string.
                 // This is to make sure that skip_indent_until_write is cleared in that case.
                 self.callAttribute("write", newString("\n").multiply(linenumber.subtract(self.getAttribute("linenumber")).subtract(newInt(1))));
+            }
+        }
+
+        /**
+         * Shorthand method for pushing a newline and indenting to the proper indent level
+         * Setting skip_indent_until_write causes calls to this method to be ignored until something
+         * calls the write method
+         */
+        private static void indent(PythonObject self) {
+            if (!self.getAttribute("skip_indent_until_write").toBoolean()) {
+                self.callAttribute("write", newString("\n").add(
+                        self.getAttribute("indentation").multiply(self.getAttribute("indent_level"))
+                ));
             }
         }
 
