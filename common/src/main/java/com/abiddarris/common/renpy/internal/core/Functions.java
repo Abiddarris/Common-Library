@@ -97,4 +97,8 @@ public class Functions {
     public static PythonObject hash(PythonObject obj) {
         return obj.callTypeAttribute("__hash__");
     }
+
+    public static PythonObject len(PythonObject obj) {
+        return obj.callTypeAttribute("__len__");
+    }
 }
