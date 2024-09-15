@@ -57,9 +57,10 @@ public class Decompiler {
         JavaModuleLoader.registerPackageLoader("decompiler", (decompiler) -> {
             Decompiler.decompiler = decompiler;
                 
-            PythonObject[] imported = decompiler.fromImport("decompiler.util", "DecompilerBase", "OptionBase");
+            PythonObject[] imported = decompiler.fromImport("decompiler.util",
+                    "DecompilerBase", "Dispatcher", "OptionBase");
             PythonObject DecompilerBase = imported[0];
-            PythonObject OptionBase = imported[1];
+            PythonObject OptionBase = imported[2];
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
                 
@@ -116,18 +117,26 @@ public class Decompiler {
     private static void pprint(PythonObject out_file, PythonObject ast, PythonObject options) {
         decompiler.getAttribute("Decompiler").call(out_file, options).callAttribute("dump", ast);
     }
-    
+
+    /**
+     * An object which hanldes the decompilation of renpy asts to a given stream
+     */
     private static class DecompilerImpl {
-        
+
         private static PythonObject define(PythonObject decompiler, PythonObject DecompilerBase) {
             ClassDefiner definer = decompiler.defineClass("Decompiler", DecompilerBase);
+
+            // This dictionary is a mapping of Class: unbount_method, which is used to determine
+            // what method to call for which ast class
+            definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
+
             definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
             return definer.define();
         }
-        
+
         private static void init(PythonObject self, PythonObject out_file, PythonObject options) {
             super0.call(decompiler.getAttribute("Decompiler"), self).callAttribute("__init__", out_file, options);
             
