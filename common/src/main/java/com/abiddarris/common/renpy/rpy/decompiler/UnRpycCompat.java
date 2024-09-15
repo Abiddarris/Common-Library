@@ -26,6 +26,7 @@ public class UnRpycCompat {
     static void initLoader() {
         registerLoader("decompiler.unrpyccompat", (unrpyccompat) -> {
             FakeModuleSubclassCheckGeneratorImpl.define(unrpyccompat);
+            DecompilerBaseAdvanceToLineGeneratorImpl.define(unrpyccompat);
         });
     }
 
@@ -53,6 +54,36 @@ public class UnRpycCompat {
             PythonObject base = callNestedAttribute(self, "iterable.__next__");
             return callNestedAttribute(self, "__self__.__subclasscheck__", base);
         }
+    }
 
+    private static class DecompilerBaseAdvanceToLineGeneratorImpl {
+
+        private static PythonObject define(PythonObject unrpyccompat) {
+            ClassDefiner definer = unrpyccompat.defineClass("DecompilerBaseAdvanceToLineGenerator");
+            definer.defineFunction("__init__", DecompilerBaseAdvanceToLineGeneratorImpl.class, "init", "self", "iterable", "linenumber");
+            definer.defineFunction("__iter__", DecompilerBaseAdvanceToLineGeneratorImpl.class, "iter", "self");
+            definer.defineFunction("__next__", DecompilerBaseAdvanceToLineGeneratorImpl.class, "next", "self");
+
+            return definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject iterable, PythonObject linenumber) {
+            self.setAttribute("iterable", iterable.callAttribute("__iter__"));
+            self.setAttribute("linenumber", linenumber);
+        }
+
+        private static PythonObject iter(PythonObject self) {
+            return self;
+        }
+
+        private static PythonObject next(PythonObject self) {
+            PythonObject linenumber = self.getAttribute("linenumber");
+            while (true) {
+                PythonObject m = callNestedAttribute(self, "iterable.__next__");
+                if (m.call(linenumber).toBoolean()) {
+                    return m;
+                }
+            }
+        }
     }
 }
