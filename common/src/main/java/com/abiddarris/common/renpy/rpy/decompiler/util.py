@@ -26,15 +26,6 @@ from contextlib import contextmanager
 
 
 class DecompilerBase:
-    def write(self, string):
-        """
-        Shorthand method for writing `string` to the file
-        """
-        string = str(string)
-        self.linenumber += string.count('\n')
-        self.skip_indent_until_write = False
-        self.out_file.write(string)
-
     def write_lines(self, lines):
         """
         Write each line in lines to the file without writing whitespace-only lines
