@@ -136,9 +136,6 @@ class FakeModule(types.ModuleType):
                 del self.__dict__[i]
         del sys.modules[self.__name__]
 
-    def __hash__(self):
-        return hash(self.__name__)
-
 class FakePackage(FakeModule):
     def __call__(self, *args, **kwargs):
         # This mainly exists to print a nicer error message when

@@ -41,18 +41,30 @@ import static com.abiddarris.common.renpy.internal.Python.createModule;
 import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
+import static com.abiddarris.common.renpy.internal.PythonObject.dict;
+import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
+import static com.abiddarris.common.renpy.internal.PythonObject.len;
+import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newList;
+import static com.abiddarris.common.renpy.internal.PythonObject.super0;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.any;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
-import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
-import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.core.Functions;
@@ -301,6 +313,7 @@ public class Magic {
             define.defineFunction("__subclasscheck__", FakeModuleImpl.class, "subclassCheck", "self", "subclass");
             define.defineFunction("__eq__", FakeModuleImpl.class, "eq", "self", "other");
             define.defineFunction("__ne__", FakeModuleImpl.class, "ne", "self", "other");
+            define.defineFunction("__hash__", FakeModuleImpl.class, "hash", "self");
 
             return define.define();
         }
@@ -342,6 +355,10 @@ public class Magic {
 
         private static PythonObject ne(PythonObject self, PythonObject other) {
             return newBoolean(!self.equals(other));
+        }
+
+        private static PythonObject hash(PythonObject self) {
+            return Functions.hash(self.getAttribute("__name__"));
         }
 
         private static PythonObject instanceCheck(PythonObject self, PythonObject instance) {
