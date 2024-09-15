@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 from .util import , First, WordConcatenator, reconstruct_paraminfo, \
-                  reconstruct_arginfo, string_escape, split_logical_lines, Dispatcher, \
+                  reconstruct_arginfo, string_escape, split_logical_lines, , \
                   say_get_code,
 
 from operator import itemgetter
@@ -38,13 +38,6 @@ __all__ = ["astdump", "magic", "sl2decompiler", "testcasedecompiler", "translate
 # Implementation
 
 class Decompiler(DecompilerBase):
-    """
-    An object which hanldes the decompilation of renpy asts to a given stream
-    """
-
-    # This dictionary is a mapping of Class: unbount_method, which is used to determine
-    # what method to call for which ast class
-    dispatch = Dispatcher()
 
     def advance_to_line(self, linenumber):
         self.last_lines_behind = max(
