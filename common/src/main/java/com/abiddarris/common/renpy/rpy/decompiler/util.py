@@ -112,9 +112,6 @@ class DecompilerBase:
             return None
         return self.block_stack[-2][self.index_stack[-2]]
 
-    def print_debug(self, message):
-        self.options.log.append(message)
-
 class First:
     # An often used pattern is that on the first item
     # of a loop something special has to be done. This class

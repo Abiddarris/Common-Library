@@ -36,6 +36,7 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
@@ -112,6 +113,7 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
+            definer.defineFunction("print_debug", DecompilerBaseImpl.class, "printDebug", "self", "message");
             definer.defineFunction("write_failure", DecompilerBaseImpl.class, "writeFailure", "self", "message");
             definer.defineFunction("print_unknown", DecompilerBaseImpl.class, "printUnknown", "self", "ast");
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
@@ -200,6 +202,10 @@ public class Util {
                 self.getAttribute("block_stack").callAttribute("pop");
                 self.getAttribute("index_stack").callAttribute("pop");
             });
+        }
+
+        private static void printDebug(PythonObject self, PythonObject message) {
+            callNestedAttribute(self, "options.log.append", message);
         }
 
         private static void printUnknown(PythonObject self, PythonObject ast) {
