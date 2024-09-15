@@ -300,6 +300,7 @@ public class Magic {
             define.defineFunction("__instancecheck__", FakeModuleImpl.class, "instanceCheck", "self", "instance");
             define.defineFunction("__subclasscheck__", FakeModuleImpl.class, "subclassCheck", "self", "subclass");
             define.defineFunction("__eq__", FakeModuleImpl.class, "eq", "self", "other");
+            define.defineFunction("__ne__", FakeModuleImpl.class, "ne", "self", "other");
 
             return define.define();
         }
@@ -337,6 +338,10 @@ public class Magic {
             }
 
             return self.getAttribute("__name__").pEquals(othername);
+        }
+
+        private static PythonObject ne(PythonObject self, PythonObject other) {
+            return newBoolean(!self.equals(other));
         }
 
         private static PythonObject instanceCheck(PythonObject self, PythonObject instance) {
