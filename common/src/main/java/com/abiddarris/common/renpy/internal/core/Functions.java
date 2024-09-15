@@ -34,6 +34,10 @@ public class Functions {
     private static PythonObject isInstanceBootstrap(PythonObject instance, PythonObject cls) {
         return cls.callTypeAttribute("__instancecheck__", instance);
     }
+
+    public static PythonObject isinstance(PythonObject instance, PythonObject cls) {
+        return isInstance(instance, cls);
+    }
     
     public static PythonObject isInstance(PythonObject instance, PythonObject cls) {
         if (hasattr.call(cls, newString("__instancecheck__")).toBoolean()) {
