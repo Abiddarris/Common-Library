@@ -302,7 +302,7 @@ public class Util {
         }
 
         private static PythonObject call(PythonObject self, PythonObject name) {
-            return util.getAttribute("DispatcherCallClosureImpl").call(self, name);
+            return util.getAttribute("DispatcherCallClosure").call(self, name);
         }
 
     }
