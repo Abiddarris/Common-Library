@@ -15,7 +15,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
@@ -24,15 +23,14 @@ import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.type;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static java.util.regex.Pattern.quote;
 
+import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.imp.Imports;
-import com.abiddarris.common.utils.ObjectWrapper;
 
 public class BuiltinsImpl {
     
@@ -41,7 +39,7 @@ public class BuiltinsImpl {
     }
     
     private static PythonObject len(PythonObject obj) {
-        return obj.callTypeAttribute("__len__");
+        return Functions.len(obj);
     }
     
     private static PythonObject hasAttr(PythonObject obj, PythonObject name) {
