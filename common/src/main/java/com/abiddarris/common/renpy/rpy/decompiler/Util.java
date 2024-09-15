@@ -112,6 +112,7 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
+            definer.defineFunction("write_failure", DecompilerBaseImpl.class, "writeFailure", "self", "message");
             definer.defineFunction("print_unknown", DecompilerBaseImpl.class, "printUnknown", "self", "ast");
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
             
@@ -205,6 +206,12 @@ public class Util {
             // If we encounter a placeholder note, print a warning and insert a placeholder
             self.callAttribute("write_failure", newString("Unknown AST node: {0}")
                     .callAttribute("format", type(ast)));
+        }
+
+        private static void writeFailure(PythonObject self, PythonObject message) {
+            self.callAttribute("print_debug", message);
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("pass # <<<COULD NOT DECOMPILE: {0}>>>").callAttribute("format", message));
         }
 
         private static void printNode(PythonObject self, PythonObject ast) {

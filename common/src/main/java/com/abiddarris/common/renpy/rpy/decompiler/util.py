@@ -115,11 +115,6 @@ class DecompilerBase:
     def print_debug(self, message):
         self.options.log.append(message)
 
-    def write_failure(self, message):
-        self.print_debug(message)
-        self.indent()
-        self.write(f'pass # <<<COULD NOT DECOMPILE: {message}>>>')
-
 class First:
     # An often used pattern is that on the first item
     # of a loop something special has to be done. This class
