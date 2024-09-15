@@ -53,10 +53,12 @@ public class Util {
         registerLoader("decompiler.util", (name) -> {
             util = createModule(name);
             util.fromImport("decompiler.unrpyccompat", "DecompilerBaseAdvanceToLineGenerator");
+            util.fromImport("decompiler.unrpyccompat", "DispatcherCallClosure");
 
             PythonObject OptionBase = OptionBaseImpl.define(util);
             
             DecompilerBaseImpl.define(util, OptionBase);
+            DispatcherImpl.define();
                 
             return util;
         });
@@ -245,5 +247,22 @@ public class Util {
         }
 
     }
-    
+
+    // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
+    private static class DispatcherImpl {
+
+        private static PythonObject define() {
+            ClassDefiner definer = util.defineClass("Dispatcher", dict);
+            definer.defineFunction("__call__", DispatcherImpl.class, "call", "self", "name");
+
+            return definer.define();
+        }
+
+        private static PythonObject call(PythonObject self, PythonObject name) {
+            return util.getAttribute("DispatcherCallClosureImpl").call(self, name);
+        }
+
+    }
+
+
 }
