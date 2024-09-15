@@ -530,14 +530,6 @@ class WordConcatenator(object):
         self.needs_space = rv[-1] != ' '
         return rv
 
-# Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
-class Dispatcher(dict):
-    def __call__(self, name):
-        def closure(func):
-            self[name] = func
-            return func
-        return closure
-
 # ren'py string handling
 def encode_say_string(s):
     """

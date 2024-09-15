@@ -23,10 +23,15 @@ import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
 public class UnRpycCompat {
 
+    private static PythonObject unrpyccompat;
+
     static void initLoader() {
         registerLoader("decompiler.unrpyccompat", (unrpyccompat) -> {
+            UnRpycCompat.unrpyccompat = unrpyccompat;
+
             FakeModuleSubclassCheckGeneratorImpl.define(unrpyccompat);
             DecompilerBaseAdvanceToLineGeneratorImpl.define(unrpyccompat);
+            DispatcherCallClosureImpl.define();
         });
     }
 
@@ -85,5 +90,28 @@ public class UnRpycCompat {
                 }
             }
         }
+    }
+
+    private static class DispatcherCallClosureImpl {
+
+        private static PythonObject define() {
+            ClassDefiner definer = unrpyccompat.defineClass("DispatcherCallClosure");
+            definer.defineFunction("__init__", DispatcherCallClosureImpl.class, "init", "self", "dict", "name");
+            definer.defineFunction("__call__", DispatcherCallClosureImpl.class, "call", "self", "func");
+
+            return definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject dict, PythonObject name) {
+            self.setAttribute("dict", dict);
+            self.setAttribute("name", name);
+        }
+
+        private static PythonObject call(PythonObject self, PythonObject func) {
+            self.getAttribute("dict").setItem(self.getAttribute("name"), func);
+
+            return func;
+        }
+
     }
 }
