@@ -157,6 +157,7 @@ public class Magic {
                  new PythonSignatureBuilder("self", "name", "bases", "attributes")
                     .addParameter("module", None)
                     .build());
+            FakeClassType.addNewFunction("__eq__", FakeClassTypeImpl.class, "eq", "self", "other");
         }
         
         private static PythonObject new0(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
@@ -181,6 +182,22 @@ public class Magic {
         
         private static PythonObject init(PythonObject self, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
             return type.callAttribute("__init__", self, name, bases, attributes);
+        }
+
+        private static PythonObject eq(PythonObject self, PythonObject other) {
+             if (!hasattr(other, newString("__name__")).toBoolean()) {
+                 return False;
+             }
+
+             if (hasattr(other, newString("__module__")).toBoolean()) {
+                 return newBoolean(self.getAttribute("__module__").equals(other.getAttribute("__module__"))
+                        && self.getAttribute("__name__").equals(other.getAttribute("__name__")));
+             } else {
+                 return self.getAttribute("__module__")
+                         .add(newString("."))
+                         .add(self.getAttribute("__name__"))
+                         .pEquals(other.getAttribute("__name__"));
+             }
         }
         
     }
@@ -243,13 +260,6 @@ public class Magic {
     /*
          # comparison logic
 
-         def __eq__(self, other):
-             if not hasattr(other, "__name__"):
-                 return False
-             if hasattr(other, "__module__"):
-                 return self.__module__ == other.__module__ and self.__name__ == other.__name__
-             else:
-                 return self.__module__ + "." + self.__name__ == other.__name__
 
          def __ne__(self, other):
              return not self == other
