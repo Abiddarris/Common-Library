@@ -80,6 +80,7 @@ class DecompilerBase:
          self.indent_level,
          self.blank_line_queue) = state
 
+
     def do_when_blank_line(self, m):
         """
         Do something the next time we find a blank line. m should be a method that takes one
@@ -118,10 +119,6 @@ class DecompilerBase:
         self.print_debug(message)
         self.indent()
         self.write(f'pass # <<<COULD NOT DECOMPILE: {message}>>>')
-
-    def print_unknown(self, ast):
-        # If we encounter a placeholder note, print a warning and insert a placeholder
-        self.write_failure(f'Unknown AST node: {type(ast)!s}
 
 class First:
     # An often used pattern is that on the first item

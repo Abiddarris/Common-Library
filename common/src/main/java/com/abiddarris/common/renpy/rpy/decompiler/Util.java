@@ -37,6 +37,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
+import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
@@ -109,6 +110,7 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
+            definer.defineFunction("print_unknown", DecompilerBaseImpl.class, "printUnknown", "self", "ast");
             definer.defineFunction("print_node", DecompilerBaseImpl.class, "printNode", "self", "ast");
             
             return DecompilerBase = definer.define();
@@ -175,6 +177,12 @@ public class Util {
                 // This is to make sure that skip_indent_until_write is cleared in that case.
                 self.callAttribute("write", newString("\n").multiply(linenumber.subtract(self.getAttribute("linenumber")).subtract(newInt(1))));
             }
+        }
+
+        private static void printUnknown(PythonObject self, PythonObject ast) {
+            // If we encounter a placeholder note, print a warning and insert a placeholder
+            self.callAttribute("write_failure", newString("Unknown AST node: {0}")
+                    .callAttribute("format", type(ast)));
         }
 
         private static void printNodes(PythonObject self, PythonObject ast, PythonObject extra_indent) {
