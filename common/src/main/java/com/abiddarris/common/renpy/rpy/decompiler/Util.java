@@ -181,12 +181,6 @@ public class Util {
             }
         }
 
-        private static void printUnknown(PythonObject self, PythonObject ast) {
-            // If we encounter a placeholder note, print a warning and insert a placeholder
-            self.callAttribute("write_failure", newString("Unknown AST node: {0}")
-                    .callAttribute("format", type(ast)));
-        }
-
         private static void printNodes(PythonObject self, PythonObject ast, PythonObject extra_indent) {
             // This node is a list of nodes
             // Print every node
@@ -205,6 +199,12 @@ public class Util {
                 self.getAttribute("block_stack").callAttribute("pop");
                 self.getAttribute("index_stack").callAttribute("pop");
             });
+        }
+
+        private static void printUnknown(PythonObject self, PythonObject ast) {
+            // If we encounter a placeholder note, print a warning and insert a placeholder
+            self.callAttribute("write_failure", newString("Unknown AST node: {0}")
+                    .callAttribute("format", type(ast)));
         }
 
         private static void printNode(PythonObject self, PythonObject ast) {
