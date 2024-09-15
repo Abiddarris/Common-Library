@@ -26,6 +26,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.utils.ObjectWrapper;
 
 public class Functions {
@@ -89,4 +90,7 @@ public class Functions {
         return hasAttribute.getObject();
     }
 
+    public static PythonObject hash(PythonObject obj) {
+        return obj.callTypeAttribute("__hash__");
+    }
 }
