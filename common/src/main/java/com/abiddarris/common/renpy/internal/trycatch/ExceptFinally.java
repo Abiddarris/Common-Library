@@ -43,4 +43,12 @@ public class ExceptFinally {
 
         return new ElseFinallyExecutable(this.statement);
     }
+
+    public void onFinally(Runnable statement) {
+        validator.checkValid();
+        validator.invalidate();
+
+        this.statement.setFinallyStatement(statement);
+        this.statement.execute();
+    }
 }

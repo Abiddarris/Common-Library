@@ -46,32 +46,42 @@ class TryStatement {
         this.elseStatement = statement;
     }
 
+    void setFinallyStatement(Runnable finallyStatement) {
+        this.finallyStatement = finallyStatement;
+    }
+
     void execute() {
         try {
-            tryStatement.run();
-        } catch(PythonException e) {
-            PythonObject exception = e.getException();
-            PythonObject exceptionClass = exception.getAttribute("__class__");
+            try {
+                tryStatement.run();
+            } catch(PythonException e) {
+                PythonObject exception = e.getException();
+                PythonObject exceptionClass = exception.getAttribute("__class__");
 
-            for (Except except : exceptionStatements) {
-                if(Stream.of(except.getExceptions())
-                        .anyMatch(except0 -> except0 == exceptionClass)) {
-                    except.getExceptionHandler()
-                            .accept(exception);
+                for (Except except : exceptionStatements) {
+                    if(Stream.of(except.getExceptions())
+                            .anyMatch(except0 -> except0 == exceptionClass)) {
+                        except.getExceptionHandler()
+                                .accept(exception);
+                        return;
+                    }
+                }
+
+                if (defaultExceptionStatement != null) {
+                    defaultExceptionStatement.run();
+
                     return;
                 }
+                throw e;
             }
 
-            if (defaultExceptionStatement != null) {
-                defaultExceptionStatement.run();
-
-                return;
+            if (elseStatement != null) {
+                elseStatement.run();
             }
-            throw e;
-        }
-
-        if (elseStatement != null) {
-            elseStatement.run();
+        } finally {
+             if (finallyStatement != null) {
+                 finallyStatement.run();
+             }
         }
     }
 }
