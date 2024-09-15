@@ -532,6 +532,15 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         
         return function;
     }
+
+    public PythonObject addNewFunction(String name, PythonObject decorator, Class sourceClass, String methodName, String... parameters) {
+        PythonObject function = newFunction(sourceClass, methodName, parameters);
+        function = decorator.call(function);
+
+        setAttribute(name, function);
+
+        return function;
+    }
     
     public PythonObject addNewFunction(String name, Class sourceClass, String methodName, PythonSignature signature) {
         PythonObject function = newFunction(sourceClass, methodName, signature);
