@@ -38,6 +38,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
+import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
@@ -116,6 +117,7 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
+            definer.defineFunction("parent", property, DecompilerBaseImpl.class, "parent", "self");
             definer.defineFunction("print_debug", DecompilerBaseImpl.class, "printDebug", "self", "message");
             definer.defineFunction("write_failure", DecompilerBaseImpl.class, "writeFailure", "self", "message");
             definer.defineFunction("print_unknown", DecompilerBaseImpl.class, "printUnknown", "self", "ast");
@@ -232,6 +234,16 @@ public class Util {
                 self.getAttribute("block_stack").callAttribute("pop");
                 self.getAttribute("index_stack").callAttribute("pop");
             });
+        }
+
+        private static PythonObject parent(PythonObject self) {
+            if (len(self.getAttribute("block_stack")).jLessThan(newInt( 2))) {
+                return None;
+            }
+            return self.getAttribute("block_stack")
+                    .getItem(newInt(-2))
+                    .getItem(self.getAttribute("index_stack")
+                            .getItem(newInt(-2)));
         }
 
         private static void printDebug(PythonObject self, PythonObject message) {
