@@ -164,6 +164,12 @@ class PythonString extends PythonObject {
         return newString(builder.toString());
     }
 
+    private static PythonObject getItem(PythonString self, PythonObject key) {
+        PythonObject start = key.getAttribute("start");
+
+        return newString(self.string.substring(start.toInt()));
+    }
+
     @Override
     public String toString() {
         return string;

@@ -108,6 +108,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         str.setAttribute("__contains__", newFunction(PythonString.class, "contains", "self", "key"));
         str.setAttribute("__mul__", newFunction(PythonString.class, "multiply", "self", "value"));
 
+        str.addNewFunction("__getitem__", PythonString.class, "getItem", "self", "key");
+
         int0 = newBootstrapObject();
         int0.setAttributeDirectly("__class__", type);
         int0.setAttribute("__bases__", defaultBases);
