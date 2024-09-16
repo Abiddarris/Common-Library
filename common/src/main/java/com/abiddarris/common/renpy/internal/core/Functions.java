@@ -101,4 +101,13 @@ public class Functions {
     public static PythonObject len(PythonObject obj) {
         return obj.callTypeAttribute("__len__");
     }
+
+    public static PythonObject all(PythonObject iterable) {
+        for (PythonObject element : iterable) {
+            if (!element.toBoolean()) {
+                return False;
+            }
+        }
+        return True;
+    }
 }
