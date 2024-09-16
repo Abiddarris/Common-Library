@@ -417,56 +417,6 @@ class Decompiler(DecompilerBase):
 
         self.do_when_blank_line(do_set_init_offset)
 
-    @dispatch(renpy.ast.Init)
-    def print_init(self, ast):
-        in_init = self.in_init
-        self.in_init = True
-        try:
-            # A bunch of statements can have implicit init blocks
-            # Define has a default priority of 0, screen of -500 and image of 990
-            # Keep this block in sync with set_best_init_offset
-            # TODO merge this and require_init into another decorator or something
-            if (len(ast.block) == 1
-                    and (isinstance(ast.block[0], (renpy.ast.Define, renpy.ast.Default,
-                                                   renpy.ast.Transform))
-                         or (ast.priority == -500 + self.init_offset
-                             and isinstance(ast.block[0], renpy.ast.Screen))
-                         or (ast.priority == self.init_offset
-                             and isinstance(ast.block[0], renpy.ast.Style))
-                         or (ast.priority == 500 + self.init_offset
-                             and isinstance(ast.block[0], renpy.ast.Testcase))
-                         or (ast.priority == 0 + self.init_offset
-                             and isinstance(ast.block[0], renpy.ast.UserStatement)
-                             and ast.block[0].line.startswith("layeredimage "))
-                         or (ast.priority == 500 + self.init_offset
-                             and isinstance(ast.block[0], renpy.ast.Image)))
-                    and not (self.should_come_before(ast, ast.block[0]))):
-                # If they fulfill this criteria we just print the contained statement
-                self.print_nodes(ast.block)
-
-            # translatestring statements are split apart and put in an init block.
-            elif (len(ast.block) > 0
-                  and ast.priority == self.init_offset
-                  and all(isinstance(i, renpy.ast.TranslateString) for i in ast.block)
-                  and all(i.language == ast.block[0].language for i in ast.block[1:])):
-                self.print_nodes(ast.block)
-
-            else:
-                self.indent()
-                self.write("init")
-                if ast.priority != self.init_offset:
-                    self.write(f' {ast.priority - self.init_offset}')
-
-                if len(ast.block) == 1 and not self.should_come_before(ast, ast.block[0]):
-                    self.write(" ")
-                    self.skip_indent_until_write = True
-                    self.print_nodes(ast.block)
-                else:
-                    self.write(":")
-                    self.print_nodes(ast.block, 1)
-        finally:
-            self.in_init = in_init
-
     def print_say_inside_menu(self):
         self.print_say(self.say_inside_menu, inmenu=True)
         self.say_inside_menu = None
