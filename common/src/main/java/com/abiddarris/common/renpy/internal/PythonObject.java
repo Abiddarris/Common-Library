@@ -8,6 +8,7 @@ import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Objects;
+import com.abiddarris.common.renpy.internal.core.Property;
 import com.abiddarris.common.renpy.internal.core.Slice;
 import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.core.classes.AttributeSetter;
@@ -60,6 +61,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject enumerate;
     public static final PythonObject ImportError;
     public static final PythonObject slice;
+    public static final PythonObject property;
     
     public static final PythonObject builtins;
     
@@ -338,6 +340,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
 
         enumerate = Enumerate.define(builtins);
         slice = Slice.define(builtins);
+        property = Property.define(builtins);
     }
     
     private static PythonObject newBootstrapObject() {
@@ -365,7 +368,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
     
     AttributeManager attributes;
-    
+
     public PythonObject(AttributeHolder holder) {
         this(holder, null);
     }
@@ -385,7 +388,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
     
     public PythonObject() {
-        this(null);
+        this((AttributeHolder)null);
     }
     
     public AttributeManager getAttributes() {

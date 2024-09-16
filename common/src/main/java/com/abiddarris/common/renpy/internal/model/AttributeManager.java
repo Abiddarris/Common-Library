@@ -16,11 +16,15 @@
 package com.abiddarris.common.renpy.internal.model;
 
 import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.property;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 
 import com.abiddarris.common.renpy.internal.PythonFunction;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.PythonTuple;
+import com.abiddarris.common.renpy.internal.object.PropertyObject;
 import com.abiddarris.common.renpy.internal.object.PythonMethod;
 
 public class AttributeManager {
@@ -77,7 +81,7 @@ public class AttributeManager {
     public PythonObject findAttributeWithoutTypeAllowConversion(PythonObject type, String name) {
         PythonObject attribute = type.getAttributes()
                 .findAttributeWithoutType(name);
-        attribute = boundFunction(attribute);
+        attribute = processAttribute(attribute);
 
         return attribute;
     }
@@ -102,14 +106,19 @@ public class AttributeManager {
     
     public PythonObject searchAttribute(PythonObject startClass, PythonObject instanceClass, String name) {
         PythonObject attribute = searchAttributeInternal(startClass, instanceClass, name);
-        attribute = boundFunction(attribute);
+        attribute = processAttribute(attribute);
         
         return attribute;
     }
     
-    private PythonObject boundFunction(PythonObject attribute) {
+    private PythonObject processAttribute(PythonObject attribute) {
         if (attribute instanceof PythonFunction) {
             return new PythonMethod(owner, attribute);
+        } else if (attribute instanceof PropertyObject) {
+            PythonObject fget = attribute.getAttribute("fget");
+            PythonObject method = new PythonMethod(owner, fget);
+
+            return method.call();
         }
         
         return attribute;
