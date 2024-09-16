@@ -71,7 +71,6 @@ public class Decompiler {
                         .build());  
                 
             PythonObject Decompiler0 = DecompilerImpl.define(decompiler, DecompilerBase);
-            System.out.println(Decompiler0.getAttribute("__mro__"));
         });
         UnRpycCompat.initLoader();
         Magic.initLoader();
