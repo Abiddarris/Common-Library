@@ -15,7 +15,11 @@
  *************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -32,6 +36,8 @@ public class UnRpycCompat {
             FakeModuleSubclassCheckGeneratorImpl.define(unrpyccompat);
             DecompilerBaseAdvanceToLineGeneratorImpl.define(unrpyccompat);
             DispatcherCallClosureImpl.define();
+            DecompilerPrintInitImpl.define();
+            DecompilerPrintInit1Impl.define();
         });
     }
 
@@ -113,5 +119,67 @@ public class UnRpycCompat {
             return func;
         }
 
+    }
+
+    private static class DecompilerPrintInitImpl {
+
+        private static PythonObject define() {
+            ClassDefiner definer = unrpyccompat.defineClass("DecompilerPrintInit");
+            definer.defineFunction("__init__", DecompilerPrintInitImpl.class, "init", "self", "renpy", "ast");
+            definer.defineFunction("__iter__", DecompilerPrintInitImpl.class, "iter", "self");
+            definer.defineFunction("__next__", DecompilerPrintInitImpl.class, "next", "self");
+
+            return definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject renpy, PythonObject ast) {
+            self.setAttribute("renpy", renpy);
+            self.setAttribute("ast", ast);
+        }
+
+        private static PythonObject iter(PythonObject self) {
+            self.setAttribute("iterable", callNestedAttribute(self, "ast.block.__iter__"));
+
+            return self;
+        }
+
+        private static PythonObject next(PythonObject self) {
+            PythonObject i = callNestedAttribute(self, "iterable.__next__");
+
+            return isinstance(i, getNestedAttribute(self, "renpy.ast.TranslateString"));
+        }
+    }
+
+    private static class DecompilerPrintInit1Impl {
+
+        private static PythonObject define() {
+            ClassDefiner definer = unrpyccompat.defineClass("DecompilerPrintInit1");
+            definer.defineFunction("__init__", DecompilerPrintInit1Impl.class, "init", "self", "ast");
+            definer.defineFunction("__iter__", DecompilerPrintInit1Impl.class, "iter", "self");
+            definer.defineFunction("__next__", DecompilerPrintInit1Impl.class, "next", "self");
+
+            return definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject ast) {
+            self.setAttribute("ast", ast);
+        }
+
+        private static PythonObject iter(PythonObject self) {
+            self.setAttribute("iterable", getNestedAttribute(self, "ast.block")
+                    .getItem(newSlice(1))
+                    .callAttribute("__iter__"));
+
+            return self;
+        }
+
+        private static PythonObject next(PythonObject self) {
+            PythonObject i = callNestedAttribute(self, "iterable.__next__");
+
+            return i.getAttribute("language").pEquals(
+                    getNestedAttribute(self, "ast.block")
+                            .getItem(newInt(0))
+                            .getAttribute("language"));
+        }
     }
 }

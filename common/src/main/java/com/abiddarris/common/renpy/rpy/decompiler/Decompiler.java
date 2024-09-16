@@ -37,10 +37,23 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.False;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
+import static com.abiddarris.common.renpy.internal.PythonObject.list;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
+import static com.abiddarris.common.renpy.internal.PythonObject.super0;
+import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
+import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Functions.all;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -63,7 +76,8 @@ public class Decompiler {
             PythonObject OptionBase = imported[2];
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
-                
+            decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit");
+
             PythonObject Options = OptionsImpl.define(decompiler, OptionBase);
                 
             decompiler.addNewFunction("pprint", Decompiler.class, "pprint", new PythonSignatureBuilder("out_file", "ast")
@@ -133,6 +147,8 @@ public class Decompiler {
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
+            definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
+                    DecompilerImpl.class, "printInit", "self", "ast");
 
             return definer.define();
         }
@@ -190,9 +206,113 @@ public class Decompiler {
             callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
         }
-    }
 
         private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {
             return first.getAttribute("linenumber").lessThan(second.getAttribute("linenumber"));
         }
+
+        private static void printInit(PythonObject self, PythonObject ast) {
+            PythonObject in_init = self.getAttribute("in_init");
+            self.setAttribute("in_init", True);
+            tryExcept(() -> {
+                // A bunch of statements can have implicit init blocks
+                // Define has a default priority of 0, screen of -500 and image of 990
+                // Keep this block in sync with set_best_init_offset
+                // TODO merge this and require_init into another decorator or something
+                if (len(ast.getAttribute("block")).equals(newInt(1))
+                        && (isinstance(
+                                ast.getAttribute("block").getItem(newInt(0)),
+                                newTuple(
+                                        getNestedAttribute(decompiler, "renpy.ast.Define"),
+                                        getNestedAttribute(decompiler, "renpy.ast.Default"),
+                                        getNestedAttribute(decompiler, "renpy.ast.Transform")
+                                )
+                            ).toBoolean()
+                        || (ast.getAttribute("priority").equals(
+                                        newInt(-500).add(self.getAttribute("init_offset"))
+                                )
+                            && isinstance(
+                                    ast.getAttribute("block").getItem(newInt(0)),
+                                    getNestedAttribute(decompiler, "renpy.ast.Screen")
+                               ).toBoolean()
+                            )
+                        || (ast.getAttribute("priority").equals(self.getAttribute("init_offset"))
+                                 && isinstance(
+                                         ast.getAttribute("block").getItem(newInt(0)),
+                                         getNestedAttribute(decompiler, "renpy.ast.Style")
+                                ).toBoolean()
+                            )
+                        || (ast.getAttribute("priority").equals(
+                                newInt(500).add(self.getAttribute("init_offset"))
+                            )
+                            && isinstance(
+                                    ast.getAttribute("block").getItem(newInt(0)),
+                                    getNestedAttribute(decompiler, "renpy.ast.Testcase")
+                                ).toBoolean()
+                            )
+                        || (ast.getAttribute("priority").equals(
+                                newInt(0).add(self.getAttribute("init_offset"))
+                            )
+                            && isinstance(
+                                    ast.getAttribute("block").getItem(newInt(0)),
+                                    getNestedAttribute(decompiler, "renpy.ast.UserStatement")
+                                ).toBoolean()
+                            && callNestedAttribute(
+                                    ast.getAttribute("block").getItem(newInt(0)),
+                                    "line.startswith",
+                                    newString("layeredimage ")
+                                ).toBoolean()
+                            )
+                        || (ast.getAttribute("priority").equals(
+                                newInt(500).add(self.getAttribute("init_offset"))
+                            )
+                            && isinstance(
+                                    ast.getAttribute("block").getItem(newInt(0)),
+                                    getNestedAttribute(decompiler, "renpy.ast.Image")
+                                ).toBoolean()
+                            )
+                        )
+                        && !(self.callAttribute("should_come_before",
+                                ast, ast.getAttribute("block").getItem(newInt(0))
+                            ).toBoolean()
+                        )) {
+
+                    // If they fulfill this criteria we just print the contained statement
+                    self.callAttribute("print_nodes", ast.getAttribute("block"));
+                }
+                // translatestring statements are split apart and put in an init block.
+                else if (len(ast.getAttribute("block")).toInt() > 0
+                      && ast.getAttribute("priority").equals(self.getAttribute("init_offset"))
+                      && all(decompiler.callAttribute(
+                              "DecompilerPrintInit", decompiler.getAttribute("renpy"), ast)
+                            ).toBoolean()
+                      && all(decompiler.callAttribute("DecompilerPrintInit1", ast))
+                            .toBoolean()) {
+                    self.callAttribute("print_nodes", ast.getAttribute("block"));
+                } else {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", newString("init"));
+                    if (ast.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))) {
+                        self.callAttribute("write", newString("{0}").callAttribute("format",
+                                ast.getAttribute("priority").subtract(self.getAttribute("init_offset"))
+                        ));
+                    }
+
+                    if (len(ast.getAttribute("block")).equals(newInt(1))
+                            && !self.callAttribute(
+                                    "should_come_before", ast,
+                                     ast.getAttribute("block").getItem(newInt(0))
+                            ).toBoolean()) {
+                        self.callAttribute("write", newString(" "));
+                        self.setAttribute("skip_indent_until_write", True);
+                        self.callAttribute("print_nodes", ast.getAttribute("block"));
+                    } else {
+                        self.callAttribute("write", newString(":"));
+                        self.callAttribute("print_nodes", ast.getAttribute("block"), newInt(1));
+                    }
+                }
+            }).onFinally(() -> self.setAttribute("in_init", in_init));
+        }
+    }
+
 }
