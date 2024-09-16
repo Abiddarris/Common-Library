@@ -379,6 +379,10 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
 
         setAttributeDirectly("__class__", cls);
     }
+
+    public PythonObject(PythonObject cls) {
+        this(null, cls);
+    }
     
     public PythonObject() {
         this(null);
