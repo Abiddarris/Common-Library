@@ -367,11 +367,17 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     AttributeManager attributes;
     
     public PythonObject(AttributeHolder holder) {
+        this(holder, null);
+    }
+
+    public PythonObject(AttributeHolder holder, PythonObject cls) {
         if(holder == null) {
             holder = new PythonAttributeHolder();
         } 
         
         attributes = new AttributeManager(this, holder);
+
+        setAttributeDirectly("__class__", cls);
     }
     
     public PythonObject() {
