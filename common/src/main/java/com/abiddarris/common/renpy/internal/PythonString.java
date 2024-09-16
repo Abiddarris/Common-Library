@@ -152,7 +152,7 @@ class PythonString extends PythonObject {
                 builder.delete(start, i + 1);
                 builder.insert(start, value);
 
-                i = start + value.length();
+                i = start + value.length() - 1;
             }
         }
 
