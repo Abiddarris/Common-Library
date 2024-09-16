@@ -353,7 +353,7 @@ public class Decompiler {
             PythonObject operator = ast.getAttribute("operator", newString("="));
 
             // store attribute added in 6.18.2
-            if (ast.getAttribute("store", newString("store")).equals("store")) {
+            if (ast.getAttribute("store", newString("store")).equals(newString("store"))) {
                 self.callAttribute("write", newString("define{0} {1}{2} {3} {4}")
                         .callAttribute("format", priority, ast.getAttribute("varname"), index,
                                 operator, getNestedAttribute(ast, "code.source")));
