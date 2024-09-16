@@ -61,6 +61,7 @@ import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttr
 import static com.abiddarris.common.renpy.internal.core.Functions.any;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
+import static com.abiddarris.common.renpy.internal.core.Functions.hash;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.stream.Signs.sign;
 
@@ -158,6 +159,7 @@ public class Magic {
                     .addParameter("module", None)
                     .build());
             FakeClassType.addNewFunction("__eq__", FakeClassTypeImpl.class, "eq", "self", "other");
+            FakeClassType.addNewFunction("__hash__", FakeClassTypeImpl.class, "hash0", "self");
         }
         
         private static PythonObject new0(PythonObject cls, PythonObject name, PythonObject bases, PythonObject attributes, PythonObject module) {
@@ -199,7 +201,12 @@ public class Magic {
                          .pEquals(other.getAttribute("__name__"));
              }
         }
-        
+
+        private static PythonObject hash0(PythonObject self) {
+            return hash(self.getAttribute("__module__")
+                    .add(newString("."))
+                    .add(self.getAttribute("__name__")));
+        }
     }
     
     private static class FakeStrictImpl {
@@ -264,8 +271,7 @@ public class Magic {
          def __ne__(self, other):
              return not self == other
 
-         def __hash__(self):
-             return hash(self.__module__ + "." + self.__name__)
+
 
          def __instancecheck__(self, instance):
              return self.__subclasscheck__(instance.__class__)
