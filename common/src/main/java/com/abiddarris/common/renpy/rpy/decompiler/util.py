@@ -88,12 +88,6 @@ class DecompilerBase:
     def index(self):
         return self.index_stack[-1]
 
-    @property
-    def parent(self):
-        if len(self.block_stack) < 2:
-            return None
-        return self.block_stack[-2][self.index_stack[-2]]
-
 class First:
     # An often used pattern is that on the first item
     # of a loop something special has to be done. This class
