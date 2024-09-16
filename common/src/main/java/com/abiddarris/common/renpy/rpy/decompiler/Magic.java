@@ -63,6 +63,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.Functions.hash;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
@@ -191,7 +192,8 @@ public class Magic {
                  return False;
              }
 
-             if (hasattr(other, newString("__module__")).toBoolean()) {
+             if (!isinstance(other, magic.getAttribute("FakeModule")).toBoolean()
+                     && hasattr(other, newString("__module__")).toBoolean()) {
                  return newBoolean(self.getAttribute("__module__").equals(other.getAttribute("__module__"))
                         && self.getAttribute("__name__").equals(other.getAttribute("__name__")));
              } else {
