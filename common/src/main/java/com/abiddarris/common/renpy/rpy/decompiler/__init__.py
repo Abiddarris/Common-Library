@@ -377,10 +377,6 @@ class Decompiler(DecompilerBase):
         self.indent()
         self.write("pass")
 
-    def require_init(self):
-        if not self.in_init:
-            self.missing_init = True
-
     def set_best_init_offset(self, nodes):
         votes = {}
         for ast in nodes:
