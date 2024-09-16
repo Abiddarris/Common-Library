@@ -129,9 +129,10 @@ public class Decompiler {
             // what method to call for which ast class
             PythonObject dispatch = definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
 
-            definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
+            definer.defineFunction("__init__", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
+            definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
 
             return definer.define();
         }
@@ -190,4 +191,8 @@ public class Decompiler {
                     .call(self, ast);
         }
     }
+
+        private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {
+            return first.getAttribute("linenumber").lessThan(second.getAttribute("linenumber"));
+        }
 }
