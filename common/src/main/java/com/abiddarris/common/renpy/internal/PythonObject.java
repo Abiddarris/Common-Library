@@ -8,6 +8,7 @@ import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.core.Enumerate;
 import com.abiddarris.common.renpy.internal.core.Functions;
 import com.abiddarris.common.renpy.internal.core.Objects;
+import com.abiddarris.common.renpy.internal.core.Slice;
 import com.abiddarris.common.renpy.internal.core.Super;
 import com.abiddarris.common.renpy.internal.core.classes.AttributeSetter;
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
@@ -58,6 +59,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject NotImplementedError;
     public static final PythonObject enumerate;
     public static final PythonObject ImportError;
+    public static final PythonObject slice;
     
     public static final PythonObject builtins;
     
@@ -335,14 +337,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         NotImplementedError = builtins.defineClass("NotImplementedError", RuntimeError).define();
 
         enumerate = Enumerate.define(builtins);
-
-        /*object.addMethod(
-                "__setattr__",
-                (args, kwargs) -> {
-                    object.setAttribute((String) args.get(1), args.get(2));
-
-                    return null;
-                });*/
+        slice = Slice.define(builtins);
     }
     
     private static PythonObject newBootstrapObject() {
