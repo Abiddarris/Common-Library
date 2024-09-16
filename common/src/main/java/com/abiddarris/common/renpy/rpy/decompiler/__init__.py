@@ -543,37 +543,6 @@ class Decompiler(DecompilerBase):
     def print_earlypython(self, ast):
         self.print_python(ast, early=True)
 
-    @dispatch(renpy.ast.Define)
-    def print_define(self, ast):
-        self.require_init()
-        self.indent()
-
-        # If we have an implicit init block with a non-default priority, we need to store
-        # the priority here.
-        priority = ""
-        if isinstance(self.parent, renpy.ast.Init):
-            init = self.parent
-            if (init.priority != self.init_offset
-                    and len(init.block) == 1
-                    and not self.should_come_before(init, ast)):
-                priority = f' {init.priority - self.init_offset}'
-
-        index = ""
-        # index attribute added in 7.4
-        if getattr(ast, "index", None) is not None:
-            index = f'[{ast.index.source}]'
-
-        # operator attribute added in 7.4
-        operator = getattr(ast, "operator", "=")
-
-        # store attribute added in 6.18.2
-        if getattr(ast, "store", "store") == "store":
-            self.write(f'define{priority} {ast.varname}{index} {operator} {ast.code.source}')
-        else:
-            self.write(
-                f'define{priority} {ast.store[6:]}.{ast.varname}{index} {operator} '
-                f'{ast.code.source}')
-
     @dispatch(renpy.ast.Default)
     def print_default(self, ast):
         self.require_init()
