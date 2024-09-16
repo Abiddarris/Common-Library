@@ -148,6 +148,7 @@ public class Decompiler {
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
+            definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
             definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
@@ -212,6 +213,12 @@ public class Decompiler {
 
         private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {
             return first.getAttribute("linenumber").lessThan(second.getAttribute("linenumber"));
+        }
+
+        private static void requireInit(PythonObject self) {
+            if (!self.getAttribute("in_init").toBoolean()) {
+                self.getAttribute("missing_init", True);
+            }
         }
 
         private static void printInit(PythonObject self, PythonObject ast) {
