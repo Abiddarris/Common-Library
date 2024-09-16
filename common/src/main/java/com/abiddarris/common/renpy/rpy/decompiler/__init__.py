@@ -377,9 +377,6 @@ class Decompiler(DecompilerBase):
         self.indent()
         self.write("pass")
 
-    def should_come_before(self, first, second):
-        return first.linenumber < second.linenumber
-
     def require_init(self):
         if not self.in_init:
             self.missing_init = True
