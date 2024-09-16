@@ -127,7 +127,7 @@ public class Decompiler {
 
             // This dictionary is a mapping of Class: unbount_method, which is used to determine
             // what method to call for which ast class
-            definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
+            PythonObject dispatch = definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
 
             definer.defineFunction("__init__, ", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
