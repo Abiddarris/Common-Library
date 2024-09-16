@@ -54,6 +54,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.all;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
+import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -149,6 +150,8 @@ public class Decompiler {
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
+            definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
+                    DecompilerImpl.class, "printDefine", "self", "ast");
 
             return definer.define();
         }
@@ -312,6 +315,47 @@ public class Decompiler {
                     }
                 }
             }).onFinally(() -> self.setAttribute("in_init", in_init));
+        }
+
+        private static void printDefine(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+            self.callAttribute("indent");
+
+            // If we have an implicit init block with a non-default priority, we need to store
+            // the priority here.
+            PythonObject priority = newString("");
+            if (isinstance(self.getAttribute("parent"),
+                    getNestedAttribute(decompiler, "renpy.ast.Init")
+            ).toBoolean()) {
+                PythonObject init = self.getAttribute("parent");
+                if (init.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))
+                        && len(init.getAttribute("block")).equals(newInt(0))
+                        && !self.callAttribute("should_come_before", init, ast).toBoolean()) {
+                    priority = newString(" {0}").callAttribute("format",
+                            init.getAttribute("priority")
+                                    .subtract(self.getAttribute("init_offset")));
+                }
+            }
+            PythonObject index = newString("");
+            // index attribute added in 7.4
+            if (ast.getAttribute("index", None) != None) {
+                index = newString("[{0}]").callAttribute("format", getNestedAttribute(ast, "index.source"));
+            }
+
+            // operator attribute added in 7.4
+            PythonObject operator = ast.getAttribute("operator", newString("="));
+
+            // store attribute added in 6.18.2
+            if (ast.getAttribute("store", newString("store")).equals("store")) {
+                self.callAttribute("write", newString("define{0} {1}{2} {3} {4}")
+                        .callAttribute("format", priority, ast.getAttribute("varname"), index,
+                                operator, getNestedAttribute(ast, "code.source")));
+            } else {
+                self.callAttribute("write", newString("define{0} {1}.{2}{3} {4} {5}")
+                        .callAttribute("format", priority, ast.getAttribute("store").getItem(newSlice(6)),
+                                ast.getAttribute("varname"), index, operator,
+                                getNestedAttribute(ast, "code.source")));
+            }
         }
     }
 
