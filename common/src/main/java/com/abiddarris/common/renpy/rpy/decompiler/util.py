@@ -84,9 +84,6 @@ class DecompilerBase:
     def block(self):
         return self.block_stack[-1]
 
-    @property
-    def index(self):
-        return self.index_stack[-1]
 
 class First:
     # An often used pattern is that on the first item
