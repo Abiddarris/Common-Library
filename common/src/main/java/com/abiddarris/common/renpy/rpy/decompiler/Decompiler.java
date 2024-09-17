@@ -147,6 +147,9 @@ public class Decompiler {
             definer.defineFunction("__init__", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
+
+            // Flow control
+            definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
@@ -209,6 +212,84 @@ public class Decompiler {
 
             callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
+        }
+
+        private static void printLabel(PythonObject self, PythonObject ast) {
+            // If a Call block preceded us, it printed us as "from"
+            if (self.getAttribute("index").toBoolean() &&
+                    isinstance(self.getAttribute("block")
+                                     .getItem(self.getAttribute("index")
+                                                 .subtract(newInt(1))
+                                     ),
+                            getNestedAttribute(decompiler, "renpy.ast.Call")
+                    ).toBoolean()) {
+                return;
+            }
+
+            // See if we're the label for a menu, rather than a standalone label.
+            if (!ast.getAttribute("block").toBoolean() &&
+                    ast.getAttribute("parameters") == None) {
+                PythonObject remaining_blocks = len(self.getAttribute("block"))
+                        .subtract(self.getAttribute("index"));
+
+                PythonObject next_ast = None;
+                if (remaining_blocks.jGreaterThan(newInt(1))) {
+                    // Label followed by a menu
+                    next_ast = self.getAttribute("block")
+                            .getItem(self.getAttribute("index")
+                                    .add(newInt(1)));
+                    if (isinstance(next_ast, getNestedAttribute(decompiler, " renpy.ast.Menu")).toBoolean() &&
+                            next_ast.getAttribute("linenumber").equals(ast.getAttribute("linenumber"))) {
+                        self.setAttribute("label_inside_menu", ast);
+                        return;
+                    }
+                }
+
+                if (remaining_blocks.jGreaterThan(newInt(2))) {
+                    // Label, followed by a say, followed by a menu
+                    PythonObject next_next_ast = self.getAttribute("block")
+                            .getItem(self.getAttribute("index")
+                                    .add(newInt(2)));
+                    if (isinstance(next_ast, getNestedAttribute(decompiler, "renpy.ast.Say")).toBoolean()
+                            && isinstance(next_next_ast, getNestedAttribute(decompiler, "renpy.ast.Menu")).toBoolean()
+                            && next_next_ast.getAttribute("linenumber").equals(ast.getAttribute("linenumber"))
+                            && self.callAttribute("say_belongs_to_menu", next_ast, next_next_ast).toBoolean()) {
+                        self.setAttribute("label_inside_menu", ast);
+                        return;
+                    }
+                }
+            }
+
+            self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+            self.callAttribute("indent");
+
+            // It's possible that we're an "init label", not a regular label. There's no way to know
+            // if we are until we parse our children, so temporarily redirect all of our output until
+            // that's done, so that we can squeeze in an "init " if we are.
+            PythonObject out_file = self.getAttribute("out_file");
+            self.setAttribute("out_file", decompiler.callAttribute("StringIO"));
+
+            PythonObject missing_init = self.getAttribute("missing_init");
+            self.setAttribute("missing_init", False);
+
+            tryExcept(() -> {
+                self.callAttribute("write", newString("label {0}{1}{2}:")
+                        .callAttribute("format",
+                                ast.getAttribute("name"),
+                                decompiler.callAttribute("reconstruct_paraminfo", ast.getAttribute("parameters")),
+                                ast.getAttribute("hide", False).toBoolean() ?
+                                        newString(" hide") : newString("")
+                        )
+                );
+                self.callAttribute("print_nodes", ast.getAttribute("block"), newInt(1));
+            }).onFinally(() -> {
+                if (self.getAttribute("missing_init").toBoolean()) {
+                    out_file.callAttribute("write", newString("init "));
+                }
+                self.setAttribute("missing_init", missing_init);
+                out_file.callAttribute("write", callNestedAttribute(self, "out_file.getvalue"));
+                self.setAttribute("out_file", out_file);
+            });
         }
 
         private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {
