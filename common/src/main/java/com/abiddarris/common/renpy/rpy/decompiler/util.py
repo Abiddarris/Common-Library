@@ -80,11 +80,6 @@ class DecompilerBase:
         """
         self.blank_line_queue.append(m)
 
-    @property
-    def block(self):
-        return self.block_stack[-1]
-
-
 class First:
     # An often used pattern is that on the first item
     # of a loop something special has to be done. This class

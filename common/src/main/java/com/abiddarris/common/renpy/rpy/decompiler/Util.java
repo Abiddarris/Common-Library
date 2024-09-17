@@ -117,6 +117,7 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
+            definer.defineFunction("block", property, DecompilerBaseImpl.class, "block", "self");
             definer.defineFunction("index", property, DecompilerBaseImpl.class, "index", "self");
             definer.defineFunction("parent", property, DecompilerBaseImpl.class, "parent", "self");
             definer.defineFunction("print_debug", DecompilerBaseImpl.class, "printDebug", "self", "message");
@@ -236,6 +237,12 @@ public class Util {
                 self.getAttribute("index_stack").callAttribute("pop");
             });
         }
+
+        private static PythonObject block(PythonObject self) {
+            return self.getAttribute("block_stack")
+                    .getItem(newInt(-1));
+        }
+
 
         private static PythonObject index(PythonObject self) {
             return self.getAttribute("index_stack")
