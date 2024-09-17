@@ -184,7 +184,7 @@ public class Util {
             self.setAttribute("linenumber", self.getAttribute("linenumber").add(
                     string.callAttribute("count", newString("\n"))
             ));
-            self.getAttribute("skip_indent_until_write", False);
+            self.setAttribute("skip_indent_until_write", False);
 
             callNestedAttribute(self, "out_file.write", string);
         }
