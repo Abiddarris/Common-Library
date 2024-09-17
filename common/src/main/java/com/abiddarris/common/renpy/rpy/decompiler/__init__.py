@@ -241,57 +241,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    # Flow control
-
-    @dispatch(renpy.ast.Label)
-    def print_label(self, ast):
-        # If a Call block preceded us, it printed us as "from"
-        if (self.index and isinstance(self.block[self.index - 1], renpy.ast.Call)):
-            return
-
-        # See if we're the label for a menu, rather than a standalone label.
-        if not ast.block and ast.parameters is None:
-            remaining_blocks = len(self.block) - self.index
-            if remaining_blocks > 1:
-                # Label followed by a menu
-                next_ast = self.block[self.index + 1]
-                if (isinstance(next_ast, renpy.ast.Menu)
-                        and next_ast.linenumber == ast.linenumber):
-                    self.label_inside_menu = ast
-                    return
-
-            if remaining_blocks > 2:
-                # Label, followed by a say, followed by a menu
-                next_next_ast = self.block[self.index + 2]
-                if (isinstance(next_ast, renpy.ast.Say)
-                        and isinstance(next_next_ast, renpy.ast.Menu)
-                        and next_next_ast.linenumber == ast.linenumber
-                        and self.say_belongs_to_menu(next_ast, next_next_ast)):
-
-                    self.label_inside_menu = ast
-                    return
-
-        self.advance_to_line(ast.linenumber)
-        self.indent()
-
-        # It's possible that we're an "init label", not a regular label. There's no way to know
-        # if we are until we parse our children, so temporarily redirect all of our output until
-        # that's done, so that we can squeeze in an "init " if we are.
-        out_file = self.out_file
-        self.out_file = StringIO()
-        missing_init = self.missing_init
-        self.missing_init = False
-        try:
-            self.write(f'label {ast.name}{reconstruct_paraminfo(ast.parameters)}'
-                       f'{" hide" if getattr(ast, "hide", False) else ""}:')
-            self.print_nodes(ast.block, 1)
-        finally:
-            if self.missing_init:
-                out_file.write("init ")
-            self.missing_init = missing_init
-            out_file.write(self.out_file.getvalue())
-            self.out_file = out_file
-
     @dispatch(renpy.ast.Jump)
     def print_jump(self, ast):
         self.indent()
