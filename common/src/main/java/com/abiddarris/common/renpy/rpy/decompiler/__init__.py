@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import , First, WordConcatenator, reconstruct_paraminfo, \
+from .util import , First, WordConcatenator, , \
                   reconstruct_arginfo, string_escape, split_logical_lines, , \
                   say_get_code,
 
