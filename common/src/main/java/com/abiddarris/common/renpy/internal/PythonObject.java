@@ -31,6 +31,7 @@ import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.mod.io.IO;
 import com.abiddarris.common.renpy.internal.model.AttributeHolder;
 import com.abiddarris.common.renpy.internal.model.AttributeManager;
 import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
@@ -360,6 +361,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         enumerate = Enumerate.define(builtins);
         slice = Slice.define(builtins);
         property = Property.define(builtins);
+
+        IO.initLoader();
     }
     
     private static PythonObject newBootstrapObject() {
