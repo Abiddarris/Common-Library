@@ -15,13 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.io;
 
-import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
-public class IO {
+class StringIOImpl {
 
-    public static void initLoader() {
-        registerLoader("io", (io) -> {
-            StringIOImpl.define(io);
-        });
+    static PythonObject define(PythonObject io) {
+        ClassDefiner definer = io.defineClass("StringIO");
+
+        return definer.define();
     }
+
 }
