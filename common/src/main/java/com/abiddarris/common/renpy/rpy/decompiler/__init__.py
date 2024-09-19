@@ -23,7 +23,6 @@ from .util import , First, WordConcatenator, reconstruct_paraminfo, \
                   say_get_code,
 
 from operator import itemgetter
-from io import StringIO
 
 from . import sl2decompiler
 from . import testcasedecompiler

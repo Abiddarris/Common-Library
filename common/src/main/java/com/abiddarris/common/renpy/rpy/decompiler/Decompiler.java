@@ -77,6 +77,7 @@ public class Decompiler {
             PythonObject OptionBase = imported[2];
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
+            decompiler.fromImport("io", "StringIO");
             decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit");
 
             PythonObject Options = OptionsImpl.define(decompiler, OptionBase);
