@@ -26,6 +26,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.core.classes.JFunctions;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.utils.ObjectWrapper;
 
@@ -87,11 +88,7 @@ public class Functions {
     }
 
     public static PythonObject hasattr(PythonObject obj, PythonObject name) {
-        ObjectWrapper<PythonObject> hasAttribute = new ObjectWrapper<>(True);
-        tryExcept(() -> obj.getAttribute(name.toString())).
-                onExcept((e) -> hasAttribute.setObject(False), AttributeError).execute();
-
-        return hasAttribute.getObject();
+        return newBoolean(JFunctions.hasattr(obj, name.toString()));
     }
 
     public static PythonObject hash(PythonObject obj) {
