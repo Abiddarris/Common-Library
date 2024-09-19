@@ -27,7 +27,9 @@ import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PythonObject extends Python implements Iterable<PythonObject> {
@@ -371,6 +373,8 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     
     AttributeManager attributes;
 
+    private Map<String, Object> javaAttributes = new HashMap<>();
+
     public PythonObject(AttributeHolder holder) {
         this(holder, null);
     }
@@ -411,6 +415,14 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
 
     public void setAttributeDirectly(String name, PythonObject value) {
         attributes.put(name, value);
+    }
+    
+    public void setJavaAttribute(String name, Object object) {
+        javaAttributes.put(name, object);
+    }
+
+    public <T> T getJavaAttribute(String name) {
+        return (T) javaAttributes.get(name);
     }
 
     public PythonObject getAttribute(String name) {
