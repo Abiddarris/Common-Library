@@ -80,6 +80,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     public static final PythonObject ImportError;
     public static final PythonObject slice;
     public static final PythonObject property;
+    public static final PythonObject set;
     
     public static final PythonObject builtins;
     
@@ -363,6 +364,9 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         property = Property.define(builtins);
 
         IO.initLoader();
+        com.abiddarris.common.renpy.internal.mod.builtins.BuiltinsImpl.initRest();
+
+        set = builtins.getAttribute("set");
     }
     
     private static PythonObject newBootstrapObject() {
