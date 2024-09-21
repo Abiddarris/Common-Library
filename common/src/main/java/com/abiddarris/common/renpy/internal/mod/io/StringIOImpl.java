@@ -15,15 +15,36 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.io;
 
+import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.PythonObject.super0;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
 class StringIOImpl {
 
+    private static PythonObject io;
+
     static PythonObject define(PythonObject io) {
+        StringIOImpl.io = io;
+
         ClassDefiner definer = io.defineClass("StringIO");
+        definer.defineFunction("__new__", StringIOImpl.class, "new0", "cls");
+        definer.defineFunction("write", StringIOImpl.class, "write", "self", "str");
 
         return definer.define();
+    }
+
+    private static PythonObject new0(PythonObject cls) {
+        PythonObject object = PythonObject.object.callAttribute("__new__", cls);
+        object.setJavaAttribute("stringBuilder", new StringBuilder());
+
+        return object;
+    }
+
+    private static void write(PythonObject self, PythonObject str) {
+        StringBuilder builder = self.getJavaAttribute("stringBuilder");
+        builder.append(str.toString());
     }
 
 }
