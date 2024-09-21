@@ -59,6 +59,11 @@ public class ClassDefiner {
                 decorator.call(newFunction(source, methodName, parameters)));
     }
 
+    public PythonObject defineFunction(String name, PythonObject decorator, Class source, String methodName, PythonSignature signature) {
+        return initFunction(name,
+                decorator.call(newFunction(source, methodName, signature)));
+    }
+
     public PythonObject defineFunction(String name, Class source, String methodName, PythonSignature signature) {
         return initFunction(name, newFunction(source, methodName, signature));
     }
