@@ -118,6 +118,10 @@ public class Python {
         
         return newDict(map);
     }
+
+    public static PythonObject format(String format, PythonObject... args) {
+        return newString(format).callAttribute("format", args);
+    }
     
     public static PythonObject newClass(String name, PythonObject bases, PythonObject attributes) {
         return newClass(null, name, bases, attributes);
