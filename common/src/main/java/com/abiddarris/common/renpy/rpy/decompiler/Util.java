@@ -39,7 +39,11 @@ import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
+import static com.abiddarris.common.renpy.internal.core.Functions.not;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.core.classes.BuiltinsClasses.set;
+import static com.abiddarris.common.renpy.internal.core.classes.JFunctions.hasattr;
+import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
@@ -60,6 +64,9 @@ public class Util {
             PythonObject OptionBase = OptionBaseImpl.define(util);
             
             DecompilerBaseImpl.define(util, OptionBase);
+
+            util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
+
             DispatcherImpl.define();
                 
             return util;
@@ -317,6 +324,224 @@ public class Util {
 
     }
 
+    private static PythonObject
+    reconstructParaminfo(PythonObject paraminfo) {
+        if (paraminfo == None) {
+            return newString("");
+        }
+
+        PythonObject rv = newList(newString("("));
+        PythonObject sep = util.callAttribute("First", newString(""), newString(", "));
+
+        if (hasattr(paraminfo, "positional_only")) {
+            // ren'py 7.5-7.6 and 8.0-8.1, a slightly changed variant of 7.4 and before
+
+            PythonObject already_accounted = set(
+                    newGenerator().forEach(vars -> paraminfo.getAttribute("positional_only"))
+                        .name((vars, obj) -> {
+                            vars.put("name", obj.getItem(newInt(0)));
+                            vars.put("default", obj.getItem(newInt(1)));
+                        }).yield(vars -> vars.get("name")));
+            already_accounted.callAttribute("update",
+                    newGenerator().forEach((vars) -> paraminfo.getAttribute("keyword_only"))
+                            .name((vars, obj) -> {
+                                vars.put("name", obj.getItem(newInt(0)));
+                                vars.put("default", obj.getItem(newInt(1)));
+                            }).yield(vars -> vars.get("name")));
+
+            PythonObject other = list.call(
+                    newGenerator()
+                        .forEach(variables -> paraminfo.getAttribute("parameters"))
+                            .name((vars, obj) -> {
+                                vars.put("name", obj.getItem(newInt(0)));
+                                vars.put("default", obj.getItem(newInt(1)));
+                            })
+                            .filter(vars -> already_accounted.in(vars.get("name")))
+                            .yield(vars -> newTuple(
+                                    vars.get("name"), vars.get("default")
+                            )));
+
+            for (PythonObject element : paraminfo.getAttribute("positional_only")) {
+                PythonObject name = element.getItem(newInt(0));
+                PythonObject default0 = element.getItem(newInt(1));
+
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", name);
+                if (default0 != None) {
+                    rv.callAttribute("append", newString("="));
+                    rv.callAttribute("append", default0);
+                }
+            }
+
+            if (paraminfo.getAttribute("positional_only").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("/"));
+            }
+
+            for (PythonObject element : other) {
+                PythonObject name = element.getItem(newInt(0));
+                PythonObject default0 = element.getItem(newInt(1));
+
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", name);
+                if (default0 != None) {
+                    rv.callAttribute("append", newString("="));
+                    rv.callAttribute("append", default0);
+                }
+            }
+
+            if (paraminfo.getAttribute("extrapos").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("*"));
+                rv.callAttribute("append", paraminfo.getAttribute("extrapos"));
+            } else if (paraminfo.getAttribute("keyword_only").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("*"));
+            }
+
+            for (PythonObject element : paraminfo.getAttribute("keyword_only")) {
+                PythonObject name = element.getItem(newInt(0));
+                PythonObject default0 = element.getItem(newInt(1));
+
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", name);
+                if (default0 != None) {
+                    rv.callAttribute("append", newString("="));
+                    rv.callAttribute("append", default0);
+                }
+            }
+
+            if (paraminfo.getAttribute("extrakw").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("**"));
+                rv.callAttribute("append", paraminfo.getAttribute("extrakw"));
+            }
+        } else if (hasattr(paraminfo, "extrapos")) {
+            // ren'py 7.4 and below, python 2 style
+            PythonObject positional = list.call(newGenerator()
+                    .forEach(vars -> paraminfo.getAttribute("parameters"))
+                    .name((vars, obj) -> vars.put("i", obj))
+                    .filter(vars -> paraminfo.getAttribute("positional")
+                            .in(vars.get("i").getItem(newInt(0))))
+                    .yield(vars -> vars.get("i"))
+            );
+            PythonObject nameonly = list.call(newGenerator()
+                    .forEach(vars -> paraminfo.getAttribute("parameters"))
+                    .name((vars, obj) -> vars.put("i", obj))
+                    .filter(vars -> not(positional.in(vars.get("i"))))
+                    .yield(vars -> vars.get("i"))
+            );
+
+            for (PythonObject parameter : positional) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", parameter.getItem(newInt(0)));
+
+                if (parameter.getItem(newInt(1)) != None) {
+                    rv.callAttribute("append", newString("={0}")
+                            .callAttribute("format", parameter.getItem(newInt(1))));
+                }
+            }
+
+            if (paraminfo.getAttribute("extrapos").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("*{0}")
+                        .callAttribute("format", paraminfo.getAttribute("extrapos")));
+            }
+
+            if (nameonly.toBoolean()) {
+                if (!paraminfo.getAttribute("extrapos").toBoolean()) {
+                    rv.callAttribute("append", sep.call());
+                    rv.callAttribute("append", newString("*"));
+                }
+
+                for (PythonObject parameter : nameonly) {
+                    rv.callAttribute("append", sep.call());
+                    rv.callAttribute("append", parameter.getItem(newInt(0)));
+
+                    if (parameter.getItem(newInt(1)) != None) {
+                        rv.callAttribute("append", newString("={0}")
+                                .callAttribute("format", parameter.getItem(newInt(1))));
+                    }
+                }
+
+            }
+            if (paraminfo.getAttribute("extrakw").toBoolean()) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", newString("**{0}")
+                        .callAttribute("format", paraminfo.getAttribute("extrakw")));
+            }
+        } else {
+            // ren'py 7.7/8.2 and above.
+            // positional only, /, positional or keyword, *, keyword only, ***
+            // prescence of the / is indicated by positional only arguments being present
+            // prescence of the * (if no *args) are present is indicated by keyword only args
+            // being present.
+            PythonObject state = newInt(1); // (0 = positional only, 1 = pos/key, 2 = keyword only)
+
+            for (PythonObject parameter : callNestedAttribute(paraminfo, "parameters.values")) {
+                rv.callAttribute("append", sep.call());
+                if (parameter.getAttribute("kind").equals(newInt(0))) {
+                    // positional only
+                    state = newInt(0);
+                    rv.callAttribute("append", sep.call());
+                    rv.callAttribute("append", parameter.getAttribute("name"));
+
+                    if (parameter.getAttribute("default") != None) {
+                        rv.callAttribute("append", newString("={0}")
+                                .callAttribute("format", parameter.getAttribute("default")));
+                    }
+                } else {
+                    if (state.equals(newInt(0))) {
+                        // insert the / if we had a positional only argument before.
+                        state = newInt(1);
+
+                        rv.callAttribute("append", newString("/"));
+                        rv.callAttribute("append", sep.call());
+                    }
+
+                    if (parameter.getAttribute("kind").equals(newInt(1))) {
+                        // positional or keyword?
+                        rv.callAttribute("append", parameter.getAttribute("name"));
+                        if (parameter.getAttribute("default") != None) {
+                            rv.callAttribute("append", newString("={0}")
+                                    .callAttribute("format", parameter.getAttribute("default")));
+                        }
+                    } else if (parameter.getAttribute("kind").equals(newInt(2))) {
+                        // *positional
+                        state = newInt(2);
+
+                        rv.callAttribute("append", newString("*{0}")
+                                .callAttribute("format", parameter.getAttribute("name")));
+                    } else if (parameter.getAttribute("kind").equals(newInt(3))) {
+                        // keyword only
+                        if (state.equals(newInt(1))) {
+                            // insert the * if we didn't have a *args before
+                            state = newInt(2);
+
+                            rv.callAttribute("append", newString("*"));
+                            rv.callAttribute("append", sep.call());
+                        }
+
+                        rv.callAttribute("append", parameter.getAttribute("name"));
+
+                        if (parameter.getAttribute("default") != None) {
+                            rv.callAttribute("append", newString("={0}")
+                                    .callAttribute("format", parameter.getAttribute("default")));
+                        }
+                    } else if (parameter.getAttribute("kind").equals(newInt(4))) {
+                        // **keyword
+                        state = newInt(3);
+                        rv.callAttribute("append", newString("**{0}")
+                                .callAttribute("format", parameter.getAttribute("name")));
+                    }
+                }
+            }
+        }
+        rv.callAttribute("append", newString(")"));
+
+        return newString("").callAttribute("join", rv);
+    }
+
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
     private static class DispatcherImpl {
 
@@ -332,6 +557,5 @@ public class Util {
         }
 
     }
-
 
 }
