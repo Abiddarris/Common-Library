@@ -66,6 +66,7 @@ public class Util {
             DecompilerBaseImpl.define(util, OptionBase);
 
             util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
+            util.addNewFunction("split_logical_lines", Util.class, "splitLogicalLines", "s");
 
             DispatcherImpl.define();
                 
@@ -541,6 +542,13 @@ public class Util {
 
         return newString("").callAttribute("join", rv);
     }
+
+    private static PythonObject
+    splitLogicalLines(PythonObject s) {
+        return util.callAttribute("Lexer", s)
+                .callAttribute("split_logical_lines");
+    }
+
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
     private static class DispatcherImpl {
