@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.internal.mod.builtins;
+package com.abiddarris.common.renpy.internal.gen;
 
-public class BuiltinsImpl {
+public class Generators {
 
-    private static boolean init;
-
-    public static void initRest() {
-        if (init) {
-            return;
-        }
-
-        init = true;
-
-        SetImpl.define();
-        GeneratorImpl.define();
+    public static GeneratorBuilder newGenerator() {
+        return new GeneratorBuilder();
     }
 
 }
