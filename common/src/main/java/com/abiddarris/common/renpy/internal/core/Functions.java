@@ -107,4 +107,8 @@ public class Functions {
         }
         return True;
     }
+
+    public static PythonObject not(PythonObject obj) {
+        return newBoolean(!obj.toBoolean());
+    }
 }
