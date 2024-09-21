@@ -37,6 +37,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Python.format;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
@@ -56,6 +57,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -155,6 +157,15 @@ public class Decompiler {
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
+
+            // Programming related functions
+
+            definer.defineFunction("print_python", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Python")),
+                    DecompilerImpl.class, "printPython", new PythonSignatureBuilder("self", "ast")
+                            .addParameter("early", False)
+                            .build());
+
+
             definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
                     DecompilerImpl.class, "printDefine", "self", "ast");
 
@@ -404,6 +415,39 @@ public class Decompiler {
                     }
                 }
             }).onFinally(() -> self.setAttribute("in_init", in_init));
+        }
+
+        private static void
+        printPython(PythonObject self, PythonObject ast, PythonObject early) {
+            self.callAttribute("indent");
+
+            PythonObject code = getNestedAttribute(ast, "code.source");
+            if (code.getItem(newInt(0)).equals(newString("\n"))) {
+                code = code.getItem(newSlice(1));
+                self.callAttribute("write", newString("python"));
+
+                if (early.toBoolean()) {
+                    self.callAttribute("write", newString(" early"));
+                }
+                if (ast.getAttribute("hide").toBoolean()) {
+                    self.callAttribute("write", newString(" hide"));
+                }
+                // store attribute added in 6.14
+                if (ast.getAttribute("store", newString("store")).jNotEquals(newString("store"))) {
+                    self.callAttribute("write", newString(" in "));
+                    // Strip prepended "store."
+                    self.callAttribute("write", ast.getAttribute("store").getItem(newSlice(6)));
+                }
+                self.callAttribute("write", newString(":"));
+
+                // Fix annoying lambda
+                PythonObject code0 = code;
+                with(self.callAttribute("increase_indent"), () -> {
+                    self.callAttribute("write_lines", decompiler.callAttribute("split_logical_lines", code0));
+                });
+            } else {
+                self.callAttribute("write", format("$ {0}", code));
+            }
         }
 
         private static void printDefine(PythonObject self, PythonObject ast) {

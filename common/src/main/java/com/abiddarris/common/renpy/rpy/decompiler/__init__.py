@@ -456,33 +456,6 @@ class Decompiler(DecompilerBase):
                 # have to go after them all
                 self.print_say_inside_menu()
 
-    # Programming related functions
-
-    @dispatch(renpy.ast.Python)
-    def print_python(self, ast, early=False):
-        self.indent()
-
-        code = ast.code.source
-        if code[0] == '\n':
-            code = code[1:]
-            self.write("python")
-            if early:
-                self.write(" early")
-            if ast.hide:
-                self.write(" hide")
-            # store attribute added in 6.14
-            if getattr(ast, "store", "store") != "store":
-                self.write(" in ")
-                # Strip prepended "store."
-                self.write(ast.store[6:])
-            self.write(":")
-
-            with self.increase_indent():
-                self.write_lines(split_logical_lines(code))
-
-        else:
-            self.write(f'$ {code}')
-
     @dispatch(renpy.ast.EarlyPython)
     def print_earlypython(self, ast):
         self.print_python(ast, early=True)
