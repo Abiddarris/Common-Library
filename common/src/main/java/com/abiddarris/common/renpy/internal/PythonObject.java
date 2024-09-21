@@ -142,6 +142,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
 
         int0.addNewFunction("__add__", PythonInt.class, "add", "self", "value");
         int0.addNewFunction("__bool__", PythonInt.class, "bool", "self");
+        int0.addNewFunction("__str__", PythonInt.class, "str", "self");
 
         function.setAttributeDirectly("__class__", type);
         function.setAttribute("__bases__", defaultBases);

@@ -54,6 +54,11 @@ class PythonInt extends PythonObject {
         return newBoolean(self.value != 0);
     }
 
+    private static PythonObject
+    str(PythonInt self) {
+        return newString(String.valueOf(self.value));
+    }
+
     @Override
     public int toInt() {
         return Math.toIntExact(value);
