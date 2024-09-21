@@ -174,6 +174,10 @@ class PythonString extends PythonObject {
         return newString(self.string.substring(start.toInt()));
     }
 
+    private static PythonObject len(PythonString self) {
+        return newInt(self.string.length());
+    }
+
     @Override
     public String toString() {
         return string;
