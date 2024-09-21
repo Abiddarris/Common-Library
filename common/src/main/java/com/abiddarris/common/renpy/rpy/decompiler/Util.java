@@ -68,6 +68,10 @@ public class Util {
             util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
             util.addNewFunction("split_logical_lines", Util.class, "splitLogicalLines", "s");
 
+            // special lexer for simple_expressions the ren'py way
+            // false negatives aren't dangerous. but false positives are
+            LexerImpl.define();
+
             DispatcherImpl.define();
                 
             return util;
@@ -549,6 +553,23 @@ public class Util {
                 .callAttribute("split_logical_lines");
     }
 
+    private static class LexerImpl {
+
+        private static PythonObject define() {
+            ClassDefiner definer = util.defineClass("Lexer");
+            definer.defineFunction("__init__", LexerImpl.class, "init", "self", "string");
+
+            return definer.define();
+        }
+
+        private static void
+        init(PythonObject self, PythonObject string) {
+            self.setAttribute("pos", newInt(0));
+            self.setAttribute("length", len(string));
+            self.setAttribute("string", string);
+        }
+
+    }
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
     private static class DispatcherImpl {

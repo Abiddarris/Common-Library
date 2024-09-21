@@ -164,13 +164,6 @@ def simple_expression_guard(s):
         return f'({s})'
 
 class Lexer:
-    # special lexer for simple_expressions the ren'py way
-    # false negatives aren't dangerous. but false positives are
-    def __init__(self, string):
-        self.pos = 0
-        self.length = len(string)
-        self.string = string
-
     def re(self, regexp):
         # see if regexp matches at self.string[self.pos].
         # if it does, increment self.pos
