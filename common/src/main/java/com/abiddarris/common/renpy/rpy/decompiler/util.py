@@ -163,9 +163,6 @@ def simple_expression_guard(s):
     else:
         return f'({s})'
 
-def split_logical_lines(s):
-    return Lexer(s).split_logical_lines()
-
 class Lexer:
     # special lexer for simple_expressions the ren'py way
     # false negatives aren't dangerous. but false positives are
