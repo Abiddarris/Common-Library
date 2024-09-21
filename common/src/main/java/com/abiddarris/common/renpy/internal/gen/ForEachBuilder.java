@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.internal.mod.builtins;
+package com.abiddarris.common.renpy.internal.gen;
 
-public class BuiltinsImpl {
+public class ForEachBuilder {
 
-    private static boolean init;
+    private final GeneratorBuilder builder;
+    private final IteratorSupplier supplier;
 
-    public static void initRest() {
-        if (init) {
-            return;
-        }
-
-        init = true;
-
-        SetImpl.define();
-        GeneratorImpl.define();
+    ForEachBuilder(GeneratorBuilder builder, IteratorSupplier supplier) {
+        this.builder = builder;
+        this.supplier = supplier;
     }
 
+    public GeneratorBuilder name(NameSetter nameSetter) {
+        builder.addForEach(new ForEachStatement(supplier, nameSetter));
+
+        return builder;
+    }
 }

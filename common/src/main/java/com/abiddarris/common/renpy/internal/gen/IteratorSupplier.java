@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.internal.mod.builtins;
+package com.abiddarris.common.renpy.internal.gen;
 
-public class BuiltinsImpl {
+import com.abiddarris.common.renpy.internal.PythonObject;
 
-    private static boolean init;
+import java.util.Map;
+import java.util.function.Function;
 
-    public static void initRest() {
-        if (init) {
-            return;
-        }
-
-        init = true;
-
-        SetImpl.define();
-        GeneratorImpl.define();
-    }
-
+public interface IteratorSupplier extends Function<Variables, PythonObject> {
 }
