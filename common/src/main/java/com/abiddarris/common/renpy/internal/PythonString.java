@@ -165,6 +165,10 @@ class PythonString extends PythonObject {
     }
 
     private static PythonObject getItem(PythonString self, PythonObject key) {
+        if (key instanceof PythonInt) {
+            int index = key.toInt();
+            return newString(self.string.substring(index, index + 1));
+        }
         PythonObject start = key.getAttribute("start");
 
         return newString(self.string.substring(start.toInt()));
