@@ -37,6 +37,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Functions.not;
@@ -575,6 +576,24 @@ public class Util {
             self.setAttribute("string", string);
         }
 
+        private static PythonObject
+        re(PythonObject self, PythonObject regexp) {
+            // see if regexp matches at self.string[self.pos].
+            // if it does, increment self.pos
+            if (self.getAttribute("length").equals(self.getAttribute("pos"))) {
+                return None;
+            }
+
+            PythonObject match = callNestedAttribute(util, "re.compile", regexp,
+                    getNestedAttribute(util, "re.DOTALL"))
+                    .callAttribute("match", self.getAttribute("string"), self.getAttribute("pos"));
+            if (!match.toBoolean()) {
+                return None;
+            }
+
+            self.setAttribute("pos", match.callAttribute("end"));
+            return match.callAttribute("group", newInt(0));
+        }
         private static PythonObject
         pythonString(PythonObject self, PythonObject clear_whitespace) {
             // parse strings the ren'py way (don't parse docstrings, no b/r in front allowed)

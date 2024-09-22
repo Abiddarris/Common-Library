@@ -164,19 +164,6 @@ def simple_expression_guard(s):
         return f'({s})'
 
 class Lexer:
-    def re(self, regexp):
-        # see if regexp matches at self.string[self.pos].
-        # if it does, increment self.pos
-        if self.length == self.pos:
-            return None
-
-        match = re.compile(regexp, re.DOTALL).match(self.string, self.pos)
-        if not match:
-            return None
-
-        self.pos = match.end()
-        return match.group(0)
-
     def eol(self):
         # eat the next whitespace and check for the end of this simple_expression
         self.re(r"(\s+|\\\n)+")
