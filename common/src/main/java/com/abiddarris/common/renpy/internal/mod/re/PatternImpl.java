@@ -15,7 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.re;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.int0;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static java.util.regex.Pattern.DOTALL;
@@ -23,12 +25,23 @@ import static java.util.regex.Pattern.compile;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class PatternImpl {
 
+    private static PythonObject re;
+
     public static void define(PythonObject re) {
+        PatternImpl.re = re;
+
         ClassDefiner definer = re.defineClass("Pattern");
         definer.defineFunction("__init__", PatternImpl.class, "init", "self", "pattern", "flags");
+        definer.defineFunction("match", PatternImpl.class, "match", new PythonSignatureBuilder("self", "string")
+                .addParameter("start", newInt(0))
+                .build());
 
         definer.define();
     }
@@ -43,5 +56,19 @@ class PatternImpl {
         self.setJavaAttribute("pattern", compile(pattern.toString(), flag));
     }
 
+    private static PythonObject
+    match(PythonObject self, PythonObject string, PythonObject start) {
+        Pattern pattern = self.getJavaAttribute("pattern");
+        Matcher matcher = pattern.matcher(string.toString());
+        matcher.region(start.toInt(), matcher.regionEnd());
+        if (!matcher.lookingAt()) {
+            return None;
+        }
+
+        PythonObject match = re.callAttribute("Match");
+        match.setJavaAttribute("matcher", matcher);
+
+        return match;
+    }
 
 }
