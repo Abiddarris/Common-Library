@@ -80,6 +80,15 @@ public class PythonTuple extends PythonObject {
         return newString(jString);
     }
 
+    private static PythonObject contains(PythonTuple self, PythonObject value) {
+        for (PythonObject element : self) {
+            if (element.equals(value)) {
+                return True;
+            }
+        }
+        return False;
+    }
+
     private static class TupleIterator extends PythonObject {
 
         private int index;
