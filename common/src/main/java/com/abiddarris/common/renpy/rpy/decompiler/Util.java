@@ -559,6 +559,10 @@ public class Util {
         private static PythonObject define() {
             ClassDefiner definer = util.defineClass("Lexer");
             definer.defineFunction("__init__", LexerImpl.class, "init", "self", "string");
+            definer.defineFunction("python_string", LexerImpl.class, "pythonString", new PythonSignatureBuilder("self")
+                    .addParameter("clear_whitespace", True)
+                    .build());
+
             definer.defineFunction("split_logical_lines", LexerImpl.class, "splitLogicalLines", "self");
 
             return definer.define();
@@ -569,6 +573,18 @@ public class Util {
             self.setAttribute("pos", newInt(0));
             self.setAttribute("length", len(string));
             self.setAttribute("string", string);
+        }
+
+        private static PythonObject
+        pythonString(PythonObject self, PythonObject clear_whitespace) {
+            // parse strings the ren'py way (don't parse docstrings, no b/r in front allowed)
+            // edit: now parses docstrings correctly. There was a degenerate case where
+            // '''string'string''' would result in issues
+            if (clear_whitespace.toBoolean()) {
+                return self.callAttribute("match", newString("(u?(?P<a>\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(?P=a))"));
+            } else {
+                return self.callAttribute("re", newString("(u?(?P<a>\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(?P=a))"));
+            }
         }
 
         private static PythonObject
