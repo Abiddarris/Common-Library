@@ -170,8 +170,13 @@ class PythonString extends PythonObject {
             return newString(self.string.substring(index, index + 1));
         }
         PythonObject start = key.getAttribute("start");
+        PythonObject end = key.getAttribute("stop");
 
-        return newString(self.string.substring(start.toInt()));
+        if (end == None) {
+            end = newInt(self.string.length());
+        }
+
+        return newString(self.string.substring(start.toInt(), end.toInt()));
     }
 
     private static PythonObject len(PythonString self) {
