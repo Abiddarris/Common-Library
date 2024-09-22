@@ -16,6 +16,7 @@
 package com.abiddarris.common.renpy.internal.mod.re;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
+import static com.abiddarris.common.renpy.internal.Python.newString;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -27,6 +28,7 @@ class MatchImpl {
     static void define(PythonObject re) {
         ClassDefiner definer = re.defineClass("Match");
         definer.defineFunction("end", MatchImpl.class, "end", "self");
+        definer.defineFunction("group", MatchImpl.class, "group", "self", "group");
 
         definer.define();
     }
@@ -36,6 +38,13 @@ class MatchImpl {
         Matcher matcher = self.getJavaAttribute("matcher");
 
         return newInt(matcher.end());
+    }
+
+    private static PythonObject
+    group(PythonObject self, PythonObject group) {
+        Matcher matcher = self.getJavaAttribute("matcher");
+
+        return newString(matcher.group(group.toInt()));
     }
 
 }
