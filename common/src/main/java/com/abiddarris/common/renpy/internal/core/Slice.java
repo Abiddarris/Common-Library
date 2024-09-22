@@ -47,4 +47,8 @@ public class Slice {
     public static PythonObject newSlice(int start) {
         return slice.call(newInt(start), None, None);
     }
+
+    public static PythonObject newSlice(PythonObject start, PythonObject end) {
+        return slice.call(start, end, None);
+    }
 }
