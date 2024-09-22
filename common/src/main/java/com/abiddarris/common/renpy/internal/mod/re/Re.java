@@ -43,6 +43,7 @@ public class Re {
                     .build());
 
             PatternImpl.define(re);
+            MatchImpl.define(re);
         });
     }
 
