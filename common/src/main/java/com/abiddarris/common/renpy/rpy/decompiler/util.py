@@ -20,7 +20,6 @@
 
 
 import sys
-import re
 from io import StringIO
 from contextlib import contextmanager
 
