@@ -603,9 +603,9 @@ public class Util {
             // edit: now parses docstrings correctly. There was a degenerate case where
             // '''string'string''' would result in issues
             if (clear_whitespace.toBoolean()) {
-                return self.callAttribute("match", newString("(u?(?P<a>\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(?P=a))"));
+                return self.callAttribute("match", newString("(u?(\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(\\2))"));
             } else {
-                return self.callAttribute("re", newString("(u?(?P<a>\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(?P=a))"));
+                return self.callAttribute("re", newString("(u?(\"(?:\"\")?|'(?:'')?).*?(?<=[^\\\\])(?:\\\\\\\\)*(\\2))"));
             }
         }
 
