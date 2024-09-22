@@ -15,15 +15,27 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.re;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+
+import java.util.regex.Matcher;
 
 class MatchImpl {
 
     static void define(PythonObject re) {
         ClassDefiner definer = re.defineClass("Match");
+        definer.defineFunction("end", MatchImpl.class, "end", "self");
 
         definer.define();
+    }
+
+    private static PythonObject
+    end(PythonObject self) {
+        Matcher matcher = self.getJavaAttribute("matcher");
+
+        return newInt(matcher.end());
     }
 
 }
