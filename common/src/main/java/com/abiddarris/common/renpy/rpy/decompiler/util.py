@@ -272,51 +272,6 @@ class Lexer:
             # are we at the end of the simple expression?
         return self.eol()
 
-    def split_logical_lines(self):
-        # split a sequence in logical lines
-        # this behaves similarly to .splitlines() which will ignore
-        # a trailing \n
-        lines = []
-
-        contained = 0
-
-        startpos = self.pos
-
-        while self.pos < self.length:
-            c = self.string[self.pos]
-
-            if (c == '\n'
-                    and not contained
-                    and (not self.pos or self.string[self.pos - 1] != '\\')):
-                lines.append(self.string[startpos:self.pos])
-                # the '\n' is not included in the emitted line
-                self.pos += 1
-                startpos = self.pos
-                continue
-
-            if c in ('(', '[', '{'):
-                contained += 1
-                self.pos += 1
-                continue
-
-            if c in (')', ']', '}') and contained:
-                contained -= 1
-                self.pos += 1
-                continue
-
-            if c == '#':
-                self.re("[^\n]*")
-                continue
-
-            if self.python_string(False):
-                continue
-
-            self.re(r'\w+| +|.')  # consume a word, whitespace or one symbol
-
-        if self.pos != startpos:
-            lines.append(self.string[startpos:])
-        return lines
-
 # Versions of Ren'Py prior to 6.17 put trailing whitespace on the end of
 # simple_expressions. This class attempts to preserve the amount of
 # whitespace if possible.

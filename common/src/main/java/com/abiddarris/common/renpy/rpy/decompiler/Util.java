@@ -40,6 +40,7 @@ import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAtt
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Functions.not;
+import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.core.classes.BuiltinsClasses.set;
 import static com.abiddarris.common.renpy.internal.core.classes.JFunctions.hasattr;
@@ -558,6 +559,7 @@ public class Util {
         private static PythonObject define() {
             ClassDefiner definer = util.defineClass("Lexer");
             definer.defineFunction("__init__", LexerImpl.class, "init", "self", "string");
+            definer.defineFunction("split_logical_lines", LexerImpl.class, "splitLogicalLines", "self");
 
             return definer.define();
         }
@@ -569,6 +571,69 @@ public class Util {
             self.setAttribute("string", string);
         }
 
+        private static PythonObject
+        splitLogicalLines(PythonObject self) {
+            // split a sequence in logical lines
+            // this behaves similarly to .splitlines() which will ignore
+            // a trailing \n
+            PythonObject lines = newList();
+
+            PythonObject contained = newInt(0);
+
+            PythonObject startpos = self.getAttribute("pos");
+
+            while (self.getAttribute("pos").jLessThan(self.getAttribute("length"))) {
+                PythonObject c = self.getAttribute("string")
+                        .getItem(self.getAttribute("pos"));
+
+                if (c.equals(newString("\n"))
+                        && !contained.toBoolean()
+                        && (!self.getAttribute("pos").toBoolean() || self.getAttribute("string")
+                                .getItem(self.getAttribute("pos")
+                                        .subtract(newInt(1)))
+                                .jNotEquals(newString("\\"))
+                            )
+                        ) {
+                    lines.callAttribute("append", self.getAttribute("string")
+                            .getItem(newSlice(startpos, self.getAttribute("pos"))));
+
+                    // the '\n' is not included in the emitted line
+                    self.setAttribute("pos", self.getAttribute("pos")
+                            .add(newInt(1)));
+                    startpos = self.getAttribute("pos");
+                    continue;
+                }
+
+                if (newTuple(newString("("), newString("["), newString("{")).jin(c)) {
+                    contained = contained.add(newInt(1));
+                    self.setAttribute("pos", self.getAttribute("pos").add(newInt(1)));
+                    continue;
+                }
+
+                if (newTuple(newString(")"), newString("]"), newString("}")).jin(c) && contained.toBoolean()) {
+                    contained =  contained.subtract(newInt(1));
+                    self.setAttribute("pos", self.getAttribute("pos").add(newInt(1)));
+                    continue;
+                }
+
+                if (c.equals(newString("#"))) {
+                    self.callAttribute("re", newString("[^\n]*"));
+                    continue;
+                }
+
+                if (self.callAttribute("python_string", False).toBoolean()) {
+                    continue;
+                }
+
+                self.callAttribute("re", newString("\\w+| +|."));  // consume a word, whitespace or one symbol
+            }
+
+            if (self.getAttribute("pos").equals(startpos)) {
+                lines.callAttribute("append", self.getAttribute("string")
+                        .getItem(newSlice(startpos)));
+            }
+            return lines;
+        }
     }
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
