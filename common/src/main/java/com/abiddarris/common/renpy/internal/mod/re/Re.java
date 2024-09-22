@@ -15,7 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.re;
 
+import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerPackageLoader;
+
+import com.abiddarris.common.renpy.internal.Python;
 
 public class Re {
 
@@ -29,6 +32,7 @@ public class Re {
         init = true;
 
         registerPackageLoader("re", (re) -> {
+            re.setAttribute("DOTALL", newString("re.DOTALL"));
         });
     }
 
