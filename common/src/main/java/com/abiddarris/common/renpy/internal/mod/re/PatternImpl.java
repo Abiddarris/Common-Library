@@ -15,40 +15,33 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.re;
 
-import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerPackageLoader;
+import static com.abiddarris.common.renpy.internal.PythonObject.int0;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static java.util.regex.Pattern.DOTALL;
+import static java.util.regex.Pattern.compile;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
-import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
-public class Re {
+class PatternImpl {
 
-    private static PythonObject re;
-    private static boolean init;
+    public static void define(PythonObject re) {
+        ClassDefiner definer = re.defineClass("Pattern");
+        definer.defineFunction("__init__", PatternImpl.class, "init", "self", "pattern", "flags");
 
-    public static void initLoader() {
-        if (init) {
-            return;
+        definer.define();
+    }
+
+    private static void init(PythonObject self, PythonObject pattern, PythonObject flags) {
+        int flag = 0;
+        if (!isinstance(flags, int0).toBoolean()) {
+            if(flags.equals(newString("re.DOTALL"))) {
+                flag |= DOTALL;
+            }
         }
-
-        init = true;
-
-        registerPackageLoader("re", (re) -> {
-            Re.re = re;
-
-            re.setAttribute("DOTALL", newString("re.DOTALL"));
-            re.addNewFunction("compile", Re.class, "compile", new PythonSignatureBuilder("pattern")
-                    .addParameter("flags", newInt(0))
-                    .build());
-
-            PatternImpl.define(re);
-        });
+        self.setJavaAttribute("pattern", compile(pattern.toString(), flag));
     }
 
-    private static PythonObject
-    compile(PythonObject pattern, PythonObject flags) {
-        return re.callAttribute("Pattern", pattern, flags);
-    }
 
 }
