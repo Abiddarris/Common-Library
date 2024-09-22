@@ -15,13 +15,16 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.re;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerPackageLoader;
 
-import com.abiddarris.common.renpy.internal.Python;
+import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class Re {
 
+    private static PythonObject re;
     private static boolean init;
 
     public static void initLoader() {
@@ -32,8 +35,18 @@ public class Re {
         init = true;
 
         registerPackageLoader("re", (re) -> {
+            Re.re = re;
+
             re.setAttribute("DOTALL", newString("re.DOTALL"));
+            re.addNewFunction("compile", Re.class, "compile", new PythonSignatureBuilder("pattern")
+                    .addParameter("flags", newInt(0))
+                    .build());
         });
+    }
+
+    private static PythonObject
+    compile(PythonObject pattern, PythonObject flags) {
+        return re.callAttribute("Pattern", pattern, flags);
     }
 
 }
