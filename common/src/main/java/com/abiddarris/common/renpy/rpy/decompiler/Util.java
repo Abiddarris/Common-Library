@@ -60,6 +60,8 @@ public class Util {
     static void initLoader() {
         registerLoader("decompiler.util", (name) -> {
             util = createModule(name);
+            util.importModule("re");
+
             util.fromImport("decompiler.unrpyccompat", "DecompilerBaseAdvanceToLineGenerator");
             util.fromImport("decompiler.unrpyccompat", "DispatcherCallClosure");
 
