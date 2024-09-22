@@ -562,6 +562,7 @@ public class Util {
         private static PythonObject define() {
             ClassDefiner definer = util.defineClass("Lexer");
             definer.defineFunction("__init__", LexerImpl.class, "init", "self", "string");
+            definer.defineFunction("re", LexerImpl.class, "re", "self", "regexp");
             definer.defineFunction("python_string", LexerImpl.class, "pythonString", new PythonSignatureBuilder("self")
                     .addParameter("clear_whitespace", True)
                     .build());
