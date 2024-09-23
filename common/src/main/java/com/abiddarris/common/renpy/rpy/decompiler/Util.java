@@ -123,6 +123,7 @@ public class Util {
                     .build());
 
             definer.defineFunction("write", DecompilerBaseImpl.class, "write", "self", "string");
+            definer.defineFunction("write_lines", DecompilerBaseImpl.class, "writeLines", "self", "line");
             definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
 
             IndentationContextManagerImpl.define(definer);
@@ -207,6 +208,20 @@ public class Util {
             callNestedAttribute(self, "out_file.write", string);
         }
 
+        /**
+         * Write each line in lines to the file without writing whitespace-only lines
+         */
+        private static void
+        writeLines(PythonObject self, PythonObject lines) {
+            for (PythonObject line : lines) {
+                if (line.equals(newString(""))) {
+                    self.callAttribute("write", newString("\n"));
+                } else {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", line);
+                }
+            }
+        }
         private static void advanceToLine(PythonObject self, PythonObject linenumber) {
             // If there was anything that we wanted to do as soon as we found a blank line,
             // try to do it now.
