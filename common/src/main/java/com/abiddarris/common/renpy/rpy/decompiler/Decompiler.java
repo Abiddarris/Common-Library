@@ -41,6 +41,7 @@ import static com.abiddarris.common.renpy.internal.Python.format;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.PythonObject.enumerate;
 import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
 import static com.abiddarris.common.renpy.internal.PythonObject.list;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
@@ -57,6 +58,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.core.classes.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -154,6 +156,8 @@ public class Decompiler {
 
             // Flow control
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
+            definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
+
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
@@ -303,6 +307,35 @@ public class Decompiler {
                 out_file.callAttribute("write", callNestedAttribute(self, "out_file.getvalue"));
                 self.setAttribute("out_file", out_file);
             });
+        }
+
+        private static void
+        printIf(PythonObject self, PythonObject ast) {
+            PythonObject statement = decompiler.callAttribute("First", newString("if"), newString("elif"));
+
+            for (PythonObject element : enumerate.call(ast.getAttribute("entries"))) {
+                PythonObject i = element.getItem(newInt(0));
+                element = element.getItem(newInt(1));
+
+                PythonObject condition = element.getItem(newInt(0));
+                PythonObject block = element.getItem(newInt(1));
+
+                // The unicode string "True" is used as the condition for else:.
+                // But if it's an actual expression, it's a renpy.ast.PyExpr
+                if (i.add(newInt(1)).equals(len(ast.getAttribute("entries"))) &&
+                        !isinstance(condition, getNestedAttribute(decompiler, "renpy.ast.PyExpr")).toBoolean()) {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", newString("else:"));
+                } else {
+                    if (hasattr(condition, "linenumber")) {
+                        self.callAttribute("advance_to_line", condition.getAttribute("linenumber"));
+                    }
+                    self.callAttribute("indent");
+                    self.callAttribute("write",format("{0} {1}:", statement.call(), condition));
+                }
+
+                self.callAttribute("print_nodes", block, newInt(1));
+            }
         }
 
         private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {

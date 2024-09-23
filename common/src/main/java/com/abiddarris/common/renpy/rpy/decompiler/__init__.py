@@ -285,24 +285,6 @@ class Decompiler(DecompilerBase):
         if ast.expression is not None:
             self.write(f' {ast.expression}')
 
-    @dispatch(renpy.ast.If)
-    def print_if(self, ast):
-        statement = First("if", "elif")
-
-        for i, (condition, block) in enumerate(ast.entries):
-            # The unicode string "True" is used as the condition for else:.
-            # But if it's an actual expression, it's a renpy.ast.PyExpr
-            if (i + 1) == len(ast.entries) and not isinstance(condition, renpy.ast.PyExpr):
-                self.indent()
-                self.write("else:")
-            else:
-                if (hasattr(condition, 'linenumber')):
-                    self.advance_to_line(condition.linenumber)
-                self.indent()
-                self.write(f'{statement()} {condition}:')
-
-            self.print_nodes(block, 1)
-
     @dispatch(renpy.ast.While)
     def print_while(self, ast):
         self.indent()
