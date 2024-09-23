@@ -68,6 +68,7 @@ public class Util {
             PythonObject OptionBase = OptionBaseImpl.define(util);
             
             DecompilerBaseImpl.define(util, OptionBase);
+            First.define();
 
             util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
             util.addNewFunction("split_logical_lines", Util.class, "splitLogicalLines", "s");
@@ -346,6 +347,43 @@ public class Util {
             }
         }
 
+    }
+
+    /**
+     * An often used pattern is that on the first item
+     * of a loop something special has to be done. This class
+     * provides an easy object which on the first access
+     * will return True, but any subsequent accesses False
+     */
+    private static class First {
+
+        private static void define() {
+            ClassDefiner definer = util.defineClass("First");
+            definer.defineFunction("__init__", First.class, "init", new PythonSignatureBuilder("self")
+                    .addParameter("yes_value", True)
+                    .addParameter("no_value", False)
+                    .build());
+            definer.defineFunction("__call__", First.class, "call", "self");
+
+            definer.define();
+        }
+
+        private static void
+        init(PythonObject self, PythonObject yes_value, PythonObject no_value) {
+            self.setAttribute("yes_value", yes_value);
+            self.setAttribute("no_value", no_value);
+            self.setAttribute("first", True);
+        }
+
+        private static PythonObject
+        call(PythonObject self) {
+            if (self.getAttribute("first").toBoolean()) {
+                self.setAttribute("first", False);
+                return self.getAttribute("yes_value");
+            } else {
+                return self.getAttribute("no_value");
+            }
+        }
     }
 
     private static PythonObject

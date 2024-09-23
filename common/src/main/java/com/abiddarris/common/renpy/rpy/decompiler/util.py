@@ -68,23 +68,6 @@ class DecompilerBase:
         """
         self.blank_line_queue.append(m)
 
-class First:
-    # An often used pattern is that on the first item
-    # of a loop something special has to be done. This class
-    # provides an easy object which on the first access
-    # will return True, but any subsequent accesses False
-    def __init__(self, yes_value=True, no_value=False):
-        self.yes_value = yes_value
-        self.no_value = no_value
-        self.first = True
-
-    def __call__(self):
-        if self.first:
-            self.first = False
-            return self.yes_value
-        else:
-            return self.no_value
-
 def reconstruct_arginfo(arginfo):
     if arginfo is None:
         return ""
