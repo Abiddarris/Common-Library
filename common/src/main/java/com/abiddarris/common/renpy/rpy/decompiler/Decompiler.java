@@ -173,6 +173,10 @@ public class Decompiler {
 
             definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
                     DecompilerImpl.class, "printDefine", "self", "ast");
+            definer.defineFunction("print_say", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Say")),
+                    DecompilerImpl.class, "printSay", new PythonSignatureBuilder("self", "ast")
+                            .addParameter("inmenu", False)
+                            .build());
 
             return definer.define();
         }
@@ -523,6 +527,24 @@ public class Decompiler {
                                 ast.getAttribute("varname"), index, operator,
                                 getNestedAttribute(ast, "code.source")));
             }
+        }
+
+        private static void
+        printSay(PythonObject self, PythonObject ast, PythonObject inmenu) {
+            // if this say statement precedes a menu statement, postpone emitting it until we're
+            // handling the menu
+            if (!inmenu.toBoolean()
+                    && self.getAttribute("index").add(newInt(1))
+                        .jLessThan(len(self.getAttribute("block")))
+                    && self.callAttribute("say_belongs_to_menu", ast, self.getAttribute("block")
+                        .getItem(self.getAttribute("index").add(newInt(1)))).toBoolean()) {
+                self.setAttribute("say_inside_menu", ast);
+                return;
+            }
+
+            //else just write it.
+            self.callAttribute("indent");
+            self.callAttribute("write", decompiler.callAttribute("say_get_code", ast, inmenu));
         }
     }
 
