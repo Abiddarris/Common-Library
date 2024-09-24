@@ -16,7 +16,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
-import com.abiddarris.common.renpy.internal.model.AttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
 
 class Bootstrap {
     

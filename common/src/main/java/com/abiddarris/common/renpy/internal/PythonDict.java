@@ -15,13 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.findMethod;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
-import static com.abiddarris.common.renpy.internal.PythonObject.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
 
-import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
 

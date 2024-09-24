@@ -15,7 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 

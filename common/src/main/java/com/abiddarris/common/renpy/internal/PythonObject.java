@@ -33,10 +33,10 @@ import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.mod.io.IO;
 import com.abiddarris.common.renpy.internal.mod.re.Re;
-import com.abiddarris.common.renpy.internal.model.AttributeHolder;
-import com.abiddarris.common.renpy.internal.model.AttributeManager;
-import com.abiddarris.common.renpy.internal.model.BootstrapAttributeHolder;
-import com.abiddarris.common.renpy.internal.model.PythonAttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.AttributeManager;
+import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.PythonAttributeHolder;
 import com.abiddarris.common.renpy.internal.object.PythonMethod;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
@@ -392,11 +392,13 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     }
     
     private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
+        long a = System.currentTimeMillis();
+
         PythonObject attribute = self.attributes.findAttribute(name.toString());
         if(attribute == null) {
             raiseAttributeError(self, name);
         }
-        
+
         return attribute;
     }
     

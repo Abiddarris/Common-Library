@@ -20,7 +20,7 @@ import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeErr
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
-import com.abiddarris.common.renpy.internal.model.AttributeManager;
+import com.abiddarris.common.renpy.internal.attributes.AttributeManager;
 
 public class Super {
     
