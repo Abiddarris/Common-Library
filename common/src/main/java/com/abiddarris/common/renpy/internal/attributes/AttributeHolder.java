@@ -13,31 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.internal.model;
+package com.abiddarris.common.renpy.internal.attributes;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
-public class CriticalAttribute {
-
-    private PythonObject class0;
-
-    public PythonObject getAttribute(String key) {
-        if (key.equals("__class__")) {
-            return class0;
-        }
-        return null;
-    }
+public interface AttributeHolder {
     
-    public boolean setAttribute(String key, PythonObject value) {
-        if (key.equals("__class__")) {
-            class0 = value;
-            return true;
-        }
-        return false;
-    }
+    void store(String name, PythonObject value);
+    PythonObject get(String name);
     
-    public PythonObject getType() {
-        return this.class0;
-    }
-
 }

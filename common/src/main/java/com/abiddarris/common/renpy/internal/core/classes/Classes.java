@@ -16,12 +16,9 @@
 package com.abiddarris.common.renpy.internal.core.classes;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
-import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.core.Functions.issubclass;
 import static com.abiddarris.common.renpy.internal.core.classes.AttributeSetter.setAttributes;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateInit;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateNew;
@@ -29,7 +26,7 @@ import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.del
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.PythonTuple;
 import com.abiddarris.common.renpy.internal.core.Types;
-import com.abiddarris.common.renpy.internal.model.AttributeHolder;
+import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

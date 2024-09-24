@@ -13,25 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.internal.model;
+package com.abiddarris.common.renpy.internal.attributes;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+public class CriticalAttribute {
 
-public class BootstrapAttributeHolder implements AttributeHolder {
-    
-    private Map<String, PythonObject> attributes = new LinkedHashMap<>();
-    
-    @Override
-    public void store(String name, PythonObject value) {
-        attributes.put(name, value);
+    private PythonObject class0;
+
+    public PythonObject getAttribute(String key) {
+        if (key.equals("__class__")) {
+            return class0;
+        }
+        return null;
     }
     
-    @Override
-    public PythonObject get(String name) {
-        return attributes.get(name);
+    public boolean setAttribute(String key, PythonObject value) {
+        if (key.equals("__class__")) {
+            class0 = value;
+            return true;
+        }
+        return false;
     }
     
+    public PythonObject getType() {
+        return this.class0;
+    }
+
 }
