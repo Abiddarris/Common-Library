@@ -44,7 +44,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.not;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.core.classes.BuiltinsClasses.set;
-import static com.abiddarris.common.renpy.internal.core.classes.JFunctions.hasattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
