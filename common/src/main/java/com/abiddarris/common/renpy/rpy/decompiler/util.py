@@ -246,16 +246,3 @@ class WordConcatenator(object):
         rv = (' ' if self.needs_space else '') + ' '.join(self.words)
         self.needs_space = rv[-1] != ' '
         return rv
-
-# ren'py string handling
-def encode_say_string(s):
-    """
-    Encodes a string in the format used by Ren'Py say statements.
-    """
-
-    s = s.replace("\\", "\\\\")
-    s = s.replace("\n", "\\n")
-    s = s.replace("\"", "\\\"")
-    s = re.sub(r'(?<= ) ', '\\ ', s)
-
-    return "\"" + s + "\""
