@@ -462,19 +462,6 @@ class Decompiler(DecompilerBase):
         else:
             self.write(f'default{priority} {ast.store[6:]}.{ast.varname} = {ast.code.source}')
 
-    # Specials
-
-    # Returns whether a Say statement immediately preceding a Menu statement
-    # actually belongs inside of the Menu statement.
-    def say_belongs_to_menu(self, say, menu):
-        return (not say.interact
-                and say.who is not None
-                and say.with_ is None
-                and say.attributes is None
-                and isinstance(menu, renpy.ast.Menu)
-                and menu.items[0][2] is not None
-                and not self.should_come_before(say, menu))
-
     @dispatch(renpy.ast.UserStatement)
     def print_userstatement(self, ast):
         self.indent()
