@@ -38,6 +38,7 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Python.format;
+import static com.abiddarris.common.renpy.internal.Python.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.True;
@@ -170,9 +171,13 @@ public class Decompiler {
                             .addParameter("early", False)
                             .build());
 
+            // Specials
+            definer.defineFunction("say_belongs_to_menu", DecompilerImpl.class, "sayBelongsToMenu", "self", "say", "menu");
 
             definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
                     DecompilerImpl.class, "printDefine", "self", "ast");
+
+
             definer.defineFunction("print_say", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Say")),
                     DecompilerImpl.class, "printSay", new PythonSignatureBuilder("self", "ast")
                             .addParameter("inmenu", False)
@@ -529,6 +534,20 @@ public class Decompiler {
             }
         }
 
+        /**
+         * Returns whether a Say statement immediately preceding a Menu statement
+         * actually belongs inside of the Menu statement.
+         */
+        private static PythonObject
+        sayBelongsToMenu(PythonObject self, PythonObject say, PythonObject menu) {
+            return newBoolean(!say.getAttribute("interact").toBoolean()
+                    && say.getAttribute("who") != None
+                    && say.getAttribute("with_") == None
+                    && say.getAttribute("attributes") == None
+                    && isinstance(menu, getNestedAttribute(decompiler, "renpy.ast.Menu")).toBoolean()
+                    && menu.getAttribute("items").getItem(newInt(0)).getItem(newInt(2)) != None
+                    && !self.callAttribute("should_come_before", say, menu).toBoolean());
+        }
         private static void
         printSay(PythonObject self, PythonObject ast, PythonObject inmenu) {
             // if this say statement precedes a menu statement, postpone emitting it until we're
