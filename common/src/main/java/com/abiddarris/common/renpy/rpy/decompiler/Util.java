@@ -757,7 +757,7 @@ public class Util {
         s = s.callAttribute("replace", newString("\\"), newString("\\\\"));
         s = s.callAttribute("replace", newString("\n"), newString("\\n"));
         s = s.callAttribute("replace", newString("\""), newString("\\\""));
-        s = util.callAttribute("re.sub", newString("(?<= ) "), newString("\\ "), s);
+        s = callNestedAttribute(util, "re.sub", newString("(?<= ) "), newString("\\ "), s);
 
         return newString("\"").add(s)
                 .add(newString("\""));
