@@ -41,6 +41,7 @@ public class Re {
             re.addNewFunction("compile", Re.class, "compile", new PythonSignatureBuilder("pattern")
                     .addParameter("flags", newInt(0))
                     .build());
+            re.addNewFunction("sub", Re.class, "sub", "pattern", "repl", "string");
 
             PatternImpl.define(re);
             MatchImpl.define(re);
@@ -50,6 +51,11 @@ public class Re {
     private static PythonObject
     compile(PythonObject pattern, PythonObject flags) {
         return re.callAttribute("Pattern", pattern, flags);
+    }
+
+    private static PythonObject
+    sub(PythonObject pattern, PythonObject repl, PythonObject string) {
+        return newString(string.toString().replace(pattern.toString(), repl.toString()));
     }
 
 }
