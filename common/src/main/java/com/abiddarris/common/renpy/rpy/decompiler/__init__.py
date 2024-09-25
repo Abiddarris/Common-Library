@@ -20,7 +20,7 @@
 
 from .util import WordConcatenator, , \
                   reconstruct_arginfo, string_escape, , , \
-                  say_get_code,
+                  ,
 
 from operator import itemgetter
 
