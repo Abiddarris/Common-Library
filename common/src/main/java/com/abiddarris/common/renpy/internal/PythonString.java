@@ -183,6 +183,12 @@ class PythonString extends PythonObject {
         return newInt(self.string.length());
     }
 
+    private static PythonObject
+    replace(PythonString self, PythonObject old, PythonObject new0) {
+        return newString(self.string.replace(
+                quote(old.toString()), new0.toString()));
+    }
+
     @Override
     public String toString() {
         return string;
