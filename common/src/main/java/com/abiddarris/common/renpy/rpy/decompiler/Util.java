@@ -79,6 +79,8 @@ public class Util {
 
             DispatcherImpl.define();
 
+            // ren'py string handling
+            util.addNewFunction("encode_say_string", Util.class, "encodeSayString", "s");
             util.addNewFunction("say_get_code", Util.class, "sayGetCode", new PythonSignatureBuilder("ast")
                     .addParameter("inmenu", False)
                     .build());
@@ -745,6 +747,20 @@ public class Util {
             return util.getAttribute("DispatcherCallClosure").call(self, name);
         }
 
+    }
+
+    /**
+     * Encodes a string in the format used by Ren'Py say statements.
+     */
+    private static PythonObject
+    encodeSayString(PythonObject s) {
+        s = s.callAttribute("replace", newString("\\"), newString("\\\\"));
+        s = s.callAttribute("replace", newString("\n"), newString("\\n"));
+        s = s.callAttribute("replace", newString("\""), newString("\\\""));
+        s = util.callAttribute("re.sub", newString("(?<= ) "), newString("\\ "), s);
+
+        return newString("\"").add(s)
+                .add(newString("\""));
     }
 
     // Adapted from Ren'Py's Say.get_code
