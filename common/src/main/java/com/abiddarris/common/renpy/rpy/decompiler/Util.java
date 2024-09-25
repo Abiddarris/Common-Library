@@ -78,6 +78,10 @@ public class Util {
             LexerImpl.define();
 
             DispatcherImpl.define();
+
+            util.addNewFunction("say_get_code", Util.class, "sayGetCode", new PythonSignatureBuilder("ast")
+                    .addParameter("inmenu", False)
+                    .build());
                 
             return util;
         });
@@ -743,4 +747,55 @@ public class Util {
 
     }
 
+    // Adapted from Ren'Py's Say.get_code
+    private static PythonObject
+    sayGetCode(PythonObject ast, PythonObject inmenu) {
+        PythonObject rv = newList();
+
+        if (ast.getAttribute("who").toBoolean()) {
+            rv.callAttribute("append", ast.getAttribute("who"));
+        }
+
+        if (hasattr(ast, "attributes") && ast.getAttribute("attributes") != None) {
+            rv.callAttribute("extend", ast.getAttribute("attributes"));
+        }
+
+        if (hasattr(ast, "temporary_attributes") && ast.getAttribute("temporary_attributes") != None) {
+            rv.callAttribute("append", newString("@"));
+            rv.callAttribute("temporary_attributes", ast.getAttribute("temporary_attributes"));
+        }
+
+        // no dialogue_filter applies to us
+
+        rv.callAttribute("append", util.callAttribute("encode_say_string",
+                ast.getAttribute("what")));
+
+        if (!ast.getAttribute("interact").toBoolean() && !inmenu.toBoolean()) {
+            rv.callAttribute("append", newString("nointeract"));
+        }
+
+        // explicit_identifier was only added in 7.7/8.2.
+        if (hasattr(ast, "explicit_identifier") && ast.getAttribute("explicit_identifier").toBoolean()) {
+            rv.callAttribute("append", newString("id"));
+            rv.callAttribute("append", ast.getAttribute("identifier"));
+        }
+        // identifier was added in 7.4.1. But the way ren'py processed it
+        // means it doesn't stored it in the pickle unless explicitly set
+        else if (hasattr(ast, "identifier") && ast.getAttribute("identifier") != None) {
+            rv.callAttribute("append", newString("id"));
+            rv.callAttribute("append", ast.getAttribute("identifier"));
+        }
+
+        if (hasattr(ast, "arguments") && ast.getAttribute("arguments") != None) {
+            rv.callAttribute("append",
+                    util.callAttribute("reconstruct_arginfo", ast.getAttribute("arguments")));
+        }
+
+        if (ast.getAttribute("with_").toBoolean()) {
+            rv.callAttribute("append", newString("with"));
+            rv.callAttribute("append", ast.getAttribute("with_"));
+        }
+
+        return newString(" ").callAttribute("join", rv);
+    }
 }
