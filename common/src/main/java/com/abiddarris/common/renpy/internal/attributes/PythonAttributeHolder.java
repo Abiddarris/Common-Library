@@ -15,8 +15,11 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.attributes;
 
+import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.Python.*;
+import static com.abiddarris.common.renpy.internal.core.Types.type;
 
+import com.abiddarris.common.renpy.internal.PythonDict;
 import com.abiddarris.common.renpy.internal.PythonException;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
@@ -34,7 +37,10 @@ public class PythonAttributeHolder implements AttributeHolder {
         if (name.equals("__dict__")) {
             return attributes;
         }
-        
+
+        if (type(attributes) == dict) {
+            return ((PythonDict)attributes).getMap().get(newString(name));
+        }
         try {
             // FIXME: Ugly trick, in the future this trick could fuck we up!
             return attributes.getItem(newString(name));
