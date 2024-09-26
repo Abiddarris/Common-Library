@@ -15,15 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.utils.Exceptions.toUncheckException;
-
 import com.abiddarris.common.renpy.internal.invocator.Invocator;
 import com.abiddarris.common.renpy.internal.invocator.MethodInvocator;
 import com.abiddarris.common.renpy.internal.signature.BadSignatureError;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class PythonFunction extends PythonObject {
@@ -46,7 +43,7 @@ public class PythonFunction extends PythonObject {
                     signatureParamCount, signatureParamCount > 1 ? "arguments" : "argument"));
         }
         
-        setAttributeDirectly("__class__", function);
+        setAttributeDirectly("__class__", Builtins.function);
         
         if(!method.isAccessible()) {
             method.setAccessible(true);
@@ -58,7 +55,7 @@ public class PythonFunction extends PythonObject {
         PythonObject[] args = signature.parseArguments(parameter);
         PythonObject object = invocator.invoke(target, args);
 
-        return object != null ? object : None;
+        return object != null ? object : Builtins.None;
     }
 
 }

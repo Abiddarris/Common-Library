@@ -1,6 +1,6 @@
 package com.abiddarris.common.renpy.internal.with;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 

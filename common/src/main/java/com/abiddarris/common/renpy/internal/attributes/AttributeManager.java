@@ -16,7 +16,7 @@
 package com.abiddarris.common.renpy.internal.attributes;
 
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
 
 import com.abiddarris.common.renpy.internal.PythonFunction;
 import com.abiddarris.common.renpy.internal.PythonObject;

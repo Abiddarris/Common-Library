@@ -15,16 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newClass;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.str;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import static com.abiddarris.common.renpy.internal.Builtins.type;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

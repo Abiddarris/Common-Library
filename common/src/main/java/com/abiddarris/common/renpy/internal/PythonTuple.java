@@ -26,7 +26,7 @@ public class PythonTuple extends PythonObject {
     private static PythonObject tuple_iterator;
 
     static void init() {
-        tuple_iterator = Bootstrap.newClass(type, newTuple(newString("tuple_iterator"), newTuple(object)), new BootstrapAttributeHolder());
+        tuple_iterator = Bootstrap.newClass(Builtins.type, newTuple(newString("tuple_iterator"), newTuple(Builtins.object)), new BootstrapAttributeHolder());
         tuple_iterator.setAttribute("__next__", newFunction(
             findMethod(TupleIterator.class, "next"),
             new PythonSignatureBuilder()
@@ -55,7 +55,7 @@ public class PythonTuple extends PythonObject {
         }
 
         if(indexInt < 0 || indexInt >= size) {
-            IndexError.call(newString("tuple index out of range")).raise();
+            Builtins.IndexError.call(newString("tuple index out of range")).raise();
         }
 
         return self.elements[indexInt];
@@ -83,10 +83,10 @@ public class PythonTuple extends PythonObject {
     private static PythonObject contains(PythonTuple self, PythonObject value) {
         for (PythonObject element : self) {
             if (element.equals(value)) {
-                return True;
+                return Builtins.True;
             }
         }
-        return False;
+        return Builtins.False;
     }
 
     private static class TupleIterator extends PythonObject {
@@ -103,8 +103,8 @@ public class PythonTuple extends PythonObject {
         private static PythonObject next(TupleIterator self) {
             PythonObject[] elements = self.tuple.elements;
             if (elements.length == self.index) {
-                StopIteration.callAttribute("__new__", new PythonArgument()
-                    .addPositionalArgument(StopIteration))
+                Builtins.StopIteration.callAttribute("__new__", new PythonArgument()
+                    .addPositionalArgument(Builtins.StopIteration))
                     .raise();
             }
 

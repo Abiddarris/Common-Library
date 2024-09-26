@@ -22,6 +22,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static java.lang.System.arraycopy;
 import static java.util.regex.Pattern.quote;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;
 
@@ -50,17 +51,17 @@ public class Imports {
             attribute.setObject(null);
 
             tryExcept(() -> attribute.setObject(mod.getAttribute(attributeName0))).
-                    onExcept((e) -> {}, AttributeError).
+                    onExcept((e) -> {}, Builtins.AttributeError).
                     execute();
 
-            if (attribute.getObject() == null && isInstance(mod, ModuleType).toBoolean() && hasattr.call(mod, newString("__path__")).toBoolean()) {
+            if (attribute.getObject() == null && isInstance(mod, ModuleType).toBoolean() && Builtins.hasattr.call(mod, newString("__path__")).toBoolean()) {
                 tryExcept(() -> attribute.setObject(importAs(modName + "." + attributeName0))).
-                        onExcept((e) -> {}, ModuleNotFoundError).
+                        onExcept((e) -> {}, Builtins.ModuleNotFoundError).
                         execute();
             }
 
             if (attribute.getObject() == null) {
-                ImportError.call(newString(
+                Builtins.ImportError.call(newString(
                         String.format("cannot import name '%s' from '%s'", attributeName0, modName)
                 )).raise();
             }
@@ -94,17 +95,17 @@ public class Imports {
                 .getItem(name.getObject()))).
         onExcept((e) -> {
             mod.setObject(importFromMetaPath(name.getObject()));
-        }, KeyError).execute();
+        }, Builtins.KeyError).execute();
         
         for (int i = 1; i < parts.length; i++) {
             PythonObject submoduleName = newString(name.getObject() + "." + parts[i]);
             
             tryExcept(() -> mod.getObject().getAttribute("__path__")).
             onExcept((e) -> {
-                ModuleNotFoundError.call(
+                Builtins.ModuleNotFoundError.call(
                     newString(String.format("No module named %s; %s is not a package", name, submoduleName))
                 ).raise();
-            }, AttributeError).execute();
+            }, Builtins.AttributeError).execute();
             
             name.setObject(submoduleName);
             int index = i;
@@ -115,7 +116,7 @@ public class Imports {
                 PythonObject submodule = importFromMetaPath(name.getObject());
                 mod.getObject().setAttribute(parts[index], submodule);    
                 mod.setObject(submodule);
-            }, KeyError).execute();
+            }, Builtins.KeyError).execute();
         }
         
     	return mod.getObject();
@@ -123,7 +124,7 @@ public class Imports {
     
     private static PythonObject importFromMetaPath(PythonObject name) {
         for (PythonObject finder : sys.getAttribute("meta_path")) {
-            PythonObject spec = finder.callAttribute("find_spec", name, None, None);
+            PythonObject spec = finder.callAttribute("find_spec", name, Builtins.None, Builtins.None);
             
             if (!spec.toBoolean()) {
                 continue;
@@ -138,7 +139,7 @@ public class Imports {
             return mod;
         }
         
-        ModuleNotFoundError.call(
+        Builtins.ModuleNotFoundError.call(
             newString(String.format("No module named %s", name))
         ).raise();
         

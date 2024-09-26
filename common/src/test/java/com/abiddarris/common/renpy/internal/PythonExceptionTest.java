@@ -15,9 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.Exception;
-import static com.abiddarris.common.renpy.internal.PythonObject.ValueError;
+import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
+import static com.abiddarris.common.renpy.internal.Builtins.Exception;
+import static com.abiddarris.common.renpy.internal.Builtins.ValueError;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

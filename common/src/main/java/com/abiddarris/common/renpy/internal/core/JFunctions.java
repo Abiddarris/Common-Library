@@ -16,7 +16,7 @@
 package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
+import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;

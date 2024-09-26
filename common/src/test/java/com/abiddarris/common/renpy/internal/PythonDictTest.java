@@ -16,7 +16,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.KeyError;
+import static com.abiddarris.common.renpy.internal.Builtins.KeyError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class PythonDictTest {
     

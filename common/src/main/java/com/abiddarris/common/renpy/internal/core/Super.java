@@ -15,9 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.attributes.AttributeManager;
@@ -28,7 +28,7 @@ public class Super {
     
     public static PythonObject define(PythonObject builtins) {
         if (init) {
-            return super0;
+            return Builtins.super0;
         }
         init = true;
         

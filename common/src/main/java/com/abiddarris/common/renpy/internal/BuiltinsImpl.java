@@ -15,15 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.issubclass;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import static com.abiddarris.common.renpy.internal.Builtins.type;
 import static com.abiddarris.common.renpy.internal.Sys.sys;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;

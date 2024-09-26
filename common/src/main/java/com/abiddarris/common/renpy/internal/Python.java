@@ -15,14 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.int0;
-import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
-import static com.abiddarris.common.renpy.internal.PythonObject.str;
-import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.int0;
+import static com.abiddarris.common.renpy.internal.Builtins.str;
+import static com.abiddarris.common.renpy.internal.Builtins.tuple;
+import static com.abiddarris.common.renpy.internal.Builtins.type;
 import static com.abiddarris.common.renpy.internal.Types.ModuleType;
 
 import static java.util.Arrays.asList;
@@ -101,7 +99,7 @@ public class Python {
     
     public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
         PythonObject dict = new PythonDict(map);
-        dict.setAttributeDirectly("__class__", PythonObject.dict);
+        dict.setAttributeDirectly("__class__", Builtins.dict);
         
         return dict;
     }

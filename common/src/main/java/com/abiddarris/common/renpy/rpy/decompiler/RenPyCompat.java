@@ -37,12 +37,12 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,15 +66,15 @@ public class RenPyCompat {
             PythonObject SPECIAL_CLASSES = renpycompat.addNewAttribute("SPECIAL_CLASSES", newList());
             SPECIAL_CLASSES.callAttribute("append", PyExprImpl.define(renpycompat, magic));
                 
-            renpycompat.setAttribute("PyExpr", None);
+            renpycompat.setAttribute("PyExpr", Builtins.None);
                 
             SPECIAL_CLASSES.callAttribute("append", PyCodeImpl.define(renpycompat, magic));
          
-            renpycompat.setAttribute("PyCode", None);
+            renpycompat.setAttribute("PyCode", Builtins.None);
                 
             SPECIAL_CLASSES.callAttribute("append", RevertableDictOldImpl.define(renpycompat, magic));
          
-            renpycompat.setAttribute("RevertableDict", None);
+            renpycompat.setAttribute("RevertableDict", Builtins.None);
 
             return renpycompat;
         });
@@ -83,10 +83,10 @@ public class RenPyCompat {
     private static class PyExprImpl {
         
         private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
-            ClassDefiner definer = renpycompat.defineClass("PyExpr", magic.getAttribute("FakeStrict"), str);
+            ClassDefiner definer = renpycompat.defineClass("PyExpr", magic.getAttribute("FakeStrict"), Builtins.str);
             definer.defineAttribute("__module__", newString("renpy.ast"));
             definer.defineFunction("__new__", PyExprImpl.class, "new0", new PythonSignatureBuilder("cls", "s", "filename", "linenumber")
-                .addParameter("py", None)
+                .addParameter("py", Builtins.None)
                 .build());
             
             return definer.define();
@@ -101,7 +101,7 @@ public class RenPyCompat {
         */
         
         private static PythonObject new0(PythonObject cls, PythonObject s, PythonObject filename, PythonObject linenumber, PythonObject py) {
-            PythonObject self = str.callAttribute("__new__", cls, s);
+            PythonObject self = Builtins.str.callAttribute("__new__", cls, s);
             self.setAttribute("filename", filename);
             self.setAttribute("linenumber", linenumber);
             self.setAttribute("py", py);
@@ -121,25 +121,25 @@ public class RenPyCompat {
         }
 
         private static void setState(PythonObject self, PythonObject state) {
-            if (len.call(state).toInt() == 4) {
+            if (Builtins.len.call(state).toInt() == 4) {
                 self.setAttribute("source", state.getItem(newInt(1)));
                 self.setAttribute("location", state.getItem(newInt(2)));
                 self.setAttribute("mode", state.getItem(newInt(3)));
-                self.setAttribute("py", None);
+                self.setAttribute("py", Builtins.None);
             } else {
                 self.setAttribute("source", state.getItem(newInt(1)));
                 self.setAttribute("location", state.getItem(newInt(2)));
                 self.setAttribute("mode", state.getItem(newInt(3)));
                 self.setAttribute("py", state.getItem(newInt(4)));
             }
-            self.setAttribute("bytecode", None);
+            self.setAttribute("bytecode", Builtins.None);
         }
     }      
     
     private static class RevertableDictOldImpl {
        
         private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
-            ClassDefiner definer = renpycompat.defineClass("RevertableDict", magic.getAttribute("FakeStrict"), dict);
+            ClassDefiner definer = renpycompat.defineClass("RevertableDict", magic.getAttribute("FakeStrict"), Builtins.dict);
             definer.defineAttribute("__module__", newString("renpy.python"));
             definer.defineFunction("__new__", RevertableDictOldImpl.class, "new0", "cls");
             
@@ -147,7 +147,7 @@ public class RenPyCompat {
         }
 
         private static PythonObject new0(PythonObject cls) {
-            return dict.callAttribute("__new__", cls);
+            return Builtins.dict.callAttribute("__new__", cls);
         }
     }
 
@@ -158,7 +158,7 @@ public class RenPyCompat {
             return CLASS_FACTORY;
         }
         
-        PythonObject renpycompat = __import__.call(newString("decompiler.renpycompat")).getAttribute("renpycompat");
+        PythonObject renpycompat = Builtins.__import__.call(newString("decompiler.renpycompat")).getAttribute("renpycompat");
         List<PythonObject> SPECIAL_CLASSES = new ArrayList<>();
         for(PythonObject clazz : renpycompat.getAttribute("SPECIAL_CLASSES")) {
         	SPECIAL_CLASSES.add(clazz);

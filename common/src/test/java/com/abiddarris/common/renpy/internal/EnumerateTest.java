@@ -17,7 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
-import static com.abiddarris.common.renpy.internal.PythonObject.enumerate;
+import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

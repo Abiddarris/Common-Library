@@ -18,9 +18,9 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Python.newFunction;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 

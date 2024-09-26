@@ -15,11 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.gen;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GeneratorObject extends PythonObject {
 
@@ -29,7 +28,7 @@ public class GeneratorObject extends PythonObject {
     private boolean first = true;
 
     public GeneratorObject(List<ForEachStatement> forEachStatements, Yield yield) {
-        super(builtins.getAttribute("generator"));
+        super(Builtins.builtins.getAttribute("generator"));
 
         this.forEachStatements = forEachStatements;
         this.yield = yield;

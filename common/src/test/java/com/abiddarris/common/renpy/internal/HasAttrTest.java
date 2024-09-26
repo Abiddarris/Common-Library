@@ -16,8 +16,8 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.Builtins.hasattr;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

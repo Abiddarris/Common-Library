@@ -17,8 +17,8 @@ package com.abiddarris.common.renpy.internal.core.classes;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
 import static com.abiddarris.common.renpy.internal.core.classes.AttributeSetter.setAttributes;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateInit;
 import static com.abiddarris.common.renpy.internal.core.classes.DelegateType.delegateNew;

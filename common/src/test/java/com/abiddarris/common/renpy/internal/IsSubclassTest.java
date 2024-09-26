@@ -15,11 +15,11 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.bool;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.issubclass;
+import static com.abiddarris.common.renpy.internal.Builtins.bool;
+import static com.abiddarris.common.renpy.internal.Builtins.object;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.issubclass;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

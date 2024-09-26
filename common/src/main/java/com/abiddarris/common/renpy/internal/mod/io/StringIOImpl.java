@@ -16,10 +16,8 @@
 package com.abiddarris.common.renpy.internal.mod.io;
 
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.object;
-import static com.abiddarris.common.renpy.internal.PythonObject.super0;
 
-import com.abiddarris.common.renpy.internal.Python;
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
@@ -39,7 +37,7 @@ class StringIOImpl {
     }
 
     private static PythonObject new0(PythonObject cls) {
-        PythonObject object = PythonObject.object.callAttribute("__new__", cls);
+        PythonObject object = Builtins.object.callAttribute("__new__", cls);
         object.setJavaAttribute("stringBuilder", new StringBuilder());
 
         return object;

@@ -19,7 +19,7 @@ import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.IndexError;
+import static com.abiddarris.common.renpy.internal.Builtins.IndexError;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 import java.util.ArrayList;

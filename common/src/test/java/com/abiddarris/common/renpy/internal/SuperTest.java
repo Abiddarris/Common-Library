@@ -16,7 +16,6 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.*;
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +35,7 @@ public class SuperTest {
     
             ChildImpl.define(supertest, Parent);
         });
-        PythonObject supertest = __import__.call(newString("supertest"));
+        PythonObject supertest = Builtins.__import__.call(newString("supertest"));
         Child = supertest.getAttribute("Child");
     }
     
@@ -91,7 +90,7 @@ public class SuperTest {
         ObjectWrapper<Boolean> thrown = new ObjectWrapper<>(false);
         
         tryExcept(() -> child.getSuper().callAttribute("do_something")).
-        onExcept((e) -> thrown.setObject(true), AttributeError).execute();
+        onExcept((e) -> thrown.setObject(true), Builtins.AttributeError).execute();
         
         assertTrue(thrown.getObject());
     }
