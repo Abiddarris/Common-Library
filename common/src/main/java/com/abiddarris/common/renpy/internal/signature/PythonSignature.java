@@ -47,7 +47,7 @@ public class PythonSignature {
         return keywords.size();
     }
     
-    public PythonObject invoke(Method method, PythonParameter parameter) {
+    public PythonObject[] parseArguments(Method method, PythonParameter parameter) {
         PythonObject[] args = new PythonObject[signature.size()];
         List<PythonObject> posArgs = new ArrayList<>(parameter.positionalArguments);
         Map<String, PythonObject> keywordArgs = new HashMap<>(parameter.keywordArguments);
@@ -110,20 +110,6 @@ public class PythonSignature {
                 "takes %s arguments but %s were given", keywords.size(), keywords.size() + posArgs.size())))
                 .raise();
         }
-        
-        try {
-            PythonObject object = (PythonObject)method.invoke(null, (Object[])args);
-            return object != null ? object : None;
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if(cause instanceof Error) {
-                throw (Error)cause;
-            }
-            throw toUncheckException(cause);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return args;
     }
 }
