@@ -189,6 +189,22 @@ class PythonString extends PythonObject {
                 quote(old.toString()), new0.toString()));
     }
 
+    private static PythonObject
+    join(PythonString self, PythonObject iterable) {
+        StringBuilder builder = new StringBuilder();
+        for (PythonObject str : iterable) {
+            builder.append(str)
+                    .append(self.string);
+        }
+
+        int length = builder.length();
+        if (length != 0) {
+            builder.delete(length - self.string.length(), length);
+        }
+
+        return newString(builder.toString());
+    }
+
     @Override
     public String toString() {
         return string;
