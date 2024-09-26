@@ -15,9 +15,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.Python.newBoolean;
-import static com.abiddarris.common.renpy.internal.Python.newInt;
-
 import static java.util.regex.Pattern.quote;
 
 import java.util.ArrayList;
@@ -45,7 +42,7 @@ class PythonString extends PythonObject {
 
     private static PythonObject stringEq(PythonString self, PythonObject eq) {
         if (!(eq instanceof PythonString)) {
-            return False;
+            return Builtins.False;
         }
 
         return newBoolean(self.string.equals(((PythonString) eq).string));
@@ -136,14 +133,14 @@ class PythonString extends PythonObject {
             if (c == '}') {
                 startCount--;
                 if (startCount < 0) {
-                    ValueError.call(newString("Single '}' encountered in format string"))
+                    Builtins.ValueError.call(newString("Single '}' encountered in format string"))
                             .raise();
                 } else if (startCount > 0) {
                     continue;
                 }
                 String key = builder.substring(start + 1, i);
                 if (key.contains("{")) {
-                    ValueError.call(newString("unexpected '{' in field name"))
+                    Builtins.ValueError.call(newString("unexpected '{' in field name"))
                             .raise();
                 }
 
@@ -157,7 +154,7 @@ class PythonString extends PythonObject {
         }
 
         if (startCount > 0) {
-            ValueError.call(newString("Single '{' encountered in format string"))
+            Builtins.ValueError.call(newString("Single '{' encountered in format string"))
                     .raise();
         }
 
@@ -172,7 +169,7 @@ class PythonString extends PythonObject {
         PythonObject start = key.getAttribute("start");
         PythonObject end = key.getAttribute("stop");
 
-        if (end == None) {
+        if (end == Builtins.None) {
             end = newInt(self.string.length());
         }
 

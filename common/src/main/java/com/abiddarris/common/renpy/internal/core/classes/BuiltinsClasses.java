@@ -15,7 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core.classes;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.set;
+import static com.abiddarris.common.renpy.internal.Builtins.set;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 

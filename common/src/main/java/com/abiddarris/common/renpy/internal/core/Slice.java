@@ -16,7 +16,7 @@
 package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;

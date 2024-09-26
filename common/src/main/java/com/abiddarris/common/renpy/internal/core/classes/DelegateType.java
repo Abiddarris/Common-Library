@@ -17,8 +17,8 @@ package com.abiddarris.common.renpy.internal.core.classes;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 import static com.abiddarris.common.renpy.internal.core.Functions.issubclass;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 

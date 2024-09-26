@@ -30,7 +30,7 @@ class PythonDict extends PythonObject {
     private static PythonObject dict_iterator;
         
     static void init() {
-        dict_iterator = Bootstrap.newClass(type, newTuple(newString("dict_iterator"), newTuple()), new BootstrapAttributeHolder());
+        dict_iterator = Bootstrap.newClass(Builtins.type, newTuple(newString("dict_iterator"), newTuple()), new BootstrapAttributeHolder());
         dict_iterator.setAttribute("__next__", newFunction(findMethod(DictIterator.class, "next"), "self"));
     }
         
@@ -57,7 +57,7 @@ class PythonDict extends PythonObject {
         PythonObject value = self.map.get(key);
         
         if(value == null) {
-            KeyError.call(key).raise();
+            Builtins.KeyError.call(key).raise();
         }
         
         return value;
@@ -70,7 +70,7 @@ class PythonDict extends PythonObject {
     private static PythonObject get(PythonDict self, PythonObject key, PythonObject default0) {
         ObjectWrapper<PythonObject> result = new ObjectWrapper<>(default0);
         tryExcept(() -> result.setObject(self.getItem(key)))
-                .onExcept((e) -> {}, KeyError)
+                .onExcept((e) -> {}, Builtins.KeyError)
                 .execute();
 
         return result.getObject();
@@ -123,8 +123,8 @@ class PythonDict extends PythonObject {
                 return self.iterator.next();
             }
                 
-            StopIteration.callAttribute("__new__", new PythonArgument()
-                .addPositionalArgument(StopIteration))
+            Builtins.StopIteration.callAttribute("__new__", new PythonArgument()
+                .addPositionalArgument(Builtins.StopIteration))
                 .raise();
             return null;
         }

@@ -11,13 +11,10 @@ import static com.abiddarris.common.stream.Signs.unsign;
 import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.nio.charset.CodingErrorAction.REPORT;
 import static java.util.Arrays.copyOf;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 import com.abiddarris.common.annotations.PrivateApi;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
-import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +27,6 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -339,15 +335,15 @@ public class Pickle {
         */
 
         protected void load_none() {
-            this.append(None);
+            this.append(Builtins.None);
         }
         
         protected void load_false() {
-            this.append(False);
+            this.append(Builtins.False);
         }
         
         protected void load_true() {
-            this.append(True);
+            this.append(Builtins.True);
         }
         
         protected void load_int() {
@@ -355,9 +351,9 @@ public class Pickle {
           
             PythonObject val;
             if (Arrays.equals(data, Arrays.copyOfRange(FALSE, 1, FALSE.length))) {
-                val = False;
+                val = Builtins.False;
             } else if (Arrays.equals(data, Arrays.copyOfRange(TRUE, 1, TRUE.length))) {
-                val = True;
+                val = Builtins.True;
             } else {
                 val = newInt(Long.parseLong(new String(Arrays.copyOf(data, data.length - 1))));
             }
@@ -801,7 +797,7 @@ public class Pickle {
         protected void load_long_binput() {
             long i = unpack("<I", this.read(4))[0].longValue();
             if (i > maxsize) {
-                ValueError.call(newString("negative LONG_BINPUT argument")).raise();
+                Builtins.ValueError.call(newString("negative LONG_BINPUT argument")).raise();
             }
             this.memo.put(i, this.stack.get(this.stack.size() - 1));
         }/*
@@ -875,15 +871,15 @@ public class Pickle {
             PythonObject state = (PythonObject)stack.remove(stack.size() - 1);
             PythonObject inst = (PythonObject)stack.get(stack.size() - 1);
             
-            PythonObject setstate = inst.getAttribute("__setstate__", None);
+            PythonObject setstate = inst.getAttribute("__setstate__", Builtins.None);
             
-            if (setstate != None) {
+            if (setstate != Builtins.None) {
                 setstate.call(state);
                 return;
             }
             
-            PythonObject slotstate = None;
-            if (isinstance.call(state, tuple).toBoolean() && len.call(state).toInt() == 2) {
+            PythonObject slotstate = Builtins.None;
+            if (Builtins.isinstance.call(state, Builtins.tuple).toBoolean() && Builtins.len.call(state).toInt() == 2) {
                 slotstate = state.getItem(newInt(1));
                 state = state.getItem(newInt(0));
             }

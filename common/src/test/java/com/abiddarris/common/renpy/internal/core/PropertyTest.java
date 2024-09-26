@@ -17,8 +17,8 @@ package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
-import static com.abiddarris.common.renpy.internal.PythonObject.property;
+import static com.abiddarris.common.renpy.internal.Builtins.__import__;
+import static com.abiddarris.common.renpy.internal.Builtins.property;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -17,8 +17,8 @@ package com.abiddarris.common.renpy.internal.mod.re;
 
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.int0;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.int0;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static java.util.regex.Pattern.DOTALL;
 import static java.util.regex.Pattern.compile;

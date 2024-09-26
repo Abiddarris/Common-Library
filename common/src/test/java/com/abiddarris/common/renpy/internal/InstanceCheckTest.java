@@ -16,14 +16,14 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.bool;
-import static com.abiddarris.common.renpy.internal.PythonObject.dict;
-import static com.abiddarris.common.renpy.internal.PythonObject.int0;
-import static com.abiddarris.common.renpy.internal.PythonObject.isinstance;
-import static com.abiddarris.common.renpy.internal.PythonObject.list;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.bool;
+import static com.abiddarris.common.renpy.internal.Builtins.dict;
+import static com.abiddarris.common.renpy.internal.Builtins.int0;
+import static com.abiddarris.common.renpy.internal.Builtins.isinstance;
+import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

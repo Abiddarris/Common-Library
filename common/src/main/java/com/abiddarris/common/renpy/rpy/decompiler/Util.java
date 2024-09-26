@@ -49,6 +49,7 @@ import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
@@ -82,7 +83,7 @@ public class Util {
             // ren'py string handling
             util.addNewFunction("encode_say_string", Util.class, "encodeSayString", "s");
             util.addNewFunction("say_get_code", Util.class, "sayGetCode", new PythonSignatureBuilder("ast")
-                    .addParameter("inmenu", False)
+                    .addParameter("inmenu", Builtins.False)
                     .build());
                 
             return util;
@@ -96,7 +97,7 @@ public class Util {
             definer.defineFunction("__init__", OptionBaseImpl.class, "init",
                  new PythonSignatureBuilder("self")
                     .addParameter("indentation", newString("    "))
-                    .addParameter("log", None)
+                    .addParameter("log", Builtins.None)
                     .build());
             
             return definer.define();
@@ -104,7 +105,7 @@ public class Util {
         
         private static void init(PythonObject self, PythonObject indentation, PythonObject log) {
             self.setAttribute("indentation", indentation);
-            self.setAttribute("log", log == None ? newList() : log);
+            self.setAttribute("log", log == Builtins.None ? newList() : log);
         }
     }
     
@@ -115,14 +116,14 @@ public class Util {
         private static PythonObject define(PythonObject util, PythonObject OptionBase) {
             ClassDefiner definer = util.defineClass("DecompilerBase");
             definer.defineFunction("__init__", DecompilerBaseImpl.class, "init", new PythonSignatureBuilder("self")
-                .addParameter("out_file", None)
+                .addParameter("out_file", Builtins.None)
                 .addParameter("options", OptionBase.call())
                 .build());
 
             definer.defineFunction("dump", DecompilerBaseImpl.class, "dump", new PythonSignatureBuilder("self", "ast")
                 .addParameter("indent_level", newInt(0))
                 .addParameter("linenumber", newInt(1))
-                .addParameter("skip_indent_until_write", False)
+                .addParameter("skip_indent_until_write", Builtins.False)
                 .build());
 
             definer.defineFunction("increase_indent", DecompilerBaseImpl.class, "increaseIndent", new PythonSignatureBuilder("self")
@@ -141,9 +142,9 @@ public class Util {
                     .addParameter("extra_indent", newInt(0))
                     .build());
 
-            definer.defineFunction("block", property, DecompilerBaseImpl.class, "block", "self");
-            definer.defineFunction("index", property, DecompilerBaseImpl.class, "index", "self");
-            definer.defineFunction("parent", property, DecompilerBaseImpl.class, "parent", "self");
+            definer.defineFunction("block", Builtins.property, DecompilerBaseImpl.class, "block", "self");
+            definer.defineFunction("index", Builtins.property, DecompilerBaseImpl.class, "index", "self");
+            definer.defineFunction("parent", Builtins.property, DecompilerBaseImpl.class, "parent", "self");
             definer.defineFunction("print_debug", DecompilerBaseImpl.class, "printDebug", "self", "message");
             definer.defineFunction("write_failure", DecompilerBaseImpl.class, "writeFailure", "self", "message");
             definer.defineFunction("print_unknown", DecompilerBaseImpl.class, "printUnknown", "self", "ast");
@@ -170,7 +171,7 @@ public class Util {
             // a boolean that can be set to make the next call to indent() not insert a newline and
             // indent useful when a child node can continue on the same line as the parent node
             // advance_to_line will also cancel this if it changes the lineno
-            self.setAttribute("skip_indent_until_write", False);
+            self.setAttribute("skip_indent_until_write", Builtins.False);
 
             // properties used for keeping track what level of block we're in
             self.setAttribute("block_stack", newList());
@@ -188,7 +189,7 @@ public class Util {
             self.setAttribute("linenumber", linenumber);
             self.setAttribute("skip_indent_until_write", skip_indent_until_write);
             
-            if (!isInstance(ast, newTuple(tuple, list)).toBoolean()) {
+            if (!isInstance(ast, newTuple(Builtins.tuple, Builtins.list)).toBoolean()) {
                 ast = newList(ast);
             }
             
@@ -205,12 +206,12 @@ public class Util {
          * Shorthand method for writing `string` to the file
          */
         private static void write(PythonObject self, PythonObject string) {
-            string = str.call(string);
+            string = Builtins.str.call(string);
 
             self.setAttribute("linenumber", self.getAttribute("linenumber").add(
                     string.callAttribute("count", newString("\n"))
             ));
-            self.setAttribute("skip_indent_until_write", False);
+            self.setAttribute("skip_indent_until_write", Builtins.False);
 
             callNestedAttribute(self, "out_file.write", string);
         }
@@ -263,7 +264,7 @@ public class Util {
                 self.getAttribute("block_stack").callAttribute("append", ast);
                 self.getAttribute("index_stack").callAttribute("append", newInt(0));
 
-                for (PythonObject tuple : enumerate.call(ast)) {
+                for (PythonObject tuple : Builtins.enumerate.call(ast)) {
                     PythonObject i = tuple.getItem(newInt(0));
                     PythonObject node = tuple.getItem(newInt(1));
 
@@ -290,7 +291,7 @@ public class Util {
 
         private static PythonObject parent(PythonObject self) {
             if (len(self.getAttribute("block_stack")).jLessThan(newInt( 2))) {
-                return None;
+                return Builtins.None;
             }
             return self.getAttribute("block_stack")
                     .getItem(newInt(-2))
@@ -315,7 +316,7 @@ public class Util {
         }
 
         private static void printNode(PythonObject self, PythonObject ast) {
-            NotImplementedError.call().raise();
+            Builtins.NotImplementedError.call().raise();
         }
 
         private static class IndentationContextManagerImpl {
@@ -366,8 +367,8 @@ public class Util {
         private static void define() {
             ClassDefiner definer = util.defineClass("First");
             definer.defineFunction("__init__", First.class, "init", new PythonSignatureBuilder("self")
-                    .addParameter("yes_value", True)
-                    .addParameter("no_value", False)
+                    .addParameter("yes_value", Builtins.True)
+                    .addParameter("no_value", Builtins.False)
                     .build());
             definer.defineFunction("__call__", First.class, "call", "self");
 
@@ -378,13 +379,13 @@ public class Util {
         init(PythonObject self, PythonObject yes_value, PythonObject no_value) {
             self.setAttribute("yes_value", yes_value);
             self.setAttribute("no_value", no_value);
-            self.setAttribute("first", True);
+            self.setAttribute("first", Builtins.True);
         }
 
         private static PythonObject
         call(PythonObject self) {
             if (self.getAttribute("first").toBoolean()) {
-                self.setAttribute("first", False);
+                self.setAttribute("first", Builtins.False);
                 return self.getAttribute("yes_value");
             } else {
                 return self.getAttribute("no_value");
@@ -394,7 +395,7 @@ public class Util {
 
     private static PythonObject
     reconstructParaminfo(PythonObject paraminfo) {
-        if (paraminfo == None) {
+        if (paraminfo == Builtins.None) {
             return newString("");
         }
 
@@ -417,7 +418,7 @@ public class Util {
                                 vars.put("default", obj.getItem(newInt(1)));
                             }).yield(vars -> vars.get("name")));
 
-            PythonObject other = list.call(
+            PythonObject other = Builtins.list.call(
                     newGenerator()
                         .forEach(variables -> paraminfo.getAttribute("parameters"))
                             .name((vars, obj) -> {
@@ -435,7 +436,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != None) {
+                if (default0 != Builtins.None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -452,7 +453,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != None) {
+                if (default0 != Builtins.None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -473,7 +474,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != None) {
+                if (default0 != Builtins.None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -486,14 +487,14 @@ public class Util {
             }
         } else if (hasattr(paraminfo, "extrapos")) {
             // ren'py 7.4 and below, python 2 style
-            PythonObject positional = list.call(newGenerator()
+            PythonObject positional = Builtins.list.call(newGenerator()
                     .forEach(vars -> paraminfo.getAttribute("parameters"))
                     .name((vars, obj) -> vars.put("i", obj))
                     .filter(vars -> paraminfo.getAttribute("positional")
                             .in(vars.get("i").getItem(newInt(0))))
                     .yield(vars -> vars.get("i"))
             );
-            PythonObject nameonly = list.call(newGenerator()
+            PythonObject nameonly = Builtins.list.call(newGenerator()
                     .forEach(vars -> paraminfo.getAttribute("parameters"))
                     .name((vars, obj) -> vars.put("i", obj))
                     .filter(vars -> not(positional.in(vars.get("i"))))
@@ -504,7 +505,7 @@ public class Util {
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", parameter.getItem(newInt(0)));
 
-                if (parameter.getItem(newInt(1)) != None) {
+                if (parameter.getItem(newInt(1)) != Builtins.None) {
                     rv.callAttribute("append", newString("={0}")
                             .callAttribute("format", parameter.getItem(newInt(1))));
                 }
@@ -526,7 +527,7 @@ public class Util {
                     rv.callAttribute("append", sep.call());
                     rv.callAttribute("append", parameter.getItem(newInt(0)));
 
-                    if (parameter.getItem(newInt(1)) != None) {
+                    if (parameter.getItem(newInt(1)) != Builtins.None) {
                         rv.callAttribute("append", newString("={0}")
                                 .callAttribute("format", parameter.getItem(newInt(1))));
                     }
@@ -554,7 +555,7 @@ public class Util {
                     rv.callAttribute("append", sep.call());
                     rv.callAttribute("append", parameter.getAttribute("name"));
 
-                    if (parameter.getAttribute("default") != None) {
+                    if (parameter.getAttribute("default") != Builtins.None) {
                         rv.callAttribute("append", newString("={0}")
                                 .callAttribute("format", parameter.getAttribute("default")));
                     }
@@ -570,7 +571,7 @@ public class Util {
                     if (parameter.getAttribute("kind").equals(newInt(1))) {
                         // positional or keyword?
                         rv.callAttribute("append", parameter.getAttribute("name"));
-                        if (parameter.getAttribute("default") != None) {
+                        if (parameter.getAttribute("default") != Builtins.None) {
                             rv.callAttribute("append", newString("={0}")
                                     .callAttribute("format", parameter.getAttribute("default")));
                         }
@@ -592,7 +593,7 @@ public class Util {
 
                         rv.callAttribute("append", parameter.getAttribute("name"));
 
-                        if (parameter.getAttribute("default") != None) {
+                        if (parameter.getAttribute("default") != Builtins.None) {
                             rv.callAttribute("append", newString("={0}")
                                     .callAttribute("format", parameter.getAttribute("default")));
                         }
@@ -623,7 +624,7 @@ public class Util {
             definer.defineFunction("__init__", LexerImpl.class, "init", "self", "string");
             definer.defineFunction("re", LexerImpl.class, "re", "self", "regexp");
             definer.defineFunction("python_string", LexerImpl.class, "pythonString", new PythonSignatureBuilder("self")
-                    .addParameter("clear_whitespace", True)
+                    .addParameter("clear_whitespace", Builtins.True)
                     .build());
 
             definer.defineFunction("split_logical_lines", LexerImpl.class, "splitLogicalLines", "self");
@@ -643,14 +644,14 @@ public class Util {
             // see if regexp matches at self.string[self.pos].
             // if it does, increment self.pos
             if (self.getAttribute("length").equals(self.getAttribute("pos"))) {
-                return None;
+                return Builtins.None;
             }
 
             PythonObject match = callNestedAttribute(util, "re.compile", regexp,
                     getNestedAttribute(util, "re.DOTALL"))
                     .callAttribute("match", self.getAttribute("string"), self.getAttribute("pos"));
             if (!match.toBoolean()) {
-                return None;
+                return Builtins.None;
             }
 
             self.setAttribute("pos", match.callAttribute("end"));
@@ -718,7 +719,7 @@ public class Util {
                     continue;
                 }
 
-                if (self.callAttribute("python_string", False).toBoolean()) {
+                if (self.callAttribute("python_string", Builtins.False).toBoolean()) {
                     continue;
                 }
 
@@ -737,7 +738,7 @@ public class Util {
     private static class DispatcherImpl {
 
         private static PythonObject define() {
-            ClassDefiner definer = util.defineClass("Dispatcher", dict);
+            ClassDefiner definer = util.defineClass("Dispatcher", Builtins.dict);
             definer.defineFunction("__call__", DispatcherImpl.class, "call", "self", "name");
 
             return definer.define();
@@ -772,11 +773,11 @@ public class Util {
             rv.callAttribute("append", ast.getAttribute("who"));
         }
 
-        if (hasattr(ast, "attributes") && ast.getAttribute("attributes") != None) {
+        if (hasattr(ast, "attributes") && ast.getAttribute("attributes") != Builtins.None) {
             rv.callAttribute("extend", ast.getAttribute("attributes"));
         }
 
-        if (hasattr(ast, "temporary_attributes") && ast.getAttribute("temporary_attributes") != None) {
+        if (hasattr(ast, "temporary_attributes") && ast.getAttribute("temporary_attributes") != Builtins.None) {
             rv.callAttribute("append", newString("@"));
             rv.callAttribute("temporary_attributes", ast.getAttribute("temporary_attributes"));
         }
@@ -797,12 +798,12 @@ public class Util {
         }
         // identifier was added in 7.4.1. But the way ren'py processed it
         // means it doesn't stored it in the pickle unless explicitly set
-        else if (hasattr(ast, "identifier") && ast.getAttribute("identifier") != None) {
+        else if (hasattr(ast, "identifier") && ast.getAttribute("identifier") != Builtins.None) {
             rv.callAttribute("append", newString("id"));
             rv.callAttribute("append", ast.getAttribute("identifier"));
         }
 
-        if (hasattr(ast, "arguments") && ast.getAttribute("arguments") != None) {
+        if (hasattr(ast, "arguments") && ast.getAttribute("arguments") != Builtins.None) {
             rv.callAttribute("append",
                     util.callAttribute("reconstruct_arginfo", ast.getAttribute("arguments")));
         }

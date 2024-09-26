@@ -15,7 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.builtins;
+import static com.abiddarris.common.renpy.internal.Builtins.builtins;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;

@@ -23,9 +23,9 @@ import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newFunction;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.__import__;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.__import__;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

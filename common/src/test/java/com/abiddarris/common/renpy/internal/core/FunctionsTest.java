@@ -3,8 +3,8 @@ package com.abiddarris.common.renpy.internal.core;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.core.Functions.all;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

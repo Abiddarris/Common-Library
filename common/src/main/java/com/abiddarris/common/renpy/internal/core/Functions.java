@@ -15,15 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.AttributeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.False;
-import static com.abiddarris.common.renpy.internal.PythonObject.True;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
-import static com.abiddarris.common.renpy.internal.PythonObject.hasattr;
+import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
+import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.hasattr;
 import static com.abiddarris.common.renpy.internal.PythonObject.newBoolean;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.tuple;
+import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;

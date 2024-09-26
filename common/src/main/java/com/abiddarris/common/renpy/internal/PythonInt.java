@@ -29,7 +29,7 @@ class PythonInt extends PythonObject {
 
     private static PythonObject eq(PythonInt self, PythonObject other) {
         if (!(other instanceof PythonInt)) {
-            return False;
+            return Builtins.False;
         }
         return newBoolean(self.value == ((PythonInt)other).value);
     }

@@ -16,14 +16,13 @@
 package com.abiddarris.common.renpy.internal.gen;
 
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.StopIteration;
+import static com.abiddarris.common.renpy.internal.Builtins.StopIteration;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 class ForEachStatement {
 

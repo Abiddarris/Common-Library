@@ -15,10 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.type;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.type;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

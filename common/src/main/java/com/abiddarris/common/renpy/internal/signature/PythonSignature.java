@@ -15,19 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
-import static com.abiddarris.common.renpy.internal.PythonObject.None;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 import static com.abiddarris.common.renpy.internal.PythonObject.newDict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.utils.Exceptions.toUncheckException;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

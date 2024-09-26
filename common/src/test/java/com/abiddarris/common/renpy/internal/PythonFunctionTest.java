@@ -23,7 +23,7 @@ import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.PythonObject.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 
 import static org.junit.jupiter.api.Assertions.*;
 

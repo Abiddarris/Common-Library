@@ -51,6 +51,7 @@ import static com.abiddarris.common.stream.Signs.unsign;
 import static java.util.Arrays.copyOf;
 import static java.util.Arrays.copyOfRange;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.Struct;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
@@ -61,7 +62,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,14 +247,24 @@ public class Unrpyc {
             //else:
                 /* FIXME: log=context.log_contents**/
                 PythonObject options = decompiler.getAttribute("Options").call(new PythonArgument()
-                    .addKeywordArgument("log", None)
+                    .addKeywordArgument("log", Builtins.None)
                     .addKeywordArgument("translator", translator)
                     .addKeywordArgument("init_offset", newBoolean(init_offset))
                     .addKeywordArgument("sl_custom_names", sl_custom_names));
-                
-                decompiler.callAttribute("pprint", None/*out_file*/, ast, options);
+
+                PythonObject stdout = newClass("stdout", newTuple(), newDict());
+                stdout.addNewFunction("write", Unrpyc.class, "write", "str");
+
+                decompiler.callAttribute("pprint", stdout/*out_file*/, ast, options);
 
         //context.set_state('ok')
     }
+
+    private static void write(PythonObject str) {
+//        Exception e = new Exception(str.toString());
+//        e.printStackTrace(System.out);
+        System.out.print(str);
+    }
+
     
 }
