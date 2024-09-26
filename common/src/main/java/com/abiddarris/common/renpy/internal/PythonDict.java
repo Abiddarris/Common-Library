@@ -41,6 +41,10 @@ public class PythonDict extends PythonObject {
         
         this.map = map;
     }
+
+    public Map<PythonObject, PythonObject> getMap() {
+        return map;
+    }
     
     private static PythonObject new0(PythonObject cls) {
         PythonDict dict = new PythonDict(new LinkedHashMap<>());
