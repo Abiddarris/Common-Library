@@ -55,7 +55,7 @@ public class PythonFunction extends PythonObject {
 
     @Override
     public PythonObject call(PythonParameter parameter) {
-        PythonObject[] args = signature.parseArguments(null, parameter);
+        PythonObject[] args = signature.parseArguments(parameter);
         PythonObject object = invocator.invoke(target, args);
 
         return object != null ? object : None;

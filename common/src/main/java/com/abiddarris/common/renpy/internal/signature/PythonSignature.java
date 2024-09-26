@@ -47,7 +47,7 @@ public class PythonSignature {
         return keywords.size();
     }
     
-    public PythonObject[] parseArguments(Method method, PythonParameter parameter) {
+    public PythonObject[] parseArguments(PythonParameter parameter) {
         PythonObject[] args = new PythonObject[signature.size()];
         List<PythonObject> posArgs = new ArrayList<>(parameter.positionalArguments);
         Map<String, PythonObject> keywordArgs = new HashMap<>(parameter.keywordArguments);
