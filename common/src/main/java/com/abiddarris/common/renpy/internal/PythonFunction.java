@@ -17,6 +17,8 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.utils.Exceptions.toUncheckException;
 
+import com.abiddarris.common.renpy.internal.invocator.Invocator;
+import com.abiddarris.common.renpy.internal.invocator.MethodInvocator;
 import com.abiddarris.common.renpy.internal.signature.BadSignatureError;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
@@ -26,12 +28,15 @@ import java.lang.reflect.Method;
 
 public class PythonFunction extends PythonObject {
 
-    private Method method;
+    private Object target;
+    private Invocator invocator;
     private PythonSignature signature;
 
     public PythonFunction(Method method, PythonSignature signature) {
         this.signature = signature;
-        this.method = method;
+        this.target = method;
+
+        invocator = MethodInvocator.INSTANCE;
         
         int paramCount = method.getParameterCount();
         int signatureParamCount = signature.getParamaterSize();
@@ -50,21 +55,10 @@ public class PythonFunction extends PythonObject {
 
     @Override
     public PythonObject call(PythonParameter parameter) {
-        PythonObject[] args = signature.parseArguments(method, parameter);
-        try {
-            PythonObject object = (PythonObject)method.invoke(null, (Object[])args);
-            return object != null ? object : None;
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if(cause instanceof Error) {
-                throw (Error)cause;
-            }
-            throw toUncheckException(cause);
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        PythonObject[] args = signature.parseArguments(null, parameter);
+        PythonObject object = invocator.invoke(target, args);
+
+        return object != null ? object : None;
     }
 
 }
