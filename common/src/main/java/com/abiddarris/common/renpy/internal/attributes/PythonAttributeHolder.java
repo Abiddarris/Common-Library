@@ -22,22 +22,22 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class PythonAttributeHolder implements AttributeHolder {
     
-    private PythonObject dict = newDict();
+    private PythonObject attributes = newDict();
     
     @Override
     public void store(String name, PythonObject value) {
-        dict.setItem(newString(name), value);
+        attributes.setItem(newString(name), value);
     }
     
     @Override
     public PythonObject get(String name) {
         if (name.equals("__dict__")) {
-            return dict;
+            return attributes;
         }
         
         try {
             // FIXME: Ugly trick, in the future this trick could fuck we up!
-            return dict.getItem(newString(name));
+            return attributes.getItem(newString(name));
         } catch (PythonException e) {
         }
         
