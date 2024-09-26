@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-class PythonDict extends PythonObject {
+public class PythonDict extends PythonObject {
     
     private static PythonObject dict_iterator;
         
