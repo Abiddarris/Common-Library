@@ -24,6 +24,10 @@ import java.lang.reflect.Method;
 
 public class MethodInvocator implements Invocator {
 
+    public static MethodInvocator INSTANCE = new MethodInvocator();
+
+    private MethodInvocator() {
+    }
 
     @Override
     public PythonObject invoke(Object target, PythonObject[] args) {
