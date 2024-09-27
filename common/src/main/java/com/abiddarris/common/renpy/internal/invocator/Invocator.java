@@ -16,9 +16,12 @@
 package com.abiddarris.common.renpy.internal.invocator;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 public interface Invocator {
 
     PythonObject invoke(Object target, PythonObject[] args);
+
+    void validateTarget(Object target, PythonSignature signature);
 
 }
