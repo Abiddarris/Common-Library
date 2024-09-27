@@ -52,9 +52,7 @@ public class MethodInvocator implements Invocator {
     @Override
     public void validateTarget(Object target, PythonSignature signature) {
         if (!(target instanceof Method)) {
-            throw new IllegalArgumentException(
-                    String.format("%s can not invoke %s", MethodInvocator.class, target.getClass())
-            );
+            throwInvalidTargetException(target);
         }
 
         Method method = (Method)target;
