@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.function;
+
 import com.abiddarris.common.renpy.internal.invocator.Invocator;
 import com.abiddarris.common.renpy.internal.invocator.MethodInvocator;
 import com.abiddarris.common.renpy.internal.signature.BadSignatureError;
@@ -30,10 +32,7 @@ public class PythonFunction extends PythonObject {
     private PythonSignature signature;
 
     public PythonFunction(Method method, PythonSignature signature) {
-        this.signature = signature;
-        this.target = method;
-
-        invocator = MethodInvocator.INSTANCE;
+        this(MethodInvocator.INSTANCE, method, signature);
         
         int paramCount = method.getParameterCount();
         int signatureParamCount = signature.getParamaterSize();
@@ -43,11 +42,17 @@ public class PythonFunction extends PythonObject {
                     signatureParamCount, signatureParamCount > 1 ? "arguments" : "argument"));
         }
         
-        setAttributeDirectly("__class__", Builtins.function);
-        
         if(!method.isAccessible()) {
             method.setAccessible(true);
         }
+    }
+
+    public PythonFunction(Invocator invocator, Object target, PythonSignature signature) {
+        super(function);
+
+        this.invocator = invocator;
+        this.signature = signature;
+        this.target = target;
     }
 
     @Override
