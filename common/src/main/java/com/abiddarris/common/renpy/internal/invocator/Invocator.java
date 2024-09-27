@@ -24,4 +24,9 @@ public interface Invocator {
 
     void validateTarget(Object target, PythonSignature signature);
 
+    default public void throwInvalidTargetException(Object target) {
+        throw new IllegalArgumentException(
+                String.format("%s can not invoke %s", getClass(), target.getClass())
+        );
+    }
 }
