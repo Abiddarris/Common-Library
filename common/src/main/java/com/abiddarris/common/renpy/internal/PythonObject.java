@@ -49,7 +49,7 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
         return newPythonInt(self.getHashCode());
     }
     
-    private static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
+    static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
         long a = System.currentTimeMillis();
 
         PythonObject attribute = self.attributes.findAttribute(name.toString());
