@@ -18,6 +18,8 @@ package com.abiddarris.common.renpy.internal.invocator;
 import static com.abiddarris.common.utils.Exceptions.toUncheckException;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.signature.BadSignatureError;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -44,6 +46,29 @@ public class MethodInvocator implements Invocator {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void validateTarget(Object target, PythonSignature signature) {
+        if (!(target instanceof Method)) {
+            throw new IllegalArgumentException(
+                    String.format("%s can not invoke %s", MethodInvocator.class, target.getClass())
+            );
+        }
+
+        Method method = (Method)target;
+
+        int paramCount = method.getParameterCount();
+        int signatureParamCount = signature.getParamaterSize();
+        if(paramCount != signatureParamCount) {
+            throw new BadSignatureError(String.format("Method %s takes %s %s but given signature takes %s %s",
+                    method.getName(), paramCount, paramCount > 1 ? "arguments" : "argument",
+                    signatureParamCount, signatureParamCount > 1 ? "arguments" : "argument"));
+        }
+
+        if(!method.isAccessible()) {
+            method.setAccessible(true);
         }
     }
 }
