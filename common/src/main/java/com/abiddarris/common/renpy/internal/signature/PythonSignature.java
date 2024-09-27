@@ -37,7 +37,11 @@ public class PythonSignature {
         
         keywords = new ArrayList<>(signature.keySet());
     }
-    
+
+    public static PythonSignature from(String... argumentNames) {
+        return new PythonSignatureBuilder(argumentNames).build();
+    }
+
     public int getParamaterSize() {
         return keywords.size();
     }
