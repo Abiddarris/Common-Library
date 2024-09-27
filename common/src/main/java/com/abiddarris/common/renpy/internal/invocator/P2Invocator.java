@@ -21,6 +21,10 @@ import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 public class P2Invocator implements Invocator {
 
+    public static final P2Invocator INSTANCE = new P2Invocator();
+
+    private P2Invocator() {}
+
     @Override
     public PythonObject invoke(Object target, PythonObject[] args) {
         return ((P2Function)target).execute(args[0], args[1]);
