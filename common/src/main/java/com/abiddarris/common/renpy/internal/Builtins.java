@@ -1,6 +1,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
+import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
 
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.core.Enumerate;
@@ -208,15 +209,7 @@ public class Builtins {
 
         type.setAttribute("__new__", Python.newFunction(
                 Python.findMethod(Classes.class, "typeNew"), "cls", "*args"));
-        type.setAttribute("__getattribute__",
-                Python.newFunction(
-                        Python.findMethod(PythonObject.class, "typeGetAttribute"),
-                        new PythonSignatureBuilder()
-                                .addParameter("self")
-                                .addParameter("name")
-                                .build()
-                )
-        );
+        type.setAttribute("__getattribute__", newFunction(PythonObject::typeGetAttribute, "self", "name"));
         type.setAttribute("__init__", Python.newFunction(
                 Python.findMethod(Classes.class, "typeInit"), "cls", "*args"
         ));
