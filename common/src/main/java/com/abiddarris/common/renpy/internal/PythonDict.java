@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
@@ -33,13 +34,20 @@ public class PythonDict extends PythonObject {
         dict_iterator = Bootstrap.newClass(Builtins.type, newTuple(newString("dict_iterator"), newTuple()), new BootstrapAttributeHolder());
         dict_iterator.setAttribute("__next__", newFunction(findMethod(DictIterator.class, "next"), "self"));
     }
-        
+
+    private boolean useJavaIterator;
     private Map<PythonObject, PythonObject> map;
     
     PythonDict(PythonObject cls, Map<PythonObject, PythonObject> map) {
         super(new BootstrapAttributeHolder(), cls);
-        
+
+        this.useJavaIterator = cls == dict;
         this.map = map;
+    }
+
+    @Override
+    public Iterator<PythonObject> iterator() {
+        return map.keySet().iterator();
     }
 
     public Map<PythonObject, PythonObject> getMap() {
