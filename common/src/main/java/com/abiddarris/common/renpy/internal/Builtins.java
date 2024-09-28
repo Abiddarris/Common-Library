@@ -67,7 +67,7 @@ public class Builtins {
 
         object.setAttributeDirectly("__class__", type);
         object.setAttributeDirectly("__setattr__", Python.newFunction(Objects.class, "setAttribute", "self", "name", "value"));
-        object.setAttributeDirectly("__getattribute__", Python.newFunction(PythonObject.class, "typeGetAttribute", "self", "name"));
+        object.setAttributeDirectly("__getattribute__", newFunction(PythonObject::typeGetAttribute, "self", "name"));
 
         type.setAttributeDirectly("__class__", type);
         type.setAttributeDirectly("__bases__", defaultBases);
