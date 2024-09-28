@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.Builtins.int0;
 import static com.abiddarris.common.renpy.internal.Builtins.str;
 import static com.abiddarris.common.renpy.internal.Builtins.tuple;
@@ -95,10 +96,7 @@ public class Python {
     }
     
     public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
-        PythonObject dict = new PythonDict(map);
-        dict.setAttributeDirectly("__class__", Builtins.dict);
-        
-        return dict;
+        return new PythonDict(dict, map);
     }
     
     public static PythonObject newDict(PythonObject... objects) {
