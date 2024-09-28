@@ -19,8 +19,9 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class Objects {
 
-    private static void setAttribute(PythonObject self, PythonObject name, PythonObject value) {
+    public static void setAttribute(PythonObject self, PythonObject name, PythonObject value) {
         // FIXME: 10/09/24 This shouldn't be converted to string
         self.setAttributeDirectly(name.toString(), value);
     }
+
 }
