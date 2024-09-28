@@ -91,10 +91,7 @@ public class Python {
     }
     
     public static PythonObject newTuple(PythonObject... elements) {
-        PythonObject object = new PythonTuple(elements);
-        object.setAttributeDirectly("__class__", tuple);
-
-        return object;
+        return new PythonTuple(tuple, elements);
     }
     
     public static PythonObject newDict(Map<PythonObject, PythonObject> map) {
