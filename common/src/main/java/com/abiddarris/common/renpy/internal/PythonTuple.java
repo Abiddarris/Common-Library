@@ -15,11 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.tuple;
+
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
+import com.abiddarris.common.renpy.internal.utils.ArrayIterator;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class PythonTuple extends PythonObject {
 
@@ -36,14 +40,25 @@ public class PythonTuple extends PythonObject {
 
     PythonObject[] elements;
 
+    private boolean useJavaIterator;
+
     PythonTuple(PythonObject cls, PythonObject[] elements) {
         super(new BootstrapAttributeHolder(), cls);
-        
+
+        this.useJavaIterator = cls == tuple;
         this.elements = elements;
     }
     
     public PythonObject[] getElements() {
         return elements;
+    }
+
+    @Override
+    public Iterator<PythonObject> iterator() {
+        if (useJavaIterator) {
+            return new ArrayIterator(elements);
+        }
+        return super.iterator();
     }
 
     private static PythonObject getitem(PythonTuple self, PythonObject pos) {
