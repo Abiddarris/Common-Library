@@ -15,20 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
-public class BuiltinsImpl {
+import static com.abiddarris.common.renpy.internal.Builtins.builtins;
 
-    private static boolean init;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
-    public static void initRest() {
-        if (init) {
-            return;
-        }
+class ZipImpl {
 
-        init = true;
-
-        SetImpl.define();
-        GeneratorImpl.define();
-        ZipImpl.define();
+    static void define() {
+        ClassDefiner definer = builtins.defineClass("zip");
+        definer.define();
     }
 
 }
