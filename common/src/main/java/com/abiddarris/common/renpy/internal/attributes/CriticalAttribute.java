@@ -15,6 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.attributes;
 
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Python.newString;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class CriticalAttribute {
@@ -30,6 +33,9 @@ public class CriticalAttribute {
     
     public boolean setAttribute(String key, PythonObject value) {
         if (key.equals("__class__")) {
+            if (class0 != null) {
+                TypeError.call(newString("class already setted")).raise();
+            }
             class0 = value;
             return true;
         }
