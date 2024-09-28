@@ -36,8 +36,8 @@ public class PythonTuple extends PythonObject {
 
     PythonObject[] elements;
 
-    PythonTuple(PythonObject[] elements) {
-        super(new BootstrapAttributeHolder());
+    PythonTuple(PythonObject cls, PythonObject[] elements) {
+        super(new BootstrapAttributeHolder(), cls);
         
         this.elements = elements;
     }
