@@ -36,8 +36,8 @@ public class PythonDict extends PythonObject {
         
     private Map<PythonObject, PythonObject> map;
     
-    PythonDict(Map<PythonObject, PythonObject> map) {
-        super(new BootstrapAttributeHolder());
+    PythonDict(PythonObject cls, Map<PythonObject, PythonObject> map) {
+        super(new BootstrapAttributeHolder(), cls);
         
         this.map = map;
     }
@@ -47,10 +47,7 @@ public class PythonDict extends PythonObject {
     }
     
     private static PythonObject new0(PythonObject cls) {
-        PythonDict dict = new PythonDict(new LinkedHashMap<>());
-        dict.setAttributeDirectly("__class__", cls);
-        
-        return dict;
+        return new PythonDict(cls, new LinkedHashMap<>());
     }
         
     private static PythonObject iter(PythonDict self) {
