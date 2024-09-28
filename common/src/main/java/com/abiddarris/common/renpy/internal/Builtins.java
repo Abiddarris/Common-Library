@@ -53,6 +53,7 @@ public class Builtins {
     public static final PythonObject __import__;
     public static final PythonObject isinstance;
     public static final PythonObject hasattr;
+    public static final PythonObject zip;
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
@@ -332,6 +333,7 @@ public class Builtins {
         com.abiddarris.common.renpy.internal.mod.builtins.BuiltinsImpl.initRest();
 
         set = builtins.getAttribute("set");
+        zip = builtins.getAttribute("zip");
 
         Re.initLoader();
     }
