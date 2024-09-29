@@ -20,5 +20,7 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 public interface Defineable {
 
     PythonObject defineAttribute(String name, PythonObject attribute);
+    PythonObject getModuleName();
+
 
 }
