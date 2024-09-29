@@ -17,6 +17,7 @@ package com.abiddarris.common.renpy.internal.core;
 
 import static com.abiddarris.common.renpy.internal.Python.tryExcept;
 import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.utils.ObjectWrapper;
@@ -33,6 +34,10 @@ public class JFunctions {
 
     public static PythonObject getattr(PythonObject obj, String name, PythonObject defaultValue) {
         return obj.getAttribute(name, defaultValue);
+    }
+
+    public static boolean jIsinstance(PythonObject obj, PythonObject class_or_tuple) {
+        return isinstance(obj, class_or_tuple).toBoolean();
     }
 
 }
