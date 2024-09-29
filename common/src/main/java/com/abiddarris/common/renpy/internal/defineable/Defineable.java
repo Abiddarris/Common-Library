@@ -15,12 +15,24 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.defineable;
 
+import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.core.functions.P2Function;
+import com.abiddarris.common.renpy.internal.core.functions.V2Function;
 
 public interface Defineable {
 
     PythonObject defineAttribute(String name, PythonObject attribute);
     PythonObject getModuleName();
 
+    default PythonObject defineFunction(String name, PythonObject decorator, V2Function function, String... argumentNames) {
+        return initFunction(name, decorator.call(newFunction(function, argumentNames)));
+    }
 
+    private PythonObject initFunction(String name, PythonObject function) {
+        function.setAttribute("__module__", getModuleName());
+
+        return defineAttribute(name, function);
+    }
 }
