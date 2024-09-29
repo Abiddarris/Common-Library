@@ -44,7 +44,12 @@ public class ClassDefiner implements Defineable {
         
         attributes.put("__module__", moduleName);
     }
-    
+
+    @Override
+    public PythonObject getModuleName() {
+        return moduleName;
+    }
+
     public PythonObject defineAttribute(String name, PythonObject attribute) {
         attributes.put(name, attribute);
         
