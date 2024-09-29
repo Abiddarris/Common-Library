@@ -23,11 +23,12 @@ import static com.abiddarris.common.renpy.internal.Python.newDict;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 
+import com.abiddarris.common.renpy.internal.defineable.Defineable;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ClassDefiner {
+public class ClassDefiner implements Defineable {
     
     private Map<String, PythonObject> attributes = new LinkedHashMap<>();
     private String className;
