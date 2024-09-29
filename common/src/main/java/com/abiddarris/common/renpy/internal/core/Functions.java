@@ -109,4 +109,9 @@ public class Functions {
     public static PythonObject not(PythonObject obj) {
         return newBoolean(!obj.toBoolean());
     }
+
+    public static PythonObject max(PythonObject obj, PythonObject obj2) {
+        return obj.jGreaterThan(obj2) ? obj : obj2;
+    }
+
 }
