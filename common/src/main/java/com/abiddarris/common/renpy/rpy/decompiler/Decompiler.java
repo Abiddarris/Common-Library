@@ -37,29 +37,35 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import static com.abiddarris.common.renpy.internal.Python.format;
-import static com.abiddarris.common.renpy.internal.Python.newBoolean;
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 import static com.abiddarris.common.renpy.internal.Builtins.hasattr;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
+import static com.abiddarris.common.renpy.internal.Builtins.str;
+import static com.abiddarris.common.renpy.internal.Builtins.super0;
+import static com.abiddarris.common.renpy.internal.Builtins.tuple;
+import static com.abiddarris.common.renpy.internal.Python.format;
+import static com.abiddarris.common.renpy.internal.Python.newBoolean;
+import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
 import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
-import static com.abiddarris.common.renpy.internal.Builtins.super0;
 import static com.abiddarris.common.renpy.internal.PythonObject.tryExcept;
-import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.zip;
 import static com.abiddarris.common.renpy.internal.core.Functions.all;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
+import static com.abiddarris.common.renpy.internal.core.Functions.max;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
-import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -163,7 +169,8 @@ public class Decompiler {
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
-
+            definer.defineFunction("print_menu", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Menu")),
+                    DecompilerImpl::printMenu, "self", "ast");
             // Programming related functions
 
             definer.defineFunction("print_python", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Python")),
@@ -458,6 +465,114 @@ public class Decompiler {
                     }
                 }
             }).onFinally(() -> self.setAttribute("in_init", in_init));
+        }
+
+        private static void
+        printMenu(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("menu"));
+            if (self.getAttribute("label_inside_menu") != None) {
+                self.callAttribute("write", format(" {0}",
+                        getNestedAttribute(self, "label_inside_menu.name")
+                ));
+                self.setAttribute("label_inside_menu", None);
+            }
+
+            // arguments attribute added in 7.1.4
+            if (getattr(ast, "arguments", None) != None) {
+                self.callAttribute("write", decompiler.callAttribute("reconstruct_arginfo",
+                        ast.getAttribute("arguments")
+                ));
+            }
+
+            self.callAttribute("write", newString(":"));
+
+            with(self.callAttribute("increase_indent"), () -> {
+                if (ast.getAttribute("with_") != None) {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", format("with {0}", ast.getAttribute("with_")));
+                }
+
+                if (ast.getAttribute("set") != None) {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", format("set {0}", ast.getAttribute("set")));
+                }
+
+                // item_arguments attribute since 7.1.4
+                PythonObject item_arguments;
+                if (hasattr(ast, "item_arguments")) {
+                    item_arguments = ast.getAttribute("item_arguments");
+                } else {
+                    item_arguments = newList(None).multiply(len(ast.getAttribute("items")));
+                }
+
+                for (PythonObject args : zip(ast.getAttribute("items"), item_arguments)) {
+                    PythonObject arguments = args.getItem(newInt(1));
+
+                    args = arguments.getItem(newInt(0));
+
+                    PythonObject label = args.getItem(newInt(0));
+                    PythonObject condition = args.getItem(newInt(1));
+                    PythonObject block = args.getItem(newInt(2));
+
+                    if (getNestedAttribute(self, "options.translator").toBoolean()) {
+                        label = callNestedAttribute(self, "options.translator.strings.get", label, label);
+                    }
+
+                    PythonObject state = None;
+
+                    // if the condition is a unicode subclass with a "linenumber" attribute it was
+                    // script.
+                    // If it isn't ren'py used to insert a "True" string. This string used to be of
+                    // type str but nowadays it's of type unicode, just not of type PyExpr
+                    // todo: this check probably doesn't work in ren'py 8
+                    if (jIsinstance(condition, str) && hasattr(condition, "linenumber")) {
+                        if (self.getAttribute("say_inside_menu") != None
+                                && condition.getAttribute("linenumber")
+                                .jGreaterThan( self.getAttribute("linenumber")
+                                        .add(newInt(1))
+                                )) {
+                            // The easy case: we know the line number that the menu item is on,
+                            // because the condition tells us
+                            // So we put the say statement here if there's room for it, or don't if
+                            // there's not
+                            self.callAttribute("print_say_inside_menu");
+                        }
+                        self.callAttribute("advance_to_line", condition.getAttribute("linenumber"));
+                    } else if (self.getAttribute("say_inside_menu") != None) {
+                        // The hard case: we don't know the line number that the menu item is on
+                        // So try to put it in, but be prepared to back it out if that puts us
+                        // behind on the line number
+                        state = self.callAttribute("save_state");
+                        self.setAttribute("most_lines_behind", self.getAttribute("last_lines_behind"));;
+                        self.callAttribute("print_say_inside_menu");
+                    }
+
+                    self.callAttribute("print_menu_item", label, condition, block, arguments);
+
+                    if (state != None) {
+                        // state[7] is the saved value of self.last_lines_behind
+                        if (self.getAttribute("most_lines_behind")
+                                .jGreaterThan(state.getItem(newInt(7)))) {
+                            // We tried to print the say statement that's inside the menu, but it
+                            // didn't fit here
+                            // Undo it and print this item again without it. We'll fit it in later
+                            self.callAttribute("rollback_state", state);
+                            self.callAttribute("print_menu_item", label, condition, block, arguments);
+                        } else {
+                            // state[6] is the saved value of self.most_lines_behind
+                            self.setAttribute("most_lines_behind", max(state.getItem(newInt(6)), self.getAttribute("most_lines_behind")));
+                            self.callAttribute("commit_state", state);
+                        }
+                    }
+                }
+
+                if (self.getAttribute("say_inside_menu") != None) {
+                    // There was no room for this before any of the menu options, so it will just
+                    // have to go after them all
+                    self.callAttribute("print_say_inside_menu");
+                }
+            });
         }
 
         private static void
