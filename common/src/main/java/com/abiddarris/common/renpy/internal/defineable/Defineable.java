@@ -30,6 +30,10 @@ public interface Defineable {
         return initFunction(name, decorator.call(newFunction(function, argumentNames)));
     }
 
+    default PythonObject defineFunction(String name, V2Function function, String... argumentNames) {
+        return initFunction(name, newFunction(function, argumentNames));
+    }
+
     private PythonObject initFunction(String name, PythonObject function) {
         function.setAttribute("__module__", getModuleName());
 
