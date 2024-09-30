@@ -509,7 +509,7 @@ public class Decompiler {
                 for (PythonObject args : zip(ast.getAttribute("items"), item_arguments)) {
                     PythonObject arguments = args.getItem(newInt(1));
 
-                    args = arguments.getItem(newInt(0));
+                    args = args.getItem(newInt(0));
 
                     PythonObject label = args.getItem(newInt(0));
                     PythonObject condition = args.getItem(newInt(1));
