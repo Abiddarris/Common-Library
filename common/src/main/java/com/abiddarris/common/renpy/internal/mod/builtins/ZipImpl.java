@@ -16,14 +16,33 @@
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
 import static com.abiddarris.common.renpy.internal.Builtins.builtins;
+import static com.abiddarris.common.renpy.internal.Python.newList;
 
+import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
 class ZipImpl {
 
     static void define() {
         ClassDefiner definer = builtins.defineClass("zip");
+        definer.defineFunction("__init__", ZipImpl::init, "self", "*iterables");
+        definer.defineFunction("__iter__", ZipImpl::iter, "self");
+
         definer.define();
+    }
+
+    private static void init(PythonObject self, PythonObject iterables) {
+        PythonObject iterable0 = newList();
+        for (PythonObject iterable : iterables) {
+            iterable0.callAttribute("append", iterable.callAttribute("__iter__"));
+        }
+
+        self.setAttribute("iterables", iterable0);
+    }
+
+    private static PythonObject
+    iter(PythonObject self) {
+        return self;
     }
 
 }
