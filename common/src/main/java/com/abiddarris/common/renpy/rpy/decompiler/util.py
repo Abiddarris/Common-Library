@@ -25,20 +25,6 @@ from contextlib import contextmanager
 
 
 class DecompilerBase:
-    def save_state(self):
-        """
-        Save our current state.
-        """
-        state = (self.out_file,
-                 self.skip_indent_until_write,
-                 self.linenumber,
-                 self.block_stack,
-                 self.index_stack,
-                 self.indent_level,
-                 self.blank_line_queue)
-        self.out_file = StringIO()
-        return state
-
     def commit_state(self, state):
         """
         Commit changes since a saved state.
