@@ -338,10 +338,6 @@ class Decompiler(DecompilerBase):
 
         self.do_when_blank_line(do_set_init_offset)
 
-    def print_say_inside_menu(self):
-        self.print_say(self.say_inside_menu, inmenu=True)
-        self.say_inside_menu = None
-
     def print_menu_item(self, label, condition, block, arguments):
         self.indent()
         self.write(f'"{string_escape(label)}"')
