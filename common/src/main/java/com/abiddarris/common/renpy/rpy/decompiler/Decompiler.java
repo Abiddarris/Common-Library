@@ -158,6 +158,7 @@ public class Decompiler {
             PythonObject dispatch = definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
 
             definer.defineFunction("__init__", DecompilerImpl.class, "init", "self", "out_file", "options");
+            definer.defineFunction("save_state", DecompilerImpl::saveState, "self");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
@@ -204,6 +205,16 @@ public class Decompiler {
             self.setAttribute("init_offset", newInt(0));
             self.setAttribute("most_lines_behind", newInt(0));
             self.setAttribute("last_lines_behind", newInt(0));
+        }
+
+        private static PythonObject
+        saveState(PythonObject self) {
+            return newTuple(super0.call(decompiler.getAttribute("Decompiler"), self)
+                            .callAttribute("save_state"),
+                            self.getAttribute("paired_with"), self.getAttribute("say_inside_menu"),
+                            self.getAttribute("label_inside_menu"), self.getAttribute("in_init"),
+                            self.getAttribute("missing_init"), self.getAttribute("most_lines_behind"),
+                            self.getAttribute("last_lines_behind"));
         }
 
         private static void dump(PythonObject self, PythonObject ast) {

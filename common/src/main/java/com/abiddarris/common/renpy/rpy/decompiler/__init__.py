@@ -44,11 +44,6 @@ class Decompiler(DecompilerBase):
         self.most_lines_behind = max(self.last_lines_behind, self.most_lines_behind)
         super(Decompiler, self).advance_to_line(linenumber)
 
-    def save_state(self):
-        return (super(Decompiler, self).save_state(), self.paired_with, self.say_inside_menu,
-                self.label_inside_menu, self.in_init, self.missing_init, self.most_lines_behind,
-                self.last_lines_behind)
-
     def commit_state(self, state):
         super(Decompiler, self).commit_state(state[0])
 
@@ -360,83 +355,6 @@ class Decompiler(DecompilerBase):
                 self.write(f' if {condition}')
             self.write(":")
             self.print_nodes(block, 1)
-
-    @dispatch(renpy.ast.Menu)
-    def print_menu(self, ast):
-        self.indent()
-        self.write("menu")
-        if self.label_inside_menu is not None:
-            self.write(f' {self.label_inside_menu.name}')
-            self.label_inside_menu = None
-
-        # arguments attribute added in 7.1.4
-        if getattr(ast, "arguments", None) is not None:
-            self.write(reconstruct_arginfo(ast.arguments))
-
-        self.write(":")
-
-        with self.increase_indent():
-            if ast.with_ is not None:
-                self.indent()
-                self.write(f'with {ast.with_}')
-
-            if ast.set is not None:
-                self.indent()
-                self.write(f'set {ast.set}')
-
-            # item_arguments attribute since 7.1.4
-            if hasattr(ast, 'item_arguments'):
-                item_arguments = ast.item_arguments
-            else:
-                item_arguments = [None] * len(ast.items)
-
-            for (label, condition, block), arguments in zip(ast.items, item_arguments):
-                if self.options.translator:
-                    label = self.options.translator.strings.get(label, label)
-
-                state = None
-
-                # if the condition is a unicode subclass with a "linenumber" attribute it was
-                # script.
-                # If it isn't ren'py used to insert a "True" string. This string used to be of
-                # type str but nowadays it's of type unicode, just not of type PyExpr
-                # todo: this check probably doesn't work in ren'py 8
-                if isinstance(condition, str) and hasattr(condition, "linenumber"):
-                    if (self.say_inside_menu is not None
-                            and condition.linenumber > self.linenumber + 1):
-                        # The easy case: we know the line number that the menu item is on,
-                        # because the condition tells us
-                        # So we put the say statement here if there's room for it, or don't if
-                        # there's not
-                        self.print_say_inside_menu()
-                    self.advance_to_line(condition.linenumber)
-                elif self.say_inside_menu is not None:
-                    # The hard case: we don't know the line number that the menu item is on
-                    # So try to put it in, but be prepared to back it out if that puts us
-                    # behind on the line number
-                    state = self.save_state()
-                    self.most_lines_behind = self.last_lines_behind
-                    self.print_say_inside_menu()
-
-                self.print_menu_item(label, condition, block, arguments)
-
-                if state is not None:
-                    # state[7] is the saved value of self.last_lines_behind
-                    if self.most_lines_behind > state[7]:
-                        # We tried to print the say statement that's inside the menu, but it
-                        # didn't fit here
-                        # Undo it and print this item again without it. We'll fit it in later
-                        self.rollback_state(state)
-                        self.print_menu_item(label, condition, block, arguments)
-                    else:
-                        # state[6] is the saved value of self.most_lines_behind
-                        self.most_lines_behind = max(state[6], self.most_lines_behind)
-                        self.commit_state(state)
-
-            if self.say_inside_menu is not None:
-                # There was no room for this before any of the menu options, so it will just
-                # have to go after them all
-                self.print_say_inside_menu()
 
     @dispatch(renpy.ast.EarlyPython)
     def print_earlypython(self, ast):
