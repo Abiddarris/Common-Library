@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.core.functions.Functions.newF
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.core.functions.P2Function;
 import com.abiddarris.common.renpy.internal.core.functions.PFunction;
+import com.abiddarris.common.renpy.internal.core.functions.V1Function;
 import com.abiddarris.common.renpy.internal.core.functions.V2Function;
 
 public interface Defineable {
@@ -33,6 +34,10 @@ public interface Defineable {
 
     default PythonObject defineFunction(String name, PythonObject decorator, V2Function function, String... argumentNames) {
         return initFunction(name, decorator.call(newFunction(function, argumentNames)));
+    }
+
+    default PythonObject defineFunction(String name, V1Function function, String... argumentNames) {
+        return initFunction(name, newFunction(function, argumentNames));
     }
 
     default PythonObject defineFunction(String name, V2Function function, String... argumentNames) {
