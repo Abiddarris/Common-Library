@@ -170,6 +170,9 @@ public class Decompiler {
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
+
+            definer.defineFunction("print_say_inside_menu", DecompilerImpl::printSayInsideMenu, "self");
+
             definer.defineFunction("print_menu", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Menu")),
                     DecompilerImpl::printMenu, "self", "ast");
             // Programming related functions
@@ -476,6 +479,13 @@ public class Decompiler {
                     }
                 }
             }).onFinally(() -> self.setAttribute("in_init", in_init));
+        }
+
+        private static void
+        printSayInsideMenu(PythonObject self) {
+            self.callAttribute("print_say", new PythonArgument(self.getAttribute("say_inside_menu"))
+                    .addKeywordArgument("inmenu", True));
+            self.setAttribute("say_inside_menu", None);
         }
 
         private static void
