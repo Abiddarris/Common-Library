@@ -63,6 +63,7 @@ public class Util {
             util = createModule(name);
             util.importModule("re");
 
+            util.fromImport("io", "StringIO");
             util.fromImport("decompiler.unrpyccompat", "DecompilerBaseAdvanceToLineGenerator");
             util.fromImport("decompiler.unrpyccompat", "DispatcherCallClosure");
 
