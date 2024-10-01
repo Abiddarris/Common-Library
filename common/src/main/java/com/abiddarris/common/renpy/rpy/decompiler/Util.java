@@ -132,6 +132,7 @@ public class Util {
 
             definer.defineFunction("write", DecompilerBaseImpl.class, "write", "self", "string");
             definer.defineFunction("write_lines", DecompilerBaseImpl.class, "writeLines", "self", "line");
+            definer.defineFunction("save_state", DecompilerBaseImpl::saveState, "self");
             definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
 
             IndentationContextManagerImpl.define(definer);
@@ -230,6 +231,23 @@ public class Util {
                 }
             }
         }
+
+        /**
+         * Save our current state.
+         */
+        private static PythonObject
+        saveState(PythonObject self) {
+            PythonObject state = newTuple(self.getAttribute("out_file"),
+                     self.getAttribute("skip_indent_until_write"),
+                     self.getAttribute("linenumber"),
+                     self.getAttribute("block_stack"),
+                     self.getAttribute("index_stack"),
+                     self.getAttribute("indent_level"),
+                     self.getAttribute("blank_line_queue"));
+            self.setAttribute("out_file", util.callAttribute("StringIO"));
+            return state;
+        }
+
         private static void advanceToLine(PythonObject self, PythonObject linenumber) {
             // If there was anything that we wanted to do as soon as we found a blank line,
             // try to do it now.
