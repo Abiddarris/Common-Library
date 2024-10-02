@@ -18,10 +18,10 @@ package com.abiddarris.common.renpy.internal.defineable;
 import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
-import com.abiddarris.common.renpy.internal.core.functions.P2Function;
 import com.abiddarris.common.renpy.internal.core.functions.PFunction;
 import com.abiddarris.common.renpy.internal.core.functions.V1Function;
 import com.abiddarris.common.renpy.internal.core.functions.V2Function;
+import com.abiddarris.common.renpy.internal.core.functions.V5Function;
 
 public interface Defineable {
 
@@ -44,9 +44,14 @@ public interface Defineable {
         return initFunction(name, newFunction(function, argumentNames));
     }
 
+    default PythonObject defineFunction(String name, V5Function function, String... argumentNames) {
+        return initFunction(name, newFunction(function, argumentNames));
+    }
+
     private PythonObject initFunction(String name, PythonObject function) {
         function.setAttribute("__module__", getModuleName());
 
         return defineAttribute(name, function);
     }
+
 }
