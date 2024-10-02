@@ -83,10 +83,11 @@ public class Decompiler {
             Decompiler.decompiler = decompiler;
                 
             PythonObject[] imported = decompiler.fromImport("decompiler.util",
-                    "DecompilerBase", "First", "reconstruct_paraminfo", "split_logical_lines",
+                    "DecompilerBase", "First", "reconstruct_paraminfo",
+                    "string_escape", "split_logical_lines",
                     "Dispatcher", "say_get_code", "OptionBase");
             PythonObject DecompilerBase = imported[0];
-            PythonObject OptionBase = imported[6];
+            PythonObject OptionBase = imported[7];
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
             decompiler.fromImport("io", "StringIO");

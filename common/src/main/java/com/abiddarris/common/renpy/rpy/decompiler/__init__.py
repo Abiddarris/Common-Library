@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 from .util import WordConcatenator, , \
-                  reconstruct_arginfo, string_escape, , , \
+                  reconstruct_arginfo, , , , \
                   ,
 
 from operator import itemgetter
