@@ -22,6 +22,7 @@ import com.abiddarris.common.renpy.internal.invocator.PInvocator;
 import com.abiddarris.common.renpy.internal.invocator.V1Invocator;
 import com.abiddarris.common.renpy.internal.invocator.V2Invocator;
 import com.abiddarris.common.renpy.internal.invocator.V3Invocator;
+import com.abiddarris.common.renpy.internal.invocator.V5Invocator;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 public class Functions {
@@ -44,5 +45,12 @@ public class Functions {
 
     public static PythonObject newFunction(V3Function function, String... argumentNames) {
         return new PythonFunction(V3Invocator.INSTANCE, function, PythonSignature.from(argumentNames));
+    }
+
+    public static PythonObject newFunction(V5Function function, String... parameterNames) {
+        if (parameterNames.length != 5) {
+            throw new IllegalArgumentException("parameterNames must exactly has length of 5 (" + parameterNames.length + " given)");
+        }
+        return new PythonFunction(V5Invocator.INSTANCE, function, PythonSignature.from(parameterNames));
     }
 }
