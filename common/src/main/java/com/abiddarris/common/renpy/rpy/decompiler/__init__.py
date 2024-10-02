@@ -338,20 +338,6 @@ class Decompiler(DecompilerBase):
 
         self.do_when_blank_line(do_set_init_offset)
 
-    def print_menu_item(self, label, condition, block, arguments):
-        self.indent()
-        self.write(f'"{string_escape(label)}"')
-
-        if arguments is not None:
-            self.write(reconstruct_arginfo(arguments))
-
-        if block is not None:
-            # ren'py uses the unicode string "True" as condition when there isn't one.
-            if isinstance(condition, renpy.ast.PyExpr):
-                self.write(f' if {condition}')
-            self.write(":")
-            self.print_nodes(block, 1)
-
     @dispatch(renpy.ast.EarlyPython)
     def print_earlypython(self, ast):
         self.print_python(ast, early=True)
