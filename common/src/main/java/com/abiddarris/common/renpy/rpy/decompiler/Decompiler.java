@@ -172,6 +172,7 @@ public class Decompiler {
                     DecompilerImpl.class, "printInit", "self", "ast");
 
             definer.defineFunction("print_say_inside_menu", DecompilerImpl::printSayInsideMenu, "self");
+            definer.defineFunction("print_menu_item", DecompilerImpl::printMenuItem, "self", "label", "condition", "block", "arguments");
 
             definer.defineFunction("print_menu", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Menu")),
                     DecompilerImpl::printMenu, "self", "ast");
@@ -486,6 +487,26 @@ public class Decompiler {
             self.callAttribute("print_say", new PythonArgument(self.getAttribute("say_inside_menu"))
                     .addKeywordArgument("inmenu", True));
             self.setAttribute("say_inside_menu", None);
+        }
+
+        private static void
+        printMenuItem(PythonObject self, PythonObject label, PythonObject condition, PythonObject block, PythonObject arguments) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("\"{0}\"", decompiler.callAttribute("string_escape", label)));
+
+            if (arguments != None) {
+                self.callAttribute("write", decompiler.callAttribute("reconstruct_arginfo", arguments));
+            }
+
+            if (block != None) {
+                // ren'py uses the unicode string "True" as condition when there isn't one.
+                if (jIsinstance(condition, getNestedAttribute(decompiler, "renpy.ast.PyExpr"))) {
+                    self.callAttribute("write", format(" if {0}", condition));
+                }
+
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_nodes", block, newInt(1));
+            }
         }
 
         private static void
