@@ -15,11 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Types.ModuleType;
 import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
+import com.abiddarris.common.renpy.internal.defineable.Defineable;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
 import com.abiddarris.common.renpy.internal.attributes.AttributeManager;
@@ -36,7 +39,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-public class PythonObject extends Python implements Iterable<PythonObject> {
+public class PythonObject extends Python implements Defineable, Iterable<PythonObject> {
 
     private static PythonObject pythonObjectNew(PythonObject cls) {
         PythonObject instance = new PythonObject();
@@ -233,6 +236,21 @@ public class PythonObject extends Python implements Iterable<PythonObject> {
     
     public ClassDefiner defineClass(String name, PythonObject... bases) {
         return new ClassDefiner(name, bases, getAttribute("__name__"), new ModuleTarget(this));
+    }
+
+    @Override
+    public PythonObject defineAttribute(String name, PythonObject attribute) {
+        setAttribute(name, attribute);
+
+        return attribute;
+    }
+
+    @Override
+    public PythonObject getModuleName() {
+        if (jIsinstance(this, ModuleType)) {
+            return getAttribute("__package__");
+        }
+        return getAttribute("__module__");
     }
     
     public PythonObject addNewAttribute(String name, PythonObject attribute) {
