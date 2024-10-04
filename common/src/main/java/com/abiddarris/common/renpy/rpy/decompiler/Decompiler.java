@@ -159,6 +159,7 @@ public class Decompiler {
             PythonObject dispatch = definer.defineAttribute("dispatch", decompiler.getAttribute("Dispatcher").call());
 
             definer.defineFunction("__init__", DecompilerImpl.class, "init", "self", "out_file", "options");
+            definer.defineFunction("advance_to_line", DecompilerImpl::advanceToLine, "self", "linenumber");
             definer.defineFunction("save_state", DecompilerImpl::saveState, "self");
             definer.defineFunction("commit_state", DecompilerImpl::commitState, "self", "state");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
@@ -211,6 +212,19 @@ public class Decompiler {
             self.setAttribute("init_offset", newInt(0));
             self.setAttribute("most_lines_behind", newInt(0));
             self.setAttribute("last_lines_behind", newInt(0));
+        }
+
+        private static void
+        advanceToLine(PythonObject self, PythonObject linenumber) {
+            self.setAttribute("last_lines_behind", max(
+                    self.getAttribute("linenumber").add(
+                            self.getAttribute("skip_indent_until_write").toBoolean() ?
+                                    newInt(0) : newInt(1)
+                    ).subtract(linenumber), newInt(0)));
+            self.setAttribute("most_lines_behind", max(self.getAttribute("last_lines_behind"), self.getAttribute("most_lines_behind")));
+
+            super0.call(decompiler.getAttribute("Decompiler"), self).
+                callAttribute("advance_to_line", linenumber);
         }
 
         private static PythonObject

@@ -37,13 +37,6 @@ __all__ = ["astdump", "magic", "sl2decompiler", "testcasedecompiler", "translate
 # Implementation
 
 class Decompiler(DecompilerBase):
-
-    def advance_to_line(self, linenumber):
-        self.last_lines_behind = max(
-            self.linenumber + (0 if self.skip_indent_until_write else 1) - linenumber, 0)
-        self.most_lines_behind = max(self.last_lines_behind, self.most_lines_behind)
-        super(Decompiler, self).advance_to_line(linenumber)
-
     def rollback_state(self, state):
         self.paired_with = state[1]
         self.say_inside_menu = state[2]
