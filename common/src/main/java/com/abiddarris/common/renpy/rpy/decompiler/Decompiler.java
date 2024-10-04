@@ -167,6 +167,7 @@ public class Decompiler {
 
             // Flow control
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
+            definer.defineFunction("print_jump", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Jump")), DecompilerImpl::printJump, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
 
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
@@ -361,6 +362,15 @@ public class Decompiler {
                 self.setAttribute("out_file", out_file);
             });
         }
+
+        private static void
+        printJump(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format(
+                    "jump {0}{1}", newString(ast.getAttribute("expression").toBoolean() ?  "expression " : ""),
+                    ast.getAttribute("target")));
+        }
+
 
         private static void
         printIf(PythonObject self, PythonObject ast) {
