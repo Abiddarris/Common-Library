@@ -194,11 +194,6 @@ class Lexer:
 # simple_expressions. This class attempts to preserve the amount of
 # whitespace if possible.
 class WordConcatenator(object):
-    def __init__(self, needs_space, reorderable=False):
-        self.words = []
-        self.needs_space = needs_space
-        self.reorderable = reorderable
-
     def append(self, *args):
         self.words.extend(i for i in args if i)
 

@@ -35,6 +35,7 @@
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
@@ -87,7 +88,7 @@ public class Util {
             // ren'py string handling
             util.addNewFunction("encode_say_string", Util.class, "encodeSayString", "s");
             util.addNewFunction("say_get_code", Util.class, "sayGetCode", new PythonSignatureBuilder("ast")
-                    .addParameter("inmenu", Builtins.False)
+                    .addParameter("inmenu", False)
                     .build());
                 
             return util;
@@ -127,7 +128,7 @@ public class Util {
             definer.defineFunction("dump", DecompilerBaseImpl.class, "dump", new PythonSignatureBuilder("self", "ast")
                 .addParameter("indent_level", newInt(0))
                 .addParameter("linenumber", newInt(1))
-                .addParameter("skip_indent_until_write", Builtins.False)
+                .addParameter("skip_indent_until_write", False)
                 .build());
 
             definer.defineFunction("increase_indent", DecompilerBaseImpl.class, "increaseIndent", new PythonSignatureBuilder("self")
@@ -177,7 +178,7 @@ public class Util {
             // a boolean that can be set to make the next call to indent() not insert a newline and
             // indent useful when a child node can continue on the same line as the parent node
             // advance_to_line will also cancel this if it changes the lineno
-            self.setAttribute("skip_indent_until_write", Builtins.False);
+            self.setAttribute("skip_indent_until_write", False);
 
             // properties used for keeping track what level of block we're in
             self.setAttribute("block_stack", newList());
@@ -217,7 +218,7 @@ public class Util {
             self.setAttribute("linenumber", self.getAttribute("linenumber").add(
                     string.callAttribute("count", newString("\n"))
             ));
-            self.setAttribute("skip_indent_until_write", Builtins.False);
+            self.setAttribute("skip_indent_until_write", False);
 
             callNestedAttribute(self, "out_file.write", string);
         }
@@ -402,7 +403,7 @@ public class Util {
             ClassDefiner definer = util.defineClass("First");
             definer.defineFunction("__init__", First.class, "init", new PythonSignatureBuilder("self")
                     .addParameter("yes_value", Builtins.True)
-                    .addParameter("no_value", Builtins.False)
+                    .addParameter("no_value", False)
                     .build());
             definer.defineFunction("__call__", First.class, "call", "self");
 
@@ -419,7 +420,7 @@ public class Util {
         private static PythonObject
         call(PythonObject self) {
             if (self.getAttribute("first").toBoolean()) {
-                self.setAttribute("first", Builtins.False);
+                self.setAttribute("first", False);
                 return self.getAttribute("yes_value");
             } else {
                 return self.getAttribute("no_value");
@@ -763,7 +764,7 @@ public class Util {
                     continue;
                 }
 
-                if (self.callAttribute("python_string", Builtins.False).toBoolean()) {
+                if (self.callAttribute("python_string", False).toBoolean()) {
                     continue;
                 }
 
@@ -782,8 +783,18 @@ public class Util {
 
         private static void define() {
             ClassDefiner definer = util.defineClass("WordConcatenator");
+            definer.defineFunction("__init__", WordConcatenatorImpl::init, new PythonSignatureBuilder("self", "needs_space")
+                    .addParameter("reorderable", False)
+                    .build());
 
             definer.define();
+        }
+
+        private static void
+        init(PythonObject self, PythonObject needs_space,  PythonObject reorderable) {
+            self.setAttribute("words", newList());
+            self.setAttribute("needs_space", needs_space);
+            self.setAttribute("reorderable", reorderable);
         }
 
     }
