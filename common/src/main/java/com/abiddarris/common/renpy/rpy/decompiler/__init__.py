@@ -224,27 +224,6 @@ class Decompiler(DecompilerBase):
         if ast.atl is not None:
             self.write(":")
             self.print_atl(ast.atl)
-    @dispatch(renpy.ast.Call)
-    def print_call(self, ast):
-        self.indent()
-        words = WordConcatenator(False)
-        words.append("call")
-        if ast.expression:
-            words.append("expression")
-        words.append(ast.label)
-
-        if ast.arguments is not None:
-            if ast.expression:
-                words.append("pass")
-            words.append(reconstruct_arginfo(ast.arguments))
-
-        # We don't have to check if there's enough elements here,
-        # since a Label or a Pass is always emitted after a Call.
-        next_block = self.block[self.index + 1]
-        if isinstance(next_block, renpy.ast.Label):
-            words.append(f'from {next_block.name}')
-
-        self.write(words.join())
 
     @dispatch(renpy.ast.Return)
     def print_return(self, ast):

@@ -168,6 +168,7 @@ public class Decompiler {
             // Flow control
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
             definer.defineFunction("print_jump", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Jump")), DecompilerImpl::printJump, "self", "ast");
+            definer.defineFunction("print_call", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Call")), DecompilerImpl::printCall, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
 
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
@@ -371,6 +372,35 @@ public class Decompiler {
                     ast.getAttribute("target")));
         }
 
+        private static void
+        printCall(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+
+            PythonObject words = decompiler.callAttribute("WordConcatenator", False);
+            words.callAttribute("append", newString("call"));
+            if (ast.getAttribute("expression").toBoolean()) {
+                words.callAttribute("append", newString("expression"));
+            }
+            words.callAttribute("append", ast.getAttribute("label"));
+
+            if (ast.getAttribute("arguments") != None) {
+                if (ast.getAttribute("expression").toBoolean()) {
+                    words.callAttribute("append", newString("pass"));
+                }
+                words.callAttribute("append", decompiler.callAttribute("reconstruct_arginfo",
+                        ast.getAttribute("arguments")));
+            }
+
+            // We don't have to check if there's enough elements here,
+            // since a Label or a Pass is always emitted after a Call.
+            PythonObject next_block = self.getAttribute("block")
+                    .getItem(self.getAttribute("index").add(newInt(1)));
+            if (jIsinstance(next_block, getNestedAttribute(decompiler, "renpy.ast.Label"))) {
+                words.callAttribute("append", format("from {0}", next_block.getAttribute("name")));
+            }
+
+            self.callAttribute("write", words.callAttribute("join"));
+        }
 
         private static void
         printIf(PythonObject self, PythonObject ast) {
