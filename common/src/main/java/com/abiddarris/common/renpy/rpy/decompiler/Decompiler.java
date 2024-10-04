@@ -160,6 +160,7 @@ public class Decompiler {
 
             definer.defineFunction("__init__", DecompilerImpl.class, "init", "self", "out_file", "options");
             definer.defineFunction("save_state", DecompilerImpl::saveState, "self");
+            definer.defineFunction("commit_state", DecompilerImpl::commitState, "self", "state");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
@@ -220,6 +221,12 @@ public class Decompiler {
                             self.getAttribute("label_inside_menu"), self.getAttribute("in_init"),
                             self.getAttribute("missing_init"), self.getAttribute("most_lines_behind"),
                             self.getAttribute("last_lines_behind"));
+        }
+
+        private static void
+        commitState(PythonObject self, PythonObject state) {
+            super0.call(decompiler.getAttribute("Decompiler"), self)
+                    .callAttribute("commit_state", state.getItem(newInt(0)));
         }
 
         private static void dump(PythonObject self, PythonObject ast) {
