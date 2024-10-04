@@ -1,5 +1,6 @@
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
 
@@ -228,7 +229,7 @@ public class Builtins {
 
         method = Bootstrap.newClass(type, newTuple(PythonObject.newPythonString("method"), newTuple(object)));
 
-        Exception = Bootstrap.newClass(type, newTuple(Python.newString("exception"), newTuple()), new BootstrapAttributeHolder());
+        Exception = Bootstrap.newClass(type, newTuple(newString("exception"), newTuple()), new BootstrapAttributeHolder());
         Exception.setAttribute("__new__", Python.newFunction(
                 Python.findMethod(PythonObject.PythonBaseException.class, "newException"),
                 new PythonSignatureBuilder()
@@ -238,12 +239,12 @@ public class Builtins {
         ));
         Exception.setAttribute("__init__", Python.newFunction(Python.findMethod(PythonObject.PythonBaseException.class, "init"), "self", "*args"));
 
-        StopIteration = Bootstrap.newClass(type, newTuple(Python.newString("StopIteration"), newTuple(Exception)), new BootstrapAttributeHolder());
-        KeyError = Bootstrap.newClass(type, newTuple(Python.newString("KeyError"), newTuple(Exception)), new BootstrapAttributeHolder());
+        StopIteration = Bootstrap.newClass(type, newTuple(newString("StopIteration"), newTuple(Exception)), new BootstrapAttributeHolder());
+        KeyError = Bootstrap.newClass(type, newTuple(newString("KeyError"), newTuple(Exception)), new BootstrapAttributeHolder());
 
         PythonDict.init();
 
-        bool = Bootstrap.newClass(type, newTuple(Python.newString("bool"), newTuple(int0)), new BootstrapAttributeHolder());
+        bool = Bootstrap.newClass(type, newTuple(newString("bool"), newTuple(int0)), new BootstrapAttributeHolder());
         bool.setAttribute("__new__", Python.newFunction(Python.findMethod(BuiltinsImpl.class, "boolNew"),
                 "cls", "obj"));
         bool.setAttribute("__init__", Python.newFunction(Python.findMethod(BuiltinsImpl.class, "boolInit"),
@@ -261,15 +262,15 @@ public class Builtins {
 
         AttributeSetter.activate();
 
-        TypeError = type.call(Python.newString("TypeError"), newTuple(Exception), Python.newDict());
-        AttributeError = type.call(Python.newString("AttributeError"), newTuple(Exception), Python.newDict());
+        TypeError = type.call(newString("TypeError"), newTuple(Exception), Python.newDict());
+        AttributeError = type.call(newString("AttributeError"), newTuple(Exception), Python.newDict());
 
         DelegateType.activate();
 
         issubclass = Python.newFunction(Python.findMethod(Functions.class, "issubclass"), "cls", "base");
 
-        NoneType = type.call(Python.newString("NoneType"), newTuple(type), Python.newDict());
-        None = NoneType.call(Python.newString("None"), newTuple(), Python.newDict());
+        NoneType = type.call(newString("NoneType"), newTuple(type), Python.newDict());
+        None = NoneType.call(newString("None"), newTuple(), Python.newDict());
 
         NoneType.setAttribute("__new__", Python.newFunction(Python.findMethod(BuiltinsImpl.class, "noneTypeNew"), "cls"));
         NoneType.setAttribute("__init__", Python.newFunction(Python.findMethod(BuiltinsImpl.class, "noneTypeInit"), "cls"));
@@ -298,13 +299,14 @@ public class Builtins {
 
         __import__ = Python.newFunction(Python.findMethod(BuiltinsImpl.class, "importImpl"), "name");
         list = Python.newClass("list", newTuple(), Python.newDict(
-                Python.newString("__getitem__"), Python.newFunction(Python.findMethod(PythonList.class, "getItem"), "self", "index"),
-                Python.newString("insert"), Python.newFunction(Python.findMethod(PythonList.class, "insert"), "self", "index", "element"),
-                Python.newString("__iter__"), Python.newFunction(Python.findMethod(PythonList.class, "iter"), "self"),
-                Python.newString("append"), Python.newFunction(PythonList.class, "append", "self", "append"),
-                Python.newString("pop"), Python.newFunction(PythonList.class, "pop", "self"),
-                Python.newString("__len__"), Python.newFunction(PythonList.class, "len", "self"),
-                Python.newString("__setitem__"), Python.newFunction(Python.findMethod(PythonList.class, "setItem"), "self", "key", "value")
+                newString("__getitem__"), Python.newFunction(Python.findMethod(PythonList.class, "getItem"), "self", "index"),
+                newString("insert"), Python.newFunction(Python.findMethod(PythonList.class, "insert"), "self", "index", "element"),
+                newString("__iter__"), Python.newFunction(Python.findMethod(PythonList.class, "iter"), "self"),
+                newString("append"), Python.newFunction(PythonList.class, "append", "self", "append"),
+                newString("pop"), Python.newFunction(PythonList.class, "pop", "self"),
+                newString("__len__"), Python.newFunction(PythonList.class, "len", "self"),
+                newString("__setitem__"), Python.newFunction(Python.findMethod(PythonList.class, "setItem"), "self", "key", "value"),
+                newString("extend"), newFunction(PythonList::extend, "self", "*iterable")
         ));
 
         Sys.init();
