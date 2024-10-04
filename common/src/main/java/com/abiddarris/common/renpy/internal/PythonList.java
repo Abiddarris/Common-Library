@@ -70,6 +70,14 @@ class PythonList extends PythonObject {
     private static void append(PythonList self, PythonObject element) {
         self.elements.add(element);
     }
+
+    static void
+    extend(PythonObject self, PythonObject iterable) {
+        PythonList list = (PythonList) self;
+        for (PythonObject element : iterable) {
+            list.elements.add(element);
+        }
+    }
     
     private static PythonObject iter(PythonList self) {
         return new ListIteratorObject(self);
