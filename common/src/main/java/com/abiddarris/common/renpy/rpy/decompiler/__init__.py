@@ -224,12 +224,6 @@ class Decompiler(DecompilerBase):
         if ast.atl is not None:
             self.write(":")
             self.print_atl(ast.atl)
-
-    @dispatch(renpy.ast.Jump)
-    def print_jump(self, ast):
-        self.indent()
-        self.write(f'jump {"expression " if ast.expression else ""}{ast.target}')
-
     @dispatch(renpy.ast.Call)
     def print_call(self, ast):
         self.indent()
