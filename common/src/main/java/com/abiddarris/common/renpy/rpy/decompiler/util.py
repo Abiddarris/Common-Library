@@ -24,14 +24,6 @@ from contextlib import contextmanager
 
 
 class DecompilerBase:
-    def commit_state(self, state):
-        """
-        Commit changes since a saved state.
-        """
-        out_file = state[0]
-        out_file.write(self.out_file.getvalue())
-        self.out_file = out_file
-
     def rollback_state(self, state):
         """
         Roll back to a saved state.
