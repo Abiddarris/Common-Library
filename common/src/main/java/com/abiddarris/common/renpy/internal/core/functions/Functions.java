@@ -44,7 +44,11 @@ public class Functions {
     }
 
     public static PythonObject newFunction(V3Function function, String... argumentNames) {
-        return new PythonFunction(V3Invocator.INSTANCE, function, PythonSignature.from(argumentNames));
+        return newFunction(function, PythonSignature.from(argumentNames));
+    }
+
+    public static PythonObject newFunction(V3Function function, PythonSignature signature) {
+        return new PythonFunction(V3Invocator.INSTANCE, function, signature);
     }
 
     public static PythonObject newFunction(V5Function function, String... parameterNames) {
