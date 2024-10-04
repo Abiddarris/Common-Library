@@ -786,6 +786,7 @@ public class Util {
             definer.defineFunction("__init__", WordConcatenatorImpl::init, new PythonSignatureBuilder("self", "needs_space")
                     .addParameter("reorderable", False)
                     .build());
+            definer.defineFunction("append", WordConcatenatorImpl::append, "self", "*args");
 
             definer.define();
         }
@@ -797,6 +798,14 @@ public class Util {
             self.setAttribute("reorderable", reorderable);
         }
 
+        private static void
+        append(PythonObject self, PythonObject args) {
+            callNestedAttribute(self, "words.extend", newGenerator()
+                    .forEach(vars -> args)
+                    .name((vars, var) -> vars.put("i", var))
+                    .filter(vars -> vars.get("i"))
+                    .yield(vars -> vars.get("i")));
+        }
     }
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
