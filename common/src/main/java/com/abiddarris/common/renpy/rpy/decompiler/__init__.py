@@ -44,9 +44,6 @@ class Decompiler(DecompilerBase):
         self.most_lines_behind = max(self.last_lines_behind, self.most_lines_behind)
         super(Decompiler, self).advance_to_line(linenumber)
 
-    def commit_state(self, state):
-        super(Decompiler, self).commit_state(state[0])
-
     def rollback_state(self, state):
         self.paired_with = state[1]
         self.say_inside_menu = state[2]
