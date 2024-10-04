@@ -137,6 +137,7 @@ public class Util {
             definer.defineFunction("write", DecompilerBaseImpl.class, "write", "self", "string");
             definer.defineFunction("write_lines", DecompilerBaseImpl.class, "writeLines", "self", "line");
             definer.defineFunction("save_state", DecompilerBaseImpl::saveState, "self");
+            definer.defineFunction("commit_state", DecompilerBaseImpl::commitState, "self", "state");
             definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
 
             IndentationContextManagerImpl.define(definer);
@@ -250,6 +251,17 @@ public class Util {
                      self.getAttribute("blank_line_queue"));
             self.setAttribute("out_file", util.callAttribute("StringIO"));
             return state;
+        }
+
+        /**
+         * Commit changes since a saved state.
+         */
+        private static void
+        commitState(PythonObject self, PythonObject state) {
+            PythonObject out_file = state.getItem(newInt(0));
+            out_file.callAttribute("write", callNestedAttribute(self, "out_file.getvalue"));
+
+            self.setAttribute("out_file", out_file);
         }
 
         private static void advanceToLine(PythonObject self, PythonObject linenumber) {
