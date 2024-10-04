@@ -81,7 +81,7 @@ public class Util {
             // special lexer for simple_expressions the ren'py way
             // false negatives aren't dangerous. but false positives are
             LexerImpl.define();
-
+            WordConcatenatorImpl.define();
             DispatcherImpl.define();
 
             // ren'py string handling
@@ -776,6 +776,16 @@ public class Util {
             }
             return lines;
         }
+    }
+
+    private static class WordConcatenatorImpl {
+
+        private static void define() {
+            ClassDefiner definer = util.defineClass("WordConcatenator");
+
+            definer.define();
+        }
+
     }
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch
