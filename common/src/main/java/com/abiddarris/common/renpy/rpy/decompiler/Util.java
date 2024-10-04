@@ -73,6 +73,9 @@ public class Util {
             First.define();
 
             util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
+
+            util.defineFunction("string_escape", Util::stringEscape, "s");
+
             util.addNewFunction("split_logical_lines", Util.class, "splitLogicalLines", "s");
 
             // special lexer for simple_expressions the ren'py way
@@ -628,6 +631,16 @@ public class Util {
         rv.callAttribute("append", newString(")"));
 
         return newString("").callAttribute("join", rv);
+    }
+
+    private static PythonObject
+    stringEscape(PythonObject s) {  // TODO see if this needs to work like encode_say_string elsewhere
+        s = s.callAttribute("replace", newString("\\"), newString("\\\\"));
+        s = s.callAttribute("replace", newString("\""), newString("\\\""));
+        s = s.callAttribute("replace", newString("\n"), newString("\\n"));
+        s = s.callAttribute("replace", newString("\t"), newString("\\t"));
+
+        return s;
     }
 
     private static PythonObject

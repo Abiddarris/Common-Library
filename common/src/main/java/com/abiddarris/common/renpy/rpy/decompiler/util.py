@@ -90,13 +90,6 @@ def reconstruct_arginfo(arginfo):
 
     return "".join(rv)
 
-def string_escape(s):  # TODO see if this needs to work like encode_say_string elsewhere
-    s = s.replace('\\', '\\\\')
-    s = s.replace('"', '\\"')
-    s = s.replace('\n', '\\n')
-    s = s.replace('\t', '\\t')
-    return s
-
 # keywords used by ren'py's parser
 KEYWORDS = set(['$', 'as', 'at', 'behind', 'call', 'expression', 'hide',
                 'if', 'in', 'image', 'init', 'jump', 'menu', 'onlayer',
