@@ -15,9 +15,11 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Types.ModuleType;
 import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeError;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
+import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -171,6 +173,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
 
     public PythonObject getItem(long key) {
         return getItem(newInt(key));
+    }
+
+    public PythonObject sliceTo(long end) {
+        return getItem(newSlice(None, newInt(end)));
     }
     
     public void setItem(PythonObject key, PythonObject value) {
