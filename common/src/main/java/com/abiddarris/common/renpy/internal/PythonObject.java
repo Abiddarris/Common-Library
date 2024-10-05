@@ -168,6 +168,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return callAttribute("__getitem__", new PythonArgument()
             .addPositionalArgument(key));
     }
+
+    public PythonObject getItem(long key) {
+        return getItem(newInt(key));
+    }
     
     public void setItem(PythonObject key, PythonObject value) {
         callAttribute("__setitem__", key, value);
