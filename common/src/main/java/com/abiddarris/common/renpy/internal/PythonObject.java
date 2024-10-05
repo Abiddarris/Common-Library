@@ -251,6 +251,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     public PythonObject notEquals(PythonObject other) {
         return callTypeAttribute("__ne__", other);
     }
+
+    public PythonObject notEquals(String other) {
+        return notEquals(newString(other));
+    }
     
     public ClassDefiner defineClass(String name, PythonObject... bases) {
         return new ClassDefiner(name, bases, getAttribute("__name__"), new ModuleTarget(this));
