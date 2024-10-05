@@ -24,6 +24,7 @@ import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
 
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
+import com.abiddarris.common.renpy.internal.core.Attributes;
 import com.abiddarris.common.renpy.internal.defineable.Defineable;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
 import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
@@ -150,6 +151,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         
         return callAttribute(name, argument);
     }
+
+    public PythonObject callNestedAttribute(String name, PythonObject... args) {
+        return Attributes.callNestedAttribute(this, name, args);
+    }
     
     public PythonObject call(PythonObject... args) {
         return call(new PythonArgument().addPositionalArgumentsFromArray(args));
@@ -209,6 +214,7 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     public boolean jNotEquals(PythonObject other) {
         return notEquals(other).toBoolean();
     }
+
 
     public boolean jLessThan(PythonObject value) {
         return lessThan(value).toBoolean();
