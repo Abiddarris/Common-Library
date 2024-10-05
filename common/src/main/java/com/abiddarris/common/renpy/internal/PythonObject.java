@@ -175,6 +175,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return getItem(newInt(key));
     }
 
+    public boolean getItemJB(long key) {
+        return getItem(key).toBoolean();
+    }
+
     public PythonObject sliceTo(long end) {
         return getItem(newSlice(None, newInt(end)));
     }
