@@ -227,6 +227,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return greaterThan(value).toBoolean();
     }
 
+    public boolean jGreaterThan(long value) {
+        return jGreaterThan(newInt(value));
+    }
+
     public PythonObject greaterThan(PythonObject value) {
         return callTypeAttribute("__gt__", value);
     }
