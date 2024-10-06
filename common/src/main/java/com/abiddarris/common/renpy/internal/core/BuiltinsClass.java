@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
+import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.Builtins.zip;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -23,6 +24,10 @@ public class BuiltinsClass {
 
     public static PythonObject zip(PythonObject... iterables) {
         return zip.call(iterables);
+    }
+
+    public static PythonObject list(PythonObject iterable) {
+        return list.call(iterable);
     }
 
 }
