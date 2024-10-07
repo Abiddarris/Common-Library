@@ -22,6 +22,7 @@ import com.abiddarris.common.renpy.internal.core.functions.PFunction;
 import com.abiddarris.common.renpy.internal.core.functions.V1Function;
 import com.abiddarris.common.renpy.internal.core.functions.V2Function;
 import com.abiddarris.common.renpy.internal.core.functions.V3Function;
+import com.abiddarris.common.renpy.internal.core.functions.V4Function;
 import com.abiddarris.common.renpy.internal.core.functions.V5Function;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
@@ -48,6 +49,10 @@ public interface Defineable {
 
     default PythonObject defineFunction(String name, V3Function function, PythonSignature signature) {
         return initFunction(name, newFunction(function, signature));
+    }
+
+    default PythonObject defineFunction(String name, V4Function function, String... argumentNames) {
+        return initFunction(name, newFunction(function, argumentNames));
     }
 
     default PythonObject defineFunction(String name, V5Function function, String... argumentNames) {
