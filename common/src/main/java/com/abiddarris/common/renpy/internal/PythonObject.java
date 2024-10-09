@@ -255,6 +255,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return callTypeAttribute("__sub__", value);
     }
 
+    public PythonObject subtract(int value) {
+        return subtract(newInt(value));
+    }
+
     public PythonObject multiply(PythonObject value) {
         return callAttribute("__mul__", value);
     }
