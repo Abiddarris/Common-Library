@@ -39,6 +39,8 @@ import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.list;
+import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Functions.not;
@@ -779,6 +781,11 @@ public class Util {
         }
     }
 
+    /**
+     * Versions of Ren'Py prior to 6.17 put trailing whitespace on the end of
+     * simple_expressions. This class attempts to preserve the amount of
+     * whitespace if possible.
+     */
     private static class WordConcatenatorImpl {
 
         private static void define() {
@@ -787,6 +794,7 @@ public class Util {
                     .addParameter("reorderable", False)
                     .build());
             definer.defineFunction("append", WordConcatenatorImpl::append, "self", "*args");
+            definer.defineFunction("join", WordConcatenatorImpl::join, "self");
 
             definer.define();
         }
@@ -806,6 +814,50 @@ public class Util {
                     .filter(vars -> vars.get("i"))
                     .yield(vars -> vars.get("i")));
         }
+
+        private static PythonObject
+        join(PythonObject self) {
+            if (!self.getAttributeJB("words")) {
+                return newString("");
+            }
+
+            if (self.getAttributeJB("reorderable") && self.getAttribute("words")
+                    .getItem(newInt(-1))
+                    .getItem(newInt(-1))
+                    .equals(newString(" "))) {
+                for (PythonObject i : range(
+                        len(self.getAttribute("words")).subtract(-1),
+                        newInt(-1), newInt(-1))
+                ) {
+                    if (self.getAttribute("words")
+                            .getItem(i)
+                            .getItem(-1)
+                            .jNotEquals(" ")) {
+                        self.callNestedAttribute("words.append", self.callNestedAttribute("words.pop", i));
+                        break;
+                    }
+                }
+            }
+
+            PythonObject last_word = self.getAttribute("words")
+                    .getItem(-1);
+            self.setAttribute("words", list(newGenerator()
+                    .forEach(vars -> self.getAttribute("words").sliceTo(-1))
+                    .name((vars, x) -> vars.put("x", x))
+                    .yield(vars -> {
+                        PythonObject x = vars.get("x");
+                        return x.getItemJB(-1) ? newString(" ") : x;
+                    })
+            ));
+            self.callNestedAttribute("words.append", last_word);
+
+            PythonObject rv = newString(self.getAttributeJB("needs_space") ? " " : "")
+                     .add(newString(" ").callAttribute("join", self.getAttribute("words")));
+            self.setAttribute("needs_space", rv.getItem(-1).notEquals(" "));
+
+            return rv;
+        }
+
     }
 
     // Dict subclass for aesthetic dispatching. use @Dispatcher(data) to dispatch

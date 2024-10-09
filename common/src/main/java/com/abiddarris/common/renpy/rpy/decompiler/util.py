@@ -189,22 +189,3 @@ class Lexer:
 
             # are we at the end of the simple expression?
         return self.eol()
-
-# Versions of Ren'Py prior to 6.17 put trailing whitespace on the end of
-# simple_expressions. This class attempts to preserve the amount of
-# whitespace if possible.
-class WordConcatenator(object):
-    def join(self):
-        if not self.words:
-            return ''
-        if self.reorderable and self.words[-1][-1] == ' ':
-            for i in range(len(self.words) - 1, -1, -1):
-                if self.words[i][-1] != ' ':
-                    self.words.append(self.words.pop(i))
-                    break
-        last_word = self.words[-1]
-        self.words = [x[:-1] if x[-1] == ' ' else x for x in self.words[:-1]]
-        self.words.append(last_word)
-        rv = (' ' if self.needs_space else '') + ' '.join(self.words)
-        self.needs_space = rv[-1] != ' '
-        return rv
