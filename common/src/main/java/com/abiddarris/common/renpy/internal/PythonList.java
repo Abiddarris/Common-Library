@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Builtins.IndexError;
 import static com.abiddarris.common.renpy.internal.Builtins.StopIteration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class PythonList extends PythonObject {
@@ -36,6 +37,10 @@ class PythonList extends PythonObject {
         this.elements = elements;
         
         setAttributeDirectly("__class__", cls);
+    }
+
+    static PythonObject new0(PythonObject cls, PythonObject iterable) {
+        return new PythonList(cls, new ArrayList<>());
     }
     
     private static PythonObject getItem(PythonList list, PythonObject index) {

@@ -307,7 +307,8 @@ public class Builtins {
                 newString("pop"), Python.newFunction(PythonList.class, "pop", "self"),
                 newString("__len__"), Python.newFunction(PythonList.class, "len", "self"),
                 newString("__setitem__"), Python.newFunction(Python.findMethod(PythonList.class, "setItem"), "self", "key", "value"),
-                newString("extend"), newFunction(PythonList::extend, "self", "*iterable")
+                newString("extend"), newFunction(PythonList::extend, "self", "*iterable"),
+                newString("__new__"), newFunction(PythonList::new0, "self", "iterable")
         ));
 
         Sys.init();
