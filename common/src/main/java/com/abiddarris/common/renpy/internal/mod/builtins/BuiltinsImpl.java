@@ -29,6 +29,7 @@ public class BuiltinsImpl {
         SetImpl.define();
         GeneratorImpl.define();
         ZipImpl.define();
+        RangeImpl.define();
     }
 
 }

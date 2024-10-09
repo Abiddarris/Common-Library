@@ -55,6 +55,7 @@ public class Builtins {
     public static final PythonObject isinstance;
     public static final PythonObject hasattr;
     public static final PythonObject zip;
+    public static final PythonObject range;
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
@@ -339,6 +340,7 @@ public class Builtins {
 
         set = builtins.getAttribute("set");
         zip = builtins.getAttribute("zip");
+        range = builtins.getAttribute("range");
 
         Re.initLoader();
     }
