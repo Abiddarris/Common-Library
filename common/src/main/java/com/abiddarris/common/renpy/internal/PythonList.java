@@ -42,7 +42,14 @@ class PythonList extends PythonObject {
     static PythonObject new0(PythonObject cls, PythonObject iterable) {
         return new PythonList(cls, new ArrayList<>());
     }
-    
+
+    static void init0(PythonObject self, PythonObject iterable) {
+        PythonList list = (PythonList) self;
+        for (PythonObject element : iterable) {
+            list.elements.add(element);
+        }
+    }
+
     private static PythonObject getItem(PythonList list, PythonObject index) {
         int indexInt = getRawIndex(list, index);
 
