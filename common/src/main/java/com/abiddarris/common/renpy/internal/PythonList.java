@@ -32,10 +32,10 @@ class PythonList extends PythonObject {
         ));
     }
     
-    PythonList(List<PythonObject> elements) {
+    PythonList(PythonObject cls, List<PythonObject> elements) {
         this.elements = elements;
         
-        setAttributeDirectly("__class__", Builtins.list);
+        setAttributeDirectly("__class__", cls);
     }
     
     private static PythonObject getItem(PythonList list, PythonObject index) {

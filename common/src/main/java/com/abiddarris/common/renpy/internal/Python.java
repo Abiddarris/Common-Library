@@ -19,6 +19,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.Builtins.int0;
+import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.Builtins.str;
 import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 import static com.abiddarris.common.renpy.internal.Builtins.type;
@@ -64,7 +65,7 @@ public class Python {
     }
     
     public static PythonObject newList(List<PythonObject> elements) {
-        return new PythonList(new ArrayList<>(elements));
+        return new PythonList(list, new ArrayList<>(elements));
     }
     
     public static ExceptFinally tryExcept(Runnable tryRunnable) {
