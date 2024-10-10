@@ -37,11 +37,15 @@ class ForEachStatement {
         this.nameSetter = nameSetter;
     }
 
-    public boolean execute(Variables vars) {
+    public void executeIterator(Variables vars) {
         if (iterator == null) {
             iterator = iteratorSupplier.apply(vars);
             iterator = iterator.callAttribute("__iter__");
         }
+    }
+
+    public boolean execute(Variables vars) {
+        executeIterator(vars);
 
         while (true) {
             tryExcept(() -> obj.setObject(iterator.callAttribute("__next__")))
