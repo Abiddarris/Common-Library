@@ -846,7 +846,7 @@ public class Util {
                     .name((vars, x) -> vars.put("x", x))
                     .yield(vars -> {
                         PythonObject x = vars.get("x");
-                        return x.getItemJB(-1) ? newString(" ") : x;
+                        return x.getItem(-1).equals(" ") ? x.sliceTo(-1) : x;
                     })
             ));
             self.callNestedAttribute("words.append", last_word);
