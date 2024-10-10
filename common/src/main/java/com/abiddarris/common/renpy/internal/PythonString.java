@@ -163,7 +163,7 @@ class PythonString extends PythonObject {
 
     private static PythonObject getItem(PythonString self, PythonObject key) {
         if (key instanceof PythonInt) {
-            int index = key.toInt();
+            int index = getRawIndex(self, key);
             return newString(self.string.substring(index, index + 1));
         }
         PythonObject start = key.getAttribute("start");
@@ -176,6 +176,16 @@ class PythonString extends PythonObject {
         return newString(self.string.substring(start.toInt(), end.toInt()));
     }
 
+    private static int getRawIndex(PythonString self, PythonObject index) {
+        int indexInt = index.toInt();
+        int size = self.string.length();
+
+        if (indexInt < 0) {
+            indexInt += size;
+        }
+
+        return indexInt;
+    }
     private static PythonObject len(PythonString self) {
         return newInt(self.string.length());
     }
