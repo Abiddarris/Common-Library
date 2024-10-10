@@ -193,7 +193,7 @@ class PythonString extends PythonObject {
     private static PythonObject
     replace(PythonString self, PythonObject old, PythonObject new0) {
         return newString(self.string.replace(
-                quote(old.toString()), new0.toString()));
+                old.toString(), new0.toString()));
     }
 
     private static PythonObject
