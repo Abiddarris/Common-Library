@@ -392,6 +392,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
             .addPositionalArgument((PythonObject)obj));
         return result.toBoolean();
     }
+
+    public boolean equals(String str) {
+        return equals(newString(str));
+    }
     
     @Override
     public int hashCode() {
