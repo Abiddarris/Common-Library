@@ -16,7 +16,10 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Builtins.IndexError;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.StopIteration;
+import static com.abiddarris.common.renpy.internal.Builtins.slice;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +54,21 @@ class PythonList extends PythonObject {
     }
 
     private static PythonObject getItem(PythonList list, PythonObject index) {
+        if (jIsinstance(index, slice)) {
+            PythonObject pStart = index.getAttribute("start");
+            PythonObject pStop = index.getAttribute("stop");
+            PythonObject pStep = index.getAttribute("step");
+
+            int start = pStart == None ? 0 : pStart.toInt();
+            int end = pStop == None ? 0 : pStop.toInt();
+            int step = pStep == None ? 0 : pStep.toInt();
+
+            List<PythonObject> items = new ArrayList<>();
+            for (int i = start; i < end; i += step) {
+                items.add(list.elements.get(i));
+            }
+            return newList(items);
+        }
         int indexInt = getRawIndex(list, index);
 
         if(indexInt < 0 || indexInt >= list.elements.size()) {
