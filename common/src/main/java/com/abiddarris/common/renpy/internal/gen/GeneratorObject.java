@@ -32,6 +32,9 @@ public class GeneratorObject extends PythonObject {
 
         this.forEachStatements = forEachStatements;
         this.yield = yield;
+
+        forEachStatements.get(0)
+                .executeIterator(var);
     }
 
     public PythonObject next() {
