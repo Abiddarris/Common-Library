@@ -42,6 +42,11 @@ class PythonList extends PythonObject {
         setAttributeDirectly("__class__", cls);
     }
 
+    @Override
+    public String toString() {
+        return elements.toString();
+    }
+
     static PythonObject new0(PythonObject cls, PythonObject iterable) {
         return new PythonList(cls, new ArrayList<>());
     }
@@ -60,8 +65,8 @@ class PythonList extends PythonObject {
             PythonObject pStep = index.getAttribute("step");
 
             int start = pStart == None ? 0 : pStart.toInt();
-            int end = pStop == None ? 0 : pStop.toInt();
-            int step = pStep == None ? 0 : pStep.toInt();
+            int end = pStop == None ? list.elements.size() : pStop.toInt();
+            int step = pStep == None ? 1 : pStep.toInt();
 
             List<PythonObject> items = new ArrayList<>();
             for (int i = start; i < end; i += step) {
