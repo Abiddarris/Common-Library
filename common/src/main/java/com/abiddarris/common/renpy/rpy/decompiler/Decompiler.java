@@ -169,6 +169,7 @@ public class Decompiler {
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
             definer.defineFunction("print_jump", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Jump")), DecompilerImpl::printJump, "self", "ast");
             definer.defineFunction("print_call", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Call")), DecompilerImpl::printCall, "self", "ast");
+            definer.defineFunction("print_pass", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Pass")), DecompilerImpl::printPass, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
 
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
@@ -401,6 +402,35 @@ public class Decompiler {
 
             self.callAttribute("write", words.callAttribute("join"));
         }
+
+
+        private static void
+        printPass(PythonObject self, PythonObject ast) {
+            if (self.getAttributeJB("index") && jIsinstance(
+                    self.getAttribute("block").getItem(self.getAttribute("index").subtract(1)),
+                    decompiler.getNestedAttribute("renpy.ast.Call"))) {
+                return;
+            }
+
+            if (self.getAttribute("index").jGreaterThan(1)
+                    && jIsinstance(self.getAttribute("block")
+                            .getItem(self.getAttribute("index").subtract(2)),
+                            decompiler.getNestedAttribute("renpy.ast.Call"))
+                    && jIsinstance(self.getAttribute("block")
+                            .getItem(self.getAttribute("index").subtract(1)),
+                            decompiler.getNestedAttribute("renpy.ast.Label"))
+                    && self.getAttribute("block")
+                            .getItem(self.getAttribute("index").subtract(2))
+                            .getAttribute("linenumber")
+                            .equals(ast.getAttribute("linenumber"))) {
+                return;
+            }
+
+            self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("pass"));
+        }
+
 
         private static void
         printIf(PythonObject self, PythonObject ast) {
