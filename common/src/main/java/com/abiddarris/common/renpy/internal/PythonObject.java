@@ -140,7 +140,7 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return getAttribute(name).toBoolean();
     }
 
-    public PythonObject S(String name) {
+    public PythonObject getNestedAttribute(String name) {
         return Attributes.getNestedAttribute(this, name);
     }
 
