@@ -250,21 +250,6 @@ class Decompiler(DecompilerBase):
 
         self.print_nodes(ast.block, 1)
 
-    @dispatch(renpy.ast.Pass)
-    def print_pass(self, ast):
-        if (self.index and isinstance(self.block[self.index - 1], renpy.ast.Call)):
-            return
-
-        if (self.index > 1
-                and isinstance(self.block[self.index - 2], renpy.ast.Call)
-                and isinstance(self.block[self.index - 1], renpy.ast.Label)
-                and self.block[self.index - 2].linenumber == ast.linenumber):
-            return
-
-        self.advance_to_line(ast.linenumber)
-        self.indent()
-        self.write("pass")
-
     def set_best_init_offset(self, nodes):
         votes = {}
         for ast in nodes:
