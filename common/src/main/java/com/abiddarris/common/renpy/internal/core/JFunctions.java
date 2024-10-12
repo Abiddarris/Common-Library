@@ -36,6 +36,11 @@ public class JFunctions {
         return obj.getAttribute(name, defaultValue);
     }
 
+    public static boolean getattrJB(PythonObject obj, String name, PythonObject defaultValue) {
+        return getattr(obj, name, defaultValue).toBoolean();
+    }
+
+
     public static boolean jIsinstance(PythonObject obj, PythonObject class_or_tuple) {
         return isinstance(obj, class_or_tuple).toBoolean();
     }
