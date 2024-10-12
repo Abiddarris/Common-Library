@@ -64,6 +64,7 @@ import static com.abiddarris.common.renpy.internal.core.Functions.max;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.getattrJB;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.with.With.with;
@@ -201,8 +202,11 @@ public class Decompiler {
                     DecompilerImpl.class, "printSay", new PythonSignatureBuilder("self", "ast")
                             .addParameter("inmenu", False)
                             .build());
+            definer.defineFunction("print_userstatement",
+                    dispatch.call(getNestedAttribute(decompiler, "renpy.ast.UserStatement")),
+                    DecompilerImpl::printUserstatement, "self", "ast");
 
-            return definer.define();
+             return definer.define();
         }
 
         private static void init(PythonObject self, PythonObject out_file, PythonObject options) {
@@ -822,6 +826,7 @@ public class Decompiler {
                     && menu.getAttribute("items").getItem(newInt(0)).getItem(newInt(2)) != None
                     && !self.callAttribute("should_come_before", say, menu).toBoolean());
         }
+
         private static void
         printSay(PythonObject self, PythonObject ast, PythonObject inmenu) {
             // if this say statement precedes a menu statement, postpone emitting it until we're
@@ -839,6 +844,20 @@ public class Decompiler {
             self.callAttribute("indent");
             self.callAttribute("write", decompiler.callAttribute("say_get_code", ast, inmenu));
         }
+
+        private static void
+        printUserstatement(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", ast.getAttribute("line"));
+
+            // block attribute since 6.13.0
+            if (getattrJB(ast, "block", None)) {
+                with (self.callAttribute("increase_indent"), () -> {
+                    self.callAttribute("print_lex", ast.getAttribute("block"));
+                });
+            }
+        }
+
     }
 
 }

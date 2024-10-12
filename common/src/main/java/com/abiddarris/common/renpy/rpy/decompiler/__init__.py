@@ -293,16 +293,6 @@ class Decompiler(DecompilerBase):
         else:
             self.write(f'default{priority} {ast.store[6:]}.{ast.varname} = {ast.code.source}')
 
-    @dispatch(renpy.ast.UserStatement)
-    def print_userstatement(self, ast):
-        self.indent()
-        self.write(ast.line)
-
-        # block attribute since 6.13.0
-        if getattr(ast, "block", None):
-            with self.increase_indent():
-                self.print_lex(ast.block)
-
     def print_lex(self, lex):
         for file, linenumber, content, block in lex:
             self.advance_to_line(linenumber)
