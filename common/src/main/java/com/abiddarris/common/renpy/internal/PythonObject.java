@@ -251,6 +251,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return callTypeAttribute("__lt__", value);
     }
 
+    public PythonObject add(long value) {
+        return add(newInt(value));
+    }
+
     public PythonObject add(PythonObject value) {
         return callTypeAttribute("__add__", value);
     }
