@@ -110,6 +110,7 @@ public class Decompiler {
         Magic.initLoader();
         RenPyCompat.initLoader();
         Util.initLoader();
+        SL2Decompiler.initLoader();
     }
     
     // Object that carries configurable decompilation options
