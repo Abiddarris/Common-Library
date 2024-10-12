@@ -225,23 +225,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    @dispatch(renpy.ast.Return)
-    def print_return(self, ast):
-        if (ast.expression is None
-                and self.parent is None
-                and self.index + 1 == len(self.block)
-                and self.index
-                and ast.linenumber == self.block[self.index - 1].linenumber):
-            # As of Ren'Py commit 356c6e34, a return statement is added to
-            # the end of each rpyc file. Don't include this in the source.
-            return
-
-        self.advance_to_line(ast.linenumber)
-        self.indent()
-        self.write("return")
-
-        if ast.expression is not None:
-            self.write(f' {ast.expression}')
 
     @dispatch(renpy.ast.While)
     def print_while(self, ast):
