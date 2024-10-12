@@ -92,6 +92,8 @@ public class Decompiler {
             PythonObject DecompilerBase = imported[0];
             PythonObject OptionBase = imported[8];
 
+            decompiler.importModule("decompiler.sl2decompiler");
+
             decompiler.fromImport("decompiler.renpycompat", "renpy");
             decompiler.fromImport("io", "StringIO");
             decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit");

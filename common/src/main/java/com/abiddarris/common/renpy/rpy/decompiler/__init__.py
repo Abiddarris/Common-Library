@@ -24,7 +24,6 @@ from .util import , , \
 
 from operator import itemgetter
 
-from . import sl2decompiler
 from . import testcasedecompiler
 from . import atldecompiler
 from . import astdump
