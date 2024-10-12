@@ -169,6 +169,7 @@ public class Decompiler {
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
             definer.defineFunction("print_jump", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Jump")), DecompilerImpl::printJump, "self", "ast");
             definer.defineFunction("print_call", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Call")), DecompilerImpl::printCall, "self", "ast");
+            definer.defineFunction("print_return", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Return")), DecompilerImpl::printReturn, "self", "ast");
             definer.defineFunction("print_pass", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Pass")), DecompilerImpl::printPass, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
 
@@ -403,6 +404,30 @@ public class Decompiler {
             self.callAttribute("write", words.callAttribute("join"));
         }
 
+        private static void
+        printReturn(PythonObject self, PythonObject ast) {
+            if (ast.getAttribute("expression") == None
+                    && self.getAttribute("parent") == None
+                    && self.getAttribute("index").add(1)
+                            .equals(len(self.getAttribute("block")))
+                    && self.getAttributeJB("index")
+                    && ast.getAttribute("linenumber")
+                            .equals(self.getAttribute("block").getItem(
+                                    self.getAttribute("index").subtract(1)
+                            ).getAttribute("linenumber"))) {
+                // As of Ren'Py commit 356c6e34, a return statement is added to
+                // the end of each rpyc file. Don't include this in the source.
+                return;
+            }
+
+            self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("return"));
+
+            if (ast.getAttribute("expression") != None) {
+                self.callAttribute("write", format(" {0}", ast.getAttribute("expression")));
+            }
+        }
 
         private static void
         printPass(PythonObject self, PythonObject ast) {
