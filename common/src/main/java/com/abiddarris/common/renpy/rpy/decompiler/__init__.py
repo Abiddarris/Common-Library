@@ -396,27 +396,6 @@ class Decompiler(DecompilerBase):
         finally:
             self.in_init = in_init
 
-    # Screens
-
-    @dispatch(renpy.ast.Screen)
-    def print_screen(self, ast):
-        self.require_init()
-        screen = ast.screen
-        if isinstance(screen, renpy.screenlang.ScreenLangScreen):
-            raise Exception(
-                "Decompiling screen language version 1 screens is no longer supported. "
-                "use the legacy branch of unrpyc if this is required"
-            )
-
-        if isinstance(screen, renpy.sl2.slast.SLScreen):
-            self.linenumber = sl2decompiler.pprint(
-                self.out_file, screen, self.options,
-                self.indent_level, self.linenumber, self.skip_indent_until_write
-            )
-            self.skip_indent_until_write = False
-        else:
-            self.print_unknown(screen)
-
     # Testcases
 
     @dispatch(renpy.ast.Testcase)

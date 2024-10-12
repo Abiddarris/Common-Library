@@ -37,6 +37,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Builtins.Exception;
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
@@ -69,6 +70,7 @@ import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
+import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
@@ -206,6 +208,10 @@ public class Decompiler {
                     dispatch.call(getNestedAttribute(decompiler, "renpy.ast.UserStatement")),
                     DecompilerImpl::printUserstatement, "self", "ast");
 
+            // Screens
+            definer.defineFunction("print_screen",
+                    dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Screen")),
+                    DecompilerImpl::printScreen, "self", "ast");
              return definer.define();
         }
 
@@ -855,6 +861,28 @@ public class Decompiler {
                 with (self.callAttribute("increase_indent"), () -> {
                     self.callAttribute("print_lex", ast.getAttribute("block"));
                 });
+            }
+        }
+
+        private static void
+        printScreen(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+
+            PythonObject screen = ast.getAttribute("screen");
+            if (jIsinstance(screen, decompiler.getNestedAttribute("renpy.screenlang.ScreenLangScreen"))) {
+                Exception.call(
+                    newString("Decompiling screen language version 1 screens is no longer supported. use the legacy branch of unrpyc if this is required")
+                ).raise();
+            }
+
+            if (jIsinstance(screen, decompiler.getNestedAttribute("renpy.sl2.slast.SLScreen"))) {
+                self.setAttribute("linenumber", decompiler.callNestedAttribute("sl2decompiler.pprint",
+                    self.getAttribute("out_file"), screen, self.getAttribute("options"),
+                    self.getAttribute("indent_level"), self.getAttribute("linenumber"), self.getAttribute("skip_indent_until_write")
+                ));
+                self.setAttribute("skip_indent_until_write", False);
+            } else {
+                self.callAttribute("print_unknown", screen);
             }
         }
 
