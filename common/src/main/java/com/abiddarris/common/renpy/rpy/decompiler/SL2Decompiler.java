@@ -38,12 +38,17 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.super0;
+import static com.abiddarris.common.renpy.internal.Python.format;
+import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class SL2Decompiler {
@@ -83,9 +88,11 @@ public class SL2Decompiler {
 
             // This dictionary is a mapping of Class: unbound_method, which is used to determine
             // what method to call for which slast class
-            definer.defineAttribute("dispatch", sl2decompiler.callAttribute("Dispatcher"));
+            PythonObject dispatch = definer.defineAttribute("dispatch", sl2decompiler.callAttribute("Dispatcher"));
 
             definer.defineFunction("print_node", SL2DecompilerImpl::printNode, "self", "ast");
+            definer.defineFunction("print_screen", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLScreen")),
+                    SL2DecompilerImpl::printScreen, "self", "ast");
 
             definer.define();
         }
@@ -101,6 +108,39 @@ public class SL2Decompiler {
             self.callAttribute("advance_to_line", ast.getAttribute("location").getItem(1));
             self.callNestedAttribute("dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
+        }
+
+        private static void
+        printScreen(PythonObject self, PythonObject ast) {
+            // Print the screen statement and create the block
+            self.callAttribute("indent");
+            self.callAttribute("write", format("screen {0}", ast.getAttribute("name")));
+
+            // If we have parameters, print them.
+            if (ast.getAttributeJB("parameters")) {
+                self.callAttribute("write", sl2decompiler.callAttribute(
+                        "reconstruct_paraminfo", ast.getAttribute("parameters")));
+            }
+
+            // print contents
+            PythonObject $args = self.callAttribute("sort_keywords_and_children", ast);
+            PythonObject first_line = $args.getItem(0);
+            PythonObject other_lines = $args.getItem(1);
+
+            // apparently, screen contents are optional.
+            self.callAttribute("print_keyword_or_child", new PythonArgument(first_line)
+                    .addKeywordArgument("first_line", True)
+                    .addKeywordArgument("has_block", bool(other_lines))
+            );
+
+            if (other_lines.toBoolean()) {
+                with (self.callAttribute("increase_indent"), () -> {
+                    for (PythonObject line : other_lines) {
+                        self.callAttribute("print_keyword_or_child", line);
+                    }
+                });
+            }
+
         }
 
     }
