@@ -80,6 +80,11 @@ public class SL2Decompiler {
         private static void define() {
             ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler", sl2decompiler.getAttribute("DecompilerBase"));
             definer.defineFunction("__init__", SL2DecompilerImpl::init, "self", "out_file", "options");
+
+            // This dictionary is a mapping of Class: unbound_method, which is used to determine
+            // what method to call for which slast class
+            definer.defineAttribute("dispatch", sl2decompiler.callAttribute("Dispatcher"));
+
             definer.defineFunction("print_node", SL2DecompilerImpl::printNode, "self", "ast");
 
             definer.define();

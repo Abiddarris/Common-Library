@@ -37,10 +37,6 @@ class SL2Decompiler(DecompilerBase):
     stream
     """
 
-    # This dictionary is a mapping of Class: unbound_method, which is used to determine
-    # what method to call for which slast class
-    dispatch = Dispatcher()
-
     @dispatch(sl2.slast.SLScreen)
     def print_screen(self, ast):
 
