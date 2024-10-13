@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.signature;
 
+import static com.abiddarris.common.renpy.internal.Python.newInt;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 import java.util.LinkedHashMap;
@@ -38,22 +40,26 @@ public class PythonSignatureBuilder {
     public PythonSignatureBuilder addParameter(String name) {
         return addParameter(name, null);
     }
-    
+
     public PythonSignatureBuilder addParameter(String name, PythonObject parameter) {
         if(!canAdd) {
             throw new IllegalStateException("Unable to add new parameter after " + kwargsName);
         }
-        
+
         if(name.startsWith("**")) {
             canAdd = false;
             kwargsName = name;
         }
-        
+
         signature.put(name, parameter);
-        
+
         return this;
     }
-    
+
+    public PythonSignatureBuilder addParameter(String name, long defaultValue) {
+        return addParameter(name, newInt(defaultValue));
+    }
+
     public PythonSignature build() {
         return new PythonSignature(
             new LinkedHashMap<>(signature)
