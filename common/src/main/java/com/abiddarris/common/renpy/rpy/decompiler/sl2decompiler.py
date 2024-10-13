@@ -37,26 +37,6 @@ class SL2Decompiler(DecompilerBase):
     stream
     """
 
-    @dispatch(sl2.slast.SLScreen)
-    def print_screen(self, ast):
-
-        # Print the screen statement and create the block
-        self.indent()
-        self.write(f'screen {ast.name}')
-        # If we have parameters, print them.
-        if ast.parameters:
-            self.write(reconstruct_paraminfo(ast.parameters))
-
-        # print contents
-        first_line, other_lines = self.sort_keywords_and_children(ast)
-
-        # apparently, screen contents are optional.
-        self.print_keyword_or_child(first_line, first_line=True, has_block=bool(other_lines))
-        if other_lines:
-            with self.increase_indent():
-                for line in other_lines:
-                    self.print_keyword_or_child(line)
-
     @dispatch(sl2.slast.SLIf)
     def print_if(self, ast):
         # if and showif share a lot of the same infrastructure
