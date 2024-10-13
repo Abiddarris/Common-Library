@@ -19,6 +19,7 @@ import static com.abiddarris.common.renpy.internal.core.functions.Functions.newF
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.core.functions.P2Function;
+import com.abiddarris.common.renpy.internal.core.functions.P6Function;
 import com.abiddarris.common.renpy.internal.core.functions.PFunction;
 import com.abiddarris.common.renpy.internal.core.functions.V1Function;
 import com.abiddarris.common.renpy.internal.core.functions.V2Function;
@@ -28,8 +29,8 @@ import com.abiddarris.common.renpy.internal.core.functions.V5Function;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 
 public interface Defineable {
-
     PythonObject defineAttribute(String name, PythonObject attribute);
+
     PythonObject getModuleName();
 
     default PythonObject defineFunction(String name, PFunction function, String... argumentNames) {
@@ -38,6 +39,10 @@ public interface Defineable {
 
     default PythonObject defineFunction(String name, P2Function function, String... argumentNames) {
         return initFunction(name, newFunction(function, argumentNames));
+    }
+
+    default PythonObject defineFunction(String name, P6Function function, PythonSignature signature) {
+        return initFunction(name, newFunction(function, signature));
     }
 
     default PythonObject defineFunction(String name, PythonObject decorator, V2Function function, String... argumentNames) {
@@ -69,5 +74,4 @@ public interface Defineable {
 
         return defineAttribute(name, function);
     }
-
 }
