@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
+import static com.abiddarris.common.renpy.internal.Builtins.AttributeError;
+import static com.abiddarris.common.renpy.internal.Builtins.isinstance;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 
 import com.abiddarris.common.renpy.internal.Builtins;
@@ -23,10 +25,13 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 public class Errors {
     
     public static void raiseAttributeError(PythonObject object, PythonObject attributeName) {
-        String message = Builtins.isinstance.call(object, Builtins.type).toBoolean() ? "type object %s" : "%s object";
-        message += " has no attribute %s";
-            
-        Builtins.AttributeError.call(newString(String.format(
+        String message = "";
+        if (isinstance != null) {
+            message = isinstance.call(object, Builtins.type).toBoolean() ? "type object %s" : "%s object";
+            message += " has no attribute %s";
+        }
+
+        AttributeError.call(newString(String.format(
             message, object.getAttribute("__name__"), attributeName
         ))).raise();
     }
