@@ -41,6 +41,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class SL2Decompiler {
@@ -58,6 +59,8 @@ public class SL2Decompiler {
                             .addParameter("linenumber", 1)
                             .addParameter("skip_indent_until_write", False)
                             .build());
+
+            SL2DecompilerImpl.define();
         });
     }
 
@@ -66,6 +69,16 @@ public class SL2Decompiler {
            PythonObject indent_level, PythonObject linenumber, PythonObject skip_indent_until_write) {
         return sl2decompiler.callAttribute("SL2Decompiler", out_file, options)
                 .callAttribute("dump", ast, indent_level, linenumber, skip_indent_until_write);
+    }
+
+    private static class SL2DecompilerImpl {
+
+        private static void define() {
+            ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler");
+
+            definer.define();
+        }
+
     }
 
 }
