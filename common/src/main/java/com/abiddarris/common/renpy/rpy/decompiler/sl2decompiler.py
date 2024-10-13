@@ -23,7 +23,7 @@ from .util import First, reconstruct_paraminfo, \
 
 from . import atldecompiler
 
-from renpy import ui, sl2
+from renpy import ui
 from renpy.ast import PyExpr
 from renpy.text import text
 from renpy.sl2 import sldisplayables as sld

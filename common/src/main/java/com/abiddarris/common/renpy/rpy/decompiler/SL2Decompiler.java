@@ -60,6 +60,7 @@ public class SL2Decompiler {
             SL2Decompiler.sl2decompiler = sl2decompiler;
 
             sl2decompiler.fromImport("decompiler.util", "DecompilerBase", "Dispatcher");
+            sl2decompiler.fromImport("renpy", "sl2");
 
             // Main API
             sl2decompiler.defineFunction("pprint", SL2Decompiler::pprint,
