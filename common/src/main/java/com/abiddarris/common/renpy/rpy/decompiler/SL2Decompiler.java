@@ -53,6 +53,8 @@ public class SL2Decompiler {
         registerLoader("decompiler.sl2decompiler", (sl2decompiler) -> {
             SL2Decompiler.sl2decompiler = sl2decompiler;
 
+            sl2decompiler.fromImport("decompiler.util", "DecompilerBase");
+
             // Main API
             sl2decompiler.defineFunction("pprint", SL2Decompiler::pprint,
                     new PythonSignatureBuilder("out_file", "ast", "options")
