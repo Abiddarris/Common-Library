@@ -384,7 +384,7 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         PythonObject type = (PythonObject)attributes.get("__class__");
         PythonObject attribute = attributes.findAttributeWithoutTypeAllowConversion(type, name);
         if(attribute == null) {
-            Builtins.AttributeError.call().raise();
+            raiseAttributeError(this, newString(name));
         }
         
         return attribute;
