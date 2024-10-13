@@ -39,6 +39,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.super0;
+import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -79,6 +80,7 @@ public class SL2Decompiler {
         private static void define() {
             ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler", sl2decompiler.getAttribute("DecompilerBase"));
             definer.defineFunction("__init__", SL2DecompilerImpl::init, "self", "out_file", "options");
+            definer.defineFunction("print_node", SL2DecompilerImpl::printNode, "self", "ast");
 
             definer.define();
         }
@@ -87,6 +89,13 @@ public class SL2Decompiler {
         init(PythonObject self, PythonObject out_file, PythonObject options) {
             super0.call(sl2decompiler.getAttribute("SL2Decompiler"), self)
                     .callAttribute("__init__", out_file, options);
+        }
+
+        private static void
+        printNode(PythonObject self, PythonObject ast) {
+            self.callAttribute("advance_to_line", ast.getAttribute("location").getItem(1));
+            self.callNestedAttribute("dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
+                    .call(self, ast);
         }
 
     }
