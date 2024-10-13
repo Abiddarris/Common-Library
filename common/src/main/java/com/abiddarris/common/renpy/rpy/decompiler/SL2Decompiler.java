@@ -37,13 +37,35 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+
+import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class SL2Decompiler {
 
+    private static PythonObject sl2decompiler;
+
     static void initLoader() {
         registerLoader("decompiler.sl2decompiler", (sl2decompiler) -> {
+            SL2Decompiler.sl2decompiler = sl2decompiler;
+
+            // Main API
+            sl2decompiler.defineFunction("pprint", SL2Decompiler::pprint,
+                    new PythonSignatureBuilder("out_file", "ast", "options")
+                            .addParameter("indent_level", 0)
+                            .addParameter("linenumber", 1)
+                            .addParameter("skip_indent_until_write", False)
+                            .build());
         });
+    }
+
+    private static PythonObject
+    pprint(PythonObject out_file, PythonObject ast, PythonObject options,
+           PythonObject indent_level, PythonObject linenumber, PythonObject skip_indent_until_write) {
+        return sl2decompiler.callAttribute("SL2Decompiler", out_file, options)
+                .callAttribute("dump", ast, indent_level, linenumber, skip_indent_until_write);
     }
 
 }
