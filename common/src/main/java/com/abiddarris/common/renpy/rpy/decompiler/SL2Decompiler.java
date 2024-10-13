@@ -15,7 +15,7 @@
  *
  * Original MIT License :
  *
- * Copyright (c) 2012-2024 Yuri K. Schlesner, CensoredUsername, Jackmcbarn
+ * Copyright (c) 2014-2024 CensoredUsername, Jackmcbarn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
