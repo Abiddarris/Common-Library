@@ -37,9 +37,6 @@ class SL2Decompiler(DecompilerBase):
     stream
     """
 
-    def __init__(self, out_file, options):
-        super(SL2Decompiler, self).__init__(out_file, options)
-
     # This dictionary is a mapping of Class: unbound_method, which is used to determine
     # what method to call for which slast class
     dispatch = Dispatcher()
