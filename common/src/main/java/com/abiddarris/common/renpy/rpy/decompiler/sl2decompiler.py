@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 from .util import First, reconstruct_paraminfo, \
-                  reconstruct_arginfo, split_logical_lines, Dispatcher
+                  reconstruct_arginfo, split_logical_lines
 
 from . import atldecompiler
 
