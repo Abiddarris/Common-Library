@@ -75,7 +75,7 @@ public class SL2Decompiler {
     private static class SL2DecompilerImpl {
 
         private static void define() {
-            ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler");
+            ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler", sl2decompiler.getAttribute("DecompilerBase"));
             definer.defineFunction("__init__", SL2DecompilerImpl::init, "self", "out_file", "options");
 
             definer.define();
