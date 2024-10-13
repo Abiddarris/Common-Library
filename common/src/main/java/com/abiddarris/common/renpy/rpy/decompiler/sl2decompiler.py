@@ -41,10 +41,6 @@ class SL2Decompiler(DecompilerBase):
     # what method to call for which slast class
     dispatch = Dispatcher()
 
-    def print_node(self, ast):
-        self.advance_to_line(ast.location[1])
-        self.dispatch.get(type(ast), type(self).print_unknown)(self, ast)
-
     @dispatch(sl2.slast.SLScreen)
     def print_screen(self, ast):
 
