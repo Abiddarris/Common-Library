@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import First, reconstruct_paraminfo, \
+from .util import First, , \
                   reconstruct_arginfo, split_logical_lines
 
 from . import atldecompiler
