@@ -146,6 +146,11 @@ class PythonList extends PythonObject {
         return indexInt;
     }
 
+    static PythonObject
+    contains(PythonObject self, PythonObject value) {
+        return newBoolean(((PythonList)self).elements.contains(value));
+    }
+
     private static class ListIteratorObject extends PythonObject {
         
         private int index;
