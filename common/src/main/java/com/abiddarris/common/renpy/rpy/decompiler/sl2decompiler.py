@@ -29,13 +29,6 @@ from renpy.text import text
 from renpy.sl2 import sldisplayables as sld
 from renpy.display import layout, behavior, im, motion, dragdrop, transform
 
-# Main API
-
-def pprint(out_file, ast, options,
-           indent_level=0, linenumber=1, skip_indent_until_write=False):
-    return SL2Decompiler(out_file, options).dump(
-        ast, indent_level, linenumber, skip_indent_until_write)
-
 # Implementation
 
 class SL2Decompiler(DecompilerBase):
