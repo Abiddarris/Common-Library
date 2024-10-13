@@ -38,6 +38,7 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.super0;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
@@ -75,8 +76,15 @@ public class SL2Decompiler {
 
         private static void define() {
             ClassDefiner definer = sl2decompiler.defineClass("SL2Decompiler");
+            definer.defineFunction("__init__", SL2DecompilerImpl::init, "self", "out_file", "options");
 
             definer.define();
+        }
+
+        private static void
+        init(PythonObject self, PythonObject out_file, PythonObject options) {
+            super0.call(sl2decompiler.getAttribute("SL2Decompiler"), self)
+                    .callAttribute("__init__", out_file, options);
         }
 
     }
