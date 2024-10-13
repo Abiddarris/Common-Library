@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal.core.functions;
 import com.abiddarris.common.renpy.internal.PythonFunction;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.invocator.P2Invocator;
+import com.abiddarris.common.renpy.internal.invocator.P6Invocator;
 import com.abiddarris.common.renpy.internal.invocator.PInvocator;
 import com.abiddarris.common.renpy.internal.invocator.V1Invocator;
 import com.abiddarris.common.renpy.internal.invocator.V2Invocator;
@@ -30,6 +31,10 @@ public class Functions {
 
     public static PythonObject newFunction(PFunction function, String... argumentNames) {
         return new PythonFunction(PInvocator.INSTANCE, function, PythonSignature.from(argumentNames));
+    }
+
+    public static PythonObject newFunction(P6Function function, PythonSignature signature) {
+        return new PythonFunction(P6Invocator.INSTANCE, function, signature);
     }
 
     public static PythonObject newFunction(V1Function function, String... argumentNames) {
