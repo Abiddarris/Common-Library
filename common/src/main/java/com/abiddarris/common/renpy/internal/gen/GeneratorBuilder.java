@@ -35,6 +35,11 @@ public class GeneratorBuilder {
         return new ForEachBuilder(this, supplier);
     }
 
+    public GeneratorBuilder forEach(IteratorSupplier supplier, String varName) {
+        return forEach(supplier)
+                .name((vars, var) -> vars.put(varName, var));
+    }
+
     public GeneratorBuilder filter(Filter filter) {
         checkValid();
 
