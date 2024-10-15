@@ -40,6 +40,10 @@ public class GeneratorBuilder {
                 .name((vars, var) -> vars.put(varName, var));
     }
 
+    public GeneratorBuilder forEach(IteratorSupplierNoVar supplier, String varName) {
+        return forEach(vars -> supplier.getIterator(), varName);
+    }
+
     public GeneratorBuilder filter(Filter filter) {
         checkValid();
 
