@@ -219,6 +219,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return notEquals(other).toBoolean();
     }
 
+    public boolean jNotEquals(long other) {
+        return notEquals(other).toBoolean();
+    }
+
     public boolean jNotEquals(String other) {
         return notEquals(newString(other)).toBoolean();
     }
