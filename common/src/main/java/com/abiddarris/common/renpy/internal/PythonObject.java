@@ -379,6 +379,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
        
         return callTypeAttribute(name, argument);
     }
+
+    public boolean callAttributeJB(String name, PythonObject... args) {
+        return callAttribute(name, args).toBoolean();
+    }
     
     private int getHashCode() {
         return super.hashCode();
