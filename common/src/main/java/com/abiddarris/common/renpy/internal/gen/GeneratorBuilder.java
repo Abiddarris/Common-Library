@@ -15,6 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.gen;
 
+import static com.abiddarris.common.renpy.internal.Builtins.ValueError;
+import static com.abiddarris.common.renpy.internal.Python.newString;
+
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 import java.util.ArrayList;
@@ -35,9 +38,28 @@ public class GeneratorBuilder {
         return new ForEachBuilder(this, supplier);
     }
 
-    public GeneratorBuilder forEach(IteratorSupplier supplier, String varName) {
+    public GeneratorBuilder forEach(IteratorSupplier supplier, String... varNames) {
         return forEach(supplier)
-                .name((vars, var) -> vars.put(varName, var));
+                .name((vars, var) -> {
+                    if (varNames.length == 0) {
+                        return;
+                    }
+
+                    if (varNames.length == 1) {
+                        vars.put(varNames[0], var);
+                    }
+
+                    int value = 0;
+                    for (PythonObject var0 : var) {
+                        vars.put(varNames[value++], var);
+                    }
+
+                    if (value < varNames.length) {
+                        ValueError.call(newString(String.format(
+                                "not enough values to unpack (expected %s, got %s)", varNames.length, value
+                        ))).raise();
+                    }
+                });
     }
 
     public GeneratorBuilder forEach(IteratorSupplierNoVar supplier, String varName) {
