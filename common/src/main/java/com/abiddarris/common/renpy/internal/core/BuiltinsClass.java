@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.core;
 
+import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.Builtins.range;
 import static com.abiddarris.common.renpy.internal.Builtins.zip;
@@ -33,6 +34,10 @@ public class BuiltinsClass {
 
     public static PythonObject range(PythonObject start, PythonObject stop, PythonObject step) {
         return range.call(start, stop, step);
+    }
+
+    public static PythonObject enumerate(PythonObject iterator) {
+        return enumerate.call(iterator);
     }
 
 }
