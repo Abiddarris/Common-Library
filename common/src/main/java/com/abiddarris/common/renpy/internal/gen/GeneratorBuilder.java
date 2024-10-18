@@ -62,8 +62,8 @@ public class GeneratorBuilder {
                 });
     }
 
-    public GeneratorBuilder forEach(IteratorSupplierNoVar supplier, String varName) {
-        return forEach(vars -> supplier.getIterator(), varName);
+    public GeneratorBuilder forEach(IteratorSupplierNoVar supplier, String... varNames) {
+        return forEach(vars -> supplier.getIterator(), varNames);
     }
 
     public GeneratorBuilder filter(Filter filter) {
