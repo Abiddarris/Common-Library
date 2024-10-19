@@ -323,6 +323,9 @@ public class Builtins {
         isinstance = Python.newFunction(Functions.class, "isInstance", "instance", "class");
         hasattr = Python.newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
 
+        list.defineAttribute("__module__", newString("builtins"));
+        list.defineFunction("reverse", PythonList::reverse, "self");
+
         int0.defineAttribute("__module__", newString("builtins"));
         int0.defineFunction("__ge__", PythonInt::ge, "self", "value");
 

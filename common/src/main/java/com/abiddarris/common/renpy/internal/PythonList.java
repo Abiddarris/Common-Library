@@ -22,6 +22,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.slice;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 class PythonList extends PythonObject {
@@ -149,6 +150,11 @@ class PythonList extends PythonObject {
     static PythonObject
     contains(PythonObject self, PythonObject value) {
         return newBoolean(((PythonList)self).elements.contains(value));
+    }
+
+    static void
+    reverse(PythonObject self) {
+        Collections.reverse(((PythonList)self).elements);
     }
 
     private static class ListIteratorObject extends PythonObject {
