@@ -71,7 +71,11 @@ public interface Defineable {
     }
 
     default PythonObject defineFunction(String name, V4Function function, String... argumentNames) {
-        return initFunction(name, newFunction(function, argumentNames));
+        return defineFunction(name, function, PythonSignature.from(argumentNames));
+    }
+
+    default PythonObject defineFunction(String name, V4Function function, PythonSignature signature) {
+        return initFunction(name, newFunction(function, signature));
     }
 
     default PythonObject defineFunction(String name, V5Function function, String... argumentNames) {
