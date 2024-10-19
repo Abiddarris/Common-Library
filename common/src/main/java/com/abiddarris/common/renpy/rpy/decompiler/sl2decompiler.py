@@ -42,21 +42,6 @@ class SL2Decompiler(DecompilerBase):
         # so for if and showif we just call an underlying function with an extra argument
         self._print_if(ast, "showif")
 
-    def _print_if(self, ast, keyword):
-        # the first condition is named if or showif, the rest elif
-        keyword = First(keyword, "elif")
-        for condition, block in ast.entries:
-            self.advance_to_line(block.location[1])
-            self.indent()
-            # if condition is None, this is the else clause
-            if condition is None:
-                self.write("else")
-            else:
-                self.write(f'{keyword()} {condition}')
-
-            # Every condition has a block of type slast.SLBlock
-            self.print_block(block, immediate_block=True)
-
     def print_block(self, ast, immediate_block=False):
         # represents an SLBlock node, which is a container of keyword arguments and children
         #
