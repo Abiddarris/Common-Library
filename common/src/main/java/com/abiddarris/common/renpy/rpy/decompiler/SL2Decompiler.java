@@ -71,7 +71,8 @@ public class SL2Decompiler {
         registerLoader("decompiler.sl2decompiler", (sl2decompiler) -> {
             SL2Decompiler.sl2decompiler = sl2decompiler;
 
-            sl2decompiler.fromImport("decompiler.util", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher");
+            sl2decompiler.fromImport("decompiler.util",
+                    "First", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher");
             sl2decompiler.fromImport("renpy", "sl2");
 
             // Main API
