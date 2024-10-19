@@ -112,6 +112,11 @@ public class SL2Decompiler {
                             .addParameter("immediate_block", False)
                             .addParameter("ignore_children", False)
                             .build());
+            definer.defineFunction("print_keyword_or_child", SL2DecompilerImpl::printKeywordOrChild,
+                    new PythonSignatureBuilder("self", "item")
+                            .addParameter("first_line", False)
+                            .addParameter("has_block", False)
+                            .build());
 
             definer.define();
         }
@@ -461,6 +466,54 @@ public class SL2Decompiler {
 
             // return first_line_content, later_contents
             return newTuple(contents_grouped.getItem(0), contents_grouped.sliceFrom(1));
+        }
+
+        private static void
+        printKeywordOrChild(PythonObject self, PythonObject item,
+                               PythonObject first_line, PythonObject has_block) {
+            PythonObject sep = sl2decompiler.callAttribute("First", newString(first_line.toBoolean() ? " " :""), newString(" "));
+
+            PythonObject lineno = item.getItem(0);
+            PythonObject ty = item.getItem(1);
+
+            if (ty.equals("child")) {
+                self.callAttribute("print_node", item.getItem(2));
+                return;
+            }
+
+            if (!first_line.toBoolean()) {
+                self.callAttribute("advance_to_line", lineno);
+                self.callAttribute("indent");
+            }
+
+            for (PythonObject $args : item.getItem(2)) {
+                PythonObject name = $args.getItem(0), value = $args.getItem(1);
+
+                self.callAttribute("write", sep.call());
+                self.callAttribute("write", format("{0} {1}", name, value));
+            }
+
+            if (ty.equals("keywords_atl")) {
+                // TODO: assert not has_block, "cannot start a block on the same line as an at transform block"
+                self.callAttribute("write", sep.call());
+                self.callAttribute("write", newString("at transform:"));
+
+                self.setAttribute("linenumber", sl2decompiler.callNestedAttribute("atldecompiler.pprint",
+                    self.getAttribute("out_file"), item.getItem(3), self.getAttribute("options"),
+                    self.getAttribute("indent_level"), self.getAttribute("linenumber"), self.getAttribute("skip_indent_until_write")
+                ));
+                self.setAttribute("skip_indent_until_write", False);
+                return;
+            }
+
+            if (ty.equals("keywords_broken")) {
+                self.callAttribute("write", sep.call());
+                self.callAttribute("write", item.getItem(3));
+            }
+
+            if (first_line.toBoolean() && has_block.toBoolean()) {
+                self.callAttribute("write", newString(":"));
+            }
         }
 
     }
