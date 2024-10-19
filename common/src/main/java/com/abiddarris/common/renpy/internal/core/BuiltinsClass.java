@@ -19,7 +19,9 @@ import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.Builtins.range;
 import static com.abiddarris.common.renpy.internal.Builtins.zip;
+import static com.abiddarris.common.renpy.internal.Python.newInt;
 
+import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 public class BuiltinsClass {
@@ -34,6 +36,10 @@ public class BuiltinsClass {
 
     public static PythonObject range(PythonObject start, PythonObject stop, PythonObject step) {
         return range.call(start, stop, step);
+    }
+
+    public static PythonObject range(PythonObject stop) {
+        return range(newInt(0), stop, newInt(1));
     }
 
     public static PythonObject enumerate(PythonObject iterator) {
