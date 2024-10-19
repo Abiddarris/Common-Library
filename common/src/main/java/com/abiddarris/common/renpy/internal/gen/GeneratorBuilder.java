@@ -47,6 +47,7 @@ public class GeneratorBuilder {
 
                     if (varNames.length == 1) {
                         vars.put(varNames[0], var);
+                        return;
                     }
 
                     int value = 0;
