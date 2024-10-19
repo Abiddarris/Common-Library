@@ -109,6 +109,7 @@ public class SL2Decompiler {
                     SL2DecompilerImpl::printScreen, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLIf")),
                     SL2DecompilerImpl::printIf, "self", "ast");
+            definer.defineFunction("_print_if", SL2DecompilerImpl::printIf0, "self", "ast", "keyword");
 
             definer.defineFunction("sort_keywords_and_children", SL2DecompilerImpl::sortKeywordsAndChildren,
                     new PythonSignatureBuilder("self", "node")
@@ -174,6 +175,30 @@ public class SL2Decompiler {
         printIf(PythonObject self, PythonObject ast) {
             // if and showif share a lot of the same infrastructure
             self.callAttribute("_print_if", ast, newString("if"));
+        }
+
+        private static void
+        printIf0(PythonObject self, PythonObject ast, PythonObject keyword) {
+            // the first condition is named if or showif, the rest elif
+            keyword = sl2decompiler.callAttribute("First", keyword, newString("elif"));
+            for (PythonObject $args : ast.getAttribute("entries")) {
+                PythonObject condition = $args.getItem(0), block = $args.getItem(1);
+
+                self.callAttribute("advance_to_line", block.getAttribute("location").getItem(1));
+                self.callAttribute("indent");
+
+                // if condition is None, this is the else clause
+                if (condition == None) {
+                    self.callAttribute("write", newString("else"));
+                } else {
+                    self.callAttribute("write", format("{0} {1}", keyword.call(), condition));
+                }
+
+                // Every condition has a block of type slast.SLBlock
+                self.callAttribute("print_block", new PythonArgument(block)
+                        .addKeywordArgument("immediate_block", True));
+            }
+
         }
 
         private static PythonObject
