@@ -52,6 +52,7 @@ import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.Keywords.or;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
@@ -61,6 +62,7 @@ import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
+import com.abiddarris.common.renpy.internal.signature.PythonSignature;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class SL2Decompiler {
@@ -110,6 +112,9 @@ public class SL2Decompiler {
             definer.defineFunction("print_if", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLIf")),
                     SL2DecompilerImpl::printIf, "self", "ast");
             definer.defineFunction("_print_if", SL2DecompilerImpl::printIf0, "self", "ast", "keyword");
+            definer.defineFunction("print_block", SL2DecompilerImpl::printBlock, new PythonSignatureBuilder("self", "ast")
+                    .addParameter("immediate_block", False)
+                    .build());
 
             definer.defineFunction("sort_keywords_and_children", SL2DecompilerImpl::sortKeywordsAndChildren,
                     new PythonSignatureBuilder("self", "node")
@@ -198,7 +203,44 @@ public class SL2Decompiler {
                 self.callAttribute("print_block", new PythonArgument(block)
                         .addKeywordArgument("immediate_block", True));
             }
+        }
 
+        private static void
+        printBlock(PythonObject self, PythonObject ast, PythonObject immediate_block) {
+            // represents an SLBlock node, which is a container of keyword arguments and children
+            //
+            // block is a child of showif, if, use, user-defined displayables.
+            // for showif, if and use, no keyword properties on the same line are allowed
+            // for custom displayables, they are allowed.
+            //
+            // immediate_block: boolean, indicates that no keyword properties are before the :, and
+            // that a block is required
+            PythonObject $args = self.callAttribute("sort_keywords_and_children", new PythonArgument(ast)
+                    .addKeywordArgument("immediate_block", immediate_block));
+
+            PythonObject first_line = $args.getItem(0), other_lines = $args.getItem(1);
+
+            PythonObject has_block = or(immediate_block, bool(other_lines));
+
+            self.callAttribute("print_keyword_or_child", new PythonArgument(first_line)
+                    .addKeywordArgument("first_line", True)
+                    .addKeywordArgument("has_block", has_block));
+
+            if (other_lines.toBoolean()) {
+                with(self.callAttribute("increase_indent"), () -> {
+                    for (PythonObject line : other_lines) {
+                        self.callAttribute("print_keyword_or_child", line);
+                    }
+                });
+            }
+
+            //special case, a block is forced, while there is no content
+            else if (immediate_block.toBoolean()) {
+                with(self.callAttribute("increase_indent"), () -> {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", newString("pass"));
+                });
+            }
         }
 
         private static PythonObject

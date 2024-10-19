@@ -42,33 +42,6 @@ class SL2Decompiler(DecompilerBase):
         # so for if and showif we just call an underlying function with an extra argument
         self._print_if(ast, "showif")
 
-    def print_block(self, ast, immediate_block=False):
-        # represents an SLBlock node, which is a container of keyword arguments and children
-        #
-        # block is a child of showif, if, use, user-defined displayables.
-        # for showif, if and use, no keyword properties on the same line are allowed
-        # for custom displayables, they are allowed.
-        #
-        # immediate_block: boolean, indicates that no keyword properties are before the :, and
-        # that a block is required
-        first_line, other_lines = self.sort_keywords_and_children(
-            ast, immediate_block=immediate_block)
-
-        has_block = immediate_block or bool(other_lines)
-
-        self.print_keyword_or_child(first_line, first_line=True, has_block=has_block)
-
-        if other_lines:
-            with self.increase_indent():
-                for line in other_lines:
-                    self.print_keyword_or_child(line)
-
-            # special case, a block is forced, while there is no content
-        elif immediate_block:
-            with self.increase_indent():
-                self.indent()
-                self.write("pass")
-
     @dispatch(sl2.slast.SLFor)
     def print_for(self, ast):
         # Since tuple unpickling is hard, renpy just gives up and inserts a
