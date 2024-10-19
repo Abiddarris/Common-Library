@@ -107,6 +107,8 @@ public class SL2Decompiler {
             definer.defineFunction("print_node", SL2DecompilerImpl::printNode, "self", "ast");
             definer.defineFunction("print_screen", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLScreen")),
                     SL2DecompilerImpl::printScreen, "self", "ast");
+            definer.defineFunction("print_if", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLIf")),
+                    SL2DecompilerImpl::printIf, "self", "ast");
 
             definer.defineFunction("sort_keywords_and_children", SL2DecompilerImpl::sortKeywordsAndChildren,
                     new PythonSignatureBuilder("self", "node")
@@ -166,6 +168,12 @@ public class SL2Decompiler {
                 });
             }
 
+        }
+
+        private static void
+        printIf(PythonObject self, PythonObject ast) {
+            // if and showif share a lot of the same infrastructure
+            self.callAttribute("_print_if", ast, newString("if"));
         }
 
         private static PythonObject

@@ -37,11 +37,6 @@ class SL2Decompiler(DecompilerBase):
     stream
     """
 
-    @dispatch(sl2.slast.SLIf)
-    def print_if(self, ast):
-        # if and showif share a lot of the same infrastructure
-        self._print_if(ast, "if")
-
     @dispatch(sl2.slast.SLShowIf)
     def print_showif(self, ast):
         # so for if and showif we just call an underlying function with an extra argument
