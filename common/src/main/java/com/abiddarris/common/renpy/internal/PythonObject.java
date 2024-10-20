@@ -420,6 +420,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     public boolean equals(String str) {
         return equals(newString(str));
     }
+
+    public boolean equals(long l) {
+        return equals(newInt(l));
+    }
     
     @Override
     public int hashCode() {
