@@ -52,6 +52,7 @@ import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Keywords.or;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
@@ -115,6 +116,11 @@ public class SL2Decompiler {
             definer.defineFunction("print_block", SL2DecompilerImpl::printBlock, new PythonSignatureBuilder("self", "ast")
                     .addParameter("immediate_block", False)
                     .build());
+
+            definer.defineFunction("print_displayable", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDisplayable")),
+                    SL2DecompilerImpl::printDisplayable, new PythonSignatureBuilder("self", "ast")
+                            .addParameter("has_block", False)
+                            .build());
 
             definer.defineFunction("sort_keywords_and_children", SL2DecompilerImpl::sortKeywordsAndChildren,
                     new PythonSignatureBuilder("self", "node")
@@ -239,6 +245,124 @@ public class SL2Decompiler {
                 with(self.callAttribute("increase_indent"), () -> {
                     self.callAttribute("indent");
                     self.callAttribute("write", newString("pass"));
+                });
+            }
+        }
+
+        private static void
+        printDisplayable(PythonObject self, PythonObject ast, PythonObject has_block) {
+            // slast.SLDisplayable represents a variety of statements. We can figure out
+            // what statement it represents by analyzing the called displayable and style
+            // attributes.
+            PythonObject key = newTuple(ast.getAttribute("displayable"), ast.getAttribute("style"));
+            PythonObject nameAndChildren = self.callNestedAttribute("displayable_names.get", key);
+
+            if (nameAndChildren == None && self.getNestedAttributeJB("options.sl_custom_names")) {
+                // check if we have a name registered for this displayable
+                nameAndChildren = self.callNestedAttribute("options.sl_custom_names.get", ast.getNestedAttribute("displayable.__name__"));
+                self.callAttribute("print_debug", format("Substituted \"{0}\" as the name for displayable {1}",
+                            nameAndChildren.getItem(0), ast.getAttribute("displayable")));
+            }
+
+            if (nameAndChildren == None) {
+                // This is a (user-defined) displayable we don't know about.
+                // fallback: assume the name of the displayable matches the given style
+                // this is rather often the case. However, as it may be wrong we have to
+                // print a debug message
+                nameAndChildren = newTuple(ast.getAttribute("style"), newString("many"));
+                self.callAttribute("print_debug", format(
+                        "Warning: Encountered a user-defined displayable of type \"{0}\n" +
+                        "Unfortunately, the name of user-defined displayables is not recorded in the compiled file.\n" +
+                        "For now the style name \"{1}\" will be substituted.\n" +
+                        "To check if this is correct, find the corresponding renpy.register_sl_displayable call.\n",
+                        ast.getAttribute("displayable"), ast.getAttribute("style")));
+            }
+
+            PythonObject name = nameAndChildren.getItem(0), children = nameAndChildren.getItem(1);
+
+            self.callAttribute("indent");
+            self.callAttribute("write", name);
+            if (ast.getAttributeJB("positional")) {
+                self.callAttribute("write", newString(" ").add(
+                        newString(" ").callAttribute(
+                                "join", ast.getAttribute("positional")
+                        )
+                ));
+            }
+
+            PythonObject atl_transform = getattr(ast, "atl_transform", None);
+            // The AST contains no indication of whether or not "has" blocks
+            // were used. We'll use one any time it's possible (except for
+            // directly nesting them, or if they wouldn't contain any children),
+            // since it results in cleaner code.
+
+            // if we're not already in a has block, and have a single child that's a displayable,
+            // which itself has children, and the line number of this child is after any atl
+            // transform or keyword we can safely use a has statement
+            if (!has_block.toBoolean()
+                    && children.equals(1)
+                    && len(ast.getAttribute("children")).equals(1)
+                    && jIsinstance(ast.getAttributeItem("children", 0), sl2decompiler.getNestedAttribute("sl2.slast.SLDisplayable"))
+                    && ast.getAttributeItem("children", 0).getAttributeJB("children")
+                    && (!ast.getAttributeJB("keyword")
+                        || ast.getAttributeItem("children", 0)
+                                .getAttributeItem("location", 1)
+                                .jGreaterThan(ast.getAttributeItem("keyword", -1)
+                                        .getItemAttribute(1, "linenumber")
+                                )
+                        )
+                    && (atl_transform == None
+                         || ast.getAttributeItem("children", 0)
+                                .getAttributeItem("location", 1)
+                                .jGreaterThan(atl_transform.getAttribute("loc"))
+                        )
+                    ) {
+                PythonObject $args = self.callAttribute("sort_keywords_and_children", new PythonArgument(ast)
+                        .addKeywordArgument("ignore_children", True));
+                PythonObject first_line = $args.getItem(0), other_lines = $args.getItem(1);
+
+                self.callAttribute("print_keyword_or_child", new PythonArgument(first_line)
+                        .addKeywordArgument("first_line", True)
+                        .addKeywordArgument("has_block", True));
+
+                with(self.callAttribute("increase_indent"), () -> {
+                    for (PythonObject line : other_lines) {
+                        self.callAttribute("print_keyword_or_child", line);
+                    }
+
+                    self.callAttribute("advance_to_line", ast.getAttributeItem("children", 0)
+                            .getAttributeItem("location", 1));
+                    self.callAttribute("indent");
+                    self.callAttribute("write", newString("has "));
+
+                    self.setAttribute("skip_indent_until_write", True);
+                    self.callAttribute("print_displayable", ast.getAttributeItem("children", 0), True);
+                });
+
+            }
+            else if (has_block.toBoolean()) {
+                // has block: for now, assume no block of any kind present
+                PythonObject $args = self.callAttribute("sort_keywords_and_children", ast);
+                PythonObject first_line = $args.getItem(0), other_lines = $args.getItem(1);
+
+                self.callAttribute("print_keyword_or_child", new PythonArgument(first_line)
+                                .addKeywordArgument("first_line", True)
+                                .addKeywordArgument("has_block", False));
+                for (PythonObject line : other_lines) {
+                    self.callAttribute("print_keyword_or_child", line);
+                }
+
+            } else {
+                PythonObject $args = self.callAttribute("sort_keywords_and_children", ast);
+                PythonObject first_line = $args.getItem(0), other_lines = $args.getItem(1);
+                self.callAttribute("print_keyword_or_child", new PythonArgument(first_line)
+                        .addKeywordArgument("first_line", True)
+                        .addKeywordArgument("has_block", bool(other_lines)));
+
+                with(self.getAttribute("increase_indent"), () -> {
+                    for (PythonObject line : other_lines) {
+                        self.callAttribute("print_keyword_or_child", line);
+                    }
                 });
             }
         }
