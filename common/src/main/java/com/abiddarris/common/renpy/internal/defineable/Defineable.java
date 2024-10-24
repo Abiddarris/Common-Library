@@ -66,6 +66,10 @@ public interface Defineable {
         return defineFunction(name, function, PythonSignature.from(argumentNames));
     }
 
+    default PythonObject defineFunction(String name, PythonObject decorator, V3Function function, PythonSignature signature) {
+        return initFunction(name, decorator.call(newFunction(function, signature)));
+    }
+
     default PythonObject defineFunction(String name, V3Function function, PythonSignature signature) {
         return initFunction(name, newFunction(function, signature));
     }
