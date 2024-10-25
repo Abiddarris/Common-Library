@@ -42,6 +42,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.super0;
 import static com.abiddarris.common.renpy.internal.Python.format;
+import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.Python.newString;
@@ -121,6 +122,48 @@ public class SL2Decompiler {
                     SL2DecompilerImpl::printDisplayable, new PythonSignatureBuilder("self", "ast")
                             .addParameter("has_block", False)
                             .build());
+
+            sl2decompiler.defineAttribute("displayable_names", newDict(
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.AreaPicker"), newString("default")),       newTuple(newString("areapicker"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.Button"), newString("button")),            newTuple(newString("button"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.DismissBehavior"), newString("default")),  newTuple(newString("dismiss"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.Input"), newString("input")),              newTuple(newString("input"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.MouseArea"), newInt(0)),            newTuple(newString("mousearea"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.MouseArea"), None),                        newTuple(newString("mousearea"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.OnEvent"), newInt(0)),              newTuple(newString("on"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.OnEvent"), None),                          newTuple(newString("on"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("behavior.Timer"), newString("default")),            newTuple(newString("timer"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("dragdrop.Drag"), newString("drag")),                newTuple(newString("drag"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("dragdrop.Drag"), None),                             newTuple(newString("drag"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("dragdrop.DragGroup"), None),                        newTuple(newString("draggroup"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("im.image"), newString("default")),                  newTuple(newString("image"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.Grid"), newString("grid")),                  newTuple(newString("grid"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.MultiBox"), newString("fixed")),             newTuple(newString("fixed"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.MultiBox"), newString("hbox")),              newTuple(newString("hbox"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.MultiBox"), newString("vbox")),              newTuple(newString("vbox"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.NearRect"), newString("default")),           newTuple(newString("nearrect"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.Null"), newString("default")),               newTuple(newString("null"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.Side"), newString("side")),                  newTuple(newString("side"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.Window"), newString("frame")),               newTuple(newString("frame"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("layout.Window"), newString("window")),              newTuple(newString("window"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("motion.Transform"), newString("transform")),        newTuple(newString("transform"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("sld.sl2add"), None),                                newTuple(newString("add"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("sld.sl2bar"), None),                                newTuple(newString("bar"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("sld.sl2vbar"), None),                               newTuple(newString("vbar"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("sld.sl2viewport"), newString("viewport")),          newTuple(newString("viewport"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("sld.sl2vpgrid"), newString("vpgrid")),              newTuple(newString("vpgrid"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("text.Text"), newString("text")),                    newTuple(newString("text"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("transform.Transform"), newString("transform")),     newTuple(newString("transform"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._add"), None),                                   newTuple(newString("add"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._hotbar"), newString("hotbar")),                 newTuple(newString("hotbar"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._hotspot"), newString("hotspot")),               newTuple(newString("hotspot"), newInt(1)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._imagebutton"), newString("image_button")),      newTuple(newString("imagebutton"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._imagemap"), newString("imagemap")),             newTuple(newString("imagemap"), newString("many")),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._key"), None),                                   newTuple(newString("key"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._label"), newString("label")),                   newTuple(newString("label"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._textbutton"), newString("button")),             newTuple(newString("textbutton"), newInt(0)),
+                    newTuple(sl2decompiler.getNestedAttribute("ui._textbutton"), newInt(0)),                newTuple(newString("textbutton"), newInt(0))
+            ));
 
             definer.defineFunction("sort_keywords_and_children", SL2DecompilerImpl::sortKeywordsAndChildren,
                     new PythonSignatureBuilder("self", "node")
