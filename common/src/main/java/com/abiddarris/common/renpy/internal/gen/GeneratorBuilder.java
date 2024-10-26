@@ -52,7 +52,7 @@ public class GeneratorBuilder {
 
                     int value = 0;
                     for (PythonObject var0 : var) {
-                        vars.put(varNames[value++], var);
+                        vars.put(varNames[value++], var0);
                     }
 
                     if (value < varNames.length) {
