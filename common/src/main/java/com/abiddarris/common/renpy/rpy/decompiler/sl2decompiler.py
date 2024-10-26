@@ -23,7 +23,6 @@ from .util import , , \
 
 from . import atldecompiler
 
-from renpy import ui
 from renpy.ast import PyExpr
 
 # Implementation
