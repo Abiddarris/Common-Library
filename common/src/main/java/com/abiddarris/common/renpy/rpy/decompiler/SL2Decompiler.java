@@ -407,7 +407,7 @@ public class SL2Decompiler {
                         .addKeywordArgument("first_line", True)
                         .addKeywordArgument("has_block", bool(other_lines)));
 
-                with(self.getAttribute("increase_indent"), () -> {
+                with(self.callAttribute("increase_indent"), () -> {
                     for (PythonObject line : other_lines) {
                         self.callAttribute("print_keyword_or_child", line);
                     }
