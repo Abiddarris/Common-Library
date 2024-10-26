@@ -79,6 +79,8 @@ public class SL2Decompiler {
                     "First", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher");
             sl2decompiler.fromImport("renpy", "sl2");
 
+            sl2decompiler.fromImport("renpy.display", "layout", "behavior", "im", "motion", "dragdrop", "transform");
+
             // Main API
             sl2decompiler.defineFunction("pprint", SL2Decompiler::pprint,
                     new PythonSignatureBuilder("out_file", "ast", "options")
