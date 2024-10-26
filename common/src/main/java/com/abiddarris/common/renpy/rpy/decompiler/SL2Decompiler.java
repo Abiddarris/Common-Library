@@ -128,7 +128,7 @@ public class SL2Decompiler {
                             .addParameter("has_block", False)
                             .build());
 
-            sl2decompiler.defineAttribute("displayable_names", newDict(
+            definer.defineAttribute("displayable_names", newDict(
                     newTuple(sl2decompiler.getNestedAttribute("behavior.AreaPicker"), newString("default")),       newTuple(newString("areapicker"), newInt(1)),
                     newTuple(sl2decompiler.getNestedAttribute("behavior.Button"), newString("button")),            newTuple(newString("button"), newInt(1)),
                     newTuple(sl2decompiler.getNestedAttribute("behavior.DismissBehavior"), newString("default")),  newTuple(newString("dismiss"), newInt(0)),
