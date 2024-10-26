@@ -123,6 +123,9 @@ public class SL2Decompiler {
                     .addParameter("immediate_block", False)
                     .build());
 
+            definer.defineFunction("print_default", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDefault")),
+                    SL2DecompilerImpl::printDefault, "self", "ast");
+
             definer.defineFunction("print_displayable", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDisplayable")),
                     SL2DecompilerImpl::printDisplayable, new PythonSignatureBuilder("self", "ast")
                             .addParameter("has_block", False)
@@ -296,6 +299,15 @@ public class SL2Decompiler {
                 });
             }
         }
+
+        private static void
+        printDefault(PythonObject self, PythonObject ast) {
+            // A default statement
+            self.callAttribute("indent");
+            self.callAttribute("write", format("default {0} = {1}", ast.getAttribute("variable"),
+                    ast.getAttribute("expression")));
+        }
+
 
         private static void
         printDisplayable(PythonObject self, PythonObject ast, PythonObject has_block) {
