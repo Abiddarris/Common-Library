@@ -57,6 +57,8 @@ public class Builtins {
     public static final PythonObject zip;
     public static final PythonObject range;
 
+    public static final PythonObject hash;
+
     private static final PythonObject method;
     private static final PythonObject NoneType;
 
@@ -347,6 +349,7 @@ public class Builtins {
         IO.initLoader();
         com.abiddarris.common.renpy.internal.mod.builtins.BuiltinsImpl.initRest();
 
+        hash = builtins.getAttribute("hash");
         set = builtins.getAttribute("set");
         zip = builtins.getAttribute("zip");
         range = builtins.getAttribute("range");

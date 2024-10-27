@@ -15,6 +15,10 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
+import static com.abiddarris.common.renpy.internal.Builtins.builtins;
+
+import com.abiddarris.common.renpy.internal.PythonObject;
+
 public class BuiltinsImpl {
 
     private static boolean init;
@@ -26,10 +30,15 @@ public class BuiltinsImpl {
 
         init = true;
 
+        builtins.defineFunction("hash", BuiltinsImpl::hash, "self");
+
         SetImpl.define();
         GeneratorImpl.define();
         ZipImpl.define();
         RangeImpl.define();
     }
 
+    private static PythonObject hash(PythonObject obj) {
+        return obj.callTypeAttribute("__hash__");
+    }
 }
