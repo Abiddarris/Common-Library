@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
@@ -28,6 +29,11 @@ import java.util.Iterator;
 public class PythonTuple extends PythonObject {
 
     private static PythonObject tuple_iterator;
+
+    static void init2() {
+        tuple.defineAttribute("__module__", newString("builtins"));
+        tuple.defineFunction("__eq__", PythonTuple::eq, "self", "other");
+    }
 
     static void init() {
         tuple_iterator = Bootstrap.newClass(Builtins.type, newTuple(newString("tuple_iterator"), newTuple(Builtins.object)), new BootstrapAttributeHolder());
@@ -59,6 +65,17 @@ public class PythonTuple extends PythonObject {
             return new ArrayIterator(elements);
         }
         return super.iterator();
+    }
+
+    private static PythonObject eq(PythonObject self, PythonObject other) {
+        if (!(other instanceof PythonTuple)) {
+            return False;
+        }
+
+        return newBoolean(Arrays.equals(
+                ((PythonTuple)self).elements,
+                ((PythonTuple)other).elements
+        ));
     }
 
     private static PythonObject getitem(PythonTuple self, PythonObject pos) {
@@ -101,7 +118,7 @@ public class PythonTuple extends PythonObject {
                 return Builtins.True;
             }
         }
-        return Builtins.False;
+        return False;
     }
 
     private static class TupleIterator extends PythonObject {
