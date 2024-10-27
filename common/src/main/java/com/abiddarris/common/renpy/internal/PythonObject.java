@@ -299,6 +299,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return callAttribute("__mul__", value);
     }
 
+    public PythonObject multiply(long value) {
+        return multiply(newInt(value));
+    }
+
     public PythonObject getSuper() {
         return Builtins.super0.call(
             com.abiddarris.common.renpy.internal.core.Types.type(this),
