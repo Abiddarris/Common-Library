@@ -15,9 +15,15 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.int0;
+
 class PythonInt extends PythonObject {
 
     private long value;
+
+    static void init() {
+        int0.defineFunction("__mul__", PythonInt::mul, "self", "other");
+    }
 
     PythonInt(long value) {
         this.value = value;
@@ -53,6 +59,10 @@ class PythonInt extends PythonObject {
 
     private static PythonObject subtract(PythonInt self, PythonInt value) {
         return newInt(self.value - value.value);
+    }
+
+    private static PythonObject mul(PythonObject self, PythonObject value) {
+        return newInt(((PythonInt)self).value * ((PythonInt)value).value);
     }
 
     private static PythonObject bool(PythonInt self) {

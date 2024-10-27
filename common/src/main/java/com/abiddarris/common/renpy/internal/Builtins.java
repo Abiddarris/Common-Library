@@ -329,6 +329,7 @@ public class Builtins {
         int0.defineAttribute("__module__", newString("builtins"));
         int0.defineFunction("__ge__", PythonInt::ge, "self", "value");
 
+        PythonInt.init();
         PythonTuple.init2();
 
         ValueError = builtins.defineClass("ValueError", Exception).define();
