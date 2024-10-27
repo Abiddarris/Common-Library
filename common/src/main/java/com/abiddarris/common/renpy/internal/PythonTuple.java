@@ -16,6 +16,7 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.hash;
 import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
@@ -33,6 +34,7 @@ public class PythonTuple extends PythonObject {
     static void init2() {
         tuple.defineAttribute("__module__", newString("builtins"));
         tuple.defineFunction("__eq__", PythonTuple::eq, "self", "other");
+        tuple.defineFunction("__hash__", PythonTuple::hash, "self");
     }
 
     static void init() {
@@ -76,6 +78,17 @@ public class PythonTuple extends PythonObject {
                 ((PythonTuple)self).elements,
                 ((PythonTuple)other).elements
         ));
+    }
+
+    private static PythonObject hash(PythonObject self) {
+        PythonObject hash0 = newInt(0);
+        PythonTuple tuple = (PythonTuple)self;
+
+        for (PythonObject object : tuple.elements) {
+            hash0.multiply(31)
+                    .add(hash.call(object));
+        }
+        return hash0;
     }
 
     private static PythonObject getitem(PythonTuple self, PythonObject pos) {
