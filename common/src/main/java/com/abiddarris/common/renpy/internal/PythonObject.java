@@ -99,10 +99,6 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     public AttributeManager getAttributes() {
         return attributes;
     }
-    
-    public void addMethod(String name, PythonMethod func) {
-        setAttribute(name, func);
-    }
 
     public void setAttribute(String name, PythonObject obj) {
         setAttribute(newString(name), obj);
