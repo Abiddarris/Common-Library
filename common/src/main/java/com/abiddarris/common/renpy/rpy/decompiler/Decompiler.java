@@ -592,7 +592,7 @@ public class Decompiler {
                     self.callAttribute("indent");
                     self.callAttribute("write", newString("init"));
                     if (ast.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))) {
-                        self.callAttribute("write", newString("{0}").callAttribute("format",
+                        self.callAttribute("write", newString(" {0}").callAttribute("format",
                                 ast.getAttribute("priority").subtract(self.getAttribute("init_offset"))
                         ));
                     }
