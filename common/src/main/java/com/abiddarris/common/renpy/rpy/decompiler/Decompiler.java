@@ -202,7 +202,8 @@ public class Decompiler {
 
             definer.defineFunction("print_define", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Define")),
                     DecompilerImpl.class, "printDefine", "self", "ast");
-
+            definer.defineFunction("print_default", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Default")),
+                    DecompilerImpl::printDefault, "self", "ast");
 
             definer.defineFunction("print_say", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Say")),
                     DecompilerImpl.class, "printSay", new PythonSignatureBuilder("self", "ast")
@@ -821,6 +822,32 @@ public class Decompiler {
                                 getNestedAttribute(ast, "code.source")));
             }
         }
+
+        private static void
+        printDefault(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+            self.callAttribute("indent");
+
+            // If we have an implicit init block with a non-default priority, we need to store the
+            // priority here.
+            PythonObject priority = newString("");
+            if (jIsinstance(self.getAttribute("parent"), decompiler.getNestedAttribute("renpy.ast.Init"))) {
+                PythonObject init = self.getAttribute("parent");
+                if (init.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))
+                        && len(init.getAttribute("block")).equals(1)
+                        && !self.callAttributeJB("should_come_before", init, ast)) {
+                    priority = format(" {0}", init.getAttribute("priority").subtract(self.getAttribute("init_offset")));
+                }
+            }
+
+            if (ast.getAttribute("store").equals("store")) {
+                self.callAttribute("write", format("default{0} {1} = {2}", priority, ast.getAttribute("varname"), ast.getNestedAttribute("code.source")));
+            } else {
+                self.callAttribute("write", format("default{0} {1}.{2} = {3}", priority, ast.getAttributeItem("store", newSlice(6)),
+                        ast.getAttribute("varname"), ast.getNestedAttribute("code.source")));
+            }
+        }
+
 
         /**
          * Returns whether a Say statement immediately preceding a Menu statement
