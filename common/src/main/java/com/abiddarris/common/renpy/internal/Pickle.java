@@ -14,12 +14,14 @@ import static java.util.Arrays.copyOf;
 
 import com.abiddarris.common.annotations.PrivateApi;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
+import com.abiddarris.common.utils.Numbers;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -124,14 +126,8 @@ public class Pickle {
      * <p>>>> decode_long(b"\x80") -128
      * <p>>>> decode_long(b"\x7f") 127
      */
-    private static int decode_long(int[] data) {
-        if(data.length > 4) {
-            throw new IllegalArgumentException("Not gonna bother with this " + Arrays.toString(data));
-        }
-        ByteBuffer buffer = ByteBuffer.wrap(sign(data));
-        buffer.order(LITTLE_ENDIAN);
-        
-        return buffer.getInt();
+    private static long decode_long(int[] data) {
+        return (long) Numbers.decode(sign(data), LITTLE_ENDIAN, true);
     }
    
     public static class Unpickler {
