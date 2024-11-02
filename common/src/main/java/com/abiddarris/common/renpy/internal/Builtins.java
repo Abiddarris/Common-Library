@@ -209,7 +209,7 @@ public class Builtins {
         dict.setAttribute("__len__", Python.newFunction(PythonDict.class, "len", "self"));
         dict.setAttribute("__str__", Python.newFunction(PythonDict.class, "str", "self"));
         dict.setAttribute("update", Python.newFunction(PythonDict.class, "update", "self", "other"));
-        dict.setAttribute("__new__", Python.newFunction(PythonDict.class, "new0", "cls"));
+        dict.setAttribute("__new__", Python.newFunction(PythonDict.class, "new0", "cls", "*iterable"));
         dict.setAttribute("__mro__", newTuple(dict, object));
         type.setAttribute("__name__", PythonObject.newPythonString("type"));
 
@@ -325,6 +325,8 @@ public class Builtins {
 
         isinstance = Python.newFunction(Functions.class, "isInstance", "instance", "class");
         hasattr = Python.newFunction(BuiltinsImpl.class, "hasAttr", "obj", "name");
+
+        PythonDict.init2();
 
         list.defineAttribute("__module__", newString("builtins"));
         list.defineFunction("reverse", PythonList::reverse, "self");

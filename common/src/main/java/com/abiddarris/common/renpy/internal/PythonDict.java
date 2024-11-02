@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 
@@ -22,6 +23,7 @@ import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +31,12 @@ import java.util.Map;
 public class PythonDict extends PythonObject {
     
     private static PythonObject dict_iterator;
-        
+
+    static void init2() {
+        dict.defineAttribute("__module__", newString("builtins"));
+        dict.defineFunction("__init__", PythonDict::init0, "self", "*iterable");
+    }
+
     static void init() {
         dict_iterator = Bootstrap.newClass(Builtins.type, newTuple(newString("dict_iterator"), newTuple()), new BootstrapAttributeHolder());
         dict_iterator.setAttribute("__next__", newFunction(findMethod(DictIterator.class, "next"), "self"));
@@ -54,8 +61,37 @@ public class PythonDict extends PythonObject {
         return map;
     }
     
-    private static PythonObject new0(PythonObject cls) {
+    private static PythonObject new0(PythonObject cls, PythonObject iterable) {
         return new PythonDict(cls, new LinkedHashMap<>());
+    }
+
+    private static void init0(PythonObject self, PythonObject iterable) {
+        PythonDict dict = (PythonDict)self;
+        PythonObject[] unpacker = new PythonObject[2];
+        int pos = 0;
+
+        if (iterable.length() > 1) {
+            TypeError.call().raise();
+        }
+
+        if (iterable.length() == 1) {
+            iterable = iterable.getItem(0);
+        }
+
+        for (PythonObject $args : iterable) {
+            for (PythonObject kv : $args) {
+                if (pos == unpacker.length) {
+                    TypeError.call().raise();
+                }
+                unpacker[pos++] = kv;
+            }
+            if (pos != 2) {
+                TypeError.call().raise();
+            }
+            pos = 0;
+
+            dict.map.put(unpacker[0], unpacker[1]);
+        }
     }
         
     private static PythonObject iter(PythonDict self) {
