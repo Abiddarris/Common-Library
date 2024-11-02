@@ -32,6 +32,10 @@ public class JFunctions {
         return (boolean) hasAttribute.getObject();
     }
 
+    public static PythonObject getattr(PythonObject obj, String name) {
+        return obj.getAttribute(name);
+    }
+
     public static PythonObject getattr(PythonObject obj, String name, PythonObject defaultValue) {
         return obj.getAttribute(name, defaultValue);
     }
