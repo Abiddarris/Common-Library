@@ -384,7 +384,7 @@ public class Pickle {
         private void load_long1() {
             int n = this.read(1)[0];
             int[] data = this.read(n);
-            this.append(decode_long(data));
+            this.append(newInt(decode_long(data)));
         }
         
         /*
