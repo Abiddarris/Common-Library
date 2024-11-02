@@ -46,6 +46,7 @@ public class Pickle {
     private static final int BININT1        = 'K';   // push 1-byte unsigned int
     private static final int BININT2        = 'M';   // push 2-byte unsigned int
     private static final int NONE           = 'N';   // push None
+    private static final int REDUCE         = 'R';   // apply callable to argtuple, both on stack
     private static final int SHORT_BINSTRING= 'U';   // "     "   ;    "      "       "      " < 256 bytes
     private static final int BINUNICODE     = 'X';   //   "     "       "  ; counted UTF-8 string argument
     private static final int APPEND         = 'a';   // append stack top to list below it
@@ -211,6 +212,8 @@ public class Pickle {
             dispatch.put(INT, this::load_int);
             dispatch.put(SETITEM, this::load_setitem);
             dispatch.put(TUPLE1, this::load_tuple1);
+            dispatch.put(REDUCE, this::load_reduce);
+
             /*self._buffers = iter(buffers) if buffers is not None else None
             self.memo = {}
             
@@ -720,15 +723,15 @@ public class Pickle {
             else:
                 return getattr(sys.modules[module], name)*/
         }
-        /*
-        def load_reduce(self):
-            stack = self.stack
-            args = stack.pop()
-            func = stack[-1]
-            stack[-1] = func(*args)
-        dispatch[REDUCE[0]] = load_reduce
 
-        def load_pop(self):
+        public void load_reduce() {
+            PythonObject args = (PythonObject) stack.remove(stack.size() - 1);
+            PythonObject func = (PythonObject) stack.get(stack.size() - 1);
+            stack.set(stack.size() - 1, func.call(new PythonArgument()
+                    .addPositionalArguments(args)));
+        }
+
+        /*def load_pop(self):
             if self.stack:
                 del self.stack[-1]
             else:
