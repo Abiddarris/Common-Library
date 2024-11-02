@@ -15,6 +15,7 @@ import com.abiddarris.common.renpy.internal.core.classes.AttributeSetter;
 import com.abiddarris.common.renpy.internal.core.classes.Classes;
 import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
+import com.abiddarris.common.renpy.internal.mod.collections.Collections;
 import com.abiddarris.common.renpy.internal.mod.io.IO;
 import com.abiddarris.common.renpy.internal.mod.re.Re;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
@@ -354,6 +355,7 @@ public class Builtins {
         zip = builtins.getAttribute("zip");
         range = builtins.getAttribute("range");
 
+        Collections.initLoader();
         Re.initLoader();
     }
 
