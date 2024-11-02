@@ -206,7 +206,7 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
 
     public PythonObject getAttributeItem(String name, String key) {
         return getAttributeItem(name, newString(key));
-    }f
+    }
 
     public PythonObject sliceTo(long end) {
         return getItem(newSlice(None, newInt(end)));
@@ -233,6 +233,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
 
     public boolean jin(PythonObject value) {
         return in(value).toBoolean();
+    }
+
+    public boolean jin(String value) {
+        return jin(newString(value));
     }
 
     public PythonObject in(PythonObject value) {
