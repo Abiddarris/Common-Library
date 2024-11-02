@@ -64,12 +64,15 @@ import static com.abiddarris.common.renpy.internal.core.Functions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.Functions.hash;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.stream.Signs.sign;
 
 import com.abiddarris.common.renpy.internal.Pickle;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.core.Functions;
+import com.abiddarris.common.renpy.internal.core.JFunctions;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
@@ -681,24 +684,29 @@ public class Magic {
      */
     public static class SafeUnpickler extends FakeUnpickler {
 
-        public SafeUnpickler(InputStream file, FakeClassFactory class_factory/*=None*/, Object safe_modules/*=()*/,
-                     boolean use_copyreg/*=False*/, String encoding/*="bytes"*/, String errors/*="strict"*/) {
+        private final Set<String> safe_modules;
+        private static PythonObject sys = __import__.call(newString("sys"));
+
+        public SafeUnpickler(InputStream file, FakeClassFactory class_factory/*=None*/, Set<String> safe_modules/*=()*/,
+                             boolean use_copyreg/*=False*/, String encoding/*="bytes"*/, String errors/*="strict"*/) {
             super(file, class_factory, encoding=encoding, errors=errors);
+
+            this.safe_modules = safe_modules;
             // A set of modules which are safe to load
-            /*self.safe_modules = set(safe_modules)
-            self.use_copyreg = use_copyreg*/
+            /*self.use_copyreg = use_copyreg*/
         }
     
         @Override
         public PythonObject find_class(String module, String name) {
-            
-            /*if module in self.safe_modules:
-                __import__(module)
-                mod = sys.modules[module]
-                if not hasattr(mod, "__all__") or name in mod.__all__:
-                    klass = getattr(mod, name)
-                    return klass
-            */
+            if (this.safe_modules.contains(module)) {
+                __import__.call(newString(module));
+                PythonObject mod = sys.getAttributeItem("modules", module);
+                if (!hasattr(mod, "__all__") || mod.getAttribute("__all__").jin(name)) {
+                    PythonObject klass = getattr(mod, name);
+                    return klass;
+                }
+            }
+
             return this.class_factory.__call__(name, module);
         }
        /* def get_extension(self, code):
