@@ -151,7 +151,10 @@ public class RenPyCompat {
             ClassDefiner definer = renpycompat.defineDecoratedClass("RevertableList",
                     renpycompat.getNestedAttribute("SPECIAL_CLASSES.append"),
                     renpycompat.getNestedAttribute("magic.FakeStrict"), list);
+
             definer.defineAttribute("__module__", newString("renpy.revertable"));
+            definer.defineFunction("__new__", RevertableListImpl::new0, "cls");
+            definer.define();
         }
 
         private static PythonObject new0(PythonObject cls) {
