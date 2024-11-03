@@ -18,6 +18,7 @@ package com.abiddarris.common.renpy.internal;
 import static com.abiddarris.common.renpy.internal.Builtins.IndexError;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.StopIteration;
+import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 import static com.abiddarris.common.renpy.internal.Builtins.slice;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 
@@ -50,6 +51,15 @@ class PythonList extends PythonObject {
 
     static void init0(PythonObject self, PythonObject iterable) {
         PythonList list = (PythonList) self;
+        int length = iterable.length();
+        if (length > 1) {
+            TypeError.call().raise();
+        } else if (length == 0) {
+            return;
+        }
+
+        iterable = iterable.getItem(0);
+
         for (PythonObject element : iterable) {
             list.elements.add(element);
         }
