@@ -34,6 +34,7 @@
  ************************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
@@ -53,10 +54,12 @@ import java.util.Set;
  * to avoid middle-of-file imports.
  */
 public class RenPyCompat {
-    
+
+    private static PythonObject renpycompat;
+
     static void initLoader() {
         registerLoader("decompiler.renpycompat", (name) -> {
-            PythonObject renpycompat = createModule(name);
+            renpycompat = createModule(name);
             PythonObject magic = renpycompat.fromImport("decompiler", "magic")[0];
 
             magic.callAttribute("fake_package", newString("renpy"));
@@ -75,6 +78,9 @@ public class RenPyCompat {
             SPECIAL_CLASSES.callAttribute("append", RevertableDictOldImpl.define(renpycompat, magic));
          
             renpycompat.setAttribute("RevertableDict", Builtins.None);
+
+            // These appear in the parsed contents of user statements.
+            RevertableListImpl.define();
 
             return renpycompat;
         });
@@ -135,7 +141,22 @@ public class RenPyCompat {
             self.setAttribute("bytecode", Builtins.None);
         }
     }      
-    
+
+    private static class RevertableListImpl {
+
+        private static void define() {
+            ClassDefiner definer = renpycompat.defineDecoratedClass("RevertableList",
+                    renpycompat.getNestedAttribute("SPECIAL_CLASSES.append"),
+                    renpycompat.getNestedAttribute("magic.FakeStrict"), list);
+            definer.defineAttribute("__module__", newString("renpy.revertable"));
+        }
+
+        private static PythonObject new0(PythonObject cls) {
+            return list.callAttribute("__new__", cls);
+        }
+
+    }
+
     private static class RevertableDictOldImpl {
        
         private static PythonObject define(PythonObject renpycompat, PythonObject magic) {
