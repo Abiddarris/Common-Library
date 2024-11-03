@@ -82,6 +82,9 @@ public class RenPyCompat {
             // These appear in the parsed contents of user statements.
             RevertableListImpl.define();
 
+            // Before ren'py 7.5/8.0 they lived in renpy.python, so for compatibility we keep it here.
+            RevertableListImpl1.define();
+
             return renpycompat;
         });
     }
@@ -149,6 +152,24 @@ public class RenPyCompat {
                     renpycompat.getNestedAttribute("SPECIAL_CLASSES.append"),
                     renpycompat.getNestedAttribute("magic.FakeStrict"), list);
             definer.defineAttribute("__module__", newString("renpy.revertable"));
+        }
+
+        private static PythonObject new0(PythonObject cls) {
+            return list.callAttribute("__new__", cls);
+        }
+
+    }
+
+    private static class RevertableListImpl1 {
+
+        private static void define() {
+            ClassDefiner definer = renpycompat.defineDecoratedClass("RevertableList",
+                    renpycompat.getNestedAttribute("SPECIAL_CLASSES.append"),
+                    renpycompat.getNestedAttribute("magic.FakeStrict"), list);
+
+            definer.defineAttribute("__module__", newString("renpy.python"));
+            definer.defineFunction("__new__", RevertableListImpl1::new0, "cls");
+            definer.define();
         }
 
         private static PythonObject new0(PythonObject cls) {
