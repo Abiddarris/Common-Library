@@ -21,7 +21,6 @@ import static com.abiddarris.common.renpy.internal.core.Errors.raiseAttributeErr
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importFrom;
-
 import static java.util.Arrays.copyOfRange;
 
 import com.abiddarris.common.renpy.internal.attributes.AttributeHolder;
@@ -29,12 +28,12 @@ import com.abiddarris.common.renpy.internal.attributes.AttributeManager;
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
 import com.abiddarris.common.renpy.internal.attributes.PythonAttributeHolder;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.builder.DecorateAttribute;
 import com.abiddarris.common.renpy.internal.builder.ModuleTarget;
 import com.abiddarris.common.renpy.internal.core.Attributes;
 import com.abiddarris.common.renpy.internal.defineable.Defineable;
 import com.abiddarris.common.renpy.internal.imp.ImportAsTarget;
 import com.abiddarris.common.renpy.internal.imp.PythonObjectLoadTarget;
-import com.abiddarris.common.renpy.internal.object.PythonMethod;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonParameter;
 import com.abiddarris.common.renpy.internal.signature.PythonSignature;
@@ -331,6 +330,11 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
 
     public ClassDefiner defineClass(String name, PythonObject... bases) {
         return new ClassDefiner(name, bases, getAttribute("__name__"), new ModuleTarget(this));
+    }
+
+    public ClassDefiner defineDecoratedClass(String name, PythonObject decorator, PythonObject... bases) {
+        return new ClassDefiner(name, bases, getAttribute("__name__"),
+                new DecorateAttribute(new ModuleTarget(this), decorator));
     }
 
     @Override
