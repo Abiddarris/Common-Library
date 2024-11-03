@@ -69,16 +69,6 @@ class Sentinel(magic.FakeStrict):
         obj.name = name
         return obj
 
-
-# These appear in the parsed contents of user statements.
-@SPECIAL_CLASSES.append
-class RevertableList(magic.FakeStrict, list):
-    __module__ = "renpy.revertable"
-
-    def __new__(cls):
-        return list.__new__(cls)
-
-
 @SPECIAL_CLASSES.append
 class RevertableDict(magic.FakeStrict, dict):
     __module__ = "renpy.revertable"
