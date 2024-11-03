@@ -213,6 +213,8 @@ public class Decompiler {
                     dispatch.call(getNestedAttribute(decompiler, "renpy.ast.UserStatement")),
                     DecompilerImpl::printUserstatement, "self", "ast");
 
+            definer.defineFunction("print_lex", DecompilerImpl::printLex, "self", "lex");
+
             // Screens
             definer.defineFunction("print_screen",
                     dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Screen")),
@@ -892,6 +894,20 @@ public class Decompiler {
                 with (self.callAttribute("increase_indent"), () -> {
                     self.callAttribute("print_lex", ast.getAttribute("block"));
                 });
+            }
+        }
+
+        private static void
+        printLex(PythonObject self, PythonObject lex) {
+            for (PythonObject $args : lex) {
+                PythonObject file = $args.getItem(0), linenumber = $args.getItem(1), content = $args.getItem(2), block = $args.getItem(3);
+
+                self.callAttribute("advance_to_line", linenumber);
+                self.callAttribute("indent");
+                self.callAttribute("write", content);
+                if (block.toBoolean()) {
+                    with(self.callAttribute("increase_indent"), () -> self.callAttribute("print_lex", block));
+                }
             }
         }
 
