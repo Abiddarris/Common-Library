@@ -272,15 +272,6 @@ class Decompiler(DecompilerBase):
     def print_earlypython(self, ast):
         self.print_python(ast, early=True)
 
-    def print_lex(self, lex):
-        for file, linenumber, content, block in lex:
-            self.advance_to_line(linenumber)
-            self.indent()
-            self.write(content)
-            if block:
-                with self.increase_indent():
-                    self.print_lex(block)
-
     @dispatch(renpy.ast.Style)
     def print_style(self, ast):
         self.require_init()
