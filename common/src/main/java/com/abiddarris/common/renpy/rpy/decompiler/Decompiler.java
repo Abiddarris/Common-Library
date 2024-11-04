@@ -172,6 +172,9 @@ public class Decompiler {
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
+            definer.defineFunction("print_with", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.With")),
+                    DecompilerImpl::printWith, "self", "ast");
+
             // Flow control
             definer.defineFunction("print_label", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Label")), DecompilerImpl.class, "printLabel", "self", "ast");
             definer.defineFunction("print_jump", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Jump")), DecompilerImpl::printJump, "self", "ast");
@@ -303,6 +306,42 @@ public class Decompiler {
 
             callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
+        }
+
+        private static void
+        printWith(PythonObject self, PythonObject ast) {
+            // the 'paired' attribute indicates that this with
+            // and with node afterwards are part of a postfix
+            // with statement. detect this and process it properly
+            if (ast.getAttribute("paired") != None) {
+                // Sanity check. check if there's a matching with statement two nodes further
+                if (!(jIsinstance(
+                        self.getAttributeItem("block", self.getAttribute("index").add(2)),
+                        decompiler.getNestedAttribute("renpy.ast.With"))
+                        && self.getAttributeItem("block", self.getAttribute("index").add(2))
+                                .getAttribute("expr").equals(ast.getAttribute("paired")))) {
+                    Exception.call(format("Unmatched paired with {0!r} != {1!r}",
+                                    self.getAttribute("paired_with", ast.getAttribute("expr")))
+                            ).raise();
+                }
+
+                self.setAttribute("paired_with", ast.getAttribute("paired"));
+            }
+
+            // paired_with attribute since 6.7.1
+            else if (self.getAttributeJB("paired_with"))  {
+                // Check if it was consumed by a show/scene statement
+                if (self.getAttribute("paired_with") != True) {
+                    self.callAttribute("write", format(" with {0}", ast.getAttribute("expr")));
+                }
+                self.setAttribute("paired_with", False);
+            } else {
+                self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+                self.callAttribute("indent");
+                self.callAttribute("write", format("with {0}", ast.getAttribute("expr")));
+                self.setAttribute("paired_with", False);
+            }
+
         }
 
         private static void printLabel(PythonObject self, PythonObject ast) {

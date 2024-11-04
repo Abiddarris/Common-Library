@@ -184,31 +184,6 @@ class Decompiler(DecompilerBase):
             self.write(f'with {self.paired_with}')
             self.paired_with = True
 
-    @dispatch(renpy.ast.With)
-    def print_with(self, ast):
-        # the 'paired' attribute indicates that this with
-        # and with node afterwards are part of a postfix
-        # with statement. detect this and process it properly
-        if ast.paired is not None:
-            # Sanity check. check if there's a matching with statement two nodes further
-            if not (isinstance(self.block[self.index + 2], renpy.ast.With)
-                    and self.block[self.index + 2].expr == ast.paired):
-                raise Exception(f'Unmatched paired with {self.paired_with!r} != {ast.expr!r}')
-
-            self.paired_with = ast.paired
-
-        # paired_with attribute since 6.7.1
-        elif self.paired_with:
-            # Check if it was consumed by a show/scene statement
-            if self.paired_with is not True:
-                self.write(f' with {ast.expr}')
-            self.paired_with = False
-        else:
-            self.advance_to_line(ast.linenumber)
-            self.indent()
-            self.write(f'with {ast.expr}')
-            self.paired_with = False
-
     @dispatch(renpy.ast.Camera)
     def print_camera(self, ast):
         self.indent()
