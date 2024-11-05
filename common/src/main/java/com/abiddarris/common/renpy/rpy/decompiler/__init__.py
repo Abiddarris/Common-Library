@@ -118,25 +118,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    # Directing related functions
-
-    @dispatch(renpy.ast.Show)
-    def print_show(self, ast):
-        self.indent()
-        self.write("show ")
-        needs_space = self.print_imspec(ast.imspec)
-
-        if self.paired_with:
-            if needs_space:
-                self.write(" ")
-            self.write(f'with {self.paired_with}')
-            self.paired_with = True
-
-        # atl attribute: since 6.10
-        if ast.atl is not None:
-            self.write(":")
-            self.print_atl(ast.atl)
-
     @dispatch(renpy.ast.ShowLayer)
     def print_showlayer(self, ast):
         self.indent()

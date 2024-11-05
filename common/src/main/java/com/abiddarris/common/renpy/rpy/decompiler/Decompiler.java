@@ -172,6 +172,9 @@ public class Decompiler {
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
+            // Directing related functions
+            definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
+                    DecompilerImpl::printShow, "self", "ast");
             definer.defineFunction("print_with", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.With")),
                     DecompilerImpl::printWith, "self", "ast");
 
@@ -309,6 +312,28 @@ public class Decompiler {
         }
 
         private static void
+        printShow(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("show "));
+
+            PythonObject needs_space = self.callAttribute("print_imspec", ast.getAttribute("imspec"));
+
+            if (self.getAttributeJB("paired_with")) {
+                if (needs_space.toBoolean()) {
+                    self.callAttribute("write", newString(" "));
+                }
+                self.callAttribute("write", format("with {0}", self.getAttribute("paired_with")));
+                self.setAttribute("paired_with", True);
+            }
+
+            // atl attribute: since 6.10
+            if (ast.getAttribute("atl") != None) {
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_atl", ast.getAttribute("atl"));
+            }
+        }
+
+        private static void
         printWith(PythonObject self, PythonObject ast) {
             // the 'paired' attribute indicates that this with
             // and with node afterwards are part of a postfix
@@ -341,7 +366,6 @@ public class Decompiler {
                 self.callAttribute("write", format("with {0}", ast.getAttribute("expr")));
                 self.setAttribute("paired_with", False);
             }
-
         }
 
         private static void printLabel(PythonObject self, PythonObject ast) {
