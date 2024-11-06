@@ -172,6 +172,9 @@ public class Decompiler {
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
 
+            // Displayable related functions
+            definer.defineFunction("print_imspec", DecompilerImpl::printImspec, "self", "imspec");
+
             // Directing related functions
             definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
                     DecompilerImpl::printShow, "self", "ast");
@@ -309,6 +312,44 @@ public class Decompiler {
 
             callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
+        }
+
+        private static PythonObject
+        printImspec(PythonObject self, PythonObject imspec) {
+            PythonObject begin;
+            if (imspec.getItem(1) != None) {
+                begin = format("expression {0}", imspec.getItem(1));
+            } else {
+                begin = newString(" ").callAttribute("join", imspec.getItem(0));
+            }
+
+            PythonObject words = decompiler.callAttribute("WordConcatenator",
+                    newBoolean(begin.toBoolean() && begin.getItem(-1).equals(" ")), True);
+            if (imspec.getItem(2) != None) {
+                words.callAttribute("append", format("as {0}", imspec.getItem(2)));
+            }
+
+            if (len(imspec.getItem(6)).jGreaterThan(0)) {
+                words.callAttribute("append", format("behind {0}",
+                        newString(", ").callAttribute("join", imspec.getItem(6))));
+            }
+
+            if (jIsinstance(imspec.getItem(4), str)) {
+                words.callAttribute("append", format("onlayer {0}", imspec.getItem(4)));
+            }
+
+            if (imspec.getItem(5) != None) {
+                words.callAttribute("append", format("zorder {0}", imspec.getItem(5)));
+            }
+
+            if (len(imspec.getItem(3)).jGreaterThan(0)) {
+                words.callAttribute("append", format("at {0}",
+                        newString(", ").callAttribute("join", imspec.getItem(3))));
+            }
+
+            self.callAttribute("write", begin.add(words.callAttribute("join")));
+
+            return words.getAttribute("needs_space");
         }
 
         private static void

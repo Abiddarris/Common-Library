@@ -56,33 +56,6 @@ class Decompiler(DecompilerBase):
         )
         self.skip_indent_until_write = False
 
-    # Displayable related functions
-
-    def print_imspec(self, imspec):
-        if imspec[1] is not None:
-            begin = f'expression {imspec[1]}'
-        else:
-            begin = " ".join(imspec[0])
-
-        words = WordConcatenator(begin and begin[-1] != ' ', True)
-        if imspec[2] is not None:
-            words.append(f'as {imspec[2]}')
-
-        if len(imspec[6]) > 0:
-            words.append(f'behind {", ".join(imspec[6])}')
-
-        if isinstance(imspec[4], str):
-            words.append(f'onlayer {imspec[4]}')
-
-        if imspec[5] is not None:
-            words.append(f'zorder {imspec[5]}')
-
-        if len(imspec[3]) > 0:
-            words.append(f'at {", ".join(imspec[3])}')
-
-        self.write(begin + words.join())
-        return words.needs_space
-
     @dispatch(renpy.ast.Image)
     def print_image(self, ast):
         self.require_init()
