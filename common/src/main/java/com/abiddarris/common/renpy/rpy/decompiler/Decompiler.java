@@ -324,7 +324,7 @@ public class Decompiler {
             }
 
             PythonObject words = decompiler.callAttribute("WordConcatenator",
-                    newBoolean(begin.toBoolean() && begin.getItem(-1).equals(" ")), True);
+                    newBoolean(begin.toBoolean() && begin.getItem(-1).jNotEquals(" ")), True);
             if (imspec.getItem(2) != None) {
                 words.callAttribute("append", format("as {0}", imspec.getItem(2)));
             }
