@@ -178,6 +178,9 @@ public class Decompiler {
             // Directing related functions
             definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
                     DecompilerImpl::printShow, "self", "ast");
+            definer.defineFunction("print_hide", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Hide")),
+                    DecompilerImpl::printHide, "self", "ast");
+
             definer.defineFunction("print_with", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.With")),
                     DecompilerImpl::printWith, "self", "ast");
 
@@ -372,6 +375,22 @@ public class Decompiler {
                 self.callAttribute("write", newString(":"));
                 self.callAttribute("print_atl", ast.getAttribute("atl"));
             }
+        }
+
+        private static void
+        printHide(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("hide "));
+
+            PythonObject needs_space = self.callAttribute("print_imspec", ast.getAttribute("imspec"));
+            if (self.getAttributeJB("paired_with")) {
+                if (needs_space.toBoolean()) {
+                    self.callAttribute("write", newString(" "));
+                }
+                self.callAttribute("write", format("with {0}", self.getAttribute("paired_with")));
+                self.setAttribute("paired_with", True);
+            }
+
         }
 
         private static void

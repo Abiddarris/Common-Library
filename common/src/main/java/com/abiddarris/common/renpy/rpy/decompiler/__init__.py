@@ -127,17 +127,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    @dispatch(renpy.ast.Hide)
-    def print_hide(self, ast):
-        self.indent()
-        self.write("hide ")
-        needs_space = self.print_imspec(ast.imspec)
-        if self.paired_with:
-            if needs_space:
-                self.write(" ")
-            self.write(f'with {self.paired_with}')
-            self.paired_with = True
-
     @dispatch(renpy.ast.Camera)
     def print_camera(self, ast):
         self.indent()
