@@ -98,6 +98,7 @@ public class Decompiler {
             decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit");
 
             decompiler.importModule("decompiler.sl2decompiler");
+            decompiler.fromImport("decompiler", "atldecompiler");
 
             PythonObject Options = OptionsImpl.define(decompiler, OptionBase);
                 
