@@ -171,6 +171,7 @@ public class Decompiler {
             definer.defineFunction("commit_state", DecompilerImpl::commitState, "self", "state");
             definer.defineFunction("dump", DecompilerImpl.class, "dump", "self", "ast");
             definer.defineFunction("print_node", DecompilerImpl.class, "printNode", "self", "ast");
+            definer.defineFunction("print_atl", DecompilerImpl::printAtl, "self", "ast");
 
             // Displayable related functions
             definer.defineFunction("print_imspec", DecompilerImpl::printImspec, "self", "imspec");
@@ -317,6 +318,16 @@ public class Decompiler {
 
             callNestedAttribute(self,"dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
                     .call(self, ast);
+        }
+
+        // ATL subdecompiler hook
+        private static void
+        printAtl(PythonObject self, PythonObject ast) {
+            self.setAttribute("linenumber", decompiler.callNestedAttribute("atldecompiler.pprint",
+                    self.getAttribute("out_file"), ast, self.getAttribute("options"),
+                    self.getAttribute("indent_level"), self.getAttribute("linenumber"), self.getAttribute("skip_indent_until_write")
+            ));
+            self.setAttribute("skip_indent_until_write", False);
         }
 
         private static PythonObject
