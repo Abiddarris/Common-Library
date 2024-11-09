@@ -113,6 +113,7 @@ public class Decompiler {
         RenPyCompat.initLoader();
         Util.initLoader();
         SL2Decompiler.initLoader();
+        ATLDecompiler.initLoader();
     }
     
     // Object that carries configurable decompilation options
