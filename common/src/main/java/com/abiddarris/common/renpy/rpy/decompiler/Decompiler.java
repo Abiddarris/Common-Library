@@ -174,6 +174,8 @@ public class Decompiler {
 
             // Displayable related functions
             definer.defineFunction("print_imspec", DecompilerImpl::printImspec, "self", "imspec");
+            definer.defineFunction("print_image", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Image")),
+                    DecompilerImpl::printImage, "self", "ast");
 
             // Directing related functions
             definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
@@ -353,6 +355,22 @@ public class Decompiler {
             self.callAttribute("write", begin.add(words.callAttribute("join")));
 
             return words.getAttribute("needs_space");
+        }
+
+        private static void
+        printImage(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+            self.callAttribute("indent");
+            self.callAttribute("write", format("image {0}", newString(" ")
+                    .callAttribute("join", ast.getAttribute("imgname"))));
+            if (ast.getAttribute("code") != None) {
+                self.callAttribute("write", format(" = {0}", ast.getNestedAttribute("code.source")));
+            } else {
+                if (ast.getAttribute("atl") != None) {
+                    self.callAttribute("write", newString(":"));
+                    self.callAttribute("print_atl", ast.getAttribute("atl"));
+                }
+            }
         }
 
         private static void

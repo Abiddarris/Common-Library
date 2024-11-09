@@ -56,18 +56,6 @@ class Decompiler(DecompilerBase):
         )
         self.skip_indent_until_write = False
 
-    @dispatch(renpy.ast.Image)
-    def print_image(self, ast):
-        self.require_init()
-        self.indent()
-        self.write(f'image {" ".join(ast.imgname)}')
-        if ast.code is not None:
-            self.write(f' = {ast.code.source}')
-        else:
-            if ast.atl is not None:
-                self.write(":")
-                self.print_atl(ast.atl)
-
     @dispatch(renpy.ast.Transform)
     def print_transform(self, ast):
         self.require_init()
