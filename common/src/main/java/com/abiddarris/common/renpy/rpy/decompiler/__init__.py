@@ -46,16 +46,6 @@ class Decompiler(DecompilerBase):
         self.last_lines_behind = state[7]
         super(Decompiler, self).rollback_state(state[0])
 
-
-    # ATL subdecompiler hook
-
-    def print_atl(self, ast):
-        self.linenumber = atldecompiler.pprint(
-            self.out_file, ast, self.options,
-            self.indent_level, self.linenumber, self.skip_indent_until_write
-        )
-        self.skip_indent_until_write = False
-
     @dispatch(renpy.ast.Transform)
     def print_transform(self, ast):
         self.require_init()
