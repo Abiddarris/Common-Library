@@ -25,7 +25,6 @@ from .util import , , \
 from operator import itemgetter
 
 from . import testcasedecompiler
-from . import atldecompiler
 from . import astdump
 
 __all__ = ["astdump", "magic", "sl2decompiler", "testcasedecompiler", "translate", "util",
