@@ -22,11 +22,6 @@ from .util import DecompilerBase, WordConcatenator, Dispatcher
 
 import renpy
 
-def pprint(out_file, ast, options,
-           indent_level=0, linenumber=1, skip_indent_until_write=False):
-    return ATLDecompiler(out_file, options).dump(
-        ast, indent_level, linenumber, skip_indent_until_write)
-
 class ATLDecompiler(DecompilerBase):
     """
     An object that handles decompilation of atl blocks from the ren'py AST
