@@ -70,21 +70,6 @@ class SL2Decompiler(DecompilerBase):
         self.indent()
         self.write("break")
 
-    @dispatch(sl2.slast.SLPython)
-    def print_python(self, ast):
-        self.indent()
-
-        # Extract the source code from the slast.SLPython object. If it starts with a
-        # newline, print it as a python block, else, print it as a $ statement
-        code = ast.code.source
-        if code.startswith("\n"):
-            code = code[1:]
-            self.write("python:")
-            with self.increase_indent():
-                self.write_lines(split_logical_lines(code))
-        else:
-            self.write(f'$ {code}')
-
     @dispatch(sl2.slast.SLPass)
     def print_pass(self, ast):
         # A pass statement
