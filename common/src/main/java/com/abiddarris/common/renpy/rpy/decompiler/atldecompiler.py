@@ -23,10 +23,6 @@ from .util import DecompilerBase, WordConcatenator, Dispatcher
 import renpy
 
 class ATLDecompiler(DecompilerBase):
-    """
-    An object that handles decompilation of atl blocks from the ren'py AST
-    """
-
     dispatch = Dispatcher()
 
     def dump(self, ast, indent_level=0, linenumber=1, skip_indent_until_write=False):
