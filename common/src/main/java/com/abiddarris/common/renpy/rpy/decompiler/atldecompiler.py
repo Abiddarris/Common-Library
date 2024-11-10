@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import DecompilerBase, WordConcatenator, Dispatcher
+from .util import , WordConcatenator, Dispatcher
 
 import renpy
 

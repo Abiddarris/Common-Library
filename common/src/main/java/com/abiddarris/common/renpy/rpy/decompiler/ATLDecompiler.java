@@ -52,6 +52,8 @@ public class ATLDecompiler {
         registerLoader("decompiler.atldecompiler", (atldecompiler) -> {
             ATLDecompiler.atldecompiler = atldecompiler;
 
+            atldecompiler.fromImport("decompiler.util", "DecompilerBase");
+
             atldecompiler.defineFunction("pprint", ATLDecompiler::pprint,
                     new PythonSignatureBuilder("out_file", "ast", "options")
                             .addParameter("indent_level", 0)
