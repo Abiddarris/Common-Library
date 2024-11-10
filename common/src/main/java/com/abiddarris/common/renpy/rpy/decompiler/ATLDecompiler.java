@@ -41,6 +41,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class ATLDecompiler {
@@ -57,6 +58,9 @@ public class ATLDecompiler {
                             .addParameter("linenumber", 1)
                             .addParameter("skip_indent_until_write", False)
                             .build());
+
+            // An object that handles decompilation of atl blocks from the ren'py AST
+            ATLDecompilerImpl.define();
         });
     }
 
@@ -65,5 +69,13 @@ public class ATLDecompiler {
            PythonObject indent_level, PythonObject linenumber, PythonObject skip_indent_until_write) {
         return atldecompiler.callAttribute("ATLDecompiler", out_file, options)
                 .callAttribute("dump", ast, indent_level, linenumber, skip_indent_until_write);
+    }
+
+    private static class ATLDecompilerImpl {
+
+        private static void define() {
+            ClassDefiner definer = atldecompiler.defineClass("ATLDecompiler", atldecompiler.getAttribute("DecompilerBase"));
+            definer.define();
+        }
     }
 }
