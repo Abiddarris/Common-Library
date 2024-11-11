@@ -20,6 +20,7 @@ import static com.abiddarris.common.renpy.internal.core.functions.Functions.newF
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.core.functions.P2Function;
 import com.abiddarris.common.renpy.internal.core.functions.P4Function;
+import com.abiddarris.common.renpy.internal.core.functions.P5Function;
 import com.abiddarris.common.renpy.internal.core.functions.P6Function;
 import com.abiddarris.common.renpy.internal.core.functions.PFunction;
 import com.abiddarris.common.renpy.internal.core.functions.V1Function;
@@ -43,6 +44,10 @@ public interface Defineable {
     }
 
     default PythonObject defineFunction(String name, P4Function function, PythonSignature signature) {
+        return initFunction(name, newFunction(function, signature));
+    }
+
+    default PythonObject defineFunction(String name, P5Function function, PythonSignature signature) {
         return initFunction(name, newFunction(function, signature));
     }
 
