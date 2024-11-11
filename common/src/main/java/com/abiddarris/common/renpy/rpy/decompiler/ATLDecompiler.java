@@ -77,7 +77,31 @@ public class ATLDecompiler {
 
         private static void define() {
             ClassDefiner definer = atldecompiler.defineClass("ATLDecompiler", atldecompiler.getAttribute("DecompilerBase"));
+            definer.defineFunction("dump", ATLDecompilerImpl::dump, new PythonSignatureBuilder("self", "ast")
+                    .addParameter("indent_level", 0)
+                    .addParameter("linenumber", 1)
+                    .addParameter("skip_indent_until_write", False)
+                    .build());
+
             definer.define();
         }
+
+        private static PythonObject
+        dump(PythonObject self, PythonObject ast, PythonObject indent_level,
+             PythonObject linenumber, PythonObject skip_indent_until_write) {
+            // At this point, the preceding ":" has been written, and indent hasn't been increased
+            // yet. There's no common syntax for starting an ATL node, and the base block that is
+            // created is just a RawBlock. normally RawBlocks are created witha block: statement
+            // so we cannot just reuse the node for that. Instead, we implement the top level node
+            // directly here
+            self.setAttribute("indent_level", indent_level);
+            self.setAttribute("linenumber", linenumber);
+            self.setAttribute("skip_indent_until_write", skip_indent_until_write);
+
+            self.callAttribute("print_block", ast);
+
+            return self.getAttribute("linenumber");
+        }
+
     }
 }

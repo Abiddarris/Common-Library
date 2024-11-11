@@ -25,20 +25,6 @@ import renpy
 class ATLDecompiler(DecompilerBase):
     dispatch = Dispatcher()
 
-    def dump(self, ast, indent_level=0, linenumber=1, skip_indent_until_write=False):
-        # At this point, the preceding ":" has been written, and indent hasn't been increased
-        # yet. There's no common syntax for starting an ATL node, and the base block that is
-        # created is just a RawBlock. normally RawBlocks are created witha block: statement
-        # so we cannot just reuse the node for that. Instead, we implement the top level node
-        # directly here
-        self.indent_level = indent_level
-        self.linenumber = linenumber
-        self.skip_indent_until_write = skip_indent_until_write
-
-        self.print_block(ast)
-
-        return self.linenumber
-
     def print_node(self, ast):
         # Line advancement logic:
         if hasattr(ast, "loc"):
