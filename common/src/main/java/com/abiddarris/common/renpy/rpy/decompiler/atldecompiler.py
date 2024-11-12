@@ -36,22 +36,6 @@ class ATLDecompiler(DecompilerBase):
 
         self.dispatch.get(type(ast), type(self).print_unknown)(self, ast)
 
-    def print_block(self, block):
-        # Prints a block of ATL statements
-        # block is a renpy.atl.RawBlock instance.
-        with self.increase_indent():
-            if block.statements:
-                self.print_nodes(block.statements)
-
-            # If a statement ends with a colon but has no block after it, loc will
-            # get set to ('', 0). That isn't supposed to be valid syntax, but it's
-            # the only thing that can generate that, so we do not write "pass" then.
-            elif block.loc != ('', 0):
-
-                # if there were no contents insert a pass node to keep syntax valid.
-                self.indent()
-                self.write("pass")
-
     def advance_to_block(self, block):
         # note: the location property of a RawBlock points to the first line of the block,
         # not the statement that created it.
