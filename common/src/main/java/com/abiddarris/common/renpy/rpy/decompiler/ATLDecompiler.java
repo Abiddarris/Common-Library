@@ -38,7 +38,11 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Python.newInt;
+import static com.abiddarris.common.renpy.internal.Python.newString;
+import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
@@ -82,6 +86,7 @@ public class ATLDecompiler {
                     .addParameter("linenumber", 1)
                     .addParameter("skip_indent_until_write", False)
                     .build());
+            definer.defineFunction("print_block", ATLDecompilerImpl::printBlock, "self", "block");
 
             definer.define();
         }
@@ -101,6 +106,26 @@ public class ATLDecompiler {
             self.callAttribute("print_block", ast);
 
             return self.getAttribute("linenumber");
+        }
+
+        private static void
+        printBlock(PythonObject self, PythonObject block) {
+            // Prints a block of ATL statements
+            // block is a renpy.atl.RawBlock instance.
+            with(self.callAttribute("increase_indent"), () -> {
+                if (block.getAttributeJB("statements")) {
+                    self.callAttribute("print_nodes", block.getAttribute("statements"));
+                }
+
+                // If a statement ends with a colon but has no block after it, loc will
+                // get set to ('', 0). That isn't supposed to be valid syntax, but it's
+                // the only thing that can generate that, so we do not write "pass" then.
+                else if (block.getAttribute("loc").jNotEquals(newTuple(newString(""), newInt(0)))) {
+                    // if there were no contents insert a pass node to keep syntax valid.
+                    self.callAttribute("indent");
+                    self.callAttribute("write", newString("pass"));
+                }
+            });
         }
 
     }
