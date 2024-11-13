@@ -25,17 +25,6 @@ import renpy
 class ATLDecompiler(DecompilerBase):
     dispatch = Dispatcher()
 
-    def print_node(self, ast):
-        # Line advancement logic:
-        if hasattr(ast, "loc"):
-            if isinstance(ast, renpy.atl.RawBlock):
-                self.advance_to_block(ast)
-
-            else:
-                self.advance_to_line(ast.loc[1])
-
-        self.dispatch.get(type(ast), type(self).print_unknown)(self, ast)
-
     def advance_to_block(self, block):
         # note: the location property of a RawBlock points to the first line of the block,
         # not the statement that created it.

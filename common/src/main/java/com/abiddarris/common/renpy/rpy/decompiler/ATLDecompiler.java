@@ -41,6 +41,10 @@ import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
+import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
+import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
@@ -86,6 +90,8 @@ public class ATLDecompiler {
                     .addParameter("linenumber", 1)
                     .addParameter("skip_indent_until_write", False)
                     .build());
+
+            definer.defineFunction("print_node", ATLDecompilerImpl::printNode, "self", "ast");
             definer.defineFunction("print_block", ATLDecompilerImpl::printBlock, "self", "block");
 
             definer.define();
@@ -106,6 +112,21 @@ public class ATLDecompiler {
             self.callAttribute("print_block", ast);
 
             return self.getAttribute("linenumber");
+        }
+
+        private static void
+        printNode(PythonObject self, PythonObject ast) {
+            // Line advancement logic:
+            if (hasattr(ast, "loc")) {
+                if (jIsinstance(ast, atldecompiler.getNestedAttribute("renpy.atl.RawBlock"))) {
+                    self.callAttribute("advance_to_block", ast);
+                } else {
+                    self.callAttribute("advance_to_line", ast.getAttributeItem("loc", 1));
+                }
+            }
+
+            self.callNestedAttribute("dispatch.get", type(ast), type(self).getAttribute("print_unknown"))
+                    .call(self, ast);
         }
 
         private static void
