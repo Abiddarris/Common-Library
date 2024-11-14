@@ -61,6 +61,7 @@ public class ATLDecompiler {
             ATLDecompiler.atldecompiler = atldecompiler;
 
             atldecompiler.fromImport("decompiler.util", "DecompilerBase");
+            atldecompiler.importModule("renpy");
 
             atldecompiler.defineFunction("pprint", ATLDecompiler::pprint,
                     new PythonSignatureBuilder("out_file", "ast", "options")

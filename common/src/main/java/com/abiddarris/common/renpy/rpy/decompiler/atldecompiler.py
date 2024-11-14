@@ -20,8 +20,6 @@
 
 from .util import , WordConcatenator, Dispatcher
 
-import renpy
-
 class ATLDecompiler(DecompilerBase):
     dispatch = Dispatcher()
 
