@@ -86,6 +86,8 @@ public class ATLDecompiler {
 
         private static void define() {
             ClassDefiner definer = atldecompiler.defineClass("ATLDecompiler", atldecompiler.getAttribute("DecompilerBase"));
+            PythonObject dispatch = definer.defineAttribute("dispatch", atldecompiler.callAttribute("Dispatcher"));
+
             definer.defineFunction("dump", ATLDecompilerImpl::dump, new PythonSignatureBuilder("self", "ast")
                     .addParameter("indent_level", 0)
                     .addParameter("linenumber", 1)
