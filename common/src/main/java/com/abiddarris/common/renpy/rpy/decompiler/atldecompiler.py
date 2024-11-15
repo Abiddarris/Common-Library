@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import , WordConcatenator, Dispatcher
+from .util import , WordConcatenator,
 
 class ATLDecompiler(DecompilerBase):
     def advance_to_block(self, block):
