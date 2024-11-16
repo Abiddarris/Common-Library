@@ -20,12 +20,6 @@
 
 
 class ATLDecompiler(DecompilerBase):
-    @dispatch(renpy.atl.RawBlock)
-    def print_atl_rawblock(self, ast):
-        self.indent()
-        self.write("block:")
-        self.print_block(ast)
-
     @dispatch(renpy.atl.RawChild)
     def print_atl_rawchild(self, ast):
         for child in ast.children:
