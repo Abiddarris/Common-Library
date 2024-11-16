@@ -38,10 +38,14 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Python.format;
+import static com.abiddarris.common.renpy.internal.Python.newBoolean;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
 import static com.abiddarris.common.renpy.internal.Python.newString;
 import static com.abiddarris.common.renpy.internal.Python.newTuple;
 import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
+import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
@@ -98,6 +102,9 @@ public class ATLDecompiler {
             definer.defineFunction("print_block", ATLDecompilerImpl::printBlock, "self", "block");
             definer.defineFunction("advance_to_block", ATLDecompilerImpl::advanceToBlock, "self", "block");
 
+            definer.defineFunction("print_atl_rawmulti", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawMultipurpose")),
+                    ATLDecompilerImpl::printAtlRawmulti, "self", "ast");
+
             definer.define();
         }
 
@@ -143,8 +150,7 @@ public class ATLDecompiler {
                 }
 
                 // If a statement ends with a colon but has no block after it, loc will
-                // get set to ('', 0). That isn't supposed to be valid syntax, but it's
-                // the only thing that can generate that, so we do not write "pass" then.
+                // get set to ('', 0). That isn't supposed to be valid syntax, but it's// the only thing that can generate that, so we do not write "pass" then.
                 else if (block.getAttribute("loc").jNotEquals(newTuple(newString(""), newInt(0)))) {
                     // if there were no contents insert a pass node to keep syntax valid.
                     self.callAttribute("indent");
@@ -163,5 +169,86 @@ public class ATLDecompiler {
             }
         }
 
+        private static void
+        printAtlRawmulti(PythonObject self, PythonObject ast) {
+            PythonObject warp_words = atldecompiler.callAttribute("WordConcatenator", False);
+
+            // warpers
+            // I think something changed about the handling of pause, that last special case
+            // doesn't look necessary anymore as a proper pause warper exists now but we'll
+            // keep it around for backwards compatability
+            if (ast.getAttributeJB("warp_function")) {
+                warp_words.callAttribute("append", newString("warp"), ast.getAttribute("warp_function"), ast.getAttribute("duration"));
+            } else if (ast.getAttributeJB("warper")) {
+                warp_words.callAttribute("append", ast.getAttribute("warper"), ast.getAttribute("duration"));
+            } else if (ast.getAttribute("duration").jNotEquals("0")) {
+                warp_words.callAttribute("append", newString("pause"), ast.getAttribute("duration"));
+            }
+
+            PythonObject warp = warp_words.callAttribute("join");
+            PythonObject words = atldecompiler.callAttribute("WordConcatenator",
+                    newBoolean(warp.toBoolean() && warp.getItem(-1).jNotEquals(" ")), True);
+
+            // revolution
+            if (ast.getAttributeJB("revolution")) {
+                words.callAttribute("append", ast.getAttribute("revolution"));
+            }
+
+            // circles
+            if (ast.getAttribute("circles").jNotEquals("0")) {
+                words.callAttribute("append", format("circles {0}", ast.getAttribute("circles")));
+            }
+
+            // splines
+            PythonObject spline_words = atldecompiler.callAttribute("WordConcatenator", False);
+            for (PythonObject $args : ast.getAttribute("splines")) {
+                PythonObject name = $args.getItem(2), expressions = $args.getItem(1);
+
+                spline_words.callAttribute("append", name, expressions.getItem(-1));
+                for (PythonObject expression : expressions.sliceTo(-1)) {
+                    spline_words.callAttribute("append", newString("knot"), expression);
+                }
+            }
+
+            words.callAttribute("append", spline_words.callAttribute("join"));
+
+            // properties
+            PythonObject property_words = atldecompiler.callAttribute("WordConcatenator", False);
+            for (PythonObject $args : ast.getAttribute("properties")) {
+                PythonObject key = $args.getItem(0), value = $args.getItem(1);
+                property_words.callAttribute("append", key, value);
+            }
+            words.callAttribute("append", property_words.callAttribute("join"));
+
+            // with
+            PythonObject expression_words = atldecompiler.callAttribute("WordConcatenator", False);
+            // TODO There's a lot of cases where pass isn't needed, since we could
+            // reorder stuff so there's never 2 expressions in a row. (And it's never
+            // necessary for the last one, but we don't know what the last one is
+            // since it could get reordered.)
+            PythonObject needs_pass = len(ast.getAttribute("expressions")).greaterThan(1);
+            for (PythonObject $args : ast.getAttribute("expressions")) {
+                PythonObject expression = $args.getItem(0), with_expression = $args.getItem(1);
+                expression_words.callAttribute("append", expression);
+                if (with_expression.toBoolean()) {
+                    expression_words.callAttribute("append", newString("with"), with_expression);
+                }
+                if (needs_pass.toBoolean()) {
+                    expression_words.callAttribute("append", newString("pass"));
+                }
+            }
+
+            words.callAttribute("append", expression_words.callAttribute("join"));
+
+            PythonObject to_write = warp.add(words.callAttribute("join"));
+            if (to_write.toBoolean()) {
+                self.callAttribute("indent");
+                self.callAttribute("write", to_write);
+            } else {
+                // A trailing comma results in an empty RawMultipurpose being
+                // generated on the same line as the last real one.
+                self.callAttribute("write", newString(","));
+            }
+        }
     }
 }
