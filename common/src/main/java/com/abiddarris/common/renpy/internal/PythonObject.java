@@ -278,6 +278,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         return callTypeAttribute("__gt__", value);
     }
 
+    public PythonObject greaterThan(int i) {
+        return greaterThan(newInt(i));
+    }
+
     public PythonObject lessThan(PythonObject value) {
         return callTypeAttribute("__lt__", value);
     }
