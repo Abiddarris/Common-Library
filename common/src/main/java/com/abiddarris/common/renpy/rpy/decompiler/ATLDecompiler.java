@@ -106,6 +106,8 @@ public class ATLDecompiler {
                     ATLDecompilerImpl::printAtlRawmulti, "self", "ast");
             definer.defineFunction("print_atl_rawblock", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawBlock")),
                     ATLDecompilerImpl::printAtlRawblock, "self", "ast");
+            definer.defineFunction("print_atl_rawchoice", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawChoice")),
+                    ATLDecompilerImpl::printAtlRawchoice, "self", "ast");
             definer.defineFunction("print_atl_rawrepeat", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawRepeat")),
                     ATLDecompilerImpl::printAtlRawrepeat, "self", "ast");
 
@@ -262,6 +264,29 @@ public class ATLDecompiler {
             self.callAttribute("print_block", ast);
         }
 
+        private static void
+        printAtlRawchoice(PythonObject self, PythonObject ast) {
+            for (PythonObject $args : ast.getAttribute("choices")) {
+                PythonObject chance = $args.getItem(0), block = $args.getItem(1);
+                self.callAttribute("advance_to_block", block);
+                self.callAttribute("indent");
+                self.callAttribute("write", newString("choice"));
+
+                if (chance.jNotEquals("1.0")) {
+                    self.callAttribute("write", format(" {0}", chance));
+                }
+
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_block", block);
+            }
+
+            if (self.getAttribute("index").add(1).jLessThan(len(self.getAttribute("block")))
+                    && jIsinstance(self.getAttributeItem("block", self.getAttribute("index").add(1)),
+                    atldecompiler.getNestedAttribute("renpy.atl.RawChoice"))) {
+                self.callAttribute("indent");
+                self.callAttribute("write", newString("pass"));
+            }
+        }
 
         private static void
         printAtlRawrepeat(PythonObject self, PythonObject ast) {
