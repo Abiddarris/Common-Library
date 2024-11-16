@@ -64,7 +64,7 @@ public class ATLDecompiler {
         registerLoader("decompiler.atldecompiler", (atldecompiler) -> {
             ATLDecompiler.atldecompiler = atldecompiler;
 
-            atldecompiler.fromImport("decompiler.util", "DecompilerBase", "Dispatcher");
+            atldecompiler.fromImport("decompiler.util", "DecompilerBase", "WordConcatenator", "Dispatcher");
             atldecompiler.importModule("renpy");
 
             atldecompiler.defineFunction("pprint", ATLDecompiler::pprint,
