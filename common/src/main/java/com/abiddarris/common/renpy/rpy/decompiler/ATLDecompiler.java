@@ -104,6 +104,8 @@ public class ATLDecompiler {
 
             definer.defineFunction("print_atl_rawmulti", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawMultipurpose")),
                     ATLDecompilerImpl::printAtlRawmulti, "self", "ast");
+            definer.defineFunction("print_atl_rawblock", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawBlock")),
+                    ATLDecompilerImpl::printAtlRawblock, "self", "ast");
 
             definer.define();
         }
@@ -250,5 +252,13 @@ public class ATLDecompiler {
                 self.callAttribute("write", newString(","));
             }
         }
+
+        private static void
+        printAtlRawblock(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("block:"));
+            self.callAttribute("print_block", ast);
+        }
+
     }
 }
