@@ -96,6 +96,7 @@ public class ATLDecompiler {
 
             definer.defineFunction("print_node", ATLDecompilerImpl::printNode, "self", "ast");
             definer.defineFunction("print_block", ATLDecompilerImpl::printBlock, "self", "block");
+            definer.defineFunction("advance_to_block", ATLDecompilerImpl::advanceToBlock, "self", "block");
 
             definer.define();
         }
@@ -150,6 +151,16 @@ public class ATLDecompiler {
                     self.callAttribute("write", newString("pass"));
                 }
             });
+        }
+
+        private static void
+        advanceToBlock(PythonObject self, PythonObject block) {
+            // note: the location property of a RawBlock points to the first line of the block,
+            // not the statement that created it.
+            // it can also contain the following nonsense if there was no block for some reason.
+            if (block.getAttribute("loc").jNotEquals(newTuple(newString(""), newInt(0)))) {
+                self.callAttribute("advance_to_line", block.getAttributeItem("loc", 1).subtract(1));
+            }
         }
 
     }
