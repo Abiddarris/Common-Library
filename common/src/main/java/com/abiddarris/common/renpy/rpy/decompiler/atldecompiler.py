@@ -28,21 +28,6 @@ class ATLDecompiler(DecompilerBase):
             self.write("contains:")
             self.print_block(child)
 
-    @dispatch(renpy.atl.RawChoice)
-    def print_atl_rawchoice(self, ast):
-        for chance, block in ast.choices:
-            self.advance_to_block(block)
-            self.indent()
-            self.write("choice")
-            if chance != "1.0":
-                self.write(f' {chance}')
-            self.write(":")
-            self.print_block(block)
-        if (self.index + 1 < len(self.block)
-                and isinstance(self.block[self.index + 1], renpy.atl.RawChoice)):
-            self.indent()
-            self.write("pass")
-
     @dispatch(renpy.atl.RawContainsExpr)
     def print_atl_rawcontainsexpr(self, ast):
         self.indent()
