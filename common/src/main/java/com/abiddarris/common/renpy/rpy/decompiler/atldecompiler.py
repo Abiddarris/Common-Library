@@ -18,7 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 class ATLDecompiler(DecompilerBase):
     @dispatch(renpy.atl.RawChild)
     def print_atl_rawchild(self, ast):
@@ -37,11 +36,6 @@ class ATLDecompiler(DecompilerBase):
     def print_atl_rawevent(self, ast):
         self.indent()
         self.write(f'event {ast.name}')
-
-    @dispatch(renpy.atl.RawFunction)
-    def print_atl_rawfunction(self, ast):
-        self.indent()
-        self.write(f'function {ast.expr}')
 
     @dispatch(renpy.atl.RawOn)
     def print_atl_rawon(self, ast):

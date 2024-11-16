@@ -108,6 +108,8 @@ public class ATLDecompiler {
                     ATLDecompilerImpl::printAtlRawblock, "self", "ast");
             definer.defineFunction("print_atl_rawchoice", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawChoice")),
                     ATLDecompilerImpl::printAtlRawchoice, "self", "ast");
+            definer.defineFunction("print_atl_rawfunction", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawFunction")),
+                    ATLDecompilerImpl::printAtlRawfunction, "self", "ast");
             definer.defineFunction("print_atl_rawrepeat", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawRepeat")),
                     ATLDecompilerImpl::printAtlRawrepeat, "self", "ast");
 
@@ -286,6 +288,12 @@ public class ATLDecompiler {
                 self.callAttribute("indent");
                 self.callAttribute("write", newString("pass"));
             }
+        }
+
+        private static void
+        printAtlRawfunction(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("function {0}", ast.getAttribute("expr")));
         }
 
         private static void
