@@ -21,13 +21,6 @@
 from .util import , WordConcatenator,
 
 class ATLDecompiler(DecompilerBase):
-    def advance_to_block(self, block):
-        # note: the location property of a RawBlock points to the first line of the block,
-        # not the statement that created it.
-        # it can also contain the following nonsense if there was no block for some reason.
-        if block.loc != ('', 0):
-            self.advance_to_line(block.loc[1] - 1)
-
     @dispatch(renpy.atl.RawMultipurpose)
     def print_atl_rawmulti(self, ast):
         warp_words = WordConcatenator(False)
