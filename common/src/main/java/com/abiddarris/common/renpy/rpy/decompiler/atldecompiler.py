@@ -79,13 +79,6 @@ class ATLDecompiler(DecompilerBase):
             self.indent()
             self.write("pass")
 
-    @dispatch(renpy.atl.RawRepeat)
-    def print_atl_rawrepeat(self, ast):
-        self.indent()
-        self.write("repeat")
-        if ast.repeats:
-            self.write(f' {ast.repeats}')  # not sure if this is even a string
-
     @dispatch(renpy.atl.RawTime)
     def print_atl_rawtime(self, ast):
         self.indent()
