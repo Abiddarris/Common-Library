@@ -36,9 +36,11 @@
 package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
+import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.enumerate;
 import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.list;
 import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
@@ -77,6 +79,7 @@ public class Util {
 
             util.addNewFunction("reconstruct_paraminfo", Util.class, "reconstructParaminfo", "paraminfo");
 
+            util.defineFunction("reconstruct_arginfo", Util::reconstructArginfo, "arginfo");
             util.defineFunction("string_escape", Util::stringEscape, "s");
 
             util.addNewFunction("split_logical_lines", Util.class, "splitLogicalLines", "s");
@@ -104,7 +107,7 @@ public class Util {
             definer.defineFunction("__init__", OptionBaseImpl.class, "init",
                  new PythonSignatureBuilder("self")
                     .addParameter("indentation", newString("    "))
-                    .addParameter("log", Builtins.None)
+                    .addParameter("log", None)
                     .build());
             
             return definer.define();
@@ -112,7 +115,7 @@ public class Util {
         
         private static void init(PythonObject self, PythonObject indentation, PythonObject log) {
             self.setAttribute("indentation", indentation);
-            self.setAttribute("log", log == Builtins.None ? newList() : log);
+            self.setAttribute("log", log == None ? newList() : log);
         }
     }
     
@@ -123,7 +126,7 @@ public class Util {
         private static PythonObject define(PythonObject util, PythonObject OptionBase) {
             ClassDefiner definer = util.defineClass("DecompilerBase");
             definer.defineFunction("__init__", DecompilerBaseImpl.class, "init", new PythonSignatureBuilder("self")
-                .addParameter("out_file", Builtins.None)
+                .addParameter("out_file", None)
                 .addParameter("options", OptionBase.call())
                 .build());
 
@@ -328,7 +331,7 @@ public class Util {
 
         private static PythonObject parent(PythonObject self) {
             if (len(self.getAttribute("block_stack")).jLessThan(newInt( 2))) {
-                return Builtins.None;
+                return None;
             }
             return self.getAttribute("block_stack")
                     .getItem(newInt(-2))
@@ -432,7 +435,7 @@ public class Util {
 
     private static PythonObject
     reconstructParaminfo(PythonObject paraminfo) {
-        if (paraminfo == Builtins.None) {
+        if (paraminfo == None) {
             return newString("");
         }
 
@@ -473,7 +476,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != Builtins.None) {
+                if (default0 != None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -490,7 +493,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != Builtins.None) {
+                if (default0 != None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -511,7 +514,7 @@ public class Util {
 
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", name);
-                if (default0 != Builtins.None) {
+                if (default0 != None) {
                     rv.callAttribute("append", newString("="));
                     rv.callAttribute("append", default0);
                 }
@@ -542,7 +545,7 @@ public class Util {
                 rv.callAttribute("append", sep.call());
                 rv.callAttribute("append", parameter.getItem(newInt(0)));
 
-                if (parameter.getItem(newInt(1)) != Builtins.None) {
+                if (parameter.getItem(newInt(1)) != None) {
                     rv.callAttribute("append", newString("={0}")
                             .callAttribute("format", parameter.getItem(newInt(1))));
                 }
@@ -564,7 +567,7 @@ public class Util {
                     rv.callAttribute("append", sep.call());
                     rv.callAttribute("append", parameter.getItem(newInt(0)));
 
-                    if (parameter.getItem(newInt(1)) != Builtins.None) {
+                    if (parameter.getItem(newInt(1)) != None) {
                         rv.callAttribute("append", newString("={0}")
                                 .callAttribute("format", parameter.getItem(newInt(1))));
                     }
@@ -592,7 +595,7 @@ public class Util {
                     rv.callAttribute("append", sep.call());
                     rv.callAttribute("append", parameter.getAttribute("name"));
 
-                    if (parameter.getAttribute("default") != Builtins.None) {
+                    if (parameter.getAttribute("default") != None) {
                         rv.callAttribute("append", newString("={0}")
                                 .callAttribute("format", parameter.getAttribute("default")));
                     }
@@ -608,7 +611,7 @@ public class Util {
                     if (parameter.getAttribute("kind").equals(newInt(1))) {
                         // positional or keyword?
                         rv.callAttribute("append", parameter.getAttribute("name"));
-                        if (parameter.getAttribute("default") != Builtins.None) {
+                        if (parameter.getAttribute("default") != None) {
                             rv.callAttribute("append", newString("={0}")
                                     .callAttribute("format", parameter.getAttribute("default")));
                         }
@@ -630,7 +633,7 @@ public class Util {
 
                         rv.callAttribute("append", parameter.getAttribute("name"));
 
-                        if (parameter.getAttribute("default") != Builtins.None) {
+                        if (parameter.getAttribute("default") != None) {
                             rv.callAttribute("append", newString("={0}")
                                     .callAttribute("format", parameter.getAttribute("default")));
                         }
@@ -643,6 +646,60 @@ public class Util {
                 }
             }
         }
+        rv.callAttribute("append", newString(")"));
+
+        return newString("").callAttribute("join", rv);
+    }
+
+    private static PythonObject
+    reconstructArginfo(PythonObject arginfo) {
+        if (arginfo == None) {
+            return newString("");
+        }
+
+        PythonObject rv = newList(newString("("));
+        PythonObject sep = util.callAttribute("First", newString(""), newString(", "));
+
+        if (hasattr(arginfo, "starred_indexes")) {
+            // ren'py 7.5 and above, PEP 448 compliant
+            for (PythonObject $args : enumerate(arginfo.getAttribute("arguments"))) {
+                PythonObject i = $args.getItem(0);
+                $args = $args.getItem(1);
+
+                PythonObject name = $args.getItem(0), val = $args.getItem(1);
+
+                rv.callAttribute("append", sep.call());
+
+                if (name != None) {
+                    rv.callAttribute("append", format("{0}=", name));
+                } else if (arginfo.getAttribute("starred_indexes").jin(i)) {
+                    rv.callAttribute("append", newString("*"));
+                } else if (arginfo.getAttribute("doublestarred_indexes").jin(i)) {
+                    rv.callAttribute("append", newString("**"));
+                }
+                rv.callAttribute("append", val);
+            }
+        } else {
+            // ren'py 7.4 and below, python 2 style
+            for (PythonObject $args : arginfo.getAttribute("arguments")) {
+                PythonObject name = $args.getItem(0), val = $args.getItem(1);
+                rv.callAttribute("append", sep.call());
+                if (name != None) {
+                    rv.callAttribute("append", format("{0}=", name));
+                }
+                rv.callAttribute("append", val);
+            }
+
+            if (arginfo.getAttributeJB("extrapos")) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", format("*{0}", arginfo.getAttribute("extrapos")));
+            }
+            if (arginfo.getAttributeJB("extrakw")) {
+                rv.callAttribute("append", sep.call());
+                rv.callAttribute("append", format("**{arginfo.extrakw}"));
+            }
+        }
+
         rv.callAttribute("append", newString(")"));
 
         return newString("").callAttribute("join", rv);
@@ -691,14 +748,14 @@ public class Util {
             // see if regexp matches at self.string[self.pos].
             // if it does, increment self.pos
             if (self.getAttribute("length").equals(self.getAttribute("pos"))) {
-                return Builtins.None;
+                return None;
             }
 
             PythonObject match = callNestedAttribute(util, "re.compile", regexp,
                     getNestedAttribute(util, "re.DOTALL"))
                     .callAttribute("match", self.getAttribute("string"), self.getAttribute("pos"));
             if (!match.toBoolean()) {
-                return Builtins.None;
+                return None;
             }
 
             self.setAttribute("pos", match.callAttribute("end"));
@@ -899,11 +956,11 @@ public class Util {
             rv.callAttribute("append", ast.getAttribute("who"));
         }
 
-        if (hasattr(ast, "attributes") && ast.getAttribute("attributes") != Builtins.None) {
+        if (hasattr(ast, "attributes") && ast.getAttribute("attributes") != None) {
             rv.callAttribute("extend", ast.getAttribute("attributes"));
         }
 
-        if (hasattr(ast, "temporary_attributes") && ast.getAttribute("temporary_attributes") != Builtins.None) {
+        if (hasattr(ast, "temporary_attributes") && ast.getAttribute("temporary_attributes") != None) {
             rv.callAttribute("append", newString("@"));
             rv.callAttribute("temporary_attributes", ast.getAttribute("temporary_attributes"));
         }
@@ -924,12 +981,12 @@ public class Util {
         }
         // identifier was added in 7.4.1. But the way ren'py processed it
         // means it doesn't stored it in the pickle unless explicitly set
-        else if (hasattr(ast, "identifier") && ast.getAttribute("identifier") != Builtins.None) {
+        else if (hasattr(ast, "identifier") && ast.getAttribute("identifier") != None) {
             rv.callAttribute("append", newString("id"));
             rv.callAttribute("append", ast.getAttribute("identifier"));
         }
 
-        if (hasattr(ast, "arguments") && ast.getAttribute("arguments") != Builtins.None) {
+        if (hasattr(ast, "arguments") && ast.getAttribute("arguments") != None) {
             rv.callAttribute("append",
                     util.callAttribute("reconstruct_arginfo", ast.getAttribute("arguments")));
         }
