@@ -45,43 +45,6 @@ class DecompilerBase:
         """
         self.blank_line_queue.append(m)
 
-def reconstruct_arginfo(arginfo):
-    if arginfo is None:
-        return ""
-
-    rv = ["("]
-    sep = First("", ", ")
-
-    if hasattr(arginfo, 'starred_indexes'):
-        # ren'py 7.5 and above, PEP 448 compliant
-        for i, (name, val) in enumerate(arginfo.arguments):
-            rv.append(sep())
-            if name is not None:
-                rv.append(f'{name}=')
-            elif i in arginfo.starred_indexes:
-                rv.append('*')
-            elif i in arginfo.doublestarred_indexes:
-                rv.append('**')
-            rv.append(val)
-
-    else:
-        # ren'py 7.4 and below, python 2 style
-        for (name, val) in arginfo.arguments:
-            rv.append(sep())
-            if name is not None:
-                rv.append(f'{name}=')
-            rv.append(val)
-        if arginfo.extrapos:
-            rv.append(sep())
-            rv.append(f'*{arginfo.extrapos}')
-        if arginfo.extrakw:
-            rv.append(sep())
-            rv.append(f'**{arginfo.extrakw}')
-
-    rv.append(")")
-
-    return "".join(rv)
-
 # keywords used by ren'py's parser
 KEYWORDS = set(['$', 'as', 'at', 'behind', 'call', 'expression', 'hide',
                 'if', 'in', 'image', 'init', 'jump', 'menu', 'onlayer',
