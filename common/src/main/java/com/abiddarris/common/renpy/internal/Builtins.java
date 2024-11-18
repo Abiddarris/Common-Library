@@ -17,6 +17,7 @@ import com.abiddarris.common.renpy.internal.core.classes.DelegateType;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
 import com.abiddarris.common.renpy.internal.mod.collections.Collections;
 import com.abiddarris.common.renpy.internal.mod.io.IO;
+import com.abiddarris.common.renpy.internal.mod.operator.OperatorImpl;
 import com.abiddarris.common.renpy.internal.mod.re.Re;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
@@ -359,6 +360,7 @@ public class Builtins {
 
         Collections.initLoader();
         Re.initLoader();
+        OperatorImpl.initLoader();
     }
 
     private static PythonObject newBootstrapObject() {
