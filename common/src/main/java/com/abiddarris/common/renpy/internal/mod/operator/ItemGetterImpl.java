@@ -15,20 +15,28 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.operator;
 
-import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
+import static com.abiddarris.common.renpy.internal.mod.operator.OperatorImpl.operator;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 
-public class OperatorImpl {
+public class ItemGetterImpl {
 
-    static PythonObject operator;
+    static void init() {
+        ClassDefiner definer = operator.defineClass("itemgetter");
+        definer.defineFunction("__init__", ItemGetterImpl::init0, "self", "item");
+        definer.defineFunction("__call__", ItemGetterImpl::call, "self", "obj");
 
-    public static void initLoader() {
-        registerLoader("operator", (operator) -> {
-            OperatorImpl.operator = operator;
-
-            ItemGetterImpl.init();
-        });
+        definer.define();
     }
 
+    private static void
+    init0(PythonObject self, PythonObject item) {
+        self.setAttribute("item", item);
+    }
+
+    private static PythonObject
+    call(PythonObject self, PythonObject obj) {
+        return obj.getItem(self.getAttribute("item"));
+    }
 }
