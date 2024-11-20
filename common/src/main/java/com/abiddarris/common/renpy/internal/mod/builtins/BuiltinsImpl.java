@@ -16,8 +16,14 @@
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
 import static com.abiddarris.common.renpy.internal.Builtins.builtins;
+import static com.abiddarris.common.renpy.internal.Python.newList;
 
+import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BuiltinsImpl {
 
@@ -31,6 +37,7 @@ public class BuiltinsImpl {
         init = true;
 
         builtins.defineFunction("hash", BuiltinsImpl::hash, "self");
+        builtins.defineFunction("sorted", BuiltinsImpl::sorted, "iterable", "key");
 
         SetImpl.define();
         GeneratorImpl.define();
@@ -40,5 +47,29 @@ public class BuiltinsImpl {
 
     private static PythonObject hash(PythonObject obj) {
         return obj.callTypeAttribute("__hash__");
+    }
+
+    private static PythonObject sorted(PythonObject iterable, PythonObject key) {
+        List<PythonObject> sortedElements = new ArrayList<>();
+        for (PythonObject element : iterable) {
+            sortedElements.add(element);
+        }
+
+        Collections.sort(sortedElements, (p1, p2) -> {
+            p1 = key.call(p1);
+            p2 = key.call(p2);
+
+            if (p1.jLessThan(p2)) {
+                return -1;
+            }
+
+            if (p1.equals(p2)) {
+                return 0;
+            }
+
+            return 1;
+        });
+
+        return newList(sortedElements);
     }
 }

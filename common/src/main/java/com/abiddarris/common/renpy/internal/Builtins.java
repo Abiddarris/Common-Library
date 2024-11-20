@@ -60,6 +60,7 @@ public class Builtins {
     public static final PythonObject range;
 
     public static final PythonObject hash;
+    public static final PythonObject sorted;
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
@@ -357,6 +358,7 @@ public class Builtins {
         set = builtins.getAttribute("set");
         zip = builtins.getAttribute("zip");
         range = builtins.getAttribute("range");
+        sorted = builtins.getAttribute("sorted");
 
         Collections.initLoader();
         Re.initLoader();
