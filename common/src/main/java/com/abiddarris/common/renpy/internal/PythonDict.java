@@ -16,10 +16,12 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
+import static com.abiddarris.common.renpy.internal.Builtins.builtins;
 import static com.abiddarris.common.renpy.internal.Builtins.dict;
 import static com.abiddarris.common.renpy.internal.PythonObject.newFunction;
 
 import com.abiddarris.common.renpy.internal.attributes.BootstrapAttributeHolder;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
 
@@ -35,6 +37,10 @@ public class PythonDict extends PythonObject {
     static void init2() {
         dict.defineAttribute("__module__", newString("builtins"));
         dict.defineFunction("__init__", PythonDict::init0, "self", "*iterable");
+
+        DictItems.define();
+
+        dict.defineFunction("items", PythonDict::items, "self");
     }
 
     static void init() {
@@ -150,6 +156,10 @@ public class PythonDict extends PythonObject {
         
         return newString(builder.toString());
     }
+
+    private static PythonObject items(PythonObject self) {
+        return builtins.callAttribute("dict_items", self);
+    }
         
     private static class DictIterator extends PythonObject {
             
@@ -174,5 +184,20 @@ public class PythonDict extends PythonObject {
             return null;
         }
             
+    }
+
+    private static class DictItems {
+
+        private static void define() {
+            ClassDefiner definer = builtins.defineClass("dict_items");
+            definer.defineFunction("__init__", DictItems::init, "self", "dict");
+
+            definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject dict) {
+            self.setAttribute("__dict__", dict);
+        }
+
     }
 }
