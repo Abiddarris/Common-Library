@@ -95,6 +95,8 @@ public class Decompiler {
             PythonObject DecompilerBase = imported[0];
             PythonObject OptionBase = imported[9];
 
+            decompiler.fromImport("operator", "itemgetter");
+
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
             decompiler.fromImport("io", "StringIO");
