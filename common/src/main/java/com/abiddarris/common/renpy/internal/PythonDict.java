@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.StopIteration;
 import static com.abiddarris.common.renpy.internal.Builtins.TypeError;
 import static com.abiddarris.common.renpy.internal.Builtins.builtins;
 import static com.abiddarris.common.renpy.internal.Builtins.dict;
@@ -25,7 +26,6 @@ import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.utils.ObjectWrapper;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,6 +39,7 @@ public class PythonDict extends PythonObject {
         dict.defineFunction("__init__", PythonDict::init0, "self", "*iterable");
 
         DictItems.define();
+        DictItemIterator.define();
 
         dict.defineFunction("items", PythonDict::items, "self");
     }
@@ -191,13 +192,54 @@ public class PythonDict extends PythonObject {
         private static void define() {
             ClassDefiner definer = builtins.defineClass("dict_items");
             definer.defineFunction("__init__", DictItems::init, "self", "dict");
+            definer.defineFunction("__iter__", DictItems::iter, "self");
 
             definer.define();
         }
 
         private static void init(PythonObject self, PythonObject dict) {
-            self.setAttribute("__dict__", dict);
+            self.setAttribute("__dict0__", dict);
         }
 
+        private static PythonObject iter(PythonObject self) {
+            return builtins.callAttribute("dict_itemiterator", self.getAttribute("__dict0__"));
+        }
+
+    }
+
+    private static class DictItemIterator {
+
+        private static void define() {
+            ClassDefiner definer = builtins.defineClass("dict_itemiterator");
+            definer.defineFunction("__init__", DictItemIterator::init, "self", "dict");
+            definer.defineFunction("__iter__", DictItemIterator::iter, "self");
+            definer.defineFunction("__next__", DictItemIterator::next, "self");
+
+            definer.define();
+        }
+
+        private static void init(PythonObject self, PythonObject dict) {
+            Map<PythonObject, PythonObject> map = ((PythonDict) dict).map;
+
+            self.setJavaAttribute("map", map);
+            self.setJavaAttribute("java_iterator", map.keySet().iterator());
+        }
+
+        private static PythonObject iter(PythonObject self) {
+            return self;
+        }
+
+        private static PythonObject next(PythonObject self) {
+            Iterator<PythonObject> iterator = self.getJavaAttribute("java_iterator");
+            if (!iterator.hasNext()) {
+                StopIteration.call().raise();
+            }
+
+            PythonObject key = iterator.next();
+
+            return newTuple(key, ((Map<PythonObject, PythonObject>)self
+                    .getJavaAttribute("map"))
+                    .get(key));
+        }
     }
 }
