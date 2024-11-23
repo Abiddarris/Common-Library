@@ -1150,7 +1150,7 @@ public class Decompiler {
                 PythonObject $keywords1 = keywords;
                 with(self.callAttribute("increase_indent"), () -> {
                     for (PythonObject i : $keywords1.sliceFrom(1)) {
-                        self.callAttribute("advance_to_line", i.getItem(1));
+                        self.callAttribute("advance_to_line", i.getItem(0));
                         self.callAttribute("indent");
                         self.callAttribute("write", i.getItem(1));
                     }
