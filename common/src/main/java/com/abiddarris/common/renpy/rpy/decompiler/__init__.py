@@ -18,11 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .util import , , \
-                  , , , , \
-                  ,
-
-from operator import itemgetter
 
 from . import testcasedecompiler
 from . import astdump
