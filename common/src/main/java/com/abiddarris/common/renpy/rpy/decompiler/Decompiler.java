@@ -44,11 +44,13 @@ import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 import static com.abiddarris.common.renpy.internal.Builtins.hasattr;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
+import static com.abiddarris.common.renpy.internal.Builtins.sorted;
 import static com.abiddarris.common.renpy.internal.Builtins.str;
 import static com.abiddarris.common.renpy.internal.Builtins.super0;
 import static com.abiddarris.common.renpy.internal.Builtins.tuple;
 import static com.abiddarris.common.renpy.internal.Python.format;
 import static com.abiddarris.common.renpy.internal.Python.newBoolean;
+import static com.abiddarris.common.renpy.internal.Python.newDict;
 import static com.abiddarris.common.renpy.internal.Python.newList;
 import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
 import static com.abiddarris.common.renpy.internal.PythonObject.newString;
@@ -68,6 +70,7 @@ import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattrJB;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.Builtins;
@@ -231,6 +234,10 @@ public class Decompiler {
                     DecompilerImpl::printUserstatement, "self", "ast");
 
             definer.defineFunction("print_lex", DecompilerImpl::printLex, "self", "lex");
+
+            definer.defineFunction("print_style",
+                    dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Style")),
+                    DecompilerImpl::printStyle, "self", "ast");
 
             // Screens
             definer.defineFunction("print_screen",
@@ -1064,6 +1071,93 @@ public class Decompiler {
                 }
             }
         }
+
+        private static void
+        printStyle(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+
+            PythonObject keywords = newDict(ast.getAttribute("linenumber"), decompiler.callAttribute("WordConcatenator", False, True));
+
+            // These don't store a line number, so just put them on the first line
+            if (ast.getAttribute("parent") != None) {
+                keywords.getItem(ast.getAttribute("linenumber"))
+                        .callAttribute("append", format("is {0}", ast.getAttribute("parent")));
+            }
+
+            if (ast.getAttributeJB("clear")) {
+                keywords.getItem(ast.getAttribute("linenumber"))
+                        .callAttribute("append",newString("clear"));
+            }
+
+            if (ast.getAttribute("take") != None) {
+                keywords.getItem(ast.getAttribute("linenumber"))
+                        .callAttribute("append", format("take {0}", ast.getAttribute("take")));
+            }
+
+            for (PythonObject delname : ast.getAttribute("delattr")) {
+                keywords.getItem(ast.getAttribute("linenumber"))
+                        .callAttribute("append", format("del {0}", delname));
+            }
+
+            // These do store a line number
+            if (ast.getAttribute("variant") != None) {
+                if (!keywords.jin(ast.getNestedAttribute("variant.linenumber"))) {
+                    keywords.setItem(
+                            ast.getNestedAttribute("variant.linenumber"),
+                            decompiler.callAttribute("WordConcatenator", False)
+                    );
+                }
+                keywords.getItem(ast.getNestedAttribute("variant.linenumber"))
+                        .callAttribute("append",format("variant {0}", ast.getAttribute("variant")));
+            }
+
+            for (PythonObject $args : ast.callNestedAttribute("properties.items")) {
+                PythonObject key = $args.getItem(0), value = $args.getItem(1);
+                if (!keywords.jin(value.getAttribute("linenumber"))) {
+                    keywords.setItem(value.getAttribute("linenumber"), decompiler.callAttribute("WordConcatenator", False));
+                }
+
+                keywords.getItem(value.getAttribute("linenumber"))
+                        .callAttribute("append", format("{0} {1}", key, value));
+            }
+
+            PythonObject $keywords = keywords;
+            keywords = sorted.call(
+                    new PythonArgument(list.call(
+                            newGenerator()
+                                    .forEach(vars -> $keywords.callAttribute("items"))
+                                    .name((vars, $args) -> {
+                                        vars.put("k", $args.getItem(0));
+                                        vars.put("v", $args.getItem(1));
+                                    })
+                                    .yield(vars -> newTuple(
+                                            vars.get("k"),
+                                            vars.get("v").callAttribute("join")
+                                    ))
+                            )
+                    ).addKeywordArgument("key", decompiler.callAttribute("itemgetter", newInt(0)))
+            );
+
+            self.callAttribute("indent");
+            self.callAttribute("write", format("style {0}", ast.getAttribute("style_name")));
+            if (keywords.getItem(0).getItemJB(1)) {
+                self.callAttribute("write", format(" {0}", keywords.getItem(0).getItem(1)));
+            }
+
+            if (len(keywords).jGreaterThan(1)) {
+                self.callAttribute("write", newString(":"));
+
+                PythonObject $keywords1 = keywords;
+                with(self.callAttribute("increase_indent"), () -> {
+                    for (PythonObject i : $keywords1.sliceFrom(1)) {
+                        self.callAttribute("advance_to_line", i.getItem(1));
+                        self.callAttribute("indent");
+                        self.callAttribute("write", i.getItem(1));
+                    }
+                });
+            }
+        }
+
 
         private static void
         printScreen(PythonObject self, PythonObject ast) {
