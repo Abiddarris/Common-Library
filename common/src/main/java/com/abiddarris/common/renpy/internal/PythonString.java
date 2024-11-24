@@ -15,6 +15,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal;
 
+import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static java.util.regex.Pattern.quote;
 
 import java.util.ArrayList;
@@ -169,7 +170,11 @@ class PythonString extends PythonObject {
         PythonObject start = key.getAttribute("start");
         PythonObject end = key.getAttribute("stop");
 
-        if (end == Builtins.None) {
+        if (start == None) {
+            start = newInt(0);
+        }
+
+        if (end == None) {
             end = newInt(self.string.length());
         }
 
