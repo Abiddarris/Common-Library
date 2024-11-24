@@ -38,28 +38,6 @@ class SL2Decompiler(DecompilerBase):
         # so for if and showif we just call an underlying function with an extra argument
         self._print_if(ast, "showif")
 
-    @dispatch(sl2.slast.SLFor)
-    def print_for(self, ast):
-        # Since tuple unpickling is hard, renpy just gives up and inserts a
-        # $ a,b,c = _sl2_i after the for statement if any tuple unpacking was
-        # attempted in the for statement. Detect this and ignore this slast.SLPython entry
-        if ast.variable == "_sl2_i":
-            variable = ast.children[0].code.source[:-9]
-            children = ast.children[1:]
-        else:
-            variable = ast.variable.strip() + " "
-            children = ast.children
-
-        self.indent()
-        if hasattr(ast, "index_expression") and ast.index_expression is not None:
-            self.write(f'for {variable}index {ast.index_expression} in {ast.expression}:')
-
-        else:
-            self.write(f'for {variable}in {ast.expression}:')
-
-        # for doesn't contain a block, but just a list of child nodes
-        self.print_nodes(children, 1)
-
     @dispatch(sl2.slast.SLContinue)
     def print_continue(self, ast):
         self.indent()

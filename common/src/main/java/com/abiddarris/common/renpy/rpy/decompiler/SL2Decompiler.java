@@ -53,6 +53,7 @@ import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.bool;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Keywords.or;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
@@ -123,6 +124,8 @@ public class SL2Decompiler {
                     .addParameter("immediate_block", False)
                     .build());
 
+            definer.defineFunction("print_for", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLFor")),
+                    SL2DecompilerImpl::printFor, "self", "ast");
             definer.defineFunction("print_python", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLPython")),
                     SL2DecompilerImpl::printPython, "self", "ast");
             definer.defineFunction("print_default", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDefault")),
@@ -300,6 +303,38 @@ public class SL2Decompiler {
                     self.callAttribute("write", newString("pass"));
                 });
             }
+        }
+
+        private static void
+        printFor(PythonObject self, PythonObject ast) {
+            // Since tuple unpickling is hard, renpy just gives up and inserts a
+            // $ a,b,c = _sl2_i after the for statement if any tuple unpacking was
+            // attempted in the for statement. Detect this and ignore this slast.SLPython entry
+            PythonObject children, variable;
+            if (ast.getAttribute("variable").equals("_sl2_i")) {
+                variable = ast.getAttributeItem("children", 0)
+                        .getNestedAttribute("code.source")
+                        .sliceTo(-9);
+                children = ast.getAttribute("children")
+                        .sliceFrom(1);
+            } else {
+                variable = ast.callNestedAttribute("variable.strip").add(" ");
+                children = ast.getAttribute("children");
+            }
+
+            self.callAttribute("indent");
+            if (hasattr(ast, "index_expression") && ast.getAttribute("index_expression") != None) {
+                self.callAttribute("write", format(
+                        "for {0}index {1} in {2}:",
+                        variable,
+                        ast.getAttribute("index_expression"),
+                        ast.getAttribute("expression")));
+            } else {
+                self.callAttribute("write", format("for {0}in {1}:", variable, ast.getAttribute("expression")));
+            }
+
+            // for doesn't contain a block, but just a list of child nodes
+            self.callAttribute("print_nodes", children, newInt(1));
         }
 
         private static void
