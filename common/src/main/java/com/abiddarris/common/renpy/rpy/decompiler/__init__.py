@@ -114,14 +114,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-
-    @dispatch(renpy.ast.While)
-    def print_while(self, ast):
-        self.indent()
-        self.write(f'while {ast.condition}:')
-
-        self.print_nodes(ast.block, 1)
-
     def set_best_init_offset(self, nodes):
         votes = {}
         for ast in nodes:

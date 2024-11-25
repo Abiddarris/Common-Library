@@ -201,6 +201,8 @@ public class Decompiler {
             definer.defineFunction("print_return", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Return")), DecompilerImpl::printReturn, "self", "ast");
             definer.defineFunction("print_pass", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Pass")), DecompilerImpl::printPass, "self", "ast");
             definer.defineFunction("print_if", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.If")), DecompilerImpl.class, "printIf", "self", "ast");
+            definer.defineFunction("print_while", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.While")), DecompilerImpl::printWhile, "self", "ast");
+
 
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
@@ -664,6 +666,14 @@ public class Decompiler {
 
                 self.callAttribute("print_nodes", block, newInt(1));
             }
+        }
+
+        private static void
+        printWhile(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("while {0}:", ast.getAttribute("condition")));
+
+            self.callAttribute("print_nodes", ast.getAttribute("block"), newInt(1));
         }
 
         private static PythonObject shouldComeBefore(PythonObject self, PythonObject first, PythonObject second) {
