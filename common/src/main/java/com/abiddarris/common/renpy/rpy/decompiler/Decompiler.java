@@ -186,6 +186,8 @@ public class Decompiler {
                     DecompilerImpl::printImage, "self", "ast");
 
             // Directing related functions
+            definer.defineFunction("print_scene", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Scene")),
+                    DecompilerImpl::printScene, "self", "ast");
             definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
                     DecompilerImpl::printShow, "self", "ast");
             definer.defineFunction("print_hide", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Hide")),
@@ -418,6 +420,38 @@ public class Decompiler {
                 self.callAttribute("print_atl", ast.getAttribute("atl"));
             }
         }
+
+        private static void
+        printScene(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("scene"));
+
+            PythonObject needs_space;
+            if (ast.getAttribute("imspec") == None) {
+                if (jIsinstance(ast.getAttribute("layer"), str)) {
+                    self.callAttribute("write", format(" onlayer {0}", ast.getAttribute("layer")));
+                }
+                needs_space = True;
+            } else {
+                self.callAttribute("write", newString(" "));
+                needs_space = self.callAttribute("print_imspec", ast.getAttribute("imspec"));
+            }
+
+            if (self.getAttributeJB("paired_with")) {
+                if (needs_space.toBoolean()) {
+                    self.callAttribute("write", newString(" "));
+                }
+                self.callAttribute("write", format("with {0}", self.getAttribute("paired_with")));
+                self.setAttribute("paired_with", True);
+            }
+
+            // atl attribute: since 6.10
+            if (ast.getAttribute("atl") != None) {
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_atl", ast.getAttribute("atl"));
+            }
+        }
+
 
         private static void
         printHide(PythonObject self, PythonObject ast) {
