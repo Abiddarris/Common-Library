@@ -75,30 +75,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    @dispatch(renpy.ast.Scene)
-    def print_scene(self, ast):
-        self.indent()
-        self.write("scene")
-
-        if ast.imspec is None:
-            if isinstance(ast.layer, str):
-                self.write(f' onlayer {ast.layer}')
-            needs_space = True
-        else:
-            self.write(" ")
-            needs_space = self.print_imspec(ast.imspec)
-
-        if self.paired_with:
-            if needs_space:
-                self.write(" ")
-            self.write(f'with {self.paired_with}')
-            self.paired_with = True
-
-        # atl attribute: since 6.10
-        if ast.atl is not None:
-            self.write(":")
-            self.print_atl(ast.atl)
-
     @dispatch(renpy.ast.Camera)
     def print_camera(self, ast):
         self.indent()
