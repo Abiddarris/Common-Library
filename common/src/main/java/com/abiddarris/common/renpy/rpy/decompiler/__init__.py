@@ -63,18 +63,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    @dispatch(renpy.ast.ShowLayer)
-    def print_showlayer(self, ast):
-        self.indent()
-        self.write(f'show layer {ast.layer}')
-
-        if ast.at_list:
-            self.write(f' at {", ".join(ast.at_list)}')
-
-        if ast.atl is not None:
-            self.write(":")
-            self.print_atl(ast.atl)
-
     @dispatch(renpy.ast.Camera)
     def print_camera(self, ast):
         self.indent()
