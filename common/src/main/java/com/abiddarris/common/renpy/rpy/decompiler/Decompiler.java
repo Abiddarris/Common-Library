@@ -186,6 +186,8 @@ public class Decompiler {
                     DecompilerImpl::printImage, "self", "ast");
 
             // Directing related functions
+            definer.defineFunction("print_showlayer", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.ShowLayer")),
+                    DecompilerImpl::printShowlayer, "self", "ast");
             definer.defineFunction("print_scene", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Scene")),
                     DecompilerImpl::printScene, "self", "ast");
             definer.defineFunction("print_show", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Show")),
@@ -415,6 +417,21 @@ public class Decompiler {
             }
 
             // atl attribute: since 6.10
+            if (ast.getAttribute("atl") != None) {
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_atl", ast.getAttribute("atl"));
+            }
+        }
+
+        private static void
+        printShowlayer(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("show layer {0}", ast.getAttribute("layer")));
+
+            if (ast.getAttributeJB("at_list")) {
+                self.callAttribute("write", format(" at {0}", newString(", ").callAttribute("join", ast.getAttribute("at_list"))));
+            }
+
             if (ast.getAttribute("atl") != None) {
                 self.callAttribute("write", newString(":"));
                 self.callAttribute("print_atl", ast.getAttribute("atl"));
