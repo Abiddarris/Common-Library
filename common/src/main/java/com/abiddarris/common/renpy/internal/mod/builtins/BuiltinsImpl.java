@@ -15,14 +15,17 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.internal.mod.builtins;
 
+import static com.abiddarris.common.renpy.internal.Builtins.ValueError;
 import static com.abiddarris.common.renpy.internal.Builtins.builtins;
 import static com.abiddarris.common.renpy.internal.Python.newList;
+import static com.abiddarris.common.renpy.internal.Python.newString;
 
 import com.abiddarris.common.renpy.internal.Python;
 import com.abiddarris.common.renpy.internal.PythonObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class BuiltinsImpl {
@@ -38,6 +41,7 @@ public class BuiltinsImpl {
 
         builtins.defineFunction("hash", BuiltinsImpl::hash, "self");
         builtins.defineFunction("sorted", BuiltinsImpl::sorted, "iterable", "key");
+        builtins.defineFunction("max", BuiltinsImpl::max, "iterable", "key");
 
         SetImpl.define();
         GeneratorImpl.define();
@@ -71,5 +75,26 @@ public class BuiltinsImpl {
         });
 
         return newList(sortedElements);
+    }
+
+    public static PythonObject max(PythonObject iterable, PythonObject key) {
+        Iterator<PythonObject> jIterable = iterable.iterator();
+        if (!jIterable.hasNext()) {
+            ValueError.call(newString("max() iterable argument is empty")).raise();
+        }
+
+        PythonObject candidate = jIterable.next();
+        PythonObject candidateKey = key.call(candidate);
+        while (jIterable.hasNext()) {
+            PythonObject element = jIterable.next();
+            PythonObject elementKey = key.call(element);
+
+            if (elementKey.jGreaterThan(candidateKey)) {
+                candidate = element;
+                candidateKey = elementKey;
+            }
+        }
+
+        return candidate;
     }
 }
