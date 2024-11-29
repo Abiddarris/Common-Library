@@ -61,6 +61,7 @@ public class Builtins {
 
     public static final PythonObject hash;
     public static final PythonObject sorted;
+    public static final PythonObject max;
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
@@ -359,6 +360,7 @@ public class Builtins {
         zip = builtins.getAttribute("zip");
         range = builtins.getAttribute("range");
         sorted = builtins.getAttribute("sorted");
+        max = builtins.getAttribute("max");
 
         Collections.initLoader();
         Re.initLoader();
