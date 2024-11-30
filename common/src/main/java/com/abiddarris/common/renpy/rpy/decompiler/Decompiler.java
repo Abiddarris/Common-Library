@@ -37,6 +37,7 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
+import static com.abiddarris.common.renpy.internal.Builtins.*;
 import static com.abiddarris.common.renpy.internal.Builtins.Exception;
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
@@ -210,6 +211,7 @@ public class Decompiler {
 
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
+            definer.defineFunction("set_best_init_offset", DecompilerImpl::setBestInitOffset, "self", "node");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
 
@@ -735,6 +737,43 @@ public class Decompiler {
             if (!self.getAttribute("in_init").toBoolean()) {
                 self.getAttribute("missing_init", True);
             }
+        }
+
+        private static void
+        setBestInitOffset(PythonObject self, PythonObject nodes) {
+            PythonObject votes = newDict();
+            for (PythonObject ast : nodes) {
+                if (!jIsinstance(ast, decompiler.getNestedAttribute("renpy.ast.Init"))) {
+                    continue;
+                }
+                PythonObject offset = ast.getAttribute("priority");
+                // Keep this block in sync with print_init
+                if (len(ast.getAttribute("block")).equals(1)
+                        && !self.callAttributeJB("should_come_before", ast, ast.getAttributeItem("block", 0))) {
+                    if (jIsinstance(ast.getAttributeItem("block", 0), decompiler.getNestedAttribute("renpy.ast.Screen"))) {
+                        offset = offset.subtract(-500);
+                    } else if (jIsinstance(ast.getAttributeItem("block", 0), decompiler.getNestedAttribute("renpy.ast.Testcase"))) {
+                        offset = offset.subtract(500);
+                    } else if (jIsinstance(ast.getAttributeItem("block", 0), decompiler.getNestedAttribute("renpy.ast.Image"))) {
+                        offset = offset.subtract(500);
+                    }
+                }
+
+                votes.setItem(offset, votes.callAttribute("get", offset, newInt(0)).add(1));
+            }
+
+            if (votes.toBoolean()) {
+                 PythonObject winner = max.call(new PythonArgument(votes)
+                        .addKeywordArgument("key", votes.getAttribute("get")));
+                // It's only worth setting an init offset if it would save
+                // more than one priority specification versus not setting one.
+                if (votes.callAttribute("get", newInt(0), newInt(0))
+                        .add(1)
+                        .jLessThan(votes.getItem(winner))) {
+                    self.callAttribute("set_init_offset", winner);
+                }
+            }
+
         }
 
         private static void printInit(PythonObject self, PythonObject ast) {
