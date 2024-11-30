@@ -78,28 +78,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)
 
-    def set_best_init_offset(self, nodes):
-        votes = {}
-        for ast in nodes:
-            if not isinstance(ast, renpy.ast.Init):
-                continue
-            offset = ast.priority
-            # Keep this block in sync with print_init
-            if len(ast.block) == 1 and not self.should_come_before(ast, ast.block[0]):
-                if isinstance(ast.block[0], renpy.ast.Screen):
-                    offset -= -500
-                elif isinstance(ast.block[0], renpy.ast.Testcase):
-                    offset -= 500
-                elif isinstance(ast.block[0], renpy.ast.Image):
-                    offset -= 500
-            votes[offset] = votes.get(offset, 0) + 1
-        if votes:
-            winner = max(votes, key=votes.get)
-            # It's only worth setting an init offset if it would save
-            # more than one priority specification versus not setting one.
-            if votes.get(0, 0) + 1 < votes[winner]:
-                self.set_init_offset(winner)
-
     def set_init_offset(self, offset):
         def do_set_init_offset(linenumber):
             # if we got to the end of the file and haven't emitted this yet,
