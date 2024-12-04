@@ -23,6 +23,7 @@ class PythonInt extends PythonObject {
 
     static void init() {
         int0.defineFunction("__mul__", PythonInt::mul, "self", "other");
+        int0.defineFunction("__le__", PythonInt::le, "self", "other");
     }
 
     PythonInt(long value) {
@@ -51,6 +52,10 @@ class PythonInt extends PythonObject {
 
     private static PythonObject lessThan(PythonInt self, PythonInt value) {
         return newBoolean(self.value < value.value);
+    }
+
+    private static PythonObject le(PythonObject self, PythonObject value) {
+        return newBoolean(((PythonInt)self).value <= ((PythonInt)value).value);
     }
 
     private static PythonObject add(PythonInt self, PythonInt value) {

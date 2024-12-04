@@ -263,7 +263,7 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     }
 
     public boolean jLessEquals(PythonObject value) {
-        return lessThan(value).toBoolean();
+        return lessEquals(value).toBoolean();
     }
 
     public boolean jGreaterThan(PythonObject value) {
