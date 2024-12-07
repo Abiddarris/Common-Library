@@ -37,6 +37,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.list;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
@@ -201,7 +202,7 @@ public class Util {
             self.setAttribute("linenumber", linenumber);
             self.setAttribute("skip_indent_until_write", skip_indent_until_write);
             
-            if (!isInstance(ast, newTuple(Builtins.tuple, Builtins.list)).toBoolean()) {
+            if (!isInstance(ast, newTuple(Builtins.tuple, list)).toBoolean()) {
                 ast = newList(ast);
             }
             
@@ -273,8 +274,11 @@ public class Util {
         private static void advanceToLine(PythonObject self, PythonObject linenumber) {
             // If there was anything that we wanted to do as soon as we found a blank line,
             // try to do it now.
-            self.setAttribute("blank_line_queue", util.callAttribute("DecompilerBaseAdvanceToLineGenerator",
-                    self.getAttribute("blank_line_queue"), linenumber));
+            self.setAttribute("blank_line_queue", list.call(
+                    newGenerator().forEach(() -> self.getAttribute("blank_line_queue"), "m")
+                            .filter(vars -> vars.get("m").call(linenumber))
+                            .yield(vars -> vars.get("m"))
+            ));
 
             if (self.getAttribute("linenumber").jLessThan(linenumber)) {
                 // Stop one line short, since the call to indent() will advance the last line.
@@ -458,7 +462,7 @@ public class Util {
                                 vars.put("default", obj.getItem(newInt(1)));
                             }).yield(vars -> vars.get("name")));
 
-            PythonObject other = Builtins.list.call(
+            PythonObject other = list.call(
                     newGenerator()
                         .forEach(variables -> paraminfo.getAttribute("parameters"))
                             .name((vars, obj) -> {
@@ -527,14 +531,14 @@ public class Util {
             }
         } else if (hasattr(paraminfo, "extrapos")) {
             // ren'py 7.4 and below, python 2 style
-            PythonObject positional = Builtins.list.call(newGenerator()
+            PythonObject positional = list.call(newGenerator()
                     .forEach(vars -> paraminfo.getAttribute("parameters"))
                     .name((vars, obj) -> vars.put("i", obj))
                     .filter(vars -> paraminfo.getAttribute("positional")
                             .in(vars.get("i").getItem(newInt(0))))
                     .yield(vars -> vars.get("i"))
             );
-            PythonObject nameonly = Builtins.list.call(newGenerator()
+            PythonObject nameonly = list.call(newGenerator()
                     .forEach(vars -> paraminfo.getAttribute("parameters"))
                     .name((vars, obj) -> vars.put("i", obj))
                     .filter(vars -> not(positional.in(vars.get("i"))))
