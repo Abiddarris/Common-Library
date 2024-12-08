@@ -38,7 +38,12 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
-import static com.abiddarris.common.renpy.internal.PythonObject.*;
+import static com.abiddarris.common.renpy.internal.PythonObject.createModule;
+import static com.abiddarris.common.renpy.internal.PythonObject.format;
+import static com.abiddarris.common.renpy.internal.PythonObject.newInt;
+import static com.abiddarris.common.renpy.internal.PythonObject.newList;
+import static com.abiddarris.common.renpy.internal.PythonObject.newString;
+import static com.abiddarris.common.renpy.internal.PythonObject.newTuple;
 import static com.abiddarris.common.renpy.internal.core.Attributes.callNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.Attributes.getNestedAttribute;
 import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.enumerate;
@@ -47,10 +52,10 @@ import static com.abiddarris.common.renpy.internal.core.BuiltinsClass.range;
 import static com.abiddarris.common.renpy.internal.core.Functions.isInstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Functions.not;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.core.classes.BuiltinsClasses.set;
-import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
@@ -146,6 +151,7 @@ public class Util {
             definer.defineFunction("save_state", DecompilerBaseImpl::saveState, "self");
             definer.defineFunction("commit_state", DecompilerBaseImpl::commitState, "self", "state");
             definer.defineFunction("advance_to_line", DecompilerBaseImpl.class, "advanceToLine", "self", "linenumber");
+            definer.defineFunction("do_when_blank_line", DecompilerBaseImpl::doWhenBlankLine, "self", "m");
 
             IndentationContextManagerImpl.define(definer);
 
@@ -287,6 +293,17 @@ public class Util {
                 self.callAttribute("write", newString("\n").multiply(linenumber.subtract(self.getAttribute("linenumber")).subtract(newInt(1))));
             }
         }
+
+        /**
+         * Do something the next time we find a blank line. m should be a method that takes one
+         * parameter (the line we're advancing to), and returns whether or not it needs to run
+         * again.
+         */
+        private static void
+        doWhenBlankLine(PythonObject self, PythonObject m) {
+            self.callNestedAttribute("blank_line_queue.append", m);
+        }
+
 
         /**
          * Shorthand method for pushing a newline and indenting to the proper indent level
@@ -787,7 +804,6 @@ public class Util {
             PythonObject contained = newInt(0);
 
             PythonObject startpos = self.getAttribute("pos");
-
             while (self.getAttribute("pos").jLessThan(self.getAttribute("length"))) {
                 PythonObject c = self.getAttribute("string")
                         .getItem(self.getAttribute("pos"));
@@ -838,6 +854,7 @@ public class Util {
                 lines.callAttribute("append", self.getAttribute("string")
                         .getItem(newSlice(startpos)));
             }
+            
             return lines;
         }
     }

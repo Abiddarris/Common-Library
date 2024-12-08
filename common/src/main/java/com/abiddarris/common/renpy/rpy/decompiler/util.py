@@ -36,15 +36,6 @@ class DecompilerBase:
          self.indent_level,
          self.blank_line_queue) = state
 
-
-    def do_when_blank_line(self, m):
-        """
-        Do something the next time we find a blank line. m should be a method that takes one
-        parameter (the line we're advancing to), and returns whether or not it needs to run
-        again.
-        """
-        self.blank_line_queue.append(m)
-
 # keywords used by ren'py's parser
 KEYWORDS = set(['$', 'as', 'at', 'behind', 'call', 'expression', 'hide',
                 'if', 'in', 'image', 'init', 'jump', 'menu', 'onlayer',
