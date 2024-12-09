@@ -37,7 +37,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.renpy.rpy.decompiler;
 
-import static com.abiddarris.common.renpy.internal.Builtins.*;
 import static com.abiddarris.common.renpy.internal.Builtins.Exception;
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.None;
@@ -45,6 +44,7 @@ import static com.abiddarris.common.renpy.internal.Builtins.True;
 import static com.abiddarris.common.renpy.internal.Builtins.enumerate;
 import static com.abiddarris.common.renpy.internal.Builtins.hasattr;
 import static com.abiddarris.common.renpy.internal.Builtins.list;
+import static com.abiddarris.common.renpy.internal.Builtins.max;
 import static com.abiddarris.common.renpy.internal.Builtins.sorted;
 import static com.abiddarris.common.renpy.internal.Builtins.str;
 import static com.abiddarris.common.renpy.internal.Builtins.super0;
@@ -66,15 +66,15 @@ import static com.abiddarris.common.renpy.internal.core.Functions.isinstance;
 import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.Functions.max;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
+import static com.abiddarris.common.renpy.internal.core.JFunctions.getattrJB;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
-import static com.abiddarris.common.renpy.internal.core.JFunctions.getattrJB;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
 import static com.abiddarris.common.renpy.internal.gen.Generators.newGenerator;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
-import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.loader.JavaModuleLoader;
@@ -212,6 +212,7 @@ public class Decompiler {
             definer.defineFunction("should_come_before", DecompilerImpl.class, "shouldComeBefore", "self", "first", "second");
             definer.defineFunction("require_init", DecompilerImpl.class, "requireInit", "self");
             definer.defineFunction("set_best_init_offset", DecompilerImpl::setBestInitOffset, "self", "node");
+            definer.defineFunction("set_init_offset", DecompilerImpl::setInitOffset, "self", "offset");
             definer.defineFunction("print_init", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Init")),
                     DecompilerImpl.class, "printInit", "self", "ast");
 
@@ -774,6 +775,28 @@ public class Decompiler {
                 }
             }
 
+        }
+
+        private static
+        void setInitOffset(PythonObject self, PythonObject offset) {
+            PythonObject do_set_init_offset = newFunction((linenumber) -> {
+                // if we got to the end of the file and haven't emitted this yet,
+                // don't bother, since it only applies to stuff below it.
+                if (linenumber == None || linenumber.subtract(self.getAttribute("linenumber"))
+                        .jLessEquals(1) || self.getAttributeJB("indent_level")) {
+                    return True;
+                }
+
+                if (offset.jNotEquals(self.getAttribute("init_offset"))) {
+                    self.callAttribute("indent");
+                    self.callAttribute("write", format("init offset = {0}", offset));
+                    self.setAttribute("init_offset", offset);
+                }
+
+                return False;
+            }, "linenumber");
+
+            self.callAttribute("do_when_blank_line", do_set_init_offset);
         }
 
         private static void printInit(PythonObject self, PythonObject ast) {

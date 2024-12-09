@@ -76,21 +76,7 @@ class Decompiler(DecompilerBase):
 
         if ast.atl is not None:
             self.write(":")
-            self.print_atl(ast.atl)
-
-    def set_init_offset(self, offset):
-        def do_set_init_offset(linenumber):
-            # if we got to the end of the file and haven't emitted this yet,
-            # don't bother, since it only applies to stuff below it.
-            if linenumber is None or linenumber - self.linenumber <= 1 or self.indent_level:
-                return True
-            if offset != self.init_offset:
-                self.indent()
-                self.write(f'init offset = {offset}')
-                self.init_offset = offset
-            return False
-
-        self.do_when_blank_line(do_set_init_offset)
+            self.print_atl(ast.atl)uul
 
     @dispatch(renpy.ast.EarlyPython)
     def print_earlypython(self, ast):
