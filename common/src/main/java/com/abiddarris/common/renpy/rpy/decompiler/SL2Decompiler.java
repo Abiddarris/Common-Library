@@ -77,7 +77,7 @@ public class SL2Decompiler {
             SL2Decompiler.sl2decompiler = sl2decompiler;
 
             sl2decompiler.fromImport("decompiler.util",
-                    "First", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher");
+                    "First", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher", "split_logical_lines");
             sl2decompiler.fromImport("renpy", "sl2");
 
             sl2decompiler.fromImport("renpy", "ui");
