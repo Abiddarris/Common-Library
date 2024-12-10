@@ -19,7 +19,7 @@
 # SOFTWARE.
 
 from .util import , , \
-                  reconstruct_arginfo, split_logical_lines
+                  reconstruct_arginfo,
 
 from . import atldecompiler
 
