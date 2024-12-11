@@ -178,6 +178,10 @@ class PythonString extends PythonObject {
             end = newInt(self.string.length());
         }
 
+        if (end.jLessThan(0)) {
+            end = newInt(self.string.length()).add(end);
+        }
+
         return newString(self.string.substring(start.toInt(), end.toInt()));
     }
 
