@@ -40,29 +40,6 @@ class Decompiler(DecompilerBase):
         self.last_lines_behind = state[7]
         super(Decompiler, self).rollback_state(state[0])
 
-    @dispatch(renpy.ast.Transform)
-    def print_transform(self, ast):
-        self.require_init()
-        self.indent()
-
-        # If we have an implicit init block with a non-default priority, we need to store the
-        # priority here.
-        priority = ""
-        if isinstance(self.parent, renpy.ast.Init):
-            init = self.parent
-            if (init.priority != self.init_offset
-                    and len(init.block) == 1
-                    and not self.should_come_before(init, ast)):
-                priority = f' {init.priority - self.init_offset}'
-        self.write(f'transform{priority} {ast.varname}')
-        if ast.parameters is not None:
-            self.write(reconstruct_paraminfo(ast.parameters))
-
-        # atl attribute: since 6.10
-        if ast.atl is not None:
-            self.write(":")
-            self.print_atl(ast.atl)
-
     @dispatch(renpy.ast.Camera)
     def print_camera(self, ast):
         self.indent()

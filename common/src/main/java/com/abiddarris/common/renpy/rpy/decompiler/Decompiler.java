@@ -183,6 +183,8 @@ public class Decompiler {
 
             // Displayable related functions
             definer.defineFunction("print_imspec", DecompilerImpl::printImspec, "self", "imspec");
+            definer.defineFunction("print_transform", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Transform")),
+                    DecompilerImpl::printTransform, "self", "ast");
             definer.defineFunction("print_image", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Image")),
                     DecompilerImpl::printImage, "self", "ast");
 
@@ -401,6 +403,36 @@ public class Decompiler {
                     self.callAttribute("write", newString(":"));
                     self.callAttribute("print_atl", ast.getAttribute("atl"));
                 }
+            }
+        }
+
+        private static void
+        printTransform(PythonObject self, PythonObject ast) {
+            self.callAttribute("require_init");
+            self.callAttribute("indent");
+
+            // If we have an implicit init block with a non-default priority, we need to store the
+            // priority here.
+            PythonObject priority = newString("");
+            if (jIsinstance(self.getAttribute("parent"), decompiler.getNestedAttribute("renpy.ast.Init"))) {
+                PythonObject init = self.getAttribute("parent");
+                if (init.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))
+                        && len(init.getAttribute("block")).equals(1)
+                        && !self.callAttributeJB("should_come_before", init, ast)) {
+                    priority = format(" {0}", init.getAttribute("priority").subtract(self.getAttribute("init_offset")));
+                }
+            }
+
+            self.callAttribute("write", format("transform{0} {1}", priority, ast.getAttribute("varname")));
+
+            if (ast.getAttribute("parameters") != None) {
+                self.callAttribute("write", decompiler.callAttribute("reconstruct_paraminfo", ast.getAttribute("parameters")));
+            }
+
+            // atl attribute: since 6.10
+            if (ast.getAttribute("atl") != None) {
+                self.callAttribute("write", newString(":"));
+                self.callAttribute("print_atl", ast.getAttribute("atl"));
             }
         }
 
