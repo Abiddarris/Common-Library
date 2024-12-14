@@ -13,4 +13,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-java -cp build/classes Main
+java -cp build/classes -XX:+EnableDynamicAgentLoading Main "$@"
+
+#v-XX:StartFlightRecording:duration=60s,filename=rec.jfr
