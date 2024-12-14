@@ -850,7 +850,7 @@ public class Util {
                 self.callAttribute("re", newString("\\w+| +|."));  // consume a word, whitespace or one symbol
             }
 
-            if (self.getAttribute("pos").equals(startpos)) {
+            if (self.getAttribute("pos").jNotEquals(startpos)) {
                 lines.callAttribute("append", self.getAttribute("string")
                         .getItem(newSlice(startpos)));
             }

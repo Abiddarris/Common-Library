@@ -46,18 +46,6 @@ class ATLDecompiler(DecompilerBase):
             self.write(f'on {name}:')
             self.print_block(block)
 
-    @dispatch(renpy.atl.RawParallel)
-    def print_atl_rawparallel(self, ast):
-        for block in ast.blocks:
-            self.advance_to_block(block)
-            self.indent()
-            self.write("parallel:")
-            self.print_block(block)
-        if (self.index + 1 < len(self.block)
-                and isinstance(self.block[self.index + 1], renpy.atl.RawParallel)):
-            self.indent()
-            self.write("pass")
-
     @dispatch(renpy.atl.RawTime)
     def print_atl_rawtime(self, ast):
         self.indent()

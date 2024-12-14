@@ -110,6 +110,8 @@ public class ATLDecompiler {
                     ATLDecompilerImpl::printAtlRawchoice, "self", "ast");
             definer.defineFunction("print_atl_rawfunction", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawFunction")),
                     ATLDecompilerImpl::printAtlRawfunction, "self", "ast");
+            definer.defineFunction("print_atl_rawparallel", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawParallel")),
+                    ATLDecompilerImpl::printAtlRawparallel, "self", "ast");
             definer.defineFunction("print_atl_rawrepeat", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawRepeat")),
                     ATLDecompilerImpl::printAtlRawrepeat, "self", "ast");
 
@@ -294,6 +296,23 @@ public class ATLDecompiler {
         printAtlRawfunction(PythonObject self, PythonObject ast) {
             self.callAttribute("indent");
             self.callAttribute("write", format("function {0}", ast.getAttribute("expr")));
+        }
+
+        private static void
+        printAtlRawparallel(PythonObject self, PythonObject ast) {
+            for (PythonObject block : ast.getAttribute("blocks")) {
+                self.callAttribute("advance_to_block", block);
+                self.callAttribute("indent");
+                self.callAttribute("write", newString("parallel:"));
+                self.callAttribute("print_block", block);
+            }
+
+            if (self.getAttribute("index").add(1).jLessThan(len(self.getAttribute("block")))
+                    && jIsinstance(self.getAttributeItem("block", self.getAttribute("index").add(1)),
+                    atldecompiler.getNestedAttribute("renpy.atl.RawParallel"))) {
+                self.callAttribute("indent");
+                self.callAttribute("write", newString("pass"));
+            }
         }
 
         private static void
