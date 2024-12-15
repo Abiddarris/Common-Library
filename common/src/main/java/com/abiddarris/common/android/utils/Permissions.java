@@ -41,8 +41,13 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.function.Consumer;
 
 public class Permissions {
-    
+
+    @Deprecated
     public static boolean checkPermission(Context context, String... permissions) {
+        return checkPermissions(context, permissions);
+    }
+
+    public static boolean checkPermissions(Context context, String... permissions) {
         for(var permission : permissions) {
         	if(ContextCompat.checkSelfPermission(context, permission) == PERMISSION_DENIED) {
                 return false;
