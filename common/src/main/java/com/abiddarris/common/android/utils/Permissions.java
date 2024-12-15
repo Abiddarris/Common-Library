@@ -68,11 +68,12 @@ public class Permissions {
     
     public static void requestPermissions(FragmentActivity activity, Consumer<Boolean> callback, String... permissions) {
         ActivityResultLauncher<String[]> requestPermissionLauncher =
-        activity.registerForActivityResult(new RequestMultiplePermissions(), result -> 
-            callback.accept(result.values()
-                .stream()
-                .reduce((p1, p2) -> p1 && p2)
-                .get()));
+                 activity.registerForActivityResult(new RequestMultiplePermissions(), result ->
+                        callback.accept(result.values()
+                                .stream()
+                                .reduce((p1, p2) -> p1 && p2)
+                                .get()));
+        requestPermissionLauncher.launch(permissions);
     }
     
     @TargetApi(16)
