@@ -47,6 +47,15 @@ public class TaskViewModel extends ViewModel {
         
         return model;
     }
+
+    /**
+     * Returns the owner of this {@code TaskViewModel}
+     *
+     * @return the owner of this {@code TaskViewModel}
+     */
+    public ViewModelStoreOwner getOwner() {
+        return owner;
+    }
     
     public void execute(@NonNull Task task) {
         Objects.requireNonNull(task);
