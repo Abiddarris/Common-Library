@@ -37,15 +37,16 @@ public class TaskViewModel extends ViewModel {
     }
     
     @NonNull
-    public static TaskViewModel getInstance(ViewModelStoreOwner owner, Class<? extends TaskViewModel> viewModel) {
+    @SuppressWarnings("unchecked")
+    public static <T extends TaskViewModel> T getInstance(ViewModelStoreOwner owner, Class<T> viewModel) {
         Objects.requireNonNull(owner);
         Objects.requireNonNull(viewModel);
         
-        var model = new ViewModelProvider(owner)
+        TaskViewModel model = new ViewModelProvider(owner)
             .get(viewModel);
         model.attachOwner(owner);
         
-        return model;
+        return (T) model;
     }
 
     /**
