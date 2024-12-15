@@ -15,31 +15,56 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.dialogs;
 
+import static com.abiddarris.common.utils.Preconditions.checkNonNull;
+
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class SimpleDialog extends BaseDialogFragment {
+import java.util.Objects;
 
-    private static final String TITLE = "title";
-    private static final String MESSAGE = "message";
+/**
+ * Simple dialog that can show title, message and ok button
+ *
+ * <p> If {@code showForResult} or {@code showForResultAndBlock} is used on this dialog, the callback always be called if
+ * the user click ok. The callback arguments always {@code null}.
+ */
+public class SimpleDialog extends BaseDialogFragment<Void> {
 
+    private static final String DATA = "data";
+
+    /**
+     * Create new simple dialog
+     *
+     * @param title Dialog's title
+     * @param message Dialog's message
+     * @return Newly created simple dialog
+     */
+    public static SimpleDialog newSimpleDialog(@NonNull String title,
+                                               @NonNull String message) {
+        checkNonNull(title, "title cannot be null");
+        checkNonNull(title, "message cannot be null");
+
+        var dialog = new SimpleDialog();
+        dialog.saveVariable(DATA, new String[] {title, message});
+
+        return dialog;
+    }
+    
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
-        var args = getArguments();
+        setCancelable(false);
 
-        builder.setTitle(args.getString(TITLE))
-            .setMessage(args.getString(MESSAGE))
-            .setPositiveButton(android.R.string.ok, (dialog, which) -> {});
+        String[] data = getVariable(DATA);
+
+        builder.setTitle(data[0])
+            .setMessage(data[1])
+            .setPositiveButton(android.R.string.ok, (dialog, which) -> sendResult(null));
     }
  
     public static void show(FragmentManager manager, String title, String message) {
-    	var args = new Bundle();
-        args.putString(TITLE, title);
-        args.putString(MESSAGE, message);
-
-        var dialog = new SimpleDialog();
-        dialog.setArguments(args);
-        dialog.show(manager, null);
+        newSimpleDialog(title, message).show(manager, null);
     }
 }
