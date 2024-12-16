@@ -640,7 +640,7 @@ public class SL2Decompiler {
                             current_keyword_line.getItem(2).callAttribute("append", content);
                         } else {
                             contents_grouped.callAttribute("append", current_keyword_line);
-                            current_keyword_line = newTuple(lineno, newString("keywords"), newTuple(content));
+                            current_keyword_line = newTuple(lineno, newString("keywords"), newList(content));
                         }
                     } else if (ty.equals("broken")) {
                         contents_grouped.callAttribute("append",
