@@ -55,10 +55,6 @@ class Decompiler(DecompilerBase):
             self.write(":")
             self.print_atl(ast.atl)uul
 
-    @dispatch(renpy.ast.EarlyPython)
-    def print_earlypython(self, ast):
-        self.print_python(ast, early=True)
-
     # Translation functions
 
     @dispatch(renpy.ast.Translate)
