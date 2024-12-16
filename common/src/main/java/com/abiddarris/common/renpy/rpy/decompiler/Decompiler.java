@@ -229,6 +229,8 @@ public class Decompiler {
                     DecompilerImpl.class, "printPython", new PythonSignatureBuilder("self", "ast")
                             .addParameter("early", False)
                             .build());
+            definer.defineFunction("print_earlypython", dispatch.call(getNestedAttribute(decompiler, "renpy.ast.EarlyPython")),
+                    DecompilerImpl::printEarlypython, "self", "ast");
 
             // Specials
             definer.defineFunction("say_belongs_to_menu", DecompilerImpl.class, "sayBelongsToMenu", "self", "say", "menu");
@@ -1100,6 +1102,12 @@ public class Decompiler {
             } else {
                 self.callAttribute("write", format("$ {0}", code));
             }
+        }
+
+        private static void
+        printEarlypython(PythonObject self, PythonObject ast) {
+            self.callAttribute("print_python", new PythonArgument(ast)
+                    .addKeywordArgument("early", True));
         }
 
         private static void printDefine(PythonObject self, PythonObject ast) {
