@@ -339,6 +339,7 @@ public class Builtins {
 
         PythonInt.init();
         PythonTuple.init2();
+        PythonString.init2();
 
         ValueError = builtins.defineClass("ValueError", Exception).define();
 

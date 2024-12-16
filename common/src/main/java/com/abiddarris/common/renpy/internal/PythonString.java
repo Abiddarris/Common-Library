@@ -16,12 +16,18 @@
 package com.abiddarris.common.renpy.internal;
 
 import static com.abiddarris.common.renpy.internal.Builtins.None;
+import static com.abiddarris.common.renpy.internal.Builtins.str;
 import static java.util.regex.Pattern.quote;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class PythonString extends PythonObject {
+
+    public static void init2() {
+        str.defineAttribute("__module__", newString("builtins"));
+        str.defineFunction("strip", PythonString::strip, "self");
+    }
 
     private String string;
 
@@ -219,6 +225,11 @@ class PythonString extends PythonObject {
         }
 
         return newString(builder.toString());
+    }
+
+    private static PythonObject
+    strip(PythonObject self) {
+        return newString(((PythonString)self).string.strip());
     }
 
     @Override
