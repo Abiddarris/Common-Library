@@ -5,7 +5,6 @@ find src/main/java -path src/main/java/com/abiddarris/common/android -prune -o -
 if ! [ -a build/classes ]; then
     mkdir build/classes
 fi
-echo "Main.java" >> build/classes.txt
 
 javac -d build/classes @build/classes.txt
 
@@ -13,6 +12,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-java -cp build/classes -XX:+EnableDynamicAgentLoading Main "$@"
-
-#v-XX:StartFlightRecording:duration=60s,filename=rec.jfr
+java -cp build/classes com.abiddarris.common.renpy.rpy.RpyMain "$@"
