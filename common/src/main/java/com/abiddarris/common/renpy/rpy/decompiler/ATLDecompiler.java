@@ -39,6 +39,7 @@ package com.abiddarris.common.renpy.rpy.decompiler;
 
 import static com.abiddarris.common.renpy.internal.Builtins.False;
 import static com.abiddarris.common.renpy.internal.Builtins.True;
+import static com.abiddarris.common.renpy.internal.Builtins.sorted;
 import static com.abiddarris.common.renpy.internal.Python.format;
 import static com.abiddarris.common.renpy.internal.Python.newBoolean;
 import static com.abiddarris.common.renpy.internal.Python.newInt;
@@ -49,11 +50,15 @@ import static com.abiddarris.common.renpy.internal.core.Functions.len;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
+import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
 import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.internal.with.With.with;
 
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
+import com.abiddarris.common.renpy.internal.core.functions.Functions;
+import com.abiddarris.common.renpy.internal.core.functions.PFunction;
+import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 import com.abiddarris.common.renpy.internal.signature.PythonSignatureBuilder;
 
 public class ATLDecompiler {
@@ -110,6 +115,8 @@ public class ATLDecompiler {
                     ATLDecompilerImpl::printAtlRawchoice, "self", "ast");
             definer.defineFunction("print_atl_rawfunction", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawFunction")),
                     ATLDecompilerImpl::printAtlRawfunction, "self", "ast");
+            definer.defineFunction("print_atl_rawon", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawOn")),
+                    ATLDecompilerImpl::printAtlRawon, "self", "ast");
             definer.defineFunction("print_atl_rawparallel", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawParallel")),
                     ATLDecompilerImpl::printAtlRawparallel, "self", "ast");
             definer.defineFunction("print_atl_rawrepeat", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawRepeat")),
@@ -296,6 +303,24 @@ public class ATLDecompiler {
         printAtlRawfunction(PythonObject self, PythonObject ast) {
             self.callAttribute("indent");
             self.callAttribute("write", format("function {0}", ast.getAttribute("expr")));
+        }
+
+        private static void
+        printAtlRawon(PythonObject self, PythonObject ast) {
+            for (PythonObject $args : sorted.call(
+                    new PythonArgument(ast.callNestedAttribute("handlers.items"))
+                            .addKeywordArgument("key",
+                                    newFunction((PFunction) i -> i.getItemAttribute(1, "loc")
+                                            .getItem(1), "i")
+                            )
+            )) {
+                PythonObject name = $args.getItem(0), block = $args.getItem(1);
+
+                self.callAttribute("advance_to_block", block);
+                self.callAttribute("indent");
+                self.callAttribute("write", format("on {0}:", name));
+                self.callAttribute("print_block", block);
+            }
         }
 
         private static void
