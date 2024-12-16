@@ -132,6 +132,8 @@ public class SL2Decompiler {
                     SL2DecompilerImpl::printPython, "self", "ast");
             definer.defineFunction("print_use", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLUse")),
                     SL2DecompilerImpl::printUse, "self", "ast");
+            definer.defineFunction("print_transclude", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLTransclude")),
+                    SL2DecompilerImpl::printTransclude, "self", "ast");
             definer.defineFunction("print_default", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDefault")),
                     SL2DecompilerImpl::printDefault, "self", "ast");
 
@@ -388,6 +390,12 @@ public class SL2Decompiler {
             if (hasattr(ast, "block") && ast.getAttributeJB("block")) {
                 self.callAttribute("print_block", ast.getAttribute("block"));
             }
+        }
+
+        private static void
+        printTransclude(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("transclude"));
         }
 
         private static void
