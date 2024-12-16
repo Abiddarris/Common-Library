@@ -77,10 +77,12 @@ public class SL2Decompiler {
             SL2Decompiler.sl2decompiler = sl2decompiler;
 
             sl2decompiler.fromImport("decompiler.util",
-                    "First", "DecompilerBase", "reconstruct_paraminfo", "Dispatcher", "split_logical_lines");
+                    "First", "DecompilerBase", "reconstruct_paraminfo",
+                    "reconstruct_arginfo", "Dispatcher", "split_logical_lines");
             sl2decompiler.fromImport("renpy", "sl2");
 
             sl2decompiler.fromImport("renpy", "ui");
+            sl2decompiler.fromImport("renpy.ast", "PyExpr");
             sl2decompiler.fromImport("renpy.text", "text");
             sl2decompiler.fromImportAs("renpy.sl2", "sldisplayables", "sld");
             sl2decompiler.fromImport("renpy.display", "layout", "behavior", "im", "motion", "dragdrop", "transform");
@@ -128,6 +130,8 @@ public class SL2Decompiler {
                     SL2DecompilerImpl::printFor, "self", "ast");
             definer.defineFunction("print_python", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLPython")),
                     SL2DecompilerImpl::printPython, "self", "ast");
+            definer.defineFunction("print_use", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLUse")),
+                    SL2DecompilerImpl::printUse, "self", "ast");
             definer.defineFunction("print_default", dispatch.call(sl2decompiler.getNestedAttribute("sl2.slast.SLDefault")),
                     SL2DecompilerImpl::printDefault, "self", "ast");
 
@@ -355,6 +359,34 @@ public class SL2Decompiler {
                 });
             } else {
                 self.callAttribute("write", format("$ {0}", code));
+            }
+        }
+
+        private static void
+        printUse(PythonObject self, PythonObject ast) {
+            // A use statement requires reconstructing the arguments it wants to pass
+            self.callAttribute("indent");
+            self.callAttribute("write", newString("use "));
+
+            PythonObject args = sl2decompiler.callAttribute("reconstruct_arginfo", ast.getAttribute("args"));
+            if (jIsinstance(ast.getAttribute("target"), sl2decompiler.getAttribute("PyExpr"))) {
+                self.callAttribute("write", format("expression {0}", ast.getAttribute("target")));
+
+                if (args.toBoolean()) {
+                    self.callAttribute("write", newString(" pass "));
+                }
+            } else {
+                self.callAttribute("write", format("{0}", ast.getAttribute("target")));
+            }
+
+            self.callAttribute("write", format("{0}", args));
+
+            if ((hasattr(ast, "id") && ast.getAttribute("id") != None)) {
+                self.callAttribute("write", format(" id {0}", ast.getAttribute("id")));
+            }
+
+            if (hasattr(ast, "block") && ast.getAttributeJB("block")) {
+                self.callAttribute("print_block", ast.getAttribute("block"));
             }
         }
 

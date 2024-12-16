@@ -19,11 +19,9 @@
 # SOFTWARE.
 
 from .util import , , \
-                  reconstruct_arginfo,
+                  ,
 
 from . import atldecompiler
-
-from renpy.ast import PyExpr
 
 # Implementation
 
@@ -53,26 +51,6 @@ class SL2Decompiler(DecompilerBase):
         # A pass statement
         self.indent()
         self.write("pass")
-
-    @dispatch(sl2.slast.SLUse)
-    def print_use(self, ast):
-        # A use statement requires reconstructing the arguments it wants to pass
-        self.indent()
-        self.write("use ")
-        args = reconstruct_arginfo(ast.args)
-        if isinstance(ast.target, PyExpr):
-            self.write(f'expression {ast.target}')
-            if args:
-                self.write(" pass ")
-        else:
-            self.write(f'{ast.target}')
-
-        self.write(f'{args}')
-        if hasattr(ast, 'id') and ast.id is not None:
-            self.write(f' id {ast.id}')
-
-        if hasattr(ast, "block") and ast.block:
-            self.print_block(ast.block)
 
     @dispatch(sl2.slast.SLTransclude)
     def print_transclude(self, ast):
