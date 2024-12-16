@@ -1122,7 +1122,7 @@ public class Decompiler {
             ).toBoolean()) {
                 PythonObject init = self.getAttribute("parent");
                 if (init.getAttribute("priority").jNotEquals(self.getAttribute("init_offset"))
-                        && len(init.getAttribute("block")).equals(newInt(0))
+                        && len(init.getAttribute("block")).equals(newInt(1))
                         && !self.callAttribute("should_come_before", init, ast).toBoolean()) {
                     priority = newString(" {0}").callAttribute("format",
                             init.getAttribute("priority")
