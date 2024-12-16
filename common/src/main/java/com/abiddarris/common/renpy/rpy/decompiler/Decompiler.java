@@ -582,7 +582,7 @@ public class Decompiler {
                     next_ast = self.getAttribute("block")
                             .getItem(self.getAttribute("index")
                                     .add(newInt(1)));
-                    if (isinstance(next_ast, getNestedAttribute(decompiler, " renpy.ast.Menu")).toBoolean() &&
+                    if (isinstance(next_ast, getNestedAttribute(decompiler, "renpy.ast.Menu")).toBoolean() &&
                             next_ast.getAttribute("linenumber").equals(ast.getAttribute("linenumber"))) {
                         self.setAttribute("label_inside_menu", ast);
                         return;
