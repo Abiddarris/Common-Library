@@ -37,15 +37,6 @@ class ATLDecompiler(DecompilerBase):
         self.indent()
         self.write(f'event {ast.name}')
 
-    @dispatch(renpy.atl.RawOn)
-    def print_atl_rawon(self, ast):
-        for name, block in sorted(ast.handlers.items(),
-                                  key=lambda i: i[1].loc[1]):
-            self.advance_to_block(block)
-            self.indent()
-            self.write(f'on {name}:')
-            self.print_block(block)
-
     @dispatch(renpy.atl.RawTime)
     def print_atl_rawtime(self, ast):
         self.indent()
