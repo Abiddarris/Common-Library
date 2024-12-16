@@ -51,8 +51,3 @@ class SL2Decompiler(DecompilerBase):
         # A pass statement
         self.indent()
         self.write("pass")
-
-    @dispatch(sl2.slast.SLTransclude)
-    def print_transclude(self, ast):
-        self.indent()
-        self.write("transclude")
