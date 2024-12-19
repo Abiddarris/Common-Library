@@ -15,13 +15,12 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.dialogs;
 
+import static android.content.DialogInterface.BUTTON_NEGATIVE;
+import static android.content.DialogInterface.BUTTON_NEUTRAL;
+import static android.content.DialogInterface.BUTTON_POSITIVE;
+
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.widget.Button;
 
 import androidx.annotation.CallSuper;
@@ -37,17 +36,21 @@ import androidx.lifecycle.ViewModelProvider;
 import com.abiddarris.common.utils.ObjectWrapper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public class BaseDialogFragment<Result> extends DialogFragment {
     
     private static final String ENABLE_POSITIVE_BUTTON = "enablePositiveButton";
+    private static final String ENABLE_NEUTRAL_BUTTON = "enableNeutralButton";
     private static final String RESULT_CALLED = "resultCalled";
     private static final String RESULT_LISTENER = "resultListener";
 
     private BaseDialogViewModel model;
+    private List<Runnable> onShowListeners = new ArrayList<>();
     private Map<String, Object> variables = new HashMap<>();
     
     @Override
@@ -74,6 +77,16 @@ public class BaseDialogFragment<Result> extends DialogFragment {
         onDialogCreated(dialog, savedInstanceState);
         
         return dialog;
+    }
+
+    /**
+     * Called when dialog is showed to the user.
+     */
+    @CallSuper
+    public void onShowDialog() {
+        for (Runnable onShowListen : onShowListeners) {
+            onShowListen.run();
+        }
     }
 
     @Nullable
@@ -142,17 +155,24 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     public void enablePositiveButton(boolean enabled) {
         saveVariable(ENABLE_POSITIVE_BUTTON, enabled);
         
-        enablePositiveButtonInternal(enabled);
+        enableButtonInternal(BUTTON_POSITIVE, enabled);
+    }
+
+    public void enableNeutralButton(boolean enabled) {
+        saveVariable(ENABLE_NEUTRAL_BUTTON, enabled);
+
+        enableButtonInternal(BUTTON_NEUTRAL, enabled);
     }
     
-    private void enablePositiveButtonInternal(boolean enabled) {
+    private void enableButtonInternal(int buttonType, boolean enabled) {
         AlertDialog dialog = (AlertDialog)getDialog();
         if(dialog == null) {
             return;
         }
-        Button button = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+        Button button = dialog.getButton(buttonType);
         if(button == null) {
-            dialog.setOnShowListener((dialog2) -> enablePositiveButtonInternal(enabled));
+            addOnShowListener(() -> enableButtonInternal(buttonType, enabled));
             return;
         }
         button.setEnabled(enabled);
@@ -178,10 +198,21 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     }
     
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
+        dialog.setOnShowListener(dialog0 -> onShowDialog());
+
         Boolean enablePositiveButton = getVariable(ENABLE_POSITIVE_BUTTON);
         if(enablePositiveButton != null) {
-            dialog.setOnShowListener(v -> enablePositiveButton(enablePositiveButton));
+            addOnShowListener(() -> enablePositiveButton(enablePositiveButton));
         }
+
+        Boolean enableNeutralButton = getVariable(ENABLE_NEUTRAL_BUTTON);
+        if(enableNeutralButton != null) {
+            addOnShowListener(() -> enableNeutralButton(enableNeutralButton));
+        }
+    }
+
+    private void addOnShowListener(Runnable runnable) {
+        onShowListeners.add(runnable);
     }
     
     public static class BaseDialogViewModel extends ViewModel {
