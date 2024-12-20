@@ -51,7 +51,7 @@ public class VirtualKeyboardOptions extends LinearLayout {
                     binding.add.setVisibility(visibility);
                     binding.setting.setVisibility(visibility);
 
-                    binding.edit.setImageResource(
+                    ((MaterialButton)binding.edit).setIconResource(
                             keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit);
                 });
 
