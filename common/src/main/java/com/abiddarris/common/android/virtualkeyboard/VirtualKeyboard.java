@@ -16,11 +16,11 @@
 package com.abiddarris.common.android.virtualkeyboard;
 
 import static android.view.MotionEvent.ACTION_UP;
-
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,18 +30,18 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
+import com.abiddarris.common.databinding.LayoutVirtualKeyboardButtonSettingsBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
-    private ImageButton editButton;
+    private Button editButton;
     private Key focus;
     private List<Key> keys = new ArrayList<>();
     private KeyListener listener;
@@ -65,10 +65,10 @@ public class VirtualKeyboard extends MoveableViewsGroup {
 
     private void init(AttributeSet attrs) {
         setClickable(true);
-        
-        editButton = new ImageButton(getContext());
-        editButton.setVisibility(GONE);
-        editButton.setImageResource(R.drawable.ic_setting);
+
+        editButton = LayoutVirtualKeyboardButtonSettingsBinding.inflate(
+                LayoutInflater.from(getContext())
+        ).getRoot();
         editButton.setOnClickListener(v -> {
             var dialog = EditButtonDialog.newInstance(this);
             dialog.showForResult(((FragmentActivity)getContext()).getSupportFragmentManager(), (res) -> {

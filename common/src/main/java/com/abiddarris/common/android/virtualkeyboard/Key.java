@@ -20,14 +20,13 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYCODE;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.NAME;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.SIZE;
 import static com.abiddarris.common.android.virtualkeyboard.Keycode.valueOf;
-
 import static org.json.JSONObject.NULL;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 
-import com.abiddarris.common.android.view.listeners.AutoRemoveGlobalLayoutListener;
+import com.abiddarris.common.databinding.LayoutButtonBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +63,7 @@ public class Key {
     }
     
     public void init(Context context) {
-        button = new Button(context);
+        button = LayoutButtonBinding.inflate(LayoutInflater.from(context)).getRoot();
     }
     
     public Button getButton() {
