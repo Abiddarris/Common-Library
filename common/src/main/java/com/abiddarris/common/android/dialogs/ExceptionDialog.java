@@ -34,6 +34,13 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
      * Identifier for throwable that will be shown
      */
     private static final String THROWABLE = "throwable";
+
+    public static ExceptionDialog<Void> newExceptionDialog(Throwable throwable) {
+        ExceptionDialog<Void> dialog = new ExceptionDialog<>();
+        dialog.setThrowable(throwable);
+
+        return dialog;
+    }
     
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
