@@ -121,6 +121,8 @@ public class ATLDecompiler {
                     ATLDecompilerImpl::printAtlRawparallel, "self", "ast");
             definer.defineFunction("print_atl_rawrepeat", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawRepeat")),
                     ATLDecompilerImpl::printAtlRawrepeat, "self", "ast");
+            definer.defineFunction("print_atl_rawtime", dispatch.call(atldecompiler.getNestedAttribute("renpy.atl.RawTime")),
+                    ATLDecompilerImpl::printAtlRawtime, "self", "ast");
 
             definer.define();
         }
@@ -349,5 +351,10 @@ public class ATLDecompiler {
             }
         }
 
+        private static void
+        printAtlRawtime(PythonObject self, PythonObject ast) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("time {0}", ast.getAttribute("time")));
+        }
     }
 }
