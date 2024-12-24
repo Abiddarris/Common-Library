@@ -41,6 +41,7 @@ import static com.abiddarris.common.files.Files.changeExtension;
 import static com.abiddarris.common.files.Files.getExtension;
 import static com.abiddarris.common.renpy.internal.PythonObject.*;
 import static com.abiddarris.common.renpy.internal.imp.Imports.importModule;
+import static com.abiddarris.common.renpy.internal.loader.JavaModuleLoader.registerLoader;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_detect_python2;
 import static com.abiddarris.common.renpy.rpy.decompiler.RenPyCompat.pickle_safe_loads;
 import static com.abiddarris.common.stream.Compresses.decompress;
@@ -54,13 +55,17 @@ import static java.util.Arrays.copyOfRange;
 import com.abiddarris.common.renpy.internal.Builtins;
 import com.abiddarris.common.renpy.internal.PythonObject;
 import com.abiddarris.common.renpy.internal.Struct;
+import com.abiddarris.common.renpy.internal.builder.ClassDefiner;
 import com.abiddarris.common.renpy.internal.signature.PythonArgument;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,9 +74,34 @@ import java.util.Map;
 public class Unrpyc {
     
     private static final PythonObject decompiler;
+    private static PythonObject JavaPyInputStream;
     
     static {
         decompiler = importModule("decompiler");
+
+        registerLoader("unrpyc", (unrpyc) -> {
+            JavaPyInputStream = JavaPyInputStreamImpl.define(unrpyc.defineClass("JavaPyInputStream"));
+        });
+
+        importModule("unrpyc");
+    }
+
+    private static class JavaPyInputStreamImpl {
+
+        private static PythonObject define(ClassDefiner definer) {
+            definer.defineFunction("write", JavaPyInputStreamImpl::write, "self", "string");
+            return definer.define();
+        }
+
+        private static void
+        write(PythonObject self, PythonObject string) {
+            OutputStream stream = self.getJavaAttribute("stream");
+            try {
+                stream.write(string.toString().getBytes());
+            } catch (IOException e) {
+                Builtins.Exception.call(newString(e.getMessage())).raise();
+            }
+        }
     }
     
     public static class Context {
@@ -240,31 +270,27 @@ public class Unrpyc {
             
         context.log(String.format("Decompiling %s to %s ...", file, outputFile.getName()));
         PythonObject ast = get_ast(file, try_harder, context);
-        
-        //with out_filename.open('w', encoding='utf-8') as out_file:
-            //if dump:
-                //astdump.pprint(out_file, ast, comparable=comparable, no_pyexpr=no_pyexpr)
-            //else:
-                /* FIXME: log=context.log_contents**/
-                PythonObject options = decompiler.getAttribute("Options").call(new PythonArgument()
+
+        try (FileOutputStream stream = new FileOutputStream(outputFile)){
+            BufferedOutputStream bufferedStream = new BufferedOutputStream(stream);
+            PythonObject options = decompiler.getAttribute("Options").call(new PythonArgument()
                     .addKeywordArgument("log", Builtins.None)
                     .addKeywordArgument("translator", translator)
                     .addKeywordArgument("init_offset", newBoolean(init_offset))
                     .addKeywordArgument("sl_custom_names", sl_custom_names));
 
-                PythonObject stdout = newClass("stdout", newTuple(), newDict());
-                stdout.addNewFunction("write", Unrpyc.class, "write", "str");
+            PythonObject out_file = JavaPyInputStream.call();
+            out_file.setJavaAttribute("stream", stream);
 
-                decompiler.callAttribute("pprint", stdout/*out_file*/, ast, options);
+            decompiler.callAttribute("pprint", out_file, ast, options);
+        }
+        //with out_filename.open('w', encoding='utf-8') as out_file:
+            //if dump:
+                //astdump.pprint(out_file, ast, comparable=comparable, no_pyexpr=no_pyexpr)
+            //else:
+                /* FIXME: log=context.log_contents**/
 
         //context.set_state('ok')
     }
 
-    private static void write(PythonObject str) {
-//        Exception e = new Exception(str.toString());
-//        e.printStackTrace(System.out);
-        System.out.print(str);
-    }
-
-    
 }
