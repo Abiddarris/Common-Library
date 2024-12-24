@@ -770,7 +770,7 @@ public class Decompiler {
 
         private static void requireInit(PythonObject self) {
             if (!self.getAttribute("in_init").toBoolean()) {
-                self.getAttribute("missing_init", True);
+                self.setAttribute("missing_init", True);
             }
         }
 
