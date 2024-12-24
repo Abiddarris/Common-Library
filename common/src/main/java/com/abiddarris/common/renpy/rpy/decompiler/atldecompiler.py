@@ -37,7 +37,3 @@ class ATLDecompiler(DecompilerBase):
         self.indent()
         self.write(f'event {ast.name}')
 
-    @dispatch(renpy.atl.RawTime)
-    def print_atl_rawtime(self, ast):
-        self.indent()
-        self.write(f'time {ast.time}')
