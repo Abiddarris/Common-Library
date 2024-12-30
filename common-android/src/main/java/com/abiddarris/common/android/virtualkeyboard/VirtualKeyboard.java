@@ -28,9 +28,9 @@ import android.widget.ImageButton;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
-import com.abiddarris.common.databinding.LayoutVirtualKeyboardButtonSettingsBinding;
+import com.abiddarris.common.android.databinding.LayoutVirtualKeyboardButtonSettingsBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;

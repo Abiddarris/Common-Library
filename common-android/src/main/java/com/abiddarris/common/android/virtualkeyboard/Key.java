@@ -26,7 +26,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.Button;
 
-import com.abiddarris.common.databinding.LayoutButtonBinding;
+import com.abiddarris.common.android.databinding.LayoutButtonBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;

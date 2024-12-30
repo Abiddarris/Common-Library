@@ -21,7 +21,7 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import androidx.annotation.NonNull;
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogBuilder extends MaterialAlertDialogBuilder {

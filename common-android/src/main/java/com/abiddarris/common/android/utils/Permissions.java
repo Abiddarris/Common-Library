@@ -35,7 +35,7 @@ import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.util.function.Consumer;

@@ -30,13 +30,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
 import com.abiddarris.common.android.utils.TextListener;
 import com.abiddarris.common.android.validations.ValidationEngine;
 import com.abiddarris.common.android.validations.Validator;
-import com.abiddarris.common.databinding.DialogEditButtonBinding;
+import com.abiddarris.common.android.databinding.DialogEditButtonBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;

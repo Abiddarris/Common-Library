@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.abiddarris.common.android.about.AttributionAdapter.AttributionViewHolder;
-import com.abiddarris.common.databinding.LayoutAttributionBinding;
+import com.abiddarris.common.android.databinding.LayoutAttributionBinding;
 import java.util.function.BiConsumer;
 
 public class AttributionAdapter extends Adapter<AttributionViewHolder> {

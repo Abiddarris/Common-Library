@@ -29,8 +29,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
-import com.abiddarris.common.R;
-import com.abiddarris.common.databinding.LayoutVirtualKeyboardOptionsBinding;
+import com.abiddarris.common.android.R;
+import com.abiddarris.common.android.databinding.LayoutVirtualKeyboardOptionsBinding;
 import com.google.android.material.button.MaterialButton;
 
 public class VirtualKeyboardOptions extends LinearLayout {

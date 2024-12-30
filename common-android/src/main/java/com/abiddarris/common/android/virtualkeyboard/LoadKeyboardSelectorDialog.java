@@ -17,7 +17,7 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.SingleChoiceDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
