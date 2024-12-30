@@ -1,46 +1,8 @@
 plugins {
-    id 'com.android.library'
+    id 'java-library'
 }
 
-android {
-    namespace 'com.abiddarris.common'
-    compileSdk 33
-    buildToolsVersion "34.0.0"
-
-    defaultConfig {
-        multiDexEnabled true
-    
-        minSdk 14
-        targetSdk 33
-    }
-
-    compileOptions {
-        coreLibraryDesugaringEnabled true
-    
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    
-    testOptions {
-        unitTests.all {
-            useJUnitPlatform()
-        }
-    }
-
-    buildFeatures {
-        viewBinding true
-    }
-}
-
-dependencies {
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("com.google.android.material:material:1.9.0")
-    
-    //Note: Add test prefix when releasing the app
-    //This is neccessary for AndroidIDE to recognize the library
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }

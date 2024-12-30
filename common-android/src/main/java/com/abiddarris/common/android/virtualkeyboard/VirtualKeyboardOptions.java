@@ -19,14 +19,10 @@ import static android.widget.RelativeLayout.CENTER_HORIZONTAL;
 import static android.widget.RelativeLayout.LayoutParams.WRAP_CONTENT;
 
 import android.content.Context;
-import android.os.Build;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
 
 import com.abiddarris.common.android.R;
@@ -40,76 +36,37 @@ public class VirtualKeyboardOptions extends LinearLayout {
     private String defaultSaveName;
     private VirtualKeyboard keyboard;
 
-    public VirtualKeyboardOptions(Context context) {
+    public VirtualKeyboardOptions(Context context, VirtualKeyboard keyboard) {
         super(context);
 
-        init(context);
-    }
+        this.keyboard = keyboard;
 
-    public VirtualKeyboardOptions(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-
-        init(context);
-    }
-
-    public VirtualKeyboardOptions(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-
-        init(context);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public VirtualKeyboardOptions(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
-        init(context);
-    }
-
-    private void init(Context context) {
         binding = LayoutVirtualKeyboardOptionsBinding.inflate(LayoutInflater.from(context), this);
-        binding.edit.setOnClickListener(v -> {
-            if (keyboard == null) {
-                return;
-            }
-            keyboard.setEdit(!keyboard.isEdit());
+        binding.edit.setOnClickListener(
+                v -> {
+                    keyboard.setEdit(!keyboard.isEdit());
 
-            int visibility = keyboard.isEdit() ? VISIBLE : GONE;
+                    int visibility = keyboard.isEdit() ? VISIBLE : GONE;
 
-            binding.add.setVisibility(visibility);
-            binding.setting.setVisibility(visibility);
+                    binding.add.setVisibility(visibility);
+                    binding.setting.setVisibility(visibility);
 
-            ((MaterialButton)binding.edit).setIconResource(
-                    keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit);
-        });
+                    binding.edit.setImageResource(
+                            keyboard.isEdit() ? R.drawable.ic_check : R.drawable.ic_edit);
+                });
 
-        binding.add.setOnClickListener(v -> {
-            if (keyboard == null) {
-                return;
-            }
-            keyboard.addButton();
-        });
-        binding.setting.setOnClickListener(v -> {
-            var dialog = VirtualKeyboardSettingsDialog.newInstance(this);
-            dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
-        });
-    }
+        binding.add.setOnClickListener(v -> keyboard.addButton());
+        binding.setting.setOnClickListener(
+                v -> {
+                    var dialog = VirtualKeyboardSettingsDialog.newInstance(this);
+                    dialog.show(
+                            ((FragmentActivity) getContext()).getSupportFragmentManager(), null);
+                });
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+        var params = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        params.addRule(CENTER_HORIZONTAL);
 
-        if (!(getParent() instanceof VirtualKeyboard)) {
-            throw new IllegalStateException("VirtualKeyboardOptions only can be use inside VirtualKeyboard");
-        }
-
-        keyboard = (VirtualKeyboard)getParent();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
-        keyboard = null;
+        keyboard.addView(this, params);
     }
 
     public String getKeyboardFolderPath() {

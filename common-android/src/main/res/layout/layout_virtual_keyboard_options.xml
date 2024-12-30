@@ -1,29 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:ignore="ContentDescription">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Button
+    <ImageButton
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
-         android:id="@+id/edit"
-         app:icon="@drawable/ic_edit"
-         style="?attr/materialIconButtonFilledStyle"/>
+         android:src="@drawable/ic_edit"
+         android:id="@+id/edit" />
 
-    <Button
+    <ImageButton
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
+         android:src="@drawable/ic_add"
          android:id="@+id/add"
-         android:visibility="gone"
-         app:icon="@drawable/ic_add"
-         style="?attr/materialIconButtonFilledStyle"/>
+         android:visibility="gone" />
 
-    <Button
+    <ImageButton
          android:layout_height="wrap_content"
          android:layout_width="wrap_content"
+         android:src="@drawable/ic_setting"
          android:id="@+id/setting"
-         android:visibility="gone"
-         app:icon="@drawable/ic_setting"
-         style="?attr/materialIconButtonFilledStyle"/>
+         android:visibility="gone" />
 </merge>

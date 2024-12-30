@@ -16,10 +16,7 @@
 package com.abiddarris.common.android.dialogs;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.FragmentManager;
-
-import com.abiddarris.common.android.R;
+import com.abiddarris.common.R;
 import com.abiddarris.common.android.fragments.TextFragment;
 import com.abiddarris.common.utils.Exceptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -36,17 +33,6 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
      * Identifier for throwable that will be shown
      */
     private static final String THROWABLE = "throwable";
-
-    public static ExceptionDialog<Void> newExceptionDialog(Throwable throwable) {
-        ExceptionDialog<Void> dialog = new ExceptionDialog<>();
-        dialog.setThrowable(throwable);
-
-        return dialog;
-    }
-
-    public static void showExceptionDialog(FragmentManager manager, Throwable throwable) {
-        newExceptionDialog(throwable).show(manager, null);
-    }
     
     @Override
     protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
@@ -58,9 +44,7 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         if(savedInstanceState != null) return;
         
         var fragment = new TextFragment();
-        fragment.setHighlightLink(false);
-        fragment.setScrollableHorizontally(true);
-        
+
         updateUI(fragment);
         setFragment(fragment);
     }

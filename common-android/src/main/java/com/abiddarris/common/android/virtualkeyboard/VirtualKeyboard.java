@@ -15,33 +15,30 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.virtualkeyboard;
 
-import static android.view.MotionEvent.ACTION_UP;
+import android.widget.ImageButton;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYS;
 
 import android.content.Context;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import androidx.fragment.app.FragmentActivity;
 
 import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
-import com.abiddarris.common.android.databinding.LayoutVirtualKeyboardButtonSettingsBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class VirtualKeyboard extends MoveableViewsGroup {
     
-    private Button editButton;
+    private ImageButton editButton;
     private Key focus;
     private List<Key> keys = new ArrayList<>();
     private KeyListener listener;
@@ -49,33 +46,12 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public VirtualKeyboard(Context context) {
         super(context);
         
-        init(null);
-    }
-    
-    public VirtualKeyboard(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        
-        init(attrs);
-    }
-
-    public VirtualKeyboard(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-
-        init(attrs);
-    }
-
-    private void init(AttributeSet attrs) {
-        setClickable(true);
-
-        editButton = LayoutVirtualKeyboardButtonSettingsBinding.inflate(
-                LayoutInflater.from(getContext())
-        ).getRoot();
+        editButton = new ImageButton(getContext());
+        editButton.setVisibility(GONE);
+        editButton.setImageResource(R.drawable.ic_setting);
         editButton.setOnClickListener(v -> {
             var dialog = EditButtonDialog.newInstance(this);
-            dialog.showForResult(((FragmentActivity)getContext()).getSupportFragmentManager(), (res) -> {
-                if(focus != null)
-                    onFocusMoved();            
-            });
+            dialog.show(((FragmentActivity)getContext()).getSupportFragmentManager(), null);
         });
         
         addView(editButton);
@@ -94,23 +70,21 @@ public class VirtualKeyboard extends MoveableViewsGroup {
                     .findFirst()
                     .get();
             
-                onFocusMoved();
+                LayoutParams params = (LayoutParams)editButton.getLayoutParams();
+                params.height = view.getHeight();
+                
+                updateViewLayout(editButton, params);
+            
+                float x = view.getX() + view.getWidth();
+            
+                editButton.setVisibility(VISIBLE);
+                editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
+                editButton.setY(view.getY());
+                editButton.bringToFront();
         }
         return super.onChildTouch(view, event);
     }
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if(focus == null) return false;
-        switch(event.getAction()) {
-            case ACTION_UP :
-                onLostFocus();
-                return true;
-        }
-        return super.onTouchEvent(event);
-    }
-    
-    
+
     @Override
     public void setEdit(boolean edit) {
         super.setEdit(edit);
@@ -189,17 +163,12 @@ public class VirtualKeyboard extends MoveableViewsGroup {
     public void load(JSONObject keyboard) throws JSONException {
         clearKeys(); 
         
-        try {
-            JSONArray keys = keyboard.getJSONArray(KEYS);
-            for(int i = 0; i < keys.length(); ++i) {
-                Key key = addButton();
-                JSONObject keyJSON = keys.getJSONObject(i);
+        JSONArray keys = keyboard.getJSONArray(KEYS);
+        for(int i = 0; i < keys.length(); ++i) {
+        	Key key = addButton();
+            JSONObject keyJSON = keys.getJSONObject(i);
             
-                key.load(keyJSON);
-            }
-        } catch (Throwable e) {
-            clearKeys();
-            throw e;
+            key.load(keyJSON);
         }
     }
     
@@ -207,21 +176,5 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         focus = null;
             
         editButton.setVisibility(GONE);
-    }
-    
-    private void onFocusMoved() { 
-        View view = focus.getButton();
-        
-        LayoutParams params = (LayoutParams)editButton.getLayoutParams();
-        params.height = view.getHeight();
-                
-        updateViewLayout(editButton, params);
-            
-        float x = view.getX() + view.getWidth();
-            
-        editButton.setVisibility(VISIBLE);
-        editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
-        editButton.setY(view.getY());
-        editButton.bringToFront();
     }
 }
