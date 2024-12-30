@@ -17,6 +17,8 @@ package com.abiddarris.common.android.dialogs;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.FragmentManager;
+
 import com.abiddarris.common.R;
 import com.abiddarris.common.android.fragments.TextFragment;
 import com.abiddarris.common.utils.Exceptions;
@@ -40,6 +42,10 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         dialog.setThrowable(throwable);
 
         return dialog;
+    }
+
+    public static void showExceptionDialog(FragmentManager manager, Throwable throwable) {
+        newExceptionDialog(throwable).show(manager, null);
     }
     
     @Override
