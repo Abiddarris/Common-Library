@@ -19,7 +19,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.FragmentManager;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.fragments.TextFragment;
 import com.abiddarris.common.utils.Exceptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
