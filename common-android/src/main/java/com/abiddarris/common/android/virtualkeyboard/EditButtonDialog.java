@@ -19,8 +19,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import static com.abiddarris.common.android.utils.ScreenUtils.pixelToDp;
-import com.abiddarris.common.android.validations.ValidationEngine;
-import com.abiddarris.common.android.validations.Validator;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.BOTTOM;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.LEFT;
 import static com.abiddarris.common.android.virtualkeyboard.Alignment.RIGHT;
@@ -32,11 +30,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
 import com.abiddarris.common.android.utils.TextListener;
-import com.abiddarris.common.databinding.DialogEditButtonBinding;
+import com.abiddarris.common.android.validations.ValidationEngine;
+import com.abiddarris.common.android.validations.Validator;
+import com.abiddarris.common.android.databinding.DialogEditButtonBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
@@ -95,7 +95,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         alignmentSpinner.setText(alignmentId);
         alignmentSpinner.setSimpleItems(R.array.alignment);
         alignmentSpinner.setOnItemClickListener((adapterView, view, index, id) -> alignmentIndex = index);
-        
+
         setValue(binding.marginX, alignment.getMarginX());
         setValue(binding.marginY, alignment.getMarginY());
         setValidation(binding.marginX, (text) -> {
@@ -115,7 +115,7 @@ public class EditButtonDialog extends BaseDialogFragment<Void> {
         
         Size size = key.getSize();
         size.calculate();
-        
+
         int sizeId = getSizeId(size.getType());
         
         setValue(binding.width, size.getWidth());

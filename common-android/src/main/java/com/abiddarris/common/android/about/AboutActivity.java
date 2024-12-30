@@ -20,9 +20,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import com.abiddarris.common.R;
-import com.abiddarris.common.databinding.ActivityAboutBinding;
+
+import com.abiddarris.common.android.R;
+import com.abiddarris.common.android.databinding.ActivityAboutBinding;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -21,7 +21,7 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 
 public class KeySpinner extends ArrayAdapter<Keycode> {
 

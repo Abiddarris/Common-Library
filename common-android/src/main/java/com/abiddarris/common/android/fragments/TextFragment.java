@@ -23,7 +23,7 @@ import android.view.ViewGroup;
 import androidx.annotation.MainThread;
 import androidx.fragment.app.Fragment;
 
-import com.abiddarris.common.databinding.FragmentTextBinding;
+import com.abiddarris.common.android.databinding.FragmentTextBinding;
 
 /**
  * {@code Fragment} that contains {@code TextView} inside {@code ScrollView}

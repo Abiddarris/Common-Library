@@ -22,8 +22,8 @@ import android.view.ViewGroup;
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.abiddarris.common.R;
-import com.abiddarris.common.databinding.DialogFragmentBinding;
+import com.abiddarris.common.android.R;
+import com.abiddarris.common.android.databinding.DialogFragmentBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**

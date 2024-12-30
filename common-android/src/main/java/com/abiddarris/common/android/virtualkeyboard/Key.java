@@ -20,7 +20,6 @@ import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.KEYCODE;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.NAME;
 import static com.abiddarris.common.android.virtualkeyboard.JSONKeys.SIZE;
 import static com.abiddarris.common.android.virtualkeyboard.Keycode.valueOf;
-
 import static org.json.JSONObject.NULL;
 
 import android.content.Context;

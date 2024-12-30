@@ -16,7 +16,10 @@
 package com.abiddarris.common.android.dialogs;
 
 import android.os.Bundle;
-import com.abiddarris.common.R;
+
+import androidx.fragment.app.FragmentManager;
+
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.fragments.TextFragment;
 import com.abiddarris.common.utils.Exceptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -44,7 +47,7 @@ public class ExceptionDialog<Result> extends FragmentDialog<Result> {
         if(savedInstanceState != null) return;
         
         var fragment = new TextFragment();
-       
+
         updateUI(fragment);
         setFragment(fragment);
     }

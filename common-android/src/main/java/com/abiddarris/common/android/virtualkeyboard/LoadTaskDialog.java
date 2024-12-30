@@ -17,18 +17,17 @@ package com.abiddarris.common.android.virtualkeyboard;
 
 import android.os.Bundle;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.ProgressDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class SaveTaskDialog extends ProgressDialog {
+public class LoadTaskDialog extends ProgressDialog{
     
     @Override
     public void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
         setCancelable(false);
-        setMessage(getString(R.string.saving));
+        setMessage(getString(R.string.loading));
         
-        builder.setTitle(R.string.save);
+        builder.setTitle(R.string.load);
     }
-    
 }

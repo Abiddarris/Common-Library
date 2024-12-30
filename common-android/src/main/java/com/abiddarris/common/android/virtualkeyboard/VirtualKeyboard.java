@@ -25,7 +25,7 @@ import android.widget.Button;
 
 import androidx.fragment.app.FragmentActivity;
 
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.view.MoveableViewsGroup;
 
 import org.json.JSONArray;
@@ -72,11 +72,11 @@ public class VirtualKeyboard extends MoveableViewsGroup {
             
                 LayoutParams params = (LayoutParams)editButton.getLayoutParams();
                 params.height = view.getHeight();
-                
+
                 updateViewLayout(editButton, params);
-            
+
                 float x = view.getX() + view.getWidth();
-            
+
                 editButton.setVisibility(VISIBLE);
                 editButton.setX(x <= getWidth() - editButton.getWidth() ? x : view.getX() - editButton.getWidth());
                 editButton.setY(view.getY());
@@ -84,7 +84,7 @@ public class VirtualKeyboard extends MoveableViewsGroup {
         }
         return super.onChildTouch(view, event);
     }
-    
+
     @Override
     public void setEdit(boolean edit) {
         super.setEdit(edit);

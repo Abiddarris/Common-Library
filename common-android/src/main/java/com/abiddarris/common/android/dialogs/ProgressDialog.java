@@ -21,7 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import androidx.appcompat.app.AlertDialog;
-import com.abiddarris.common.databinding.DialogProgressBinding;
+import com.abiddarris.common.android.databinding.DialogProgressBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 /**

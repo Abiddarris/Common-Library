@@ -19,7 +19,7 @@ package com.abiddarris.common.android.virtualkeyboard;
 import android.os.Bundle;
 
 import android.widget.Toast;
-import com.abiddarris.common.R;
+import com.abiddarris.common.android.R;
 import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.abiddarris.common.android.tasks.TaskViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;

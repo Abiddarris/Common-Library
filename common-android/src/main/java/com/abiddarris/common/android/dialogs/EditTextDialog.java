@@ -19,9 +19,12 @@ import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+
 import androidx.appcompat.app.AlertDialog;
-import com.abiddarris.common.databinding.DialogEditTextBinding;
+
+import com.abiddarris.common.android.databinding.DialogEditTextBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.Optional;
 
 public class EditTextDialog extends BaseDialogFragment<String> {
