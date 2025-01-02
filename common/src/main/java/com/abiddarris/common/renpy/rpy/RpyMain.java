@@ -11,8 +11,7 @@ public class RpyMain {
         try {
             Rpy.initLoader();
 
-            Unrpyc.decompile_rpyc(new File("/home/abid/Programming/just yuri/" + args[0] + ".rpyc"), new Unrpyc.Context(), false,
-                    false, false, false, false, None, true, None);
+            RpyDecompiler.decompile(new File("/home/abid/Programming/just yuri/splash.rpyc"), false, true, None);
         } finally {
             System.err.println(System.currentTimeMillis() - startTime);
         }
