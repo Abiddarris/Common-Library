@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Commmon Library"
 
-include(":common")
+include(":common-android")
+include ':common'
