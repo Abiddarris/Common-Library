@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024 - 2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class Decompiler {
 
             decompiler.fromImport("decompiler.renpycompat", "renpy");
             decompiler.fromImport("io", "StringIO");
-            decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit");
+            decompiler.fromImport("decompiler.unrpyccompat", "DecompilerPrintInit", "DecompilerPrintInit1");
 
             decompiler.importModule("decompiler.sl2decompiler");
             decompiler.fromImport("decompiler", "atldecompiler");
