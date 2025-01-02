@@ -290,7 +290,7 @@ public class Unrpyc {
             //else:
                 /* FIXME: log=context.log_contents**/
 
-        //context.set_state('ok')
+        context.setState("ok");
     }
 
 }
