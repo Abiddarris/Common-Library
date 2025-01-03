@@ -15,6 +15,9 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.handlers;
 
+import static android.os.Looper.getMainLooper;
+import static android.os.Looper.myLooper;
+
 import android.os.Handler;
 import android.os.Looper;
 
@@ -23,6 +26,10 @@ public final class MainThreads {
     private static Handler handler;
     
     private MainThreads() {
+    }
+
+    public static boolean isMainThread() {
+        return myLooper() == getMainLooper();
     }
     
     public static boolean post(Runnable runnable) {
