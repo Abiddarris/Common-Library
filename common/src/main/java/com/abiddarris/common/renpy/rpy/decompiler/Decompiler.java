@@ -69,6 +69,7 @@ import static com.abiddarris.common.renpy.internal.core.JFunctions.getattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.getattrJB;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.hasattr;
 import static com.abiddarris.common.renpy.internal.core.JFunctions.jIsinstance;
+import static com.abiddarris.common.renpy.internal.core.Keywords.or;
 import static com.abiddarris.common.renpy.internal.core.Slice.newSlice;
 import static com.abiddarris.common.renpy.internal.core.Types.type;
 import static com.abiddarris.common.renpy.internal.core.functions.Functions.newFunction;
@@ -253,6 +254,9 @@ public class Decompiler {
             definer.defineFunction("print_style",
                     dispatch.call(getNestedAttribute(decompiler, "renpy.ast.Style")),
                     DecompilerImpl::printStyle, "self", "ast");
+            definer.defineFunction("print_translatestring",
+                    dispatch.call(getNestedAttribute(decompiler, "renpy.ast.TranslateString")),
+                    DecompilerImpl::printTranslatestring, "self", "ast");
 
             // Screens
             definer.defineFunction("print_screen",
@@ -1323,6 +1327,34 @@ public class Decompiler {
             }
         }
 
+    private static void
+    printTranslatestring(PythonObject self, PythonObject ast) {
+        self.callAttribute("require_init");
+        // Was the last node a translatestrings node?
+        if (!(self.getAttributeJB("index")
+                && jIsinstance(self.getAttributeItem("block", self.getAttribute("index").subtract(1)), decompiler.getNestedAttribute("renpy.ast.TranslateString"))
+                && self.getAttributeItem("block", self.getAttribute("index").subtract(1)).getAttribute("language").equals(ast.getAttribute("language")))) {
+            self.callAttribute("indent");
+            self.callAttribute("write", format("translate {0} strings:",
+                    or(ast.getAttribute("language"), newString("None"))));
+        }
+
+        // TranslateString's linenumber refers to the line with "old", not to the
+        // line with "translate ... strings: (above)"
+        with(self.callAttribute("increase_indent"), () -> {
+            self.callAttribute("advance_to_line", ast.getAttribute("linenumber"));
+            self.callAttribute("indent");
+            self.callAttribute("write", format("old \"{0}\"", decompiler.callAttribute("string_escape", ast.getAttribute("old"))));
+
+            // newlock attribute since 6.99
+            if (hasattr(ast, "newloc")) {
+                self.callAttribute("advance_to_line", ast.getAttributeItem("newloc", 1));
+            }
+
+            self.callAttribute("indent");
+            self.callAttribute("write", format("new \"{0}\"", decompiler.callAttribute("string_escape", ast.getAttribute("new"))));
+        });
+    }
 
         private static void
         printScreen(PythonObject self, PythonObject ast) {
