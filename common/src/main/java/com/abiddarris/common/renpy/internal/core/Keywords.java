@@ -23,7 +23,7 @@ import com.abiddarris.common.renpy.internal.PythonObject;
 public class Keywords {
 
     public static PythonObject or(PythonObject p1, PythonObject p2) {
-        return p1.toBoolean() ? True : p2.toBoolean() ? True : False;
+        return p1.toBoolean() ? p1 : p2.toBoolean() ? p2 : False;
     }
 
 }
