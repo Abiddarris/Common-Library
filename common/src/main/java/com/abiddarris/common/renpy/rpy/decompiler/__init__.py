@@ -69,28 +69,6 @@ class Decompiler(DecompilerBase):
         # an implicitly added node which does nothing...
         pass
 
-    @dispatch(renpy.ast.TranslateString)
-    def print_translatestring(self, ast):
-        self.require_init()
-        # Was the last node a translatestrings node?
-        if not (self.index
-                and isinstance(self.block[self.index - 1], renpy.ast.TranslateString)
-                and self.block[self.index - 1].language == ast.language):
-            self.indent()
-            self.write(f'translate {ast.language or "None"} strings:')
-
-        # TranslateString's linenumber refers to the line with "old", not to the
-        # line with "translate ... strings: (above)"
-        with self.increase_indent():
-            self.advance_to_line(ast.linenumber)
-            self.indent()
-            self.write(f'old "{string_escape(ast.old)}"')
-            # newlock attribute since 6.99
-            if hasattr(ast, "newloc"):
-                self.advance_to_line(ast.newloc[1])
-            self.indent()
-            self.write(f'new "{string_escape(ast.new)}"')
-
     @dispatch(renpy.ast.TranslateBlock)
     @dispatch(renpy.ast.TranslateEarlyBlock)
     def print_translateblock(self, ast):
