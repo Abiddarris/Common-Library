@@ -20,7 +20,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+
 import com.abiddarris.common.android.databinding.DialogProgressBinding;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -28,36 +31,66 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
  * {@code Dialog} that show indetermine progress
  */
 public class ProgressDialog extends BaseDialogFragment<Void> {
-    
+
     public static final String MESSAGE = "message";
-    
+    private static final String TITLE = "title";
+
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
-    
+
+    public static ProgressDialog newProgressDialog(String title) {
+        ProgressDialog dialog = new ProgressDialog();
+        dialog.setTitle(title);
+
+        return dialog;
+    }
+
     private DialogProgressBinding ui;
-    
+
     @Override
     protected MaterialAlertDialogBuilder newDialogBuilder() {
         return new ProgressDialogBuilder(getContext());
     }
-    
+
+    @Override
+    protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
+        super.onCreateDialog(builder, savedInstanceState);
+
+        if (getTitle() != null) {
+            builder.setTitle(getTitle());
+        }
+    }
+
     @Override
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
         super.onDialogCreated(dialog, savedInstanceState);
-        
+
         updateUI();
     }
-    
+
     public void setMessage(String message) {
         saveVariable(MESSAGE, message);
-        
+
         if(ui != null) {
             HANDLER.post(() -> updateUI());
         }
     }
+
     public String getMessage() {
         return getVariable(MESSAGE);
     }
-    
+
+    private void setTitle(@Nullable String title) {
+        if (title == null) {
+            title = "";
+        }
+        saveVariable(TITLE, title);
+    }
+
+    @Nullable
+    private String getTitle() {
+        return getVariable(TITLE, null);
+    }
+
     private void updateUI() {
         ui.message.setText(getMessage());
     }
