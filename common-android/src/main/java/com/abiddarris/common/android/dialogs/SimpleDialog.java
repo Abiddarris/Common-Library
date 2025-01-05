@@ -67,4 +67,8 @@ public class SimpleDialog extends BaseDialogFragment<Void> {
     public static void show(FragmentManager manager, String title, String message) {
         newSimpleDialog(title, message).show(manager, null);
     }
+
+    public static void showForResult(FragmentManager manager, String title, String message, Runnable runnable) {
+        newSimpleDialog(title, message).showForResult(manager, (ignored) -> runnable.run());
+    }
 }
