@@ -96,7 +96,7 @@ public class RememberedOpenDocumentContract extends ActivityResultContract<Void,
     @Override
     public final List<Uri> parseResult(int code, @Nullable Intent intent) {
         if (code != RESULT_OK || intent == null) {
-            return null;
+            return new ArrayList<>();
         }
 
         Set<Uri> uris = new LinkedHashSet<>();
