@@ -27,7 +27,7 @@ public class RpyMain {
 
     private void realMain(String[] args) throws IOException, InterruptedException {
         Rpy.initLoader();
-        addDirectoryToProcessed(new File("/home/abid/Desktop/renpy2/"));
+        addDirectoryToProcessed(new File("/home/abid/Programming/renpy2"));
 
         for (File file : filesToProcess) {
             String extension = getDecompiledExtension(file);
