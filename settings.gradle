@@ -18,4 +18,5 @@ rootProject.name = "Commmon Library"
 
 include(":common-android")
 include ':common'
-include ':terminal'
+include ':python3'
+include ':unrpyc'
