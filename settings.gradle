@@ -18,3 +18,4 @@ rootProject.name = "Commmon Library"
 
 include(":common-android")
 include ':common'
+include ':terminal'
