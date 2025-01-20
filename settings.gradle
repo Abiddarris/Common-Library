@@ -20,3 +20,4 @@ include(":common-android")
 include ':common'
 include ':python3'
 include ':unrpyc'
+include ':terminal'
