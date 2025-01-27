@@ -165,4 +165,20 @@ public final class Files {
         }
     }
 
+    /**
+     * Utility method to ensure that the given {@code File} does not exist.
+     * If the file exists, an {@code IOException} is thrown with the provided message.
+     *
+     * @param file The file to check for non-existence.
+     * @param message The message to include in the exception if the file exists.
+     * @throws IOException if the file exists.
+     * @since 1.0
+     */
+    public static void requireNonExists(File file, String message) throws IOException {
+        if (file.exists()) {
+            throw new IOException(message);
+        }
+    }
+
+
 }
