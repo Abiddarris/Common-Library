@@ -15,11 +15,16 @@
  ***********************************************************************************/
 package com.abiddarris.common.files;
 
+import static com.abiddarris.common.stream.InputStreams.writeAllTo;
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -217,6 +222,51 @@ public final class Files {
         if (!folder.mkdirs()) {
             throw new IOException(String.format("Cannot make directory : %s", folder));
         }
+    }
+
+    /**
+     * Copies the contents of a source directory or file to a destination.
+     *
+     * <p>If the source is a directory, it recursively copies all its contents, including subdirectories, to the destination.
+     * If the destination already exists, an exception will be thrown.
+     *
+     * @param src the source {@link File} (can be a file or directory) to copy.
+     * @param dest the destination {@link File} where the contents of the source will be copied.
+     * @throws IOException if an I/O error occurs during copying, or if the source doesn't exist or the destination already exists.
+     */
+    public static void copy(File src, File dest) throws IOException {
+        requireExists(src, "src does not exist");
+        requireNonExists(dest, "dest exists");
+
+        traverse(src, file -> {
+            File destination = file.equals(src) ? dest : new File(dest, file.getPath().substring(src.getPath().length()));
+            if (file.isDirectory()) {
+                makeDirectories(destination);
+                return true;
+            }
+
+            copyFile(file, destination);
+            return true;
+        });
+    }
+
+    private static void copyFile(File src, File dest) throws IOException {
+        try (InputStream in = new FileInputStream(src);
+             OutputStream out = new FileOutputStream(dest)) {
+            writeAllTo(in, out);
+        }
+    }
+
+    public static void move(File src, File dest) throws IOException {
+        requireExists(src, "src does not exist");
+        requireNonExists(dest,"dest exist");
+
+        if (src.renameTo(dest)) {
+            return;
+        }
+
+        copy(src, dest);
+
     }
 
 }
