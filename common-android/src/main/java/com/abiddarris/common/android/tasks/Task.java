@@ -56,7 +56,11 @@ public abstract class Task implements BaseRunnable {
         }
         return applicationContext;
     }
-    
+
+    public TaskViewModel getModel() {
+        return model;
+    }
+
     @Nullable
     @SuppressWarnings("unchecked")
     public <T extends AppCompatActivity> T getActivity() {
