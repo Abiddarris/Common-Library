@@ -128,7 +128,11 @@ public final class Files {
         }
 
         FileFilter filter0 = filter;
-        traverseRecursively(file, (f) -> filter0.accept(f) && result.add(f));
+        try {
+            traverseRecursively(file, (f) -> filter0.accept(f) && result.add(f));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -143,14 +147,14 @@ public final class Files {
      * @throws NullPointerException If {@code src} or {@code visitor} is {@code null}.
      * @since 1.0
      */
-    private static void traverse(File src, Visitor visitor) {
+    private static void traverse(File src, Visitor visitor) throws IOException {
         checkNonNull(src, "src cannot be null");
         checkNonNull(visitor, "visitor cannot be null");
 
         traverseRecursively(src, visitor);
     }
 
-    private static void traverseRecursively(File src, Visitor visitor) {
+    private static void traverseRecursively(File src, Visitor visitor) throws IOException {
         boolean continue0 = visitor.onVisit(src);
         if(!continue0) {
             return;
@@ -214,6 +218,5 @@ public final class Files {
             throw new IOException(String.format("Cannot make directory : %s", folder));
         }
     }
-
 
 }

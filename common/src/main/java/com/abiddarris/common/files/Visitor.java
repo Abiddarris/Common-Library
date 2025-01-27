@@ -1,6 +1,7 @@
 package com.abiddarris.common.files;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Interface for visiting files and directories during a traversal.
@@ -23,12 +24,13 @@ public interface Visitor {
      * <p>This method is invoked for each {@link File} encountered while traversing
      * a directory structure. If this method returns {@code false}, the traversal
      * will stop visiting that file or directory, and any subdirectories under it
-     * will not be visited.
+     * will not be visited. If this method thrown an {@link IOException}, the traversal
+     * will stop visiting all directories and files.
      *
      * @param src The file or directory being visited.
      * @return {@code true} to continue the traversal, or {@code false} to stop
      *         traversing this file/directory and its subdirectories.
      * @since 1.0
      */
-    boolean onVisit(File src);
+    boolean onVisit(File src) throws IOException;
 }
