@@ -18,9 +18,11 @@ package com.abiddarris.common.stream;
 import static java.util.Arrays.copyOf;
 
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 
 /**
  * Class that provides utilities for {@code InputStream}.
@@ -105,6 +107,25 @@ public final class InputStreams {
         }
             
         return output.toByteArray();
+    }
+
+    /**
+     * Reads all bytes from given {@code InputStream} as a string.
+     *
+     * @param reader {@code Reader} to read
+     * @return String contains the data
+     * @throws IOException if I/O error occurs while reading the stream
+     * @since 1.0
+     */
+    public static String readAll(Reader reader) throws IOException {
+        CharArrayWriter output = new CharArrayWriter();
+        char[] buf = new char[1024 * 8];
+        int len;
+        while((len = reader.read(buf)) != -1) {
+            output.write(buf, 0, len);
+        }
+
+        return output.toString();
     }
     
     /**
