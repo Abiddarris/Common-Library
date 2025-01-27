@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Class that provides utilities for files
@@ -257,6 +258,49 @@ public final class Files {
         }
     }
 
+    /**
+     * Deletes the specified file or directory and its contents.
+     *
+     * <p>If the provided {@link File} is a directory, the method recursively deletes
+     * all files and subdirectories within the directory before deleting the directory itself.
+     * If the file does not exist, an {@link IOException} will be thrown.
+     *
+     * <p>The deletion of each file or directory is attempted using the {@link File#delete()} method.
+     * If any deletion fails, an {@link IOException} is thrown.
+     *
+     * <p>Important: This method does not handle file system-specific issues such as permissions.
+     * It assumes that the current process has the appropriate permissions to delete the files and directories.
+     *
+     * @param file the {@link File} to delete (can be a file or directory).
+     * @throws IOException if an I/O error occurs during the deletion process, or if the file does not exist.
+     * @throws NullPointerException if the provided {@code file} is {@code null}.
+     */
+    public static void delete(File file) throws IOException {
+        checkNonNull(file, "file cannot be null");
+        requireExists(file, String.format("Cannot delete non exist file : %s", file));
+
+        List<File> directories = new ArrayList<>();
+        Visitor deleteOrThrow = (f) -> {
+            if (!f.delete()) {
+                throw new IOException("Cannot delete " + f);
+            }
+            return true;
+        };
+
+        traverse(file, (f) -> {
+            if (f.isDirectory()) {
+                directories.add(f);
+                return true;
+            }
+
+            return deleteOrThrow.onVisit(f);
+        });
+
+        for (int i = directories.size() - 1; i >= 0; i--) {
+            deleteOrThrow.onVisit(directories.get(i));
+        }
+    }
+
     public static void move(File src, File dest) throws IOException {
         requireExists(src, "src does not exist");
         requireNonExists(dest,"dest exist");
@@ -266,7 +310,7 @@ public final class Files {
         }
 
         copy(src, dest);
-
+        delete(src);
     }
 
 }
