@@ -76,21 +76,22 @@ public final class Files {
         return new File(
             file.getParent(), getNameWithoutExtension(file) + extension);
     }
-    
+
     /**
-     * Returns all files and folders from a directory/file
+     * Returns all files and folders from a directory/file.
      *
-     * <p>If {@code file} is file, This method will add the file.
-     * If {@code file} is directory, This method will add the directory
+     * <p>If {@code file} is a file, this method will add the file.
+     * If {@code file} is a directory, this method will add the directory
      * and its children.
-     * 
-     * <p>Before the file/directory is added to list, {@code filter} is called
-     * to determined if this file/directory should be added to the list
      *
-     * @param file Directory/file to add
-     * @param filter Filter that will be called before adding files to the list, May be {@code null}
-     * @return {@code List} containing all files and folders from a directory/file
-     * @throws NullPointerException if {@code file} is {@code null}.
+     * <p>Before the file/directory is added to the list, {@code filter} is called
+     * to determine if this file/directory should be added to the list. If the {@code filter} is {@code null},
+     * all files and directories are added by default.
+     *
+     * @param file The directory or file to add to the list.
+     * @param filter The filter to apply before adding files or directories to the list. May be {@code null}.
+     * @return A {@code List} containing all files and folders from the provided directory/file.
+     * @throws NullPointerException If {@code file} is {@code null}.
      * @since 1.0
      */
     public static List<File> getFilesTree(File file, FileFilter filter) {
@@ -100,46 +101,68 @@ public final class Files {
         
         return result;
     }
-    
+
     /**
-     * Get all files and folders from a directory/file and add them to 
-     * given list.
+     * Get all files and folders from a directory/file and add them to the given list.
      *
-     * <p>If {@code file} is file, This method will add the file.
-     * If {@code file} is directory, This method will add the directory
-     * and its children.
-     * 
-     * <p>Before the file/directory is added to list, {@code filter} is called
-     * to determined if this file/directory should be added to the list
+     * <p>If {@code file} is a file, this method will add the file to the list.
+     * If {@code file} is a directory, this method will add the directory and its children to the list.
      *
-     * @param result List to store the result
-     * @param file Directory/file to add
-     * @param filter Filter that will be called before adding files to the list, May be {@code null}
-     * @throws NullPointerException if {@code file} is {@code null} or {@code result} is {@code null}
+     * <p>Before the file/directory is added to the list, {@code filter} is called
+     * to determine if the file/directory should be added. If the {@code filter} is {@code null},
+     * all files and directories are added by default.
+     *
+     * @param result The list to store the result of the traversal. It must not be {@code null}.
+     * @param file The directory or file to add to the list. It must not be {@code null}.
+     * @param filter The filter to apply before adding files or directories to the list. May be {@code null}.
+     * @throws NullPointerException If {@code result} or {@code file} is {@code null}.
      * @since 1.0
      */
     public static void getFilesTree(List<File> result, File file, FileFilter filter) {
         checkNonNull(result);
         checkNonNull(file);
-        
-        getFilesTreeInternal(result, file, filter != null ? filter : (f) -> true);
+
+        if (filter == null) {
+            filter = (f) -> true;
+        }
+
+        FileFilter filter0 = filter;
+        traverseRecursively(file, (f) -> filter0.accept(f) && result.add(f));
     }
-    
-    private static void getFilesTreeInternal(List<File> result, File file, FileFilter filter) {
-        boolean accept = filter.accept(file);
-        if(!accept) {
+
+    /**
+     * Traverses a file or directory recursively and applies the given visitor.
+     *
+     * <p>The traversal will visit the file/directory specified by {@code src}, then recursively visit
+     * its children if it is a directory. The visitor's {@code onVisit} method will be called for each file/directory.
+     * If the visitor's {@code onVisit} method returns {@code false}, the traversal will stop at that file or directory.
+     *
+     * @param src The source file or directory to start the traversal from. It must not be {@code null}.
+     * @param visitor The visitor that will be called for each file/directory. It must not be {@code null}.
+     * @throws NullPointerException If {@code src} or {@code visitor} is {@code null}.
+     * @since 1.0
+     */
+    private static void traverse(File src, Visitor visitor) {
+        checkNonNull(src, "src cannot be null");
+        checkNonNull(visitor, "visitor cannot be null");
+
+        traverseRecursively(src, visitor);
+    }
+
+    private static void traverseRecursively(File src, Visitor visitor) {
+        boolean continue0 = visitor.onVisit(src);
+        if(!continue0) {
             return;
         }
-        
-        result.add(file);
-        
-        File[] children = file.listFiles();
+
+        File[] children = src.listFiles();
         if(children == null) {
             return;
         }
-        
+
         for(var child : children) {
-        	getFilesTreeInternal(result, child, filter);
+            traverseRecursively(child, visitor);
         }
     }
+
 }
