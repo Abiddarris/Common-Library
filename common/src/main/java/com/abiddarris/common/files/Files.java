@@ -196,5 +196,24 @@ public final class Files {
         }
     }
 
+    /**
+     * Creates the specified directory, including its parent directories if it does not exist.
+     *
+     * <p>If a file or directory already exists at the specified path, an {@link IOException} is thrown.
+     *
+     * @param folder the {@link File} object representing the directory to be created.
+     * @throws IOException if the folder already exists as a file, or if the directory cannot be created
+     *                     for any other reason.
+     * @throws NullPointerException if the {@code folder} parameter is {@code null}.
+     */
+    public static void makeDirectories(File folder) throws IOException {
+        checkNonNull(folder, "folder cannot be null");
+        requireNonExists(folder, folder + " already exist");
+
+        if (!folder.mkdirs()) {
+            throw new IOException(String.format("Cannot make directory : %s", folder));
+        }
+    }
+
 
 }
