@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Class that provides utilities for files
@@ -301,6 +300,21 @@ public final class Files {
         }
     }
 
+    /**
+     * Moves a file or directory from the source location to the destination.
+     *
+     * <p>This method first attempts to move the file or directory by renaming it using the {@link File#renameTo(File)} method.
+     * If the move operation fails (likely due to the source and destination being on different file systems), it will fall back to copying
+     * the file or directory to the destination and then deleting the original.
+     *
+     * <p>If the source does not exist, or if the destination already exists, an {@link IOException} will be thrown.
+     * If the file or directory cannot be renamed, copied, or deleted, an exception will be thrown.
+     *
+     * @param src the source {@link File} (can be a file or directory) to move.
+     * @param dest the destination {@link File} where the source will be moved to.
+     * @throws IOException if an I/O error occurs during the move operation, or if the source does not exist,
+     *         or the destination already exists.
+     */
     public static void move(File src, File dest) throws IOException {
         requireExists(src, "src does not exist");
         requireNonExists(dest,"dest exist");
