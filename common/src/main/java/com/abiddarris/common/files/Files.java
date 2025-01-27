@@ -19,6 +19,7 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -176,6 +177,21 @@ public final class Files {
      */
     public static void requireNonExists(File file, String message) throws IOException {
         if (file.exists()) {
+            throw new IOException(message);
+        }
+    }
+
+    /**
+     * Utility method to ensure that the given {@code File} exists.
+     * If the file does not exist, an {@code IOException} is thrown with the provided message.
+     *
+     * @param file The file to check for existence.
+     * @param message The message to include in the exception if the file does not exist.
+     * @throws IOException if the file does not exist.
+     * @since 1.0
+     */
+    public static void requireExists(File file, String message) throws IOException {
+        if (!file.exists()) {
             throw new IOException(message);
         }
     }
