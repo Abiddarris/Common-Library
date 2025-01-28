@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.core;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import static com.abiddarris.python3.Builtins.False;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+import com.abiddarris.python3.PythonObject;
+
+public class Keywords {
+
+    public static PythonObject or(PythonObject p1, PythonObject p2) {
+        return p1.toBoolean() ? p1 : p2.toBoolean() ? p2 : False;
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+
 }

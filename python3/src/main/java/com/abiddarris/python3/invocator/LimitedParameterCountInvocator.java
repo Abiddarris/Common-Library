@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.invocator;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import com.abiddarris.python3.signature.PythonSignature;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
+interface LimitedParameterCountInvocator extends Invocator {
+
+    int getParameterCount();
+
+    default void validateTarget(Object target, PythonSignature signature) {
+        int paramaterSize = signature.getParamaterSize();
+        int parameterCount = getParameterCount();
+
+        if (paramaterSize != parameterCount) {
+            throw new IllegalArgumentException(String.format("Mismatch signature (expected %s, actual %s", parameterCount, paramaterSize));
         }
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+
 }

@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import static com.abiddarris.python3.Python.newList;
+import static com.abiddarris.python3.PythonObject.newDict;
+import static com.abiddarris.python3.PythonObject.newString;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
-    }
+import com.abiddarris.common.annotations.PrivateApi;
+
+@PrivateApi
+public class Sys {
+    static final int maxsize = Integer.MAX_VALUE;
     
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
+    public static PythonObject sys;
     
+    static void init() {
+        sys = Types.ModuleType.call(newString("sys"));
+        sys.setAttribute("modules", newDict(newString("sys"), sys));
+        sys.setAttribute("meta_path", newList());
+        
+        ImportLib.init();
+        Types.mountModule(sys.getAttribute("modules"));
+    }
 }

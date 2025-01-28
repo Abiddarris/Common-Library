@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.loader;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import static com.abiddarris.python3.Python.createPackage;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
-    }
+import com.abiddarris.python3.PythonObject;
+
+public class PackageModuleFactory implements ModuleFactory {
     
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
+    public static final PackageModuleFactory INSTANCE = new PackageModuleFactory();
     
+    @Override
+    public PythonObject createModule(String name) {
+        return createPackage(name);
+    }
 }

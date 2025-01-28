@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.trycatch;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+class StateValidator {
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
+    private boolean invalid;
+
+    void invalidate() {
+        invalid = true;
+    }
+
+    void checkValid() {
+        if (invalid) {
+            throw new IllegalStateException("Attempt to call invalid object");
         }
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+
 }

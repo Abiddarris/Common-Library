@@ -13,22 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.attributes;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
-
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
-    }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+public interface Event {
 }

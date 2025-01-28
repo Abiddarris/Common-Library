@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3;
 
-public final class Preconditions {
+import com.abiddarris.python3.core.classes.Classes;
+import com.abiddarris.python3.attributes.AttributeHolder;
+
+class Bootstrap {
     
-    private Preconditions() {}
-
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+    static PythonObject newClass(PythonObject cls, PythonObject args) {
+        return newClass(cls, args, null);
     }
     
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
+    static PythonObject newClass(PythonObject cls, PythonObject args, AttributeHolder attributeHolder) {
+        return Classes.newClass(cls, args, attributeHolder);
     }
     
 }

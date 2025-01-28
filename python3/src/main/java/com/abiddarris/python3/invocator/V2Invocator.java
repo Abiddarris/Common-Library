@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.invocator;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import com.abiddarris.python3.PythonObject;
+import com.abiddarris.python3.core.functions.V2Function;
+import com.abiddarris.python3.signature.PythonSignature;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
+public class V2Invocator implements Invocator {
+
+    public static final V2Invocator INSTANCE = new V2Invocator();
+
+    private V2Invocator() {}
+
+    @Override
+    public PythonObject invoke(Object target, PythonObject[] args) {
+        ((V2Function)target).execute(args[0], args[1]);
+
+        return null;
+    }
+
+    @Override
+    public void validateTarget(Object target, PythonSignature signature) {
+        if (!(target instanceof V2Function)) {
+            throwInvalidTargetException(target);
         }
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
 }

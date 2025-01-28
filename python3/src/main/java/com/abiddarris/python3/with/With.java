@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.with;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import com.abiddarris.python3.PythonObject;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
+import java.io.IOException;
+
+public class With {
+
+    public static void with(PythonObject object, Runnable runnable) {
+        object.callAttribute("__enter__");
+
+        try (CloseablePythonObject closeable = new CloseablePythonObject(object)) {
+            runnable.run();
+        } catch (IOException e) {
+            // impossible to happend
+            throw new RuntimeException(e);
         }
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+
 }

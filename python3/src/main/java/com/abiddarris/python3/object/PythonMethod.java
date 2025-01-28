@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.object;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import com.abiddarris.python3.PythonObject;
+import com.abiddarris.python3.signature.PythonArgument;
+import com.abiddarris.python3.signature.PythonParameter;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+public class PythonMethod extends PythonObject {
+        
+    private PythonObject function;
+    private PythonObject self;
+        
+    public PythonMethod(PythonObject self, PythonObject function) {
+        this.self = self;
+        this.function = function;
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
+        
+    @Override
+    public PythonObject call(PythonParameter parameter) {
+        PythonArgument newParams = new PythonArgument(parameter);
+        newParams.insertPositionalArgument(0, self);
+            
+        return function.call(newParams);
     }
-    
 }

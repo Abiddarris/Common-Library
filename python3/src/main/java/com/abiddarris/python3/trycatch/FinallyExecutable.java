@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.trycatch;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+public class FinallyExecutable {
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+    private TryStatement statement;
+    private StateValidator validator = new StateValidator();
+
+    FinallyExecutable(TryStatement statement) {
+        this.statement = statement;
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
+
+    public void execute() {
+        validator.checkValid();
+        validator.invalidate();
+
+        statement.execute();
     }
-    
 }

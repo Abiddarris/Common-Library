@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.loader;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import static com.abiddarris.python3.Python.newString;
+import static com.abiddarris.python3.loader.JavaModuleLoader.sys;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+import com.abiddarris.python3.PythonObject;
+
+class OldLoadStrategy implements LoadStrategy {
+
+    private String name;
+    private ModuleLoader loader;
+
+    OldLoadStrategy(String name, ModuleLoader loader) {
+        this.name = name;
+        this.loader = loader;
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
+
+    @Override
+    public PythonObject loadModule() {
+        PythonObject module = loader.loadModule(name);
+        sys.getAttribute("modules")
+            .setItem(newString(name), module);
+        
+        return module;
     }
-    
 }

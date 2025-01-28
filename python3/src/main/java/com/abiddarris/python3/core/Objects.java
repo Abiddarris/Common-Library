@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 - 2025 Abiddarris
+ * Copyright 2024 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.utils;
+package com.abiddarris.python3.core;
 
-public final class Preconditions {
-    
-    private Preconditions() {}
+import com.abiddarris.python3.PythonObject;
 
-    public static void checkNonNull(Object object) {
-        if(object == null) {
-            throw new NullPointerException();
-        }
+public class Objects {
+
+    public static void setAttribute(PythonObject self, PythonObject name, PythonObject value) {
+        // FIXME: 10/09/24 This shouldn't be converted to string
+        self.setAttributeDirectly(name.toString(), value);
     }
-    
-    public static void checkNonNull(Object object, String message) {
-    	if(object == null) {
-            throw new NullPointerException(message);
-        }
-    }
-    
+
 }
