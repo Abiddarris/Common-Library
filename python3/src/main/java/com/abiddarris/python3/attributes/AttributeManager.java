@@ -18,21 +18,25 @@ package com.abiddarris.python3.attributes;
 import static com.abiddarris.python3.Python.newString;
 import static com.abiddarris.python3.Builtins.object;
 
+import com.abiddarris.common.utils.WeakCollection;
 import com.abiddarris.python3.PythonFunction;
 import com.abiddarris.python3.PythonObject;
 import com.abiddarris.python3.PythonTuple;
+import com.abiddarris.python3.attributes.DisableAttributeAccessOptimizationEvent.Type;
 import com.abiddarris.python3.object.PropertyObject;
 import com.abiddarris.python3.object.PythonMethod;
 import com.abiddarris.common.utils.WeakableValueMap;
 
 public class AttributeManager {
 
+    private boolean optimizeGetter = true;
+    private boolean optimizeSetter = true;
     private CriticalAttribute criticalAttribute = new CriticalAttribute();
     private PythonObject owner;
     private AttributeHolder attributes;
 
-    private final WeakableValueMap<String, PythonObject> classes = new WeakableValueMap<>();
-    private final WeakableValueMap<String, PythonObject> instances = new WeakableValueMap<>();
+    private final WeakCollection<PythonObject> classes = new WeakCollection<>();
+    private final WeakCollection<PythonObject> instances = new WeakCollection<>();
 
     public AttributeManager(PythonObject owner) {
         this(owner, new BootstrapAttributeHolder());
@@ -52,24 +56,62 @@ public class AttributeManager {
         return attributes.get(name);
     }
 
+    public boolean isOptimizeGetter() {
+        return optimizeGetter;
+    }
+
+    public boolean isOptimizeSetter() {
+        return optimizeSetter;
+    }
+
     public void registerSubclass(PythonObject Class) {
+        classes.add(Class);
     }
 
     public void registerInstance(PythonObject instance) {
-
+        if (instance == owner) {
+            return;
+        }
+        instances.add(instance);
     }
 
-    public void notifySubclassses(Event event) {
+    public void notifySubclasses(Event event) {
+        classes.forEach(Class -> Class.getAttributes().onEvent(event));
     }
 
-    public void notifyInstances(Event event) {
+    protected void onEvent(Event event) {
+        if (event instanceof DisableAttributeAccessOptimizationEvent) {
+            DisableAttributeAccessOptimizationEvent ev = (DisableAttributeAccessOptimizationEvent)event;
+            switch (ev.getType()) {
+                case GETTER :
+                    optimizeGetter = false;
+                    break;
+                case SETTER :
+                    optimizeSetter = false;
+            }
+        }
+
+        notifySubclasses(event);
     }
 
     public void put(String name, PythonObject attribute) {
-        if(criticalAttribute.setAttribute(name, attribute)) {
+        if(criticalAttribute.setAttribute(owner, name, attribute)) {
             return;
         }
         attributes.store(name, attribute);
+
+        Type type = null;
+        if (name.equals("__getattribute__")) {
+            type = Type.GETTER;
+            optimizeGetter = false;
+        } else if (name.equals("__setattr__")){
+            type = Type.SETTER;
+            optimizeSetter = false;
+        } else {
+            return;
+        }
+
+        notifySubclasses(new DisableAttributeAccessOptimizationEvent(type));
     }
     
     public PythonObject findAttribute(String name) {

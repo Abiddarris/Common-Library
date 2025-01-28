@@ -31,11 +31,13 @@ public class CriticalAttribute {
         return null;
     }
     
-    public boolean setAttribute(String key, PythonObject value) {
+    public boolean setAttribute(PythonObject owner, String key, PythonObject value) {
         if (key.equals("__class__")) {
             if (class0 != null) {
                 TypeError.call(newString("class already setted")).raise();
             }
+
+            value.getAttributes().registerInstance(owner);
             class0 = value;
             return true;
         }

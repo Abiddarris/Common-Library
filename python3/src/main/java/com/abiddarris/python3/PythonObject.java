@@ -31,6 +31,7 @@ import com.abiddarris.python3.builder.ClassDefiner;
 import com.abiddarris.python3.builder.DecorateAttribute;
 import com.abiddarris.python3.builder.ModuleTarget;
 import com.abiddarris.python3.core.Attributes;
+import com.abiddarris.python3.core.Objects;
 import com.abiddarris.python3.defineable.Defineable;
 import com.abiddarris.python3.imp.ImportAsTarget;
 import com.abiddarris.python3.imp.PythonObjectLoadTarget;
@@ -59,8 +60,6 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     }
     
     static PythonObject typeGetAttribute(PythonObject self, PythonObject name) {
-        long a = System.currentTimeMillis();
-
         PythonObject attribute = self.attributes.findAttribute(name.toString());
         if(attribute == null) {
             raiseAttributeError(self, name);
@@ -84,7 +83,9 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
         
         attributes = new AttributeManager(this, holder);
 
-        setAttributeDirectly("__class__", cls);
+        if (cls != null) {
+            setAttributeDirectly("__class__", cls);
+        }
     }
 
     public PythonObject(PythonObject cls) {
@@ -104,6 +105,10 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     }
 
     public void setAttribute(PythonObject name, PythonObject value) {
+        if (attributes.get("__class__").attributes.isOptimizeSetter()) {
+            Objects.setAttribute(this, name, value);
+            return;
+        }
         callTypeAttribute("__setattr__", name, value);
     }
 
@@ -120,6 +125,9 @@ public class PythonObject extends Python implements Defineable, Iterable<PythonO
     }
 
     public PythonObject getAttribute(String name) {
+        if (attributes.get("__class__").attributes.isOptimizeGetter()) {
+            return typeGetAttribute(this, newString(name));
+        }
         PythonObject attribute = callTypeAttribute("__getattribute__",
             new PythonParameter()
                 .addPositionalArgument(newPythonString(name)));
