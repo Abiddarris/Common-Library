@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024 - 2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,12 @@ package com.abiddarris.common.utils;
 public final class Preconditions {
     
     private Preconditions() {}
+
+    public static void checkNonNull(Object object) {
+        if(object == null) {
+            throw new NullPointerException();
+        }
+    }
     
     public static void checkNonNull(Object object) {
         checkNonNull(object, "");
