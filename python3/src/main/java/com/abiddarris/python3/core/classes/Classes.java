@@ -58,13 +58,13 @@ public class Classes {
         Set<PythonObject> mro = new LinkedHashSet<>();
         mro.add(self);
         for (PythonObject parent : ((PythonTuple) bases).getElements()) {
+            parent.getAttributes().registerSubclass(self);
             PythonObject[] parentMro = ((PythonTuple) parent.getAttributes().get("__mro__")).getElements();
             for (PythonObject mro0 : parentMro) {
                 mro.remove(mro0);
                 mro.add(mro0);
             }
         }
-
         self.setAttribute("__mro__", newTuple(mro.toArray(PythonObject[]::new)));
 
         return self;
