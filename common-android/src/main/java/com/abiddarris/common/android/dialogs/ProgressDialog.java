@@ -38,8 +38,13 @@ public class ProgressDialog extends BaseDialogFragment<Void> {
     private static final Handler HANDLER = new Handler(Looper.getMainLooper());
 
     public static ProgressDialog newProgressDialog(String title) {
+        return newProgressDialog(title, "");
+    }
+
+    public static ProgressDialog newProgressDialog(String title, String message) {
         ProgressDialog dialog = new ProgressDialog();
         dialog.setTitle(title);
+        dialog.setMessage(message);
 
         return dialog;
     }
