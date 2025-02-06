@@ -1,4 +1,4 @@
-package com.gretta.util.recycler;
+package com.abiddarris.common.utils.recycler;
 
 public class FreedException extends RuntimeException {
 
