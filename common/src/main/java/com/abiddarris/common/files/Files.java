@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Class that provides utilities for files
@@ -338,5 +339,40 @@ public final class Files {
             return true;
         });
         return size.getObject();
+    }
+
+    public static String formatSize(long length) {
+        double kbLength = length / 1024;
+        if(kbLength < 0.9) {
+            return Math.round(length) + " B";
+        }
+
+        if(kbLength < 100) {
+            return formatSize(kbLength) + " KB";
+        }
+
+        double mbLength = kbLength / 1024;
+        if(mbLength < 0.9) {
+            return Math.round(kbLength) + " KB";
+        }
+
+        if(mbLength < 100) {
+            return formatSize(mbLength) + " MB";
+        }
+
+        double gbLength = mbLength / 1024;
+        if(gbLength < 0.9) {
+            return Math.round(mbLength) + " MB";
+        }
+
+        if(gbLength < 100) {
+            return formatSize(gbLength) + " GB";
+        }
+
+        return Math.round(gbLength) + " GB";
+    }
+
+    private static String formatSize(final double length) {
+        return String.format(Locale.getDefault(),"%.2f", length);
     }
 }
