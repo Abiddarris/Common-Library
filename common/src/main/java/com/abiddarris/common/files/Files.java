@@ -18,6 +18,8 @@ package com.abiddarris.common.files;
 import static com.abiddarris.common.stream.InputStreams.writeAllTo;
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
+import com.abiddarris.common.utils.ObjectWrapper;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -327,4 +329,14 @@ public final class Files {
         delete(src);
     }
 
+    public static long size(File file) throws IOException {
+        ObjectWrapper<Long> size = new ObjectWrapper<>(0L);
+        traverse(file, (f) -> {
+            if (f.isFile()) {
+                size.setObject(size.getObject() + f.length());
+            }
+            return true;
+        });
+        return size.getObject();
+    }
 }
