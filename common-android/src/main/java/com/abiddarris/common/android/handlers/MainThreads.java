@@ -50,5 +50,13 @@ public final class MainThreads {
         }
         return handler;
     }
-    
+
+    public static void runOnMainThreadIfNot(Runnable runnable) {
+        if (isMainThread()) {
+            runnable.run();
+            return;
+        }
+
+        post(runnable);
+    }
 }
