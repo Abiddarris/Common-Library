@@ -1,8 +1,11 @@
 package com.abiddarris.common.utils;
 
+import java.util.Random;
+
 public final class Randoms {
 
     private static final String[] CHARACTERS;
+    private static final Random RANDOM = new Random();
 
     static {
         String lowerCase = "abcdefghijklmnopqrstuvwxyz";
@@ -16,7 +19,7 @@ public final class Randoms {
     public static String newRandomString(int length) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            int index = (int)(Math.random() * CHARACTERS.length);
+            int index = randomInt(0, CHARACTERS.length);
             if(index == CHARACTERS.length) {
                 index--;
             }
@@ -25,6 +28,14 @@ public final class Randoms {
         }
 
         return builder.toString();
+    }
+
+    public static int randomInt(int start, int end) {
+        return start + randomInt(end - start);
+    }
+
+    public static int randomInt(int end) {
+        return (int) (Math.random() * end);
     }
 
 }
