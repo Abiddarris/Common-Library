@@ -66,20 +66,6 @@ public abstract class TaskDialog extends Task {
         dialog.show(getFragmentManager(), tag);
     }
     
-    @NonNull
-    protected FragmentManager getFragmentManager() {
-        var owner = getOwner();
-        if(owner instanceof FragmentActivity) {
-            return ((FragmentActivity)owner).getSupportFragmentManager();
-        } 
-        
-        if(owner instanceof Fragment) {
-            return ((Fragment)owner).getParentFragmentManager();
-        }
-        
-        throw new ClassCastException();
-    }
-    
     @Override
     public void onFinally() {
         super.onFinally();

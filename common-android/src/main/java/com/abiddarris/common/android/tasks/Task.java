@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelStoreOwner;
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
@@ -57,6 +58,20 @@ public abstract class Task implements BaseRunnable {
         return applicationContext;
     }
 
+    @NonNull
+    protected FragmentManager getFragmentManager() {
+        var owner = getOwner();
+        if(owner instanceof FragmentActivity) {
+            return ((FragmentActivity)owner).getSupportFragmentManager();
+        }
+
+        if(owner instanceof Fragment) {
+            return ((Fragment)owner).getParentFragmentManager();
+        }
+
+        throw new ClassCastException();
+    }
+
     public TaskViewModel getModel() {
         return model;
     }
@@ -70,14 +85,10 @@ public abstract class Task implements BaseRunnable {
     @Override
     public void onThrowableCatched(Throwable throwable) {
         BaseRunnable.super.onThrowableCatched(throwable);
-       
-        if(!(owner instanceof AppCompatActivity)) {
-            return;
-        }
-        
+
         var dialog = new ExceptionDialog();
         dialog.setThrowable(throwable);
-        dialog.show(getActivity().getSupportFragmentManager(), null);
+        dialog.show(getFragmentManager(), null);
     }
     
     @Override
