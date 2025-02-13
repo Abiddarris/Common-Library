@@ -16,8 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Commmon Library"
 
-include(":common-android")
-include ':common'
-include ':python3'
-include ':unrpyc'
-include ':terminal'
+include ':common-android', ':common', ':python3',':unrpyc', ':terminal'
