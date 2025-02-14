@@ -19,6 +19,8 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import com.abiddarris.common.utils.Exceptions;
 
+import java.io.IOException;
+
 public abstract class Logger {
 
     private Level defaultLevel;
@@ -42,7 +44,7 @@ public abstract class Logger {
         if (obj instanceof Throwable) {
             obj = Exceptions.toString((Throwable) obj);
         }
-        log(obj == null ? "null" : obj.toString());
+        safeWrite(obj == null ? "null" : obj.toString());
     }
 
     public Level getDefaultLevel() {
@@ -55,5 +57,17 @@ public abstract class Logger {
 
     public String getTag() {
         return this.tag;
+    }
+
+    protected void write(String log) throws IOException {
+        log(log);
+    }
+
+    private void safeWrite(String log) {
+        try {
+            write(log);
+        } catch (IOException e) {
+            throw new LogException("Failed to log", e);
+        }
     }
 }
