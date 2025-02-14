@@ -45,7 +45,7 @@ public abstract class Logger {
         if (obj instanceof Throwable) {
             obj = Exceptions.toString((Throwable) obj);
         }
-        safeWrite(obj == null ? "null" : obj.toString());
+        safeWrite(level, obj == null ? "null" : obj.toString());
     }
 
     public Level getDefaultLevel() {
@@ -80,13 +80,13 @@ public abstract class Logger {
         return new DelegateLogger(this, defaultLevel, tag);
     }
 
-    protected void write(String log) throws IOException {
+    protected void write(Level level, String log) throws IOException {
         log(log);
     }
 
-    private void safeWrite(String log) {
+    private void safeWrite(Level level, String log) {
         try {
-            write(log);
+            write(level, log);
         } catch (IOException e) {
             throw new LogException("Failed to log", e);
         }
