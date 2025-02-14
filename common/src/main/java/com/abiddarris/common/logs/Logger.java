@@ -35,43 +35,10 @@ public abstract class Logger {
     public abstract void log(String string);
 
     public void log(Object obj) {
+        if (obj instanceof Throwable) {
+            obj = Exceptions.toString((Throwable) obj);
+        }
         log(obj == null ? "null" : obj.toString());
-    }
-
-    public void log(Throwable e) {
-        log(e == null ? "null" : Exceptions.toString(e));
-    }
-
-    public void log(boolean e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(byte e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(char e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(double e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(float e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(int e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(long e) {
-        log(String.valueOf(e));
-    }
-
-    public void log(short e) {
-        log(String.valueOf(e));
     }
 
     public Level getLevel() {
