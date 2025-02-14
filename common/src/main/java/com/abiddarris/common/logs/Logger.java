@@ -42,10 +42,14 @@ public abstract class Logger implements Closeable {
     public void log(String string) {}
 
     public void log(Object obj) {
-        log(defaultLevel, obj);
+        log(null, obj);
     }
 
     public void log(Level level, Object obj) {
+        if (level == null) {
+            level = defaultLevel;
+        }
+
         try {
             state.ensureOpen();
         } catch (IOException e) {
