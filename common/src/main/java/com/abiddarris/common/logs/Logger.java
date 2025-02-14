@@ -35,7 +35,7 @@ public abstract class Logger {
         this.tag = tag;
     }
 
-    public abstract void log(String string);
+    public void log(String string) {}
 
     public void log(Object obj) {
         log(defaultLevel, obj);
@@ -74,6 +74,10 @@ public abstract class Logger {
         checkNonNull(logFormatter, "logFormatter cannot be null");
 
         this.logFormatter = logFormatter;
+    }
+
+    public Logger deriveLogger(String tag) {
+        return new DelegateLogger(this, defaultLevel, tag);
     }
 
     protected void write(String log) throws IOException {
