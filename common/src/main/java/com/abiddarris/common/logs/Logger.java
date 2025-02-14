@@ -56,6 +56,12 @@ public abstract class Logger {
         this.defaultLevel = defaultLevel;
     }
 
+    public void setTag(String tag) {
+        checkNonNull(tag, "tag cannot be null");
+
+        this.tag = tag;
+    }
+
     public String getTag() {
         return this.tag;
     }
