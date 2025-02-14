@@ -17,12 +17,15 @@ package com.abiddarris.common.logs;
 
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
+import com.abiddarris.common.stream.CloseableObject;
 import com.abiddarris.common.utils.Exceptions;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-public abstract class Logger {
+public abstract class Logger implements Closeable {
 
+    private CloseableObject state = new CloseableObject();
     private Level defaultLevel;
     private LogFormatter logFormatter = new DefaultLogFormatter();
     private String tag;
@@ -42,6 +45,12 @@ public abstract class Logger {
     }
 
     public void log(Level level, Object obj) {
+        try {
+            state.ensureOpen();
+        } catch (IOException e) {
+            throw new LogException("Log closed");
+        }
+
         if (obj instanceof Throwable) {
             obj = Exceptions.toString((Throwable) obj);
         }
@@ -81,6 +90,11 @@ public abstract class Logger {
     }
 
     public void flush() {
+    }
+
+    @Override
+    public void close() throws IOException {
+        state.close();
     }
 
     protected void write(Level level, String log) throws IOException {
