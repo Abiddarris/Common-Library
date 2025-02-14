@@ -43,7 +43,7 @@ public class AndroidLogger extends Logger {
     }
     
     private int determineAndroidLevel() {
-        switch(getLevel()) {
+        switch(getDefaultLevel()) {
             case DEBUG :
                 return DEBUG;
             case INFO :

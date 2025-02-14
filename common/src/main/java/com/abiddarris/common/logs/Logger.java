@@ -21,28 +21,36 @@ import com.abiddarris.common.utils.Exceptions;
 
 public abstract class Logger {
 
-    private Level level;
+    private Level defaultLevel;
     private String tag;
 
-    public Logger(Level level, String tag) {
-        checkNonNull(level, "level cannot be null");
+    public Logger(Level defaultLevel, String tag) {
+        checkNonNull(defaultLevel, "level cannot be null");
         checkNonNull(tag, "tag cannot be null");
         
-        this.level = level;
+        this.defaultLevel = defaultLevel;
         this.tag = tag;
     }
 
     public abstract void log(String string);
 
     public void log(Object obj) {
+        log(defaultLevel, obj);
+    }
+
+    public void log(Level level, Object obj) {
         if (obj instanceof Throwable) {
             obj = Exceptions.toString((Throwable) obj);
         }
         log(obj == null ? "null" : obj.toString());
     }
 
-    public Level getLevel() {
-        return this.level;
+    public Level getDefaultLevel() {
+        return this.defaultLevel;
+    }
+
+    public void setDefaultLevel(Level defaultLevel) {
+        this.defaultLevel = defaultLevel;
     }
 
     public String getTag() {
