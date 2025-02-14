@@ -24,6 +24,7 @@ import java.io.IOException;
 public abstract class Logger {
 
     private Level defaultLevel;
+    private LogFormatter logFormatter = new DefaultLogFormatter();
     private String tag;
 
     public Logger(Level defaultLevel, String tag) {
@@ -57,6 +58,16 @@ public abstract class Logger {
 
     public String getTag() {
         return this.tag;
+    }
+
+    public LogFormatter getLogFormatter() {
+        return logFormatter;
+    }
+
+    public void setLogFormatter(LogFormatter logFormatter) {
+        checkNonNull(logFormatter, "logFormatter cannot be null");
+
+        this.logFormatter = logFormatter;
     }
 
     protected void write(String log) throws IOException {
