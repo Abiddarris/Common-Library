@@ -30,6 +30,6 @@ public class DelegateLogger extends Logger {
 
     @Override
     protected void write(Level level, String log) throws IOException {
-        base.write(, log);
+        base.write(level, log);
     }
 }
