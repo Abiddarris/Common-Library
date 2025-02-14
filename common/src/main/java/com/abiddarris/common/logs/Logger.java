@@ -28,6 +28,7 @@ public abstract class Logger implements Closeable {
     private CloseableObject state = new CloseableObject();
     private Level defaultLevel;
     private LogFormatter logFormatter = new DefaultLogFormatter();
+    private Level minLoggedLevel;
     private String tag;
 
     public Logger(Level defaultLevel, String tag) {
@@ -49,6 +50,10 @@ public abstract class Logger implements Closeable {
             state.ensureOpen();
         } catch (IOException e) {
             throw new LogException("Log closed");
+        }
+
+        if (level.getLevel() < getMinLoggedLevel().getLevel()) {
+            return;
         }
 
         if (obj instanceof Throwable) {
@@ -117,5 +122,15 @@ public abstract class Logger implements Closeable {
 
         Class<?> clazz = (Class<?>)obj;
         return clazz.getName();
+    }
+
+    public Level getMinLoggedLevel() {
+        return minLoggedLevel;
+    }
+
+    public void setMinLoggedLevel(Level minLoggedLevel) {
+        checkNonNull(minLoggedLevel, "minLoggedLevel cannot be null");
+
+        this.minLoggedLevel = minLoggedLevel;
     }
 }

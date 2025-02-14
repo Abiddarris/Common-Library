@@ -16,8 +16,19 @@
 package com.abiddarris.common.logs;
 
 public enum Level {
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR
+    NONE(0),
+    DEBUG(1),
+    INFO(2),
+    WARNING(3),
+    ERROR(4);
+
+    private final int level;
+
+    Level(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
 }
