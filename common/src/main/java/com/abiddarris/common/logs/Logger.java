@@ -91,4 +91,14 @@ public abstract class Logger {
             throw new LogException("Failed to log", e);
         }
     }
+
+    public static String getTag(Object obj) {
+        checkNonNull(obj, "Require non null obj");
+        if (!(obj instanceof Class)) {
+            obj = obj.getClass();
+        }
+
+        Class<?> clazz = (Class<?>)obj;
+        return clazz.getName();
+    }
 }
