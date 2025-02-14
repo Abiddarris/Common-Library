@@ -15,14 +15,21 @@
  ***********************************************************************************/
 package com.abiddarris.common.logs;
 
+import static com.abiddarris.common.logs.Level.ERROR;
+
+import java.io.IOException;
+import java.io.PrintStream;
+
 public class DefaultLogger extends Logger {
 
-    public DefaultLogger(Level level, String tag) {
-        super(level, tag);
+    public DefaultLogger(Level defaultLevel, String tag) {
+        super(defaultLevel, tag);
     }
 
     @Override
-    public void log(String string) {
-        System.out.printf("%s : %s\n", getTag(), string);
+    protected void write(Level level, String log) throws IOException {
+        PrintStream stream = level == ERROR ? System.err : System.out;
+        stream.printf("[%s] %s : %s\n", level, getTag(), log);
     }
+
 }
