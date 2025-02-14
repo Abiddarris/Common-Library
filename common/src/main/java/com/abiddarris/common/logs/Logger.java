@@ -80,6 +80,9 @@ public abstract class Logger {
         return new DelegateLogger(this, defaultLevel, tag);
     }
 
+    public void flush() {
+    }
+
     protected void write(Level level, String log) throws IOException {
         log(log);
     }
