@@ -37,14 +37,10 @@ public class StreamLogger extends Logger {
         
         this.stream = stream;
     }
-    
+
     @Override
-    public void log(String string) {
-        try {
-            stream.write((getTag() + " " + string + "\n").getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    protected void write(Level level, String log) throws IOException {
+        stream.write((getTag() + " " + log + "\n").getBytes());
     }
-    
+
 }
