@@ -71,6 +71,8 @@ public abstract class Logger implements Closeable {
     }
 
     public void setDefaultLevel(Level defaultLevel) {
+        checkNonNull(defaultLevel, "defaultLevel cannot be null");
+
         this.defaultLevel = defaultLevel;
     }
 
