@@ -33,9 +33,6 @@ public final class SimpleConfirmationDialog extends BaseDialogFragment<Boolean> 
 
     private static final String DATA = "data";
 
-    private SimpleConfirmationDialog() {
-    }
-
     /**
      * Create new confirmation dialog
      *
