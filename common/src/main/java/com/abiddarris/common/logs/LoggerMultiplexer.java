@@ -15,11 +15,34 @@
  ***********************************************************************************/
 package com.abiddarris.common.logs;
 
-@Deprecated
-public class MultipleLogger extends LoggerMultiplexer {
+import java.util.ArrayList;
+import java.util.List;
 
-    @Deprecated
-    public MultipleLogger(Level level, String tag, Logger... loggers) {
-        super(level, tag, loggers);
+public class LoggerMultiplexer extends Logger {
+    
+    private final List<Logger> loggers = new ArrayList<>();
+    
+    public LoggerMultiplexer(Level level, String tag, Logger... loggers) {
+        super(level, tag);
+        
+        this.loggers.addAll(
+            List.of(loggers)
+        );
+    }
+
+    @Override
+    public void log(Level level, Object obj) {
+        ensureOpen();
+
+        if (level == null) {
+            level = getDefaultLevel();
+        }
+        if (level.getLevel() < getMinLoggedLevel().getLevel()) {
+            return;
+        }
+
+        for(Logger logger : loggers) {
+            logger.log(level, obj);
+        }
     }
 }

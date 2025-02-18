@@ -25,7 +25,8 @@ import java.io.IOException;
 
 public abstract class Logger implements Closeable {
 
-    private CloseableObject state = new CloseableObject();
+    private final CloseableObject state = new CloseableObject();
+
     private Level defaultLevel;
     private LogFormatter logFormatter = new DefaultLogFormatter();
     private Level minLoggedLevel;
@@ -46,16 +47,11 @@ public abstract class Logger implements Closeable {
     }
 
     public void log(Level level, Object obj) {
+        ensureOpen();
+
         if (level == null) {
             level = defaultLevel;
         }
-
-        try {
-            state.ensureOpen();
-        } catch (IOException e) {
-            throw new LogException("Log closed");
-        }
-
         if (level.getLevel() < getMinLoggedLevel().getLevel()) {
             return;
         }
@@ -64,6 +60,14 @@ public abstract class Logger implements Closeable {
             obj = Exceptions.toString((Throwable) obj);
         }
         safeWrite(level, obj == null ? "null" : obj.toString());
+    }
+
+    protected void ensureOpen() {
+        try {
+            state.ensureOpen();
+        } catch (IOException e) {
+            throw new LogException("Log closed");
+        }
     }
 
     public Level getDefaultLevel() {

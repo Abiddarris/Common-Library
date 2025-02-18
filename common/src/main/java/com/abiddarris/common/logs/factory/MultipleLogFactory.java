@@ -17,11 +17,10 @@ package com.abiddarris.common.logs.factory;
 
 import com.abiddarris.common.logs.Level;
 import com.abiddarris.common.logs.Logger;
-import com.abiddarris.common.logs.MultipleLogger;
+import com.abiddarris.common.logs.LoggerMultiplexer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class MultipleLogFactory implements LogFactory {
     
@@ -35,7 +34,7 @@ public class MultipleLogFactory implements LogFactory {
     
     @Override
     public Logger newLogger(Level level, String tag) {
-        return new MultipleLogger(level, tag,
+        return new LoggerMultiplexer(level, tag,
             factories.stream()
                 .map(factory -> factory.newLogger(level, tag))
                 .toArray(Logger[]::new)
