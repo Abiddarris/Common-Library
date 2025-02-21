@@ -18,7 +18,6 @@ package com.abiddarris.python3.mod.builtins;
 import static com.abiddarris.python3.Builtins.builtins;
 import static com.abiddarris.python3.Builtins.list;
 import static com.abiddarris.python3.Builtins.str;
-import static com.abiddarris.python3.Builtins.tuple;
 
 import com.abiddarris.python3.PythonObject;
 import com.abiddarris.python3.builder.ClassDefiner;
@@ -28,9 +27,14 @@ public class BytesImpl {
     static void define() {
         ClassDefiner definer = builtins.defineClass("bytes");
         definer.defineFunction("__init__", BytesImpl::init, "self", "iterable_of_int");
+        definer.defineFunction("__iter__", BytesImpl::iter, "self");
         definer.defineFunction("__str__", BytesImpl::str, "self");
 
         definer.define();
+    }
+
+    private static PythonObject iter(PythonObject self) {
+        return self.getAttribute("__data__").callAttribute("__iter__");
     }
 
     private static void init(PythonObject self, PythonObject iterableOfInt) {
