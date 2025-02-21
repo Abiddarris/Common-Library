@@ -87,14 +87,10 @@ public abstract class Task implements BaseRunnable {
     @Override
     public void onThrowableCatched(Throwable throwable) {
         BaseRunnable.super.onThrowableCatched(throwable);
-       
-        if(!(owner instanceof AppCompatActivity)) {
-            return;
-        }
-        
+
         var dialog = new ExceptionDialog();
         dialog.setThrowable(throwable);
-        dialog.show(getActivity().getSupportFragmentManager(), null);
+        dialog.show(getFragmentManager(), null);
     }
     
     @Override
