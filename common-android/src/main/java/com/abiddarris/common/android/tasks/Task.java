@@ -16,13 +16,16 @@
 package com.abiddarris.common.android.tasks;
 
 import android.content.Context;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelStoreOwner;
+
 import com.abiddarris.common.android.dialogs.ExceptionDialog;
 import com.abiddarris.common.utils.BaseRunnable;
 
@@ -55,6 +58,24 @@ public abstract class Task implements BaseRunnable {
             applicationContext = applicationContext.getApplicationContext();
         }
         return applicationContext;
+    }
+
+    @NonNull
+    protected FragmentManager getFragmentManager() {
+        var owner = getOwner();
+        if(owner instanceof FragmentActivity) {
+            return ((FragmentActivity)owner).getSupportFragmentManager();
+        }
+
+        if(owner instanceof Fragment) {
+            return ((Fragment)owner).getParentFragmentManager();
+        }
+
+        throw new ClassCastException();
+    }
+
+    public TaskViewModel getModel() {
+        return model;
     }
     
     @Nullable
