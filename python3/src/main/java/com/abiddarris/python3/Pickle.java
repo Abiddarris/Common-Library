@@ -20,6 +20,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -255,6 +256,10 @@ public class Pickle {
         }
         
         private void append(Object obj) {
+            if (obj.equals(newInt(-32)))
+            {
+                throw new AssertionError();
+            }
             stack.add(obj);
         }
 
@@ -274,7 +279,7 @@ public class Pickle {
                     int[] key = read(1);
                     if (key.length == 0)
                         throw new UncheckedIOException(new EOFException());
-                    
+
                     Runnable runnable = dispatch.get(key[0]);
                     if(runnable == null) {
                         throw new IllegalArgumentException(key[0] + " not supported");
@@ -412,9 +417,14 @@ public class Pickle {
             // Used to allow strings from Python 2 to be decoded either as
             // bytes or Unicode strings.  This should be used only with the
             // STRING, BINSTRING and SHORT_BINSTRING opcodes.
-            if (this.encoding.equals("bytes"))
-                return value;
-            
+            if (this.encoding.equals("bytes")) {
+                PythonObject bytes = newList();
+                for (int b : value) {
+                    bytes.callAttribute("append", newInt(b));
+                }
+                return Builtins.bytes.call(bytes);
+            }
+
             CharsetDecoder decoder = Charset.forName(this.encoding)
                 .newDecoder();
             decoder.onMalformedInput(getError(this.errors));
@@ -520,6 +530,7 @@ public class Pickle {
         */
         private void load_short_binstring() {
             int len = this.read(1)[0];
+
             int[] data = this.read(len);
             this.append(this._decode_string(data));
         }
