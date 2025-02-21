@@ -33,7 +33,11 @@ public class Numbers {
         long result = 0;
 
         for (int i = 0; i < bytes.length; i++) {
-            result |= bytes[i] << i * 8;
+            int b = bytes[i];
+            if (b < 0) {
+                b = 256 + b;
+            }
+            result |= ((long) b) << i * 8;
         }
 
         return result;
