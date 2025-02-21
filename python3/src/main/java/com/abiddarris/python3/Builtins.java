@@ -46,6 +46,7 @@ public class Builtins {
     public static final PythonObject RuntimeError;
     public static final PythonObject NotImplementedError;
     public static final PythonObject enumerate;
+    public static final PythonObject bytes;
     public static final PythonObject ImportError;
     public static final PythonObject slice;
     public static final PythonObject property;
@@ -65,6 +66,7 @@ public class Builtins {
 
     private static final PythonObject method;
     private static final PythonObject NoneType;
+
 
     static {
         type = newBootstrapObject();
@@ -362,6 +364,7 @@ public class Builtins {
         range = builtins.getAttribute("range");
         sorted = builtins.getAttribute("sorted");
         max = builtins.getAttribute("max");
+        bytes = builtins.getAttribute("bytes");
 
         Collections.initLoader();
         Re.initLoader();

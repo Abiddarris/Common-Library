@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024-2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class BuiltinsImpl {
         GeneratorImpl.define();
         ZipImpl.define();
         RangeImpl.define();
+        BytesImpl.define();
     }
 
     private static PythonObject hash(PythonObject obj) {
