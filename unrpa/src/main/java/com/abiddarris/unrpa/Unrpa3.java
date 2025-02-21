@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.archives;
+package com.abiddarris.unrpa;
 
-import static com.abiddarris.common.renpy.internal.Pickle.loads;
+import static com.abiddarris.python3.Pickle.loads;
+
+import com.abiddarris.python3.PythonDict;
+import com.abiddarris.python3.PythonObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,15 +49,27 @@ class Unrpa3 extends Unrpa {
         stream.readNBytes(offset - header.length() - 1);
         
         InflaterInputStream inflater = new InflaterInputStream(stream);
-        Map map = ((Map)loads(inflater, "bytes"));
-        map.forEach((k, v) -> {
-             List value = (List) v;   
-             ((List)value.remove(0))
-                 .forEach(value::add);    
-             value.add(0, (int)value.remove(0) ^ key);
-             value.add(1, (int)value.remove(1) ^ key);
-             
-             entries.add(new RpaEntry3((String)k, (List)v));
+        PythonObject map = ((PythonObject)loads(inflater, "bytes"));
+        map.forEach(k -> {
+            PythonObject value = map.getItem(k);
+            PythonObject item = value.callAttribute("pop");
+
+            List jItem = new ArrayList<>();
+            item.forEach(jItem::add);
+
+            System.out.println(k + " " + jItem);
+
+            jItem.add(0, ((PythonObject)jItem.remove(0)).toInt() ^ key);
+            jItem.add(1, ((PythonObject)jItem.remove(1)).toInt() ^ key);
+
+            PythonObject start = (PythonObject) jItem.remove(2);
+            int[] jStart = new int[start.length()];
+            for (int i = 0; i < start.length(); i++) {
+                jStart[i] = start.getItem(i).toInt();
+            }
+            jItem.add(2, jStart);
+
+            entries.add(new RpaEntry3(k.toString(), jItem));
         });
         
         return entries;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.renpy.archives;
+package com.abiddarris.unrpa;
 
 import static com.abiddarris.common.stream.InputStreams.readLine;
 import static com.abiddarris.common.stream.InputStreams.skipExact;
@@ -27,7 +27,6 @@ import com.abiddarris.common.stream.LimitedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 

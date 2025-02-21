@@ -1,4 +1,4 @@
-package com.abiddarris.common.renpy.archives;
+package com.abiddarris.unrpa;
 
 import java.io.IOException;
 
