@@ -21,6 +21,7 @@ import static com.abiddarris.python3.Builtins.str;
 
 import com.abiddarris.python3.PythonObject;
 import com.abiddarris.python3.builder.ClassDefiner;
+import com.abiddarris.python3.core.Functions;
 
 public class BytesImpl {
 
@@ -28,9 +29,14 @@ public class BytesImpl {
         ClassDefiner definer = builtins.defineClass("bytes");
         definer.defineFunction("__init__", BytesImpl::init, "self", "iterable_of_int");
         definer.defineFunction("__iter__", BytesImpl::iter, "self");
+        definer.defineFunction("__len__", BytesImpl::len, "self");
         definer.defineFunction("__str__", BytesImpl::str, "self");
 
         definer.define();
+    }
+
+    private static PythonObject len(PythonObject self) {
+        return Functions.len(self.getAttribute("__data__"));
     }
 
     private static PythonObject iter(PythonObject self) {
