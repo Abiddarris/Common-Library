@@ -52,12 +52,14 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     private BaseDialogViewModel model;
     private List<Runnable> onShowListeners = new ArrayList<>();
     private Map<String, Object> variables = new HashMap<>();
-    
+
     @Override
     @CallSuper
     @MainThread
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        saveVariable(RESULT_CALLED, false);
         
         model = new ViewModelProvider(this)
             .get(BaseDialogViewModel.class);
