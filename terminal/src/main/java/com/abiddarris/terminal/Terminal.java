@@ -57,7 +57,7 @@ public class Terminal {
         Future<Integer> future = executor.submit(() -> {
             try {
                 int result = commandObj.main(context);
-                outInPipe.close();
+                inOutPipe.close();
                 outOutPipe.close();
 
                 return result;
