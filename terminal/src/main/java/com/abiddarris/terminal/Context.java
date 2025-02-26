@@ -2,7 +2,7 @@ package com.abiddarris.terminal;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
 public class Context {
 
@@ -10,12 +10,14 @@ public class Context {
     private final String[] args;
     private final OutputStream outputStream;
     private final InputStream inputStream;
+    private final PipedOutputStream errorStream;
 
-    Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream) {
+    Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, PipedOutputStream errorStream) {
         this.terminal = terminal;
         this.args = args;
         this.outputStream = outputStream;
         this.inputStream = inputStream;
+        this.errorStream = errorStream;
     }
 
     public String[] getArgs() {
@@ -32,5 +34,9 @@ public class Context {
 
     public InputStream getInputStream() {
         return inputStream;
+    }
+
+    public PipedOutputStream getErrorStream() {
+        return errorStream;
     }
 }

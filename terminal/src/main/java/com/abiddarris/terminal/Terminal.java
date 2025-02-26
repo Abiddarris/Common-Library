@@ -2,6 +2,8 @@ package com.abiddarris.terminal;
 
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
+import com.abiddarris.common.utils.Exceptions;
+
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -42,31 +44,34 @@ public class Terminal {
             throw new CommandNotFoundException(String.format("Command '%s' not found", args[0]));
         }
 
-        PipedInputStream inInPipe, outInPipe;
-        PipedOutputStream inOutPipe, outOutPipe;
+        PipedInputStream inInPipe, outInPipe, errInPipe;
+        PipedOutputStream inOutPipe, outOutPipe, errOutPipe;
         try {
             inInPipe = new PipedInputStream();
             inOutPipe = new PipedOutputStream(inInPipe);
             outInPipe = new PipedInputStream();
             outOutPipe = new PipedOutputStream(outInPipe);
+            errInPipe = new PipedInputStream();
+            errOutPipe = new PipedOutputStream(errInPipe);
         } catch (IOException e) {
             throw new CommandException("Unable to create pipe");
         }
 
-        Context context = new Context(this, args, outOutPipe, inInPipe);
+        Context context = new Context(this, args, outOutPipe, inInPipe, errOutPipe);
         Future<Integer> future = executor.submit(() -> {
             try {
-                int result = commandObj.main(context);
+                return commandObj.main(context);
+            } catch (Throwable e) {
+                errOutPipe.write(Exceptions.toString(e).getBytes());
+                return -1;
+            } finally {
                 inOutPipe.close();
                 outOutPipe.close();
-
-                return result;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+                errOutPipe.close();
             }
         });
 
-        return new Process(future, outInPipe, inOutPipe);
+        return new Process(future, outInPipe, inOutPipe, errInPipe);
     }
 
     public void setParser(Parser parser) {
