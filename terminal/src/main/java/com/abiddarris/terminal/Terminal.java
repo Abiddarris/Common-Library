@@ -42,19 +42,22 @@ public class Terminal {
             throw new CommandNotFoundException(String.format("Command '%s' not found", args[0]));
         }
 
-        PipedInputStream outInPipe;
-        PipedOutputStream outOutPipe;
+        PipedInputStream inInPipe, outInPipe;
+        PipedOutputStream inOutPipe, outOutPipe;
         try {
+            inInPipe = new PipedInputStream();
+            inOutPipe = new PipedOutputStream(inInPipe);
             outInPipe = new PipedInputStream();
             outOutPipe = new PipedOutputStream(outInPipe);
         } catch (IOException e) {
             throw new CommandException("Unable to create pipe");
         }
 
-        Context context = new Context(this, args, outOutPipe);
+        Context context = new Context(this, args, outOutPipe, inInPipe);
         Future<Integer> future = executor.submit(() -> {
             try {
                 int result = commandObj.main(context);
+                outInPipe.close();
                 outOutPipe.close();
 
                 return result;
@@ -63,7 +66,7 @@ public class Terminal {
             }
         });
 
-        return new Process(future, outInPipe);
+        return new Process(future, outInPipe, inOutPipe);
     }
 
     public void setParser(Parser parser) {
