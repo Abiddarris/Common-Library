@@ -72,7 +72,7 @@ public class Terminal {
             throw new CommandException("Unable to create pipe");
         }
 
-        Context context = new Context(this, args, outOutPipe, inInPipe, errOutPipe);
+        Context context = new Context(newTerminal(), args, outOutPipe, inInPipe, errOutPipe);
         Future<Integer> future = executor.submit(() -> {
             try {
                 return commandObj.main(context);
