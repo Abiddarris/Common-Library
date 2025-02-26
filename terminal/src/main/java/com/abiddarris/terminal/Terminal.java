@@ -2,6 +2,9 @@ package com.abiddarris.terminal;
 
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -39,16 +42,28 @@ public class Terminal {
             throw new CommandNotFoundException(String.format("Command '%s' not found", args[0]));
         }
 
-        Context context = new Context(this, args);
+        PipedInputStream outInPipe;
+        PipedOutputStream outOutPipe;
+        try {
+            outInPipe = new PipedInputStream();
+            outOutPipe = new PipedOutputStream(outInPipe);
+        } catch (IOException e) {
+            throw new CommandException("Unable to create pipe");
+        }
+
+        Context context = new Context(this, args, outOutPipe);
         Future<Integer> future = executor.submit(() -> {
             try {
-                return commandObj.main(context);
+                int result = commandObj.main(context);
+                outOutPipe.close();
+
+                return result;
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
         });
 
-        return new Process(future);
+        return new Process(future, outInPipe);
     }
 
     public void setParser(Parser parser) {
