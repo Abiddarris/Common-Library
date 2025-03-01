@@ -1,0 +1,83 @@
+/***********************************************************************************
+ * Copyright 2024-2025 Abiddarris
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***********************************************************************************/
+package com.abiddarris.common.android.tasks.v2;
+
+import android.content.Context;
+
+import com.abiddarris.common.utils.BaseRunnable;
+
+public abstract class Task<P, R> implements BaseRunnable {
+
+    private final DelegateProgressPublisher<P> progressPublisher = new DelegateProgressPublisher<>(new NullProgressPublisher<>());
+
+    private TaskManager taskManager;
+    private TaskInfo<P, R> taskInfo;
+
+    void attach(TaskManager taskManager, TaskInfo<P, R> taskInfo) {
+        this.taskManager = taskManager;
+        this.taskInfo = taskInfo;
+        this.taskInfo.setDelegateProgressPublisher(progressPublisher);
+    }
+
+    @Override
+    public void onThrowableCatched(Throwable throwable) {
+        BaseRunnable.super.onThrowableCatched(throwable);
+
+        progressPublisher.error(throwable);
+    }
+
+    @Override
+    public void onFinally() {
+        BaseRunnable.super.onFinally();
+
+        progressPublisher.onFinish();
+        taskInfo.queueTaskListener();
+    }
+
+    protected final String getString(int id, Object... objects) {
+        return getContext().getString(id, objects);
+    }
+
+    protected final String getString(int id) {
+        return getContext().getString(id);
+    }
+
+    protected final Context getContext() {
+        if (taskManager == null) {
+            throw new IllegalStateException("Attempt to call getContext() before Task is associated with any TaskManager");
+        }
+        return taskManager.getContext();
+    }
+
+    public final ProgressPublisher<P> getPublisher() {
+        return progressPublisher;
+    }
+
+    public void setResult(R result) {
+        if (taskManager == null) {
+            throw new IllegalStateException("Attempt to call setResult() before Task is associated with any TaskManager");
+        }
+        taskInfo.setResult(result);
+    }
+
+    public void error(Throwable throwable) {
+        getPublisher().error(throwable);
+    }
+
+    public void publish(P progress) {
+        getPublisher().publish(progress);
+    }
+}
