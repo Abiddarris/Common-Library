@@ -193,6 +193,16 @@ class TerminalTest {
         assertThrows(NullPointerException.class, () -> terminal.setWorkingDirectory(null));
     }
 
+    @Test
+    void setEnvFromChild() {
+        terminal.setEnv("user", "Cat");
+
+        Terminal subTerminal = terminal.newTerminal();
+        subTerminal.setEnv("user", "Dog");
+
+        assertEquals("Dog", subTerminal.getEnv("user"));
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
