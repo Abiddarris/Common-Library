@@ -188,6 +188,11 @@ class TerminalTest {
         assertEquals(childWorkingDirectory, child.getWorkingDirectory());
     }
 
+    @Test
+    void passNullOnsetWorkingDirectory() {
+        assertThrows(NullPointerException.class, () -> terminal.setWorkingDirectory(null));
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
