@@ -203,6 +203,15 @@ class TerminalTest {
         assertEquals("Dog", subTerminal.getEnv("user"));
     }
 
+    @Test
+    void getEnvFromChild() {
+        terminal.setEnv("user", "Cat");
+
+        Terminal subTerminal = terminal.newTerminal();
+
+        assertEquals("Cat", subTerminal.getEnv("user"));
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
