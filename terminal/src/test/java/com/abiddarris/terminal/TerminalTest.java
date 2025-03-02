@@ -120,6 +120,12 @@ class TerminalTest {
     }
 
     @Test
+    void parserThatReturnsNull() {
+        terminal.setParser(str -> null);
+        assertThrows(NullPointerException.class, () -> terminal.execute("hai"));
+    }
+
+    @Test
     void testSetAndGetEnv() {
         // Set an environment variable
         terminal.setEnv("TEST_VAR", "test_value");
