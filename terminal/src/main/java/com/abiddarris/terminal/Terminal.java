@@ -55,6 +55,10 @@ public class Terminal {
         commands.put(name, command);
     }
 
+    public Command removeCommand(String name) {
+        return commands.remove(name);
+    }
+
     public Command getCommand(String name) {
         Command command = commands.get(name);
         if (command == null && parent != null) {

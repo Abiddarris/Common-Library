@@ -266,6 +266,29 @@ class TerminalTest {
         assertEquals(map, child.getEnvs());
     }
 
+    @Test
+    void removeCommand() {
+        terminal.addCommand("mock", mockCommand);
+
+        assertEquals(mockCommand, terminal.removeCommand("mock"));
+        assertNull(terminal.getCommand("mock"));
+    }
+
+    @Test
+    void removeNotExistCommand() {
+        assertNull(terminal.removeCommand("mock"));
+    }
+
+    @Test
+    void removeFromChild() {
+        terminal.addCommand("mock", mockCommand);
+
+        Terminal subterminal = terminal.newTerminal();
+
+        assertNull(subterminal.removeCommand("mock"));
+        assertEquals(mockCommand, subterminal.getCommand("mock"));
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
