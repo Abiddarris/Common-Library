@@ -95,6 +95,21 @@ class TerminalTest {
     }
 
     @Test
+    void executeFromChild() throws ExecutionException, InterruptedException {
+        ObjectWrapper<Boolean> called = new ObjectWrapper<>(false);
+        terminal.addCommand("mock", context -> {
+            called.setObject(true);
+            return 0;
+        });
+
+        Terminal subterminal = terminal.newTerminal();
+        Process process = subterminal.execute("mock");
+
+        assertEquals(0, process.getResultCode());
+        assertTrue(called.getObject());
+    }
+
+    @Test
     void testSetAndGetEnv() {
         // Set an environment variable
         terminal.setEnv("TEST_VAR", "test_value");
