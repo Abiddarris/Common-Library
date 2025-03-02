@@ -1,6 +1,7 @@
 package com.abiddarris.terminal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -215,6 +216,16 @@ class TerminalTest {
 
         assertTrue(subTerminal.hasEnv("user"));
         assertEquals("Cat", subTerminal.getEnv("user"));
+    }
+
+    @Test
+    void clearFromChild() {
+        terminal.setEnv("user", "Cat");
+
+        Terminal subTerminal = terminal.newTerminal();
+
+        assertFalse(subTerminal.clearEnv("user"));
+        assertEquals("Cat", terminal.getEnv("user"));
     }
 
     // Mock Command class to simulate command execution (for unit testing)
