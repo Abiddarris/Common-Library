@@ -1,14 +1,17 @@
 package com.abiddarris.terminal;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.File;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 class TerminalTest {
@@ -194,21 +197,23 @@ class TerminalTest {
     }
 
     @Test
-    void setEnvFromChild() {
+    void setEnvAndHasEnvFromChild() {
         terminal.setEnv("user", "Cat");
 
         Terminal subTerminal = terminal.newTerminal();
         subTerminal.setEnv("user", "Dog");
 
+        assertTrue(subTerminal.hasEnv("user"));
         assertEquals("Dog", subTerminal.getEnv("user"));
     }
 
     @Test
-    void getEnvFromChild() {
+    void getEnvAndHasEnvFromChild() {
         terminal.setEnv("user", "Cat");
 
         Terminal subTerminal = terminal.newTerminal();
 
+        assertTrue(subTerminal.hasEnv("user"));
         assertEquals("Cat", subTerminal.getEnv("user"));
     }
 
