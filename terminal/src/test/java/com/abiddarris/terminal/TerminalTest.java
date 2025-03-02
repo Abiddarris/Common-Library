@@ -228,6 +228,15 @@ class TerminalTest {
         assertEquals("Cat", terminal.getEnv("user"));
     }
 
+    @Test
+    void clearEnvByCallingSetEnv() {
+        terminal.setEnv("user", "Cat");
+        terminal.setEnv("user", null);
+
+        assertNull(terminal.getEnv("user"));
+    }
+
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
