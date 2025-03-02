@@ -109,6 +109,10 @@ public class Terminal {
         return new Terminal(this);
     }
 
+    public Terminal getParentTerminal() {
+        return parent;
+    }
+
     public void setParser(Parser parser) {
         checkNonNull(parser, "parser cannot be null");
 
