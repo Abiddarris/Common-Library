@@ -32,10 +32,19 @@ import java.util.concurrent.Future;
 public class Terminal {
 
     private final Map<String, Command> commands = new HashMap<>();
+    private final Terminal parent;
     private ExecutorService executor = Executors.newCachedThreadPool();
-    private File workingDirectory = new File("");
-
+    private File workingDirectory;
     private Parser parser = new DefaultParser();
+
+    public Terminal() {
+        this(null);
+    }
+
+    public Terminal(Terminal parent) {
+        this.parent = parent;
+        this.workingDirectory = parent == null ? new File("") : null;
+    }
 
     public void addCommand(String name, Command command) {
         checkNonNull(name, "name cannot be null");
@@ -45,7 +54,12 @@ public class Terminal {
     }
 
     public Command getCommand(String name) {
-        return commands.get(name);
+        Command command = commands.get(name);
+        if (command == null && parent != null) {
+            command = parent.getCommand(name);
+        }
+
+        return command;
     }
 
     public Process execute(String command) {
@@ -92,7 +106,7 @@ public class Terminal {
     }
 
     public Terminal newTerminal() {
-        return new SubTerminal(this);
+        return new Terminal(this);
     }
 
     public void setParser(Parser parser) {
@@ -102,6 +116,9 @@ public class Terminal {
     }
 
     public File getWorkingDirectory() {
+        if (workingDirectory == null) {
+            return parent.getWorkingDirectory();
+        }
         return workingDirectory;
     }
 
@@ -110,4 +127,5 @@ public class Terminal {
 
         this.workingDirectory = workingDirectory;
     }
+
 }
