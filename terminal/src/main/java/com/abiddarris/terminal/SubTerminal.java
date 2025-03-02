@@ -15,8 +15,11 @@
  ***********************************************************************************/
 package com.abiddarris.terminal;
 
+import java.io.File;
+
 public class SubTerminal extends Terminal {
 
+    private File workingDirectory;
     private Terminal terminal;
 
     public SubTerminal(Terminal terminal) {
@@ -37,5 +40,17 @@ public class SubTerminal extends Terminal {
         super.setParser(parser);
 
         terminal.setParser(parser);
+    }
+
+    @Override
+    public void setWorkingDirectory(File workingDirectory) {
+        super.setWorkingDirectory(workingDirectory);
+
+        this.workingDirectory = workingDirectory;
+    }
+
+    @Override
+    public File getWorkingDirectory() {
+        return workingDirectory == null ? terminal.getWorkingDirectory() : workingDirectory;
     }
 }

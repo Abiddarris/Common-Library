@@ -19,6 +19,7 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import com.abiddarris.common.utils.Exceptions;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -32,6 +33,7 @@ public class Terminal {
 
     private final Map<String, Command> commands = new HashMap<>();
     private ExecutorService executor = Executors.newCachedThreadPool();
+    private File workingDirectory = new File("");
 
     private Parser parser = new DefaultParser();
 
@@ -97,5 +99,15 @@ public class Terminal {
         checkNonNull(parser, "parser cannot be null");
 
         this.parser = parser;
+    }
+
+    public File getWorkingDirectory() {
+        return workingDirectory;
+    }
+
+    public void setWorkingDirectory(File workingDirectory) {
+        checkNonNull(workingDirectory, "workingDirectory cannot be null");
+
+        this.workingDirectory = workingDirectory;
     }
 }
