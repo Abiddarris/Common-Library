@@ -115,6 +115,11 @@ class TerminalTest {
     }
 
     @Test
+    void setNullParser() {
+        assertThrows(NullPointerException.class, () -> terminal.setParser(null));
+    }
+
+    @Test
     void testSetAndGetEnv() {
         // Set an environment variable
         terminal.setEnv("TEST_VAR", "test_value");
