@@ -56,6 +56,15 @@ class TerminalTest {
     }
 
     @Test
+    void testGetFromTerminalChild() {
+        // Add a command
+        terminal.addCommand("mock", mockCommand);
+
+        Terminal subterminal = terminal.newTerminal();
+        assertEquals(subterminal.getCommand("mock"), mockCommand);
+    }
+
+    @Test
     void testExecuteValidCommand() throws ExecutionException, InterruptedException {
         // Add a mock command
         terminal.addCommand("mock", mockCommand);
