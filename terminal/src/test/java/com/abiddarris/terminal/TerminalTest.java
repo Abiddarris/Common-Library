@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 class TerminalTest {
@@ -236,6 +238,15 @@ class TerminalTest {
         assertNull(terminal.getEnv("user"));
     }
 
+    @Test
+    void setEnvsAndGetEnvsTest() {
+        Map<String, String> map = new HashMap<>();
+        map.put("user", "Cat");
+        map.put("terminal", "VirtualTerminal");
+
+        terminal.setEnvs(map);
+        assertEquals(map, terminal.getEnvs());
+    }
 
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
