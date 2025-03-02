@@ -176,6 +176,18 @@ class TerminalTest {
         assertEquals(workingDirectory, terminal.newTerminal().getWorkingDirectory());
     }
 
+    @Test
+    void setWorkingDirectoryInChild() {
+        File workingDirectory = terminal.getWorkingDirectory();
+        File childWorkingDirectory = new File("/usr");
+
+        Terminal child = terminal.newTerminal();
+        child.setWorkingDirectory(childWorkingDirectory);
+
+        assertEquals(workingDirectory, terminal.getWorkingDirectory());
+        assertEquals(childWorkingDirectory, child.getWorkingDirectory());
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
