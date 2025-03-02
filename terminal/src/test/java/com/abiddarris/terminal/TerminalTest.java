@@ -168,6 +168,14 @@ class TerminalTest {
         assertEquals(newDirectory, terminal.getWorkingDirectory(), "Working directory should be set to /tmp");
     }
 
+    @Test
+    void getWorkingDirectoryFromChild() {
+        File workingDirectory = terminal.getWorkingDirectory().getAbsoluteFile().getParentFile();
+        terminal.setWorkingDirectory(workingDirectory);
+
+        assertEquals(workingDirectory, terminal.newTerminal().getWorkingDirectory());
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
