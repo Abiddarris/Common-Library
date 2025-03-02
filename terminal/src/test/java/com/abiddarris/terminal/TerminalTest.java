@@ -248,6 +248,24 @@ class TerminalTest {
         assertEquals(map, terminal.getEnvs());
     }
 
+    @Test
+    void getEnvsFromChild() {
+        Map<String, String> map = new HashMap<>();
+        map.put("user", "Cat");
+        map.put("terminal", "VirtualTerminal");
+
+        terminal.setEnvs(map);
+
+        Terminal child = terminal.newTerminal();
+        child.setEnv("year", "2025");
+
+        assertEquals(map, terminal.getEnvs());
+
+        map.put("year", "2025");
+
+        assertEquals(map, child.getEnvs());
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override
