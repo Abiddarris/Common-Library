@@ -90,6 +90,11 @@ class TerminalTest {
     }
 
     @Test
+    void testExecuteEmptyCommand() {
+        assertThrows(CommandException.class, () -> terminal.execute(""));
+    }
+
+    @Test
     void testSetAndGetEnv() {
         // Set an environment variable
         terminal.setEnv("TEST_VAR", "test_value");
