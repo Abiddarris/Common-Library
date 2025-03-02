@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.abiddarris.common.utils.ObjectWrapper;
+
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +33,20 @@ class TerminalTest {
         // Assert that the command is correctly retrieved
         assertNotNull(command, "Command should not be null");
         assertEquals(mockCommand, command, "Retrieved command should be the same as the one added");
+    }
+
+    @Test
+    void testAddCommandOnExistingName() {
+        // Add a command
+        terminal.addCommand("mock", mockCommand);
+
+        Command newCommand = context -> 0;
+        terminal.addCommand("mock", newCommand);
+
+        Command command = terminal.getCommand("mock");
+
+        assertNotNull(command, "Command should not be null");
+        assertEquals(newCommand, command, "Retrieved command should be the same as the one added");
     }
 
     @Test
