@@ -32,7 +32,9 @@ import java.util.concurrent.Future;
 public class Terminal {
 
     private final Map<String, Command> commands = new HashMap<>();
+    private final Map<String, String> envs = new HashMap<>();
     private final Terminal parent;
+
     private ExecutorService executor = Executors.newCachedThreadPool();
     private File workingDirectory;
     private Parser parser = new DefaultParser();
@@ -132,4 +134,53 @@ public class Terminal {
         this.workingDirectory = workingDirectory;
     }
 
+    public void setEnv(String name, String val) {
+        checkNonNull(name, "name cannot be null");
+
+        if (val == null) {
+            clearEnv(name);
+            return;
+        }
+        envs.put(name, val);
+    }
+
+    public String getEnv(String name) {
+        checkNonNull(name, "name cannot be null");
+
+        String val = envs.get(name);
+        if (val == null && parent != null) {
+            val = parent.getEnv(name);
+        }
+
+        return val;
+    }
+
+    public boolean clearEnv(String name) {
+        checkNonNull(name, "name cannot be null");
+
+        return envs.remove(name) != null;
+    }
+
+    public Map<String, String> getEnvs() {
+        Map<String, String> envs = parent == null ? new HashMap<>() : parent.getEnvs();
+        envs.putAll(this.envs);
+        return envs;
+    }
+
+    public void setEnvs(Map<String, String> envs) {
+        checkNonNull(envs, "envs cannot be null");
+
+        envs.forEach(this::setEnv);
+    }
+
+    public boolean hasEnv(String name) {
+        checkNonNull(name, "name cannot be null");
+
+        boolean hasEnv = envs.containsKey(name);
+        if (!hasEnv && parent != null) {
+            hasEnv = parent.hasEnv(name);
+        }
+
+        return hasEnv;
+    }
 }
