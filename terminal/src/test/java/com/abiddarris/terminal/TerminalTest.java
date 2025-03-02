@@ -110,6 +110,11 @@ class TerminalTest {
     }
 
     @Test
+    void getParentTerminal() {
+        assertEquals(terminal.newTerminal().getParentTerminal(), terminal);
+    }
+
+    @Test
     void testSetAndGetEnv() {
         // Set an environment variable
         terminal.setEnv("TEST_VAR", "test_value");
