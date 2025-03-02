@@ -50,6 +50,12 @@ class TerminalTest {
     }
 
     @Test
+    void nullTestOnAddCommand() {
+        assertThrows(NullPointerException.class, () -> terminal.addCommand(null, mockCommand));
+        assertThrows(NullPointerException.class, () -> terminal.addCommand("mock", null));
+    }
+
+    @Test
     void testExecuteValidCommand() throws ExecutionException, InterruptedException {
         // Add a mock command
         terminal.addCommand("mock", mockCommand);
