@@ -34,6 +34,8 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.abiddarris.common.utils.ObjectWrapper;
+import com.abiddarris.common.utils.ObservableValue;
+import com.abiddarris.common.utils.Observer;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class BaseDialogFragment<Result> extends DialogFragment {
 
     private BaseDialogViewModel model;
     private List<Runnable> onShowListeners = new ArrayList<>();
-    private Map<String, Object> variables = new HashMap<>();
+    private Map<String, ObservableValue<?>> variables = new HashMap<>();
 
     @Override
     @CallSuper
@@ -143,15 +145,36 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     }
     
     @SuppressWarnings("unchecked")
-    @Nullable
     public <T> T getVariable(@Nullable String name, T defaultVal) {
-        return (T)variables.getOrDefault(name, defaultVal);
+        ObservableValue<?> observableValue = variables.get(name);
+        if (observableValue == null) {
+            return defaultVal;
+        }
+        return (T) observableValue.getValue();
     }
-    
-    @SuppressWarnings("unchecked")
+
     @Nullable
     public <T> T saveVariable(@Nullable String name, @Nullable T obj) {
-        return (T)variables.put(name, obj);
+        ObservableValue<T> observableValue = this.<T>getObservableValue(name);
+        T oldValue = observableValue.getValue();
+        observableValue.setValue(obj);
+
+        return oldValue;
+    }
+
+    protected <T> void observe(String name, Observer<T> observer) {
+        this.<T>getObservableValue(name).addObserver(observer);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> ObservableValue<T> getObservableValue(String name) {
+        ObservableValue<T> observableValue = (ObservableValue<T>) variables.get(name);
+        if (observableValue == null) {
+            observableValue = new ObservableValue<>(null);
+            variables.put(name, observableValue);
+        }
+
+        return observableValue;
     }
     
     public void enablePositiveButton(boolean enabled) {
@@ -213,16 +236,26 @@ public class BaseDialogFragment<Result> extends DialogFragment {
         }
     }
 
+    @CallSuper
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        for (ObservableValue<?> value : variables.values()) {
+            value.clearObservers();
+        }
+    }
+
     private void addOnShowListener(Runnable runnable) {
         onShowListeners.add(runnable);
     }
     
     public static class BaseDialogViewModel extends ViewModel {
         
-        private Map<String, Object> variables = null;
+        private Map<String, ObservableValue<?>> variables = null;
         private BaseDialogFragment fragment;
         
-        private Map<String, Object> attach(Map<String, Object> variables, BaseDialogFragment fragment) {
+        private Map<String, ObservableValue<?>> attach(Map<String, ObservableValue<?>> variables, BaseDialogFragment fragment) {
             this.fragment = fragment;
             
             if(this.variables == null) {
