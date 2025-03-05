@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.android.tasks.v2;
+package com.abiddarris.common.android.tasks.v2.notifications;
 
 import static com.abiddarris.common.android.handlers.MainThreads.postDelayed;
 
@@ -21,6 +21,9 @@ import android.content.Context;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+
+import com.abiddarris.common.android.tasks.v2.IndeterminateProgress;
+import com.abiddarris.common.android.tasks.v2.ProgressPublisher;
 
 abstract class NotificationProgressPublisher<P extends IndeterminateProgress> implements ProgressPublisher<P> {
 

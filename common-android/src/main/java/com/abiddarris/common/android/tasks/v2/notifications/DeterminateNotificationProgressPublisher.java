@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.android.tasks.v2;
+package com.abiddarris.common.android.tasks.v2.notifications;
 
 import static com.abiddarris.common.utils.Randoms.randomInt;
 
 import android.content.Context;
 
 import androidx.core.app.NotificationCompat;
+
+import com.abiddarris.common.android.tasks.v2.DeterminateProgress;
 
 public class DeterminateNotificationProgressPublisher extends NotificationProgressPublisher<DeterminateProgress> {
 
