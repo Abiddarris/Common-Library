@@ -20,9 +20,11 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -339,6 +341,10 @@ public final class Files {
             return true;
         });
         return size.getObject();
+    }
+
+    public static OutputStream openBufferedOutput(File file) throws FileNotFoundException {
+        return new BufferedOutputStream(new FileOutputStream(file));
     }
 
     public static String formatSize(long length) {
