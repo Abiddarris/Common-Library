@@ -40,7 +40,18 @@ import java.util.Locale;
  * @author Abiddarris
  */
 public final class Files {
-    
+
+    public static String getPathName(String path) {
+        if (path.isBlank()) {
+            return path;
+        }
+
+        if (path.endsWith(File.separator)) path = path.substring(0, path.length() - 1);
+        if (!path.startsWith(File.separator)) path = File.separator + path;
+
+        return path.substring(path.lastIndexOf(File.separator) + 1);
+    }
+
     /**
      * Returns file's name without its extension.
      * 
