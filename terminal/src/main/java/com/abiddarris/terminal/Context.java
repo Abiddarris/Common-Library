@@ -25,9 +25,9 @@ public class Context {
     private final String[] args;
     private final OutputStream outputStream;
     private final InputStream inputStream;
-    private final PipedOutputStream errorStream;
+    private final OutputStream errorStream;
 
-    Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, PipedOutputStream errorStream) {
+    Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, OutputStream errorStream) {
         this.terminal = terminal;
         this.args = args;
         this.outputStream = outputStream;
@@ -51,7 +51,7 @@ public class Context {
         return inputStream;
     }
 
-    public PipedOutputStream getErrorStream() {
+    public OutputStream getErrorStream() {
         return errorStream;
     }
 }
