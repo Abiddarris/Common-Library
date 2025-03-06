@@ -21,6 +21,8 @@ import com.abiddarris.common.utils.Exceptions;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.HashMap;
@@ -35,6 +37,7 @@ public class Terminal {
     private final Map<String, Variable> variables = new HashMap<>();
     private final Terminal parent;
 
+    private boolean interactive = true;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private File workingDirectory;
     private Parser parser = new DefaultParser();
@@ -84,8 +87,8 @@ public class Terminal {
         PipedInputStream inInPipe, outInPipe, errInPipe;
         PipedOutputStream inOutPipe, outOutPipe, errOutPipe;
         try {
-            inInPipe = new PipedInputStream();
-            inOutPipe = new PipedOutputStream(inInPipe);
+            inInPipe = interactive ? new PipedInputStream() : null;
+            inOutPipe = interactive ? new PipedOutputStream(inInPipe) : null;
             outInPipe = new PipedInputStream();
             outOutPipe = new PipedOutputStream(outInPipe);
             errInPipe = new PipedInputStream();
@@ -94,7 +97,7 @@ public class Terminal {
             throw new CommandException("Unable to create pipe");
         }
 
-        Context context = new Context(newTerminal(), args, outOutPipe, inInPipe, errOutPipe);
+        Context context = new Context(newTerminal(), args, outOutPipe, inInPipe == null ? new StubInputStream() : inInPipe, errOutPipe);
         Future<Integer> future = executor.submit(() -> {
             try {
                 return commandObj.main(context);
@@ -102,13 +105,15 @@ public class Terminal {
                 errOutPipe.write(Exceptions.toString(e).getBytes());
                 return -1;
             } finally {
-                inOutPipe.close();
+                if (inOutPipe != null) {
+                    inOutPipe.close();
+                }
                 outOutPipe.close();
                 errOutPipe.close();
             }
         });
 
-        return new Process(future, outInPipe, inOutPipe, errInPipe);
+        return new Process(future, outInPipe, inOutPipe == null ? new StubOutputStream() : inOutPipe, errInPipe);
     }
 
     public Terminal newTerminal() {
@@ -241,6 +246,50 @@ public class Terminal {
 
     public Terminal getRootTerminal() {
         return parent == null ? this : parent.getRootTerminal();
+    }
+
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+
+    public boolean isInteractive() {
+        return interactive;
+    }
+
+    private static class StubInputStream extends InputStream {
+
+        @Override
+        public int read() throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
+
+        @Override
+        public synchronized void reset() throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
+
+        @Override
+        public int available() throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
+
+        @Override
+        public long skip(long n) throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
+    }
+
+    private static class StubOutputStream extends OutputStream {
+
+        @Override
+        public void write(int i) throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
+
+        @Override
+        public void flush() throws IOException {
+            throw new IOException("Terminal is not in interactive mode");
+        }
     }
 
     private static class Variable {
