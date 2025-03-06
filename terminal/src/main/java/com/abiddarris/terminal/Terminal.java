@@ -138,6 +138,18 @@ public class Terminal {
         this.workingDirectory = workingDirectory;
     }
 
+    public void setVariable(String name, String val) {
+        checkNonNull(name, "name cannot be null");
+
+        if (val == null) {
+            clearVariable(val);
+            return;
+        }
+
+        Variable variable = variables.computeIfAbsent(name, k -> new Variable());
+        variable.value = val;
+    }
+
     public void exportVariable(String name, String val) {
         checkNonNull(name, "name cannot be null");
 

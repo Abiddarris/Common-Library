@@ -132,7 +132,28 @@ class TerminalTest {
     }
 
     @Test
-    void testSetAndGetVariable() {
+    void setVariableAndGetVariable() {
+        terminal.setVariable("TEST_VAR", "test_value");
+
+        // Retrieve the environment variable
+        String value = terminal.getVariable("TEST_VAR");
+
+        // Assert that the environment variable is set and retrieved correctly
+        assertEquals("test_value", value, "Environment variable value should match the set value");
+    }
+
+    @Test
+    void getVariableFromChild() {
+        terminal.setVariable("TEST_VAR", "test_value");
+
+        Terminal child = terminal.newTerminal();
+        String value = child.getVariable("TEST_VAR");
+
+        assertNull(value);
+    }
+
+    @Test
+    void testExportVariableAndGetVariable() {
         // Set an environment variable
         terminal.exportVariable("TEST_VAR", "test_value");
 
@@ -144,7 +165,7 @@ class TerminalTest {
     }
 
     @Test
-    void testClearVariable() {
+    void testClearExportedVariable() {
         // Set and then clear the environment variable
         terminal.exportVariable("CLEAR_VAR", "clear_value");
         assertTrue(terminal.clearVariable("CLEAR_VAR"), "clearEnv should return true when removing an existing variable");
@@ -255,12 +276,16 @@ class TerminalTest {
         map.put("terminal", "VirtualTerminal");
 
         terminal.exportVariables(map);
+        terminal.setVariable("somevariable", "somevalue");
 
         Terminal child = terminal.newTerminal();
         child.exportVariable("year", "2025");
 
+        map.put("somevariable", "somevalue");
+
         assertEquals(map, terminal.getVariables());
 
+        map.remove("somevariable");
         map.put("year", "2025");
 
         assertEquals(map, child.getVariables());
