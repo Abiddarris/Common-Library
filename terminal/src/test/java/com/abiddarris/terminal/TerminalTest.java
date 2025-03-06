@@ -132,25 +132,25 @@ class TerminalTest {
     }
 
     @Test
-    void testSetAndGetEnv() {
+    void testExportAndGetVariable() {
         // Set an environment variable
-        terminal.setEnv("TEST_VAR", "test_value");
+        terminal.exportVariable("TEST_VAR", "test_value");
 
         // Retrieve the environment variable
-        String value = terminal.getEnv("TEST_VAR");
+        String value = terminal.getVariable("TEST_VAR");
 
         // Assert that the environment variable is set and retrieved correctly
         assertEquals("test_value", value, "Environment variable value should match the set value");
     }
 
     @Test
-    void testClearEnv() {
+    void testClearVariable() {
         // Set and then clear the environment variable
-        terminal.setEnv("CLEAR_VAR", "clear_value");
-        assertTrue(terminal.clearEnv("CLEAR_VAR"), "clearEnv should return true when removing an existing variable");
+        terminal.exportVariable("CLEAR_VAR", "clear_value");
+        assertTrue(terminal.clearVariable("CLEAR_VAR"), "clearEnv should return true when removing an existing variable");
 
         // Ensure that the environment variable is cleared
-        String value = terminal.getEnv("CLEAR_VAR");
+        String value = terminal.getVariable("CLEAR_VAR");
         assertNull(value, "Environment variable should be null after clearing");
     }
 
@@ -200,70 +200,70 @@ class TerminalTest {
     }
 
     @Test
-    void setEnvAndHasEnvFromChild() {
-        terminal.setEnv("user", "Cat");
+    void exportVariableAndHasVariableFromChild() {
+        terminal.exportVariable("user", "Cat");
 
         Terminal subTerminal = terminal.newTerminal();
-        subTerminal.setEnv("user", "Dog");
+        subTerminal.exportVariable("user", "Dog");
 
-        assertTrue(subTerminal.hasEnv("user"));
-        assertEquals("Dog", subTerminal.getEnv("user"));
+        assertTrue(subTerminal.hasVariable("user"));
+        assertEquals("Dog", subTerminal.getVariable("user"));
     }
 
     @Test
-    void getEnvAndHasEnvFromChild() {
-        terminal.setEnv("user", "Cat");
+    void getVariableAndHasVariableFromChild() {
+        terminal.exportVariable("user", "Cat");
 
         Terminal subTerminal = terminal.newTerminal();
 
-        assertTrue(subTerminal.hasEnv("user"));
-        assertEquals("Cat", subTerminal.getEnv("user"));
+        assertTrue(subTerminal.hasVariable("user"));
+        assertEquals("Cat", subTerminal.getVariable("user"));
     }
 
     @Test
     void clearFromChild() {
-        terminal.setEnv("user", "Cat");
+        terminal.exportVariable("user", "Cat");
 
         Terminal subTerminal = terminal.newTerminal();
 
-        assertFalse(subTerminal.clearEnv("user"));
-        assertEquals("Cat", terminal.getEnv("user"));
+        assertFalse(subTerminal.clearVariable("user"));
+        assertEquals("Cat", terminal.getVariable("user"));
     }
 
     @Test
-    void clearEnvByCallingSetEnv() {
-        terminal.setEnv("user", "Cat");
-        terminal.setEnv("user", null);
+    void clearEnvByCallingSetVariable() {
+        terminal.exportVariable("user", "Cat");
+        terminal.exportVariable("user", null);
 
-        assertNull(terminal.getEnv("user"));
+        assertNull(terminal.getVariable("user"));
     }
 
     @Test
-    void setEnvsAndGetEnvsTest() {
+    void setEnvsAndGetVariablesTest() {
         Map<String, String> map = new HashMap<>();
         map.put("user", "Cat");
         map.put("terminal", "VirtualTerminal");
 
-        terminal.setEnvs(map);
-        assertEquals(map, terminal.getEnvs());
+        terminal.setVariables(map);
+        assertEquals(map, terminal.getVariables());
     }
 
     @Test
-    void getEnvsFromChild() {
+    void getVariablesFromChild() {
         Map<String, String> map = new HashMap<>();
         map.put("user", "Cat");
         map.put("terminal", "VirtualTerminal");
 
-        terminal.setEnvs(map);
+        terminal.setVariables(map);
 
         Terminal child = terminal.newTerminal();
-        child.setEnv("year", "2025");
+        child.exportVariable("year", "2025");
 
-        assertEquals(map, terminal.getEnvs());
+        assertEquals(map, terminal.getVariables());
 
         map.put("year", "2025");
 
-        assertEquals(map, child.getEnvs());
+        assertEquals(map, child.getVariables());
     }
 
     @Test

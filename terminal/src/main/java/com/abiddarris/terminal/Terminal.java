@@ -138,51 +138,52 @@ public class Terminal {
         this.workingDirectory = workingDirectory;
     }
 
-    public void setEnv(String name, String val) {
+    public void exportVariable(String name, String val) {
         checkNonNull(name, "name cannot be null");
 
         if (val == null) {
-            clearEnv(name);
+            clearVariable(name);
             return;
         }
         envs.put(name, val);
     }
 
-    public String getEnv(String name) {
+    public String getVariable(String name) {
         checkNonNull(name, "name cannot be null");
 
         String val = envs.get(name);
         if (val == null && parent != null) {
-            val = parent.getEnv(name);
+            val = parent.getVariable(name);
         }
 
         return val;
     }
 
-    public boolean clearEnv(String name) {
+    public boolean clearVariable(String name) {
         checkNonNull(name, "name cannot be null");
 
         return envs.remove(name) != null;
     }
 
-    public Map<String, String> getEnvs() {
-        Map<String, String> envs = parent == null ? new HashMap<>() : parent.getEnvs();
-        envs.putAll(this.envs);
-        return envs;
+    public Map<String, String> getVariables() {
+        Map<String, String> variables = parent == null ? new HashMap<>() : parent.getVariables();
+        variables.putAll(this.envs);
+
+        return variables;
     }
 
-    public void setEnvs(Map<String, String> envs) {
-        checkNonNull(envs, "envs cannot be null");
+    public void setVariables(Map<String, String> variables) {
+        checkNonNull(variables, "variables cannot be null");
 
-        envs.forEach(this::setEnv);
+        variables.forEach(this::exportVariable);
     }
 
-    public boolean hasEnv(String name) {
+    public boolean hasVariable(String name) {
         checkNonNull(name, "name cannot be null");
 
         boolean hasEnv = envs.containsKey(name);
         if (!hasEnv && parent != null) {
-            hasEnv = parent.hasEnv(name);
+            hasEnv = parent.hasVariable(name);
         }
 
         return hasEnv;
