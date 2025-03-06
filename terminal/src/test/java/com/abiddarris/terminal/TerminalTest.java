@@ -132,7 +132,7 @@ class TerminalTest {
     }
 
     @Test
-    void testExportAndGetVariable() {
+    void testSetAndGetVariable() {
         // Set an environment variable
         terminal.exportVariable("TEST_VAR", "test_value");
 

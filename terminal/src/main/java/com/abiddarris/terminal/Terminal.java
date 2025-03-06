@@ -32,7 +32,7 @@ import java.util.concurrent.Future;
 public class Terminal {
 
     private final Map<String, Command> commands = new HashMap<>();
-    private final Map<String, String> envs = new HashMap<>();
+    private final Map<String, Variable> variables = new HashMap<>();
     private final Terminal parent;
 
     private ExecutorService executor = Executors.newCachedThreadPool();
@@ -141,33 +141,70 @@ public class Terminal {
     public void exportVariable(String name, String val) {
         checkNonNull(name, "name cannot be null");
 
-        if (val == null) {
-            clearVariable(name);
-            return;
-        }
-        envs.put(name, val);
+        Variable variable = variables.computeIfAbsent(name, k -> new Variable());
+        variable.exported = true;
+        variable.value = val;
     }
 
     public String getVariable(String name) {
+        return getVariable(name, false);
+    }
+
+    private String getVariable(String name, boolean requireExport) {
         checkNonNull(name, "name cannot be null");
 
-        String val = envs.get(name);
-        if (val == null && parent != null) {
-            val = parent.getVariable(name);
+        Variable variable = variables.get(name);
+        if (variable != null) {
+            if (requireExport) {
+                if (variable.exported) {
+                    return variable.value;
+                }
+            } else {
+                return variable.value;
+            }
         }
 
-        return val;
+        if (parent != null) {
+            return parent.getVariable(name, true);
+        }
+
+        return null;
     }
 
     public boolean clearVariable(String name) {
         checkNonNull(name, "name cannot be null");
 
-        return envs.remove(name) != null;
+        Variable variable = variables.get(name);
+        if (variable == null) {
+            return false;
+        }
+
+        if (variable.exported) {
+            boolean success = variable.value != null;
+            variable.value = null;
+
+            return success;
+        }
+
+        variables.remove(name);
+        return true;
     }
 
     public Map<String, String> getVariables() {
-        Map<String, String> variables = parent == null ? new HashMap<>() : parent.getVariables();
-        variables.putAll(this.envs);
+        return getVariables(false);
+    }
+
+    public Map<String, String> getVariables(boolean requiredExport) {
+        Map<String, String> variables = parent == null ? new HashMap<>() : parent.getVariables(true);
+        this.variables.forEach((k, v) -> {
+            if (requiredExport) {
+                if (v.exported) {
+                    variables.put(k, v.value);
+                }
+            } else {
+                variables.put(k, v.value);
+            }
+        });
 
         return variables;
     }
@@ -181,11 +218,11 @@ public class Terminal {
     public boolean hasVariable(String name) {
         checkNonNull(name, "name cannot be null");
 
-        boolean hasEnv = envs.containsKey(name);
-        if (!hasEnv && parent != null) {
-            hasEnv = parent.hasVariable(name);
-        }
+        return getVariable(name) != null;
+    }
 
-        return hasEnv;
+    private static class Variable {
+        private String value;
+        private boolean exported;
     }
 }
