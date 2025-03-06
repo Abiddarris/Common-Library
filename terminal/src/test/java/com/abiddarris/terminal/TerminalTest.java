@@ -239,12 +239,12 @@ class TerminalTest {
     }
 
     @Test
-    void setEnvsAndGetVariablesTest() {
+    void setExportVariablesAndGetVariablesTest() {
         Map<String, String> map = new HashMap<>();
         map.put("user", "Cat");
         map.put("terminal", "VirtualTerminal");
 
-        terminal.setVariables(map);
+        terminal.exportVariables(map);
         assertEquals(map, terminal.getVariables());
     }
 
@@ -254,7 +254,7 @@ class TerminalTest {
         map.put("user", "Cat");
         map.put("terminal", "VirtualTerminal");
 
-        terminal.setVariables(map);
+        terminal.exportVariables(map);
 
         Terminal child = terminal.newTerminal();
         child.exportVariable("year", "2025");

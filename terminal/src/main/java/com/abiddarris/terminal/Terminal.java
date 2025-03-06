@@ -209,7 +209,7 @@ public class Terminal {
         return variables;
     }
 
-    public void setVariables(Map<String, String> variables) {
+    public void exportVariables(Map<String, String> variables) {
         checkNonNull(variables, "variables cannot be null");
 
         variables.forEach(this::exportVariable);
