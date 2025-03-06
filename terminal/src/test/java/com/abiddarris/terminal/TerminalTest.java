@@ -314,6 +314,16 @@ class TerminalTest {
         assertEquals(mockCommand, subterminal.getCommand("mock"));
     }
 
+    @Test
+    void getRootTerminal() {
+        Terminal subterminal = terminal.newTerminal();
+        Terminal subterminal2 = subterminal.newTerminal();
+
+        assertEquals(terminal, terminal.getRootTerminal());
+        assertEquals(terminal, subterminal.getRootTerminal());
+        assertEquals(terminal, subterminal2.getRootTerminal());
+    }
+
     // Mock Command class to simulate command execution (for unit testing)
     static class MockCommand implements Command {
         @Override

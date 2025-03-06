@@ -239,6 +239,10 @@ public class Terminal {
         return getVariable(name) != null;
     }
 
+    public Terminal getRootTerminal() {
+        return parent == null ? this : parent.getRootTerminal();
+    }
+
     private static class Variable {
         private String value;
         private boolean exported;
