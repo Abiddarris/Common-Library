@@ -15,7 +15,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.dialogs;
 
-import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_NEUTRAL;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
 
@@ -163,7 +162,11 @@ public class BaseDialogFragment<Result> extends DialogFragment {
     }
 
     protected <T> void observe(String name, Observer<T> observer) {
-        this.<T>getObservableValue(name).addObserver(observer);
+        observe(name, observer, false);
+    }
+
+    protected <T> void observe(String name, Observer<T> observer, boolean strict) {
+        this.<T>getObservableValue(name).addObserver(observer, strict);
     }
 
     @SuppressWarnings("unchecked")
