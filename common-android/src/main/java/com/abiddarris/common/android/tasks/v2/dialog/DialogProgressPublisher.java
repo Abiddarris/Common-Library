@@ -59,7 +59,9 @@ public abstract class DialogProgressPublisher<P, D extends DialogFragment> imple
     public void onFinish() {
         ensureValid();
 
-        getDialog().dismiss();
+        if (dialogShown) {
+            getDialog().dismiss();
+        }
     }
 
     public abstract D newDialog();
