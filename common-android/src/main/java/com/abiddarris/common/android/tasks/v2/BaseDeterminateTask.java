@@ -27,4 +27,8 @@ public abstract class BaseDeterminateTask<P extends DeterminateProgress, R> exte
         publish(getProgress());
     }
 
+    protected void addProgress(long len) {
+        getProgress().addProgress(len);
+        publish(getProgress());
+    }
 }

@@ -41,4 +41,8 @@ public class DeterminateProgress extends IndeterminateProgress {
     public long getProgress() {
         return progress;
     }
+
+    public void addProgress(long len) {
+        setProgress(getProgress() + len);
+    }
 }
