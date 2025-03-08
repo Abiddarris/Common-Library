@@ -26,6 +26,7 @@ public class TaskInfo<P, R> implements Future<R> {
 
     private final Set<OnTaskExecutedListener<R>> onTaskExecutedListeners = new LinkedHashSet<>();
 
+    private volatile boolean queueTaskOnExecuted;
     private DelegateProgressPublisher<P> delegateProgressPublisher;
     private Future<?> future;
     private R result;
@@ -38,8 +39,8 @@ public class TaskInfo<P, R> implements Future<R> {
         delegateProgressPublisher.setProgressPublisher(progress);
     }
 
-    public void addOnTaskExecuted(OnTaskExecutedListener<R> onTaskExecutedListener) {
-        if (isDone()) {
+    public synchronized void addOnTaskExecuted(OnTaskExecutedListener<R> onTaskExecutedListener) {
+        if (isDone() || queueTaskOnExecuted) {
             onTaskExecutedListener.onExecuted(result);
             return;
         }
@@ -87,7 +88,8 @@ public class TaskInfo<P, R> implements Future<R> {
         this.future = future;
     }
 
-    void queueTaskListener() {
+    synchronized void queueTaskListener() {
+        queueTaskOnExecuted = true;
         for (OnTaskExecutedListener<R> listener : onTaskExecutedListeners) {
             listener.onExecuted(result);
         }
