@@ -62,11 +62,13 @@ public class DeterminateProgressDialog extends BaseDialogFragment<Void> {
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
         super.onDialogCreated(dialog, savedInstanceState);
 
-        ui.message.setText(getMessage());
-        updateProgress();
+        this.<CharSequence>observe(TITLE, dialog::setTitle, true);
+        this.<CharSequence>observe(MESSAGE, ui.message::setText, true);
+        this.observe(PROGRESS, ignored -> updateProgress(), true);
+        this.observe(MAX_PROGRESS, ignored -> updateProgress(), true);
     }
 
-    private void setTitle(@Nullable String title) {
+    public void setTitle(@Nullable String title) {
         if (title == null) {
             title = "";
         }
@@ -85,7 +87,6 @@ public class DeterminateProgressDialog extends BaseDialogFragment<Void> {
     public void setProgress(long progress) {
         checkNonNegative(progress, "progress cannot be negative");
         saveVariable(PROGRESS, progress);
-        updateProgress();
     }
 
     public long getProgress() {
@@ -95,7 +96,6 @@ public class DeterminateProgressDialog extends BaseDialogFragment<Void> {
     public void setMaxProgress(long maxProgress) {
         checkNonNegative(maxProgress, "maxProgress cannot be negative");
         saveVariable(MAX_PROGRESS, maxProgress);
-        updateProgress();
     }
 
     private void updateProgress() {
@@ -125,14 +125,6 @@ public class DeterminateProgressDialog extends BaseDialogFragment<Void> {
 
     public void setMessage(String message) {
         saveVariable(MESSAGE, message);
-
-        if(ui != null) {
-            runOnMainThreadIfNot(() -> ui.message.setText(getMessage()));
-        }
-    }
-
-    public String getMessage() {
-        return getVariable(MESSAGE);
     }
 
     private class DetermineProgressDialogBuilder extends DialogBuilder {
