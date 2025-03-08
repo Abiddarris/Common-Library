@@ -16,6 +16,7 @@
 package com.abiddarris.common.utils;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class ObservableValue<T> {
@@ -45,7 +46,19 @@ public class ObservableValue<T> {
     }
 
     public void addObserver(Observer<T> observer) {
-        if (observers.add(observer)) {
+        addObserver(observer, false);
+    }
+
+    public void addObserver(Observer<T> observer, boolean strict) {
+        if (strict) {
+            observer = new StrictObserver<>(observer);
+        }
+
+        Observer<T> finalObserver = observer;
+        if (observers.stream()
+                .map(obs -> obs instanceof StrictObserver<?> ? ((StrictObserver<?>) obs).observer : obs)
+                .noneMatch(obs -> obs.equals(finalObserver))) {
+            observers.add(observer);
             observer.onChanged(value);
         }
     }
@@ -56,5 +69,24 @@ public class ObservableValue<T> {
 
     public void clearObservers() {
         observers.clear();
+    }
+
+    private static class StrictObserver<T> implements Observer<T> {
+
+        private final Observer<T> observer;
+        private T value;
+
+        public StrictObserver(Observer<T> observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void onChanged(T value) {
+            if (!Objects.equals(this.value, value)) {
+                this.value = value;
+
+                observer.onChanged(value);
+            }
+        }
     }
 }
