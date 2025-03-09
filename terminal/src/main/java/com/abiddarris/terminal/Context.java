@@ -18,6 +18,7 @@ package com.abiddarris.terminal;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedOutputStream;
+import java.util.Arrays;
 
 public class Context {
 
@@ -29,7 +30,7 @@ public class Context {
 
     Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, OutputStream errorStream) {
         this.terminal = terminal;
-        this.args = args;
+        this.args = Arrays.copyOfRange(args, 1, args.length);
         this.outputStream = outputStream;
         this.inputStream = inputStream;
         this.errorStream = errorStream;
