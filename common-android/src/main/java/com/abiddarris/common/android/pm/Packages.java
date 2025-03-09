@@ -26,6 +26,7 @@ import android.content.pm.PackageInstaller.SessionParams;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageManager.PackageInfoFlags;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import java.io.BufferedInputStream;
@@ -98,6 +99,13 @@ public class Packages {
             context.unregisterReceiver(listener);
         }
         
+    }
+
+    public static boolean isAllowedToInstallPackage(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return context.getPackageManager().canRequestPackageInstalls();
+        }
+        return true;
     }
 
 }
