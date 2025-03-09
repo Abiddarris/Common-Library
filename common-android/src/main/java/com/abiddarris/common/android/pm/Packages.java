@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.pm;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -25,10 +27,14 @@ import android.content.pm.PackageInstaller.Session;
 import android.content.pm.PackageInstaller.SessionParams;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager.PackageInfoFlags;
+import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.Settings;
+
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -108,4 +114,20 @@ public class Packages {
         return true;
     }
 
+    public static class RequestInstallPackagePermission extends ActivityResultContract<Void, Boolean> {
+
+        @NonNull
+        @Override
+        public Intent createIntent(@NonNull Context context, Void unused) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
+            intent.setData(Uri.parse("package:" + context. getPackageName()));
+
+            return intent;
+        }
+
+        @Override
+        public Boolean parseResult(int i, @Nullable Intent intent) {
+            return i == RESULT_OK;
+        }
+    }
 }
