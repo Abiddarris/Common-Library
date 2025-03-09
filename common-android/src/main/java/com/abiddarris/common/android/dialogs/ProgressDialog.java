@@ -66,7 +66,7 @@ public class ProgressDialog extends BaseDialogFragment<Void> {
         }
     }
 
-    private void setTitle(@Nullable String title) {
+    public void setTitle(@Nullable String title) {
         if (title == null) {
             title = "";
         }
@@ -81,7 +81,8 @@ public class ProgressDialog extends BaseDialogFragment<Void> {
     @Override
     protected void onDialogCreated(AlertDialog dialog, Bundle savedInstanceState) {
         super.onDialogCreated(dialog, savedInstanceState);
-        
+
+        this.<CharSequence>observe(TITLE, dialog::setTitle, true);
         updateUI();
     }
     
