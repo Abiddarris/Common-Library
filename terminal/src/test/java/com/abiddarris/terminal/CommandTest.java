@@ -1,5 +1,6 @@
 package com.abiddarris.terminal;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -71,6 +72,18 @@ public class CommandTest {
 
         command.release();
     }
+
+    @Test
+    void getArgsTest() throws IOException {
+        terminal.addCommand("print", command);
+        terminal.execute("print hi");
+
+        Context context = command.getContext();
+        assertArrayEquals(new String[] {"hi"}, context.getArgs());
+
+        command.release();
+    }
+
 
     private static class CommandImpl implements Command {
 
