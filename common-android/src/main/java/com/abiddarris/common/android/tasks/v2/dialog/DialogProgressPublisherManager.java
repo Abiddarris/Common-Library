@@ -56,7 +56,7 @@ public class DialogProgressPublisherManager {
         attachInternal(activity.getSupportFragmentManager());
     }
 
-    private void attach(Fragment fragment) {
+    public void attach(Fragment fragment) {
         attachInternal(fragment.getChildFragmentManager());
     }
 
