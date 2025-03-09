@@ -59,6 +59,19 @@ public class CommandTest {
         command.release();
     }
 
+    @Test
+    void commandErrorTest() throws IOException {
+        terminal.addCommand("interact", command);
+
+        Process process = terminal.execute("interact");
+        Context context = command.getContext();
+
+        context.getErrorStream().write('m');
+        assertEquals('m', process.getErrorStream().read());
+
+        command.release();
+    }
+
     private static class CommandImpl implements Command {
 
         private final Object contextLock = new Object();
