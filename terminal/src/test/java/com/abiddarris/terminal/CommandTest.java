@@ -84,6 +84,16 @@ public class CommandTest {
         command.release();
     }
 
+    @Test
+    void getCommandNameTest() throws IOException {
+        terminal.addCommand("print", command);
+        terminal.execute("print");
+
+        Context context = command.getContext();
+        assertEquals("print", context.getCommandName());
+
+        command.release();
+    }
 
     private static class CommandImpl implements Command {
 

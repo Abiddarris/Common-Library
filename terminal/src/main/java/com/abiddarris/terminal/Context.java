@@ -27,9 +27,11 @@ public class Context {
     private final OutputStream outputStream;
     private final InputStream inputStream;
     private final OutputStream errorStream;
+    private final String commandName;
 
     Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, OutputStream errorStream) {
         this.terminal = terminal;
+        this.commandName = args[0];
         this.args = Arrays.copyOfRange(args, 1, args.length);
         this.outputStream = outputStream;
         this.inputStream = inputStream;
@@ -54,5 +56,9 @@ public class Context {
 
     public OutputStream getErrorStream() {
         return errorStream;
+    }
+
+    public String getCommandName() {
+        return commandName;
     }
 }
