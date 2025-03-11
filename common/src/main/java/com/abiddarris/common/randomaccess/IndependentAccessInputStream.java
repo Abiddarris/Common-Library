@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024-2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,43 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.common.stream;
-
-import static com.abiddarris.common.utils.Preconditions.checkNonNull;
+package com.abiddarris.common.randomaccess;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Class that wraps existing {@code InputStream} and delegate this class' methods call
- * to specified {@code InputStream}.
+ * Provides independent reading of {@code RandomAccess}.
  *
- * <p>This is useful if you want to manipulate variables and delegate
- * it to existing {@code InputStream}
+ * The difference between <p>{@code RandomAccess.newInputStream()} and 
+ * {@code RandomAccess.newIndependentInputStream()} is {@code IndependentInputStream} has its
+ * own internal pointer. Meaning any call to {@code RandomAccess} methods like {@code read()} do not
+ * affect {@code IndependentInputStream} (except call to {@code close()}). 
+ *
+ * <p>Regular {@code InputStream} only delegates the call into {@code RandomAccess} itself. 
+ * Meaning any call to {@code InputStream} will affect {@code RandomAccess} and vice virca.
  *
  * @author Abiddarris
- * @since 1.0
  */
-public class DelegateInputStream extends InputStream {
+public class IndependentAccessInputStream extends InputStream {
+  
+    /**
+     * {@code RandomAccess} instance
+     */
+    private RandomAccess randomAccess;
     
     /**
-     * Delegate destination
+     * Internal pointer
      */
-    private InputStream stream;
+    private long pointer = 0;
 
     /**
-     * Create new {@code DelegateInputStream} from specified stream
+     * Create new {@code IndependentAccessInputStream} from specified
+     * {@code RandomAccess}.
      *
-     * @param stream An existing stream
-     * @throws NullPointerException If {@code stream} is {@code null}
-     * @since 1.0
+     * @param randomAccess RandomAccess
+     * @throws NullPointerException If {@code randomAccess} is {@code null}
      */
-    public DelegateInputStream(InputStream stream) {
-        checkNonNull(stream);
-        
-        this.stream = stream;
+    public IndependentAccessInputStream(RandomAccess randomAccess) {
+        this.randomAccess = randomAccess;
     }
-
+    
     /**
      * Reads a byte of data from this {@code InputStream}. The byte is returned
      * as an integer in the range 0 to 255 {@code 0x00-0x0ff}. This method
@@ -58,33 +62,16 @@ public class DelegateInputStream extends InputStream {
      * @return the next byte of data, or {@code -1} if the end of the
      *         {@code InputStream} has been reached.
      * @throws IOException if an I/O error occurs. Not thrown if end of
-     *         {@code InputStream} has been reached.             
-     * @since 1.0
+     *         {@code InputStream} has been reached.
      */
     @Override
-    public int read() throws IOException {
-        return stream.read();
+    public synchronized int read() throws IOException {
+        int b = randomAccess.readAt(pointer);     
+        if(b != -1) pointer++;
+        
+        return b;
     }
 
-    /**
-     * Reads up to {@code b.length} bytes of data from this {@code InputStream}
-     * into an array of bytes. This method blocks until at least one byte of input
-     * is available.
-     *
-     * @param b the buffer into which the data is read.
-     * @return the total number of bytes read into the buffer, or {@code -1} if there is 
-     *         no more data because the end of this {@code InputStream} has been reached.          
-     * @throws IOException If the first byte cannot be read for any reason other than end
-     *         of {@code RandomAccess}, or if the {@code InputStream} has been closed, or 
-     *         if some other I/O error occurs.
-     * @throws NullPointerException If {@code b} is {@code null}.
-     * @since 1.0
-     */
-    @Override
-    public int read(byte[] b) throws IOException {
-        return stream.read(b);
-    }
-    
     /**
      * Reads up to {@code len} bytes of data from this {@code InputStream} into an
      * array of bytes. This method blocks until at least one byte of input is available.
@@ -99,12 +86,15 @@ public class DelegateInputStream extends InputStream {
      *         or if some other I/O error occurs.
      * @throws NullPointerException If {@code b} is {@code null}.
      * @throws IndexOutOfBoundsException If {@code off} is negative, {@code len} is negative, 
-     *         or {@code len} is greater than {@code b.length - off}                   
-     * @since 1.0
+     *         or {@code len} is greater than {@code b.length - off}
      */
     @Override
-    public int read(byte[] b, int off, int len) throws IOException {
-        return stream.read(b, off, len);
+    public synchronized int read(byte[] b, int off, int len) throws IOException {
+        len = randomAccess.readAt(b, pointer, off, len);
+        if(len > 0) {
+            pointer += len;
+        }
+        return len;
     }
 
     /**
@@ -119,11 +109,21 @@ public class DelegateInputStream extends InputStream {
      * @param n the number of bytes to be skipped.
      * @return the actual number of bytes skipped.
      * @throws IOException if an I/O error occurs.
-     * @since 1.0
      */
     @Override
     public long skip(long n) throws IOException {
-        return stream.skip(n);
+        randomAccess.ensureOpen();
+
+        if(n <= 0) return 0;
+
+        synchronized(this) {
+            long length = randomAccess.getLength();
+            long newPointer = pointer + n;
+            if(newPointer > length) newPointer = length;     
+            
+            this.pointer = newPointer;
+            return newPointer - pointer;
+        }      
     }
 
     /**
@@ -141,11 +141,14 @@ public class DelegateInputStream extends InputStream {
      *         over) from this input stream without blocking or {@code 0} when
      *         it reaches the end of the input stream.
      * @throws IOException if an I/O error occurs or stream closed.
-     * @since 1.0
      */
     @Override
     public int available() throws IOException {
-        return stream.available();
+        randomAccess.ensureOpen();      
+        
+        synchronized(this) {         
+            return (int) Math.min(randomAccess.getLength() - pointer, Integer.MAX_VALUE);
+        }      
     }
 
     /**
@@ -153,56 +156,10 @@ public class DelegateInputStream extends InputStream {
      * with the stream.
      *
      * @throws IOException  if an I/O error occurs.
-     * @since 1.0
      */
     @Override
     public void close() throws IOException {
-        stream.close();
+        randomAccess.close();
     }
 
-    /**
-     * Marks the current position in this input stream. A subsequent call to
-     * the <code>reset</code> method repositions this stream at the last marked
-     * position so that subsequent reads re-read the same bytes.
-     *
-     * <p> The <code>readlimit</code> arguments tells this input stream to
-     * allow that many bytes to be read before the mark position gets
-     * invalidated.
-     *
-     * <p> Marking a closed stream should not have any effect on the stream.
-     * @param readlimit the maximum limit of bytes that can be read before
-     *        the mark position becomes invalid.
-     * @see java.io.InputStream#reset()
-     * @since 1.0
-     */
-    @Override
-    public void mark(int readlimit) {
-        stream.mark(readlimit);
-    }
-
-    /**
-     * Repositions this stream to the position at the time the
-     * <code>mark</code> method was last called on this input stream.
-     *
-     * @throws IOException if this stream has not been marked or if the
-     *         mark has been invalidated.
-     * @see java.io.InputStream#mark(int)
-     * @see java.io.IOException
-     * @since 1.0
-     */
-    @Override
-    public void reset() throws IOException {
-        stream.reset();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 1.0
-     */
-    @Override
-    public boolean markSupported() {
-        return stream.markSupported();
-    }
-    
 }
