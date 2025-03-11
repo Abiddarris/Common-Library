@@ -1,0 +1,84 @@
+package com.abiddarris.common.stream;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+/**
+ * {@code OutputStream} implementation that does not close associated {@code OutputStream}
+ * when {@link #close()} called
+ *
+ * <p>When {@link #close()} has been called, only this stream is closed. For example any call
+ * to {@link #write(int)} is throwing {@code IOException} if {@link #close()} has been called.
+ * but this class does not close {@code OutputStream} that passed to constructor. Meaning any call
+ * to {@code OutputStream} does not throw an {@code Exception} even though this stream already closed.
+ * unless there is a call to {@code close()} to {@code OutputStream}
+ *
+ * @author Abiddarris
+ */
+public class IndependentCloseOutputStream extends DelegateOutputStream {
+    
+    /**
+     * Hold this class state
+     */
+    private CloseableObject closeObject = new CloseableObject();
+    
+    /**
+     * Create new {@code IndependentCloseOutputStream} from specified stream
+     *
+     * @param stream An existing stream
+     * @throws NullPointerException If {@code stream} is {@code null}
+     */
+    public IndependentCloseOutputStream(OutputStream stream) {
+        super(stream);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(int b) throws IOException {
+        closeObject.ensureOpen();
+        
+        super.write(b);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(byte[] b) throws IOException {
+        closeObject.ensureOpen();
+        
+        super.write(b);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        closeObject.ensureOpen();
+        
+        super.write(b, off, len);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void flush() throws IOException {
+        closeObject.ensureOpen();
+        
+        super.flush();
+    }
+
+    /**
+     * Close this {@code IndependentCloseOutputStream} without closing passed
+     * {@code tCloseInputStream}.
+     */
+    @Override
+    public void close() {
+        closeObject.close();            
+    }
+    
+}
