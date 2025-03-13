@@ -38,6 +38,10 @@ public abstract class BaseIndeterminateTask<T extends IndeterminateProgress, R> 
         publish(progressInstance);
     }
 
+    protected void setMessage(int message) {
+        setMessage(getString(message));
+    }
+
     protected void setMessage(String message) {
         getProgress().setMessage(message);
         publish(progressInstance);
