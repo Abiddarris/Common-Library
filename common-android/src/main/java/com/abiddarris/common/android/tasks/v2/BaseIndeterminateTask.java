@@ -29,6 +29,10 @@ public abstract class BaseIndeterminateTask<T extends IndeterminateProgress, R> 
 
     protected abstract T newProgressInstance();
 
+    protected void setTitle(int res) {
+        setTitle(getString(res));
+    }
+
     protected void setTitle(String title) {
         getProgress().setTitle(title);
         publish(progressInstance);
