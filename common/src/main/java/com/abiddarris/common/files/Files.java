@@ -20,6 +20,7 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import com.abiddarris.common.utils.ObjectWrapper;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -358,6 +359,10 @@ public final class Files {
         return new BufferedOutputStream(new FileOutputStream(file));
     }
 
+    public static InputStream openBufferedInput(String path) throws FileNotFoundException {
+        return new BufferedInputStream(new FileInputStream(path));
+    }
+
     public static String formatSize(long length) {
         double kbLength = length / 1024;
         if(kbLength < 0.9) {
@@ -392,4 +397,5 @@ public final class Files {
     private static String formatSize(final double length) {
         return String.format(Locale.getDefault(),"%.2f", length);
     }
+
 }
