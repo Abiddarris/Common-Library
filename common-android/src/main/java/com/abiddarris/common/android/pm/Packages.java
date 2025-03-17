@@ -22,6 +22,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInstaller;
 import android.content.pm.PackageInstaller.Session;
 import android.content.pm.PackageInstaller.SessionParams;
@@ -35,6 +36,8 @@ import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.abiddarris.common.files.Files;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,11 +45,34 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class Packages {
     
     private static final String ACTION_INSTALLED = "com.abiddarris.common.android.ACTION_INSTALLED";
-    
+
+    public static String[] getAbiFromPackage(Context context, String packageName) throws NameNotFoundException, IOException {
+        PackageManager manager = context.getPackageManager();
+        ApplicationInfo applicationInfo = manager.getApplicationInfo(packageName, 0);
+        Set<String> abis = new HashSet<>();
+        try (ZipInputStream zis = new ZipInputStream(Files.openBufferedInput(applicationInfo.sourceDir))){
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                String path = entry.getName();
+                String prefix = "lib/";
+                if (path.startsWith(prefix)) {
+                    int archEnd = path.lastIndexOf("/");
+                    abis.add(path.substring(prefix.length(), archEnd == -1 ? path.length() : archEnd));
+                }
+                zis.closeEntry();
+            }
+        }
+        return abis.toArray(new String[0]);
+    }
+
     public static boolean isInstalled(Context context, String packageName) {
         PackageManager manager = context.getPackageManager();
         try {
