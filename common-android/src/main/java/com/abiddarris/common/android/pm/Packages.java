@@ -16,9 +16,11 @@
 package com.abiddarris.common.android.pm;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.pm.PackageInstaller.EXTRA_STATUS_MESSAGE;
 
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,6 +37,8 @@ import android.provider.Settings;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.abiddarris.common.files.Files;
 
@@ -83,21 +87,20 @@ public class Packages {
         return true;
     }
     
-    public static InstallationResult installPackage(Context context, File file) throws IOException {
+    public static void installPackage(Context context, File file, @Nullable InstallationCallback callback) throws IOException {
     	try (InputStream stream = new BufferedInputStream(new FileInputStream(file))){
-            return installPackage(context, stream);
+            installPackage(context, stream, callback);
         } 
     }
     
     @TargetApi(21)
-    public static InstallationResult installPackage(Context context, InputStream stream) throws IOException {
-        PackageInstaller packageInstaller = context.getPackageManager()
-            .getPackageInstaller();
+    public static void installPackage(Context context, InputStream stream, @Nullable InstallationCallback callback) throws IOException {
+        PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+
         SessionParams params = new SessionParams(SessionParams.MODE_FULL_INSTALL);
-       
         int sessionId = packageInstaller.createSession(params);
-        
         Session session = packageInstaller.openSession(sessionId);
+
         try (OutputStream output = new BufferedOutputStream(session.openWrite("PackageInstaller", 0, -1))) {
             byte[] buffer = new byte[65536];
             int length;
@@ -106,31 +109,30 @@ public class Packages {
             }
             output.flush();
         }
-        
-        InstallationListener listener = new InstallationListener();
-        try {
-            context.registerReceiver(listener, new IntentFilter(ACTION_INSTALLED));
 
-            Intent intent = new Intent(ACTION_INSTALLED);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            
-            session.commit(pendingIntent.getIntentSender());
-            
-            synchronized(listener) {
-                if(listener.getStatus() == -1) {
-                    try {
-                        listener.wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return new InstallationResult(
-                listener.getStatus(), listener.getMessage());
-        } finally {
+        InstallationListener listener = new InstallationListener();
+        InstallationCallback internalCallback = (status, message) -> {
             context.unregisterReceiver(listener);
-        }
-        
+            session.close();
+
+            if (callback != null) {
+                callback.installationResult(status, message);
+            }
+        };
+
+        listener.setCallback(internalCallback);
+        ContextCompat.registerReceiver(
+                context, listener, new IntentFilter(ACTION_INSTALLED),
+                ContextCompat.RECEIVER_EXPORTED
+        );
+
+        Intent intent = new Intent(ACTION_INSTALLED);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, 0, intent,
+                PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        session.commit(pendingIntent.getIntentSender());
     }
 
     public static boolean isAllowedToInstallPackage(Context context) {
@@ -140,6 +142,7 @@ public class Packages {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public static class RequestInstallPackagePermission extends ActivityResultContract<Void, Boolean> {
 
         @NonNull
@@ -154,6 +157,30 @@ public class Packages {
         @Override
         public Boolean parseResult(int i, @Nullable Intent intent) {
             return i == RESULT_OK;
+        }
+    }
+
+    @TargetApi(21)
+    private static class InstallationListener extends BroadcastReceiver {
+
+        private InstallationCallback internalCallback;
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int status = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, -2);
+            String message = intent.getExtras().getString(EXTRA_STATUS_MESSAGE);
+
+            if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+                Intent confirmIntent = intent.getParcelableExtra(Intent.EXTRA_INTENT);
+                context.startActivity(confirmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                return;
+            }
+
+            internalCallback.installationResult(status, message);
+        }
+
+        public void setCallback(InstallationCallback internalCallback) {
+            this.internalCallback = internalCallback;
         }
     }
 }

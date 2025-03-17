@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024-2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,6 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.pm;
 
-public final class InstallationResult {
-    
-    private int status;
-    private String message;
-    
-    InstallationResult(int status, String message) {
-        this.status = status;
-        this.message = message;
-    }
-    
-    public int getStatus() {
-        return this.status;
-    }
-    
-    public String getMessage() {
-        return this.message;
-    }
+public interface InstallationCallback {
+    void installationResult(int status, String message);
 }
