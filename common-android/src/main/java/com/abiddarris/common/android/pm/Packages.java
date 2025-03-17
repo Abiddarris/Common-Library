@@ -59,6 +59,10 @@ public class Packages {
     private static final String ACTION_INSTALLED = "com.abiddarris.common.android.ACTION_INSTALLED";
 
     public static String[] getAbiFromPackage(Context context, String packageName) throws NameNotFoundException, IOException {
+        return getAbiFromPackage(context, packageName, false);
+    }
+
+    public static String[] getAbiFromPackage(Context context, String packageName, boolean firstAbiOnly) throws NameNotFoundException, IOException {
         PackageManager manager = context.getPackageManager();
         ApplicationInfo applicationInfo = manager.getApplicationInfo(packageName, 0);
         Set<String> abis = new HashSet<>();
@@ -70,6 +74,9 @@ public class Packages {
                 if (path.startsWith(prefix)) {
                     int archEnd = path.lastIndexOf("/");
                     abis.add(path.substring(prefix.length(), archEnd == -1 ? path.length() : archEnd));
+                    if (firstAbiOnly) {
+                        return abis.toArray(new String[0]);
+                    }
                 }
                 zis.closeEntry();
             }
