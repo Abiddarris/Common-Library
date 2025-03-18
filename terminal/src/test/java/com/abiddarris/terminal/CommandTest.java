@@ -9,6 +9,7 @@ import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
 import com.abiddarris.terminal.arguments.PositionalArgument;
 import com.abiddarris.terminal.arguments.parsers.StringParser;
+import com.abiddarris.terminal.arguments.validators.PermittedValueValidator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -237,6 +238,58 @@ public class CommandTest {
         ArgumentParser parser = new ArgumentParser();
         parser.require(message);
         assertThrows(IllegalArgumentException.class, () -> parser.require(message));
+    }
+
+    @Test
+    void requiredPositionalArgument_withPossibleValues() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "level", StringParser.INSTANCE,
+                new PermittedValueValidator<>("debug", "warning")
+        );
+        String[] args = {"debug"};
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+        parser.parse(args);
+    }
+
+    @Test
+    void requiredPositionalArgument_withPossibleValues_notMatch() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "level", StringParser.INSTANCE,
+                new PermittedValueValidator<>("debug", "warning")
+        );
+        String[] args = {"verbose"};
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+        assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+    }
+
+    @Test
+    void requiredPositionalArgument_withPossibleValues_notProvided() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "level", StringParser.INSTANCE,
+                new PermittedValueValidator<>("debug", "warning")
+        );
+        String[] args = {};
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+        assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+    }
+
+    @Test
+    void optionalPositionalArgument_withPossibleValues_notProvided() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "level", StringParser.INSTANCE,
+                new PermittedValueValidator<>("debug", "warning")
+        );
+        String[] args = {};
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(message);
+        parser.parse(args);
     }
 
     private static class CommandImpl implements Command {

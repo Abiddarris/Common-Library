@@ -15,11 +15,40 @@
  ***********************************************************************************/
 package com.abiddarris.terminal.arguments;
 
+import static com.abiddarris.common.utils.Preconditions.checkNonNull;
+
 import com.abiddarris.terminal.arguments.parsers.ValueParser;
+import com.abiddarris.terminal.arguments.validators.AlwaysAcceptValidator;
+import com.abiddarris.terminal.arguments.validators.Validator;
 
 public class PositionalArgument<T> extends Argument<T> {
 
+    private Validator<T> validator;
+
     public PositionalArgument(String name, ValueParser<T> parser) {
+        this(name, parser, new AlwaysAcceptValidator<>());
+    }
+
+    public PositionalArgument(String name, ValueParser<T> parser, Validator<T> validator) {
         super(name, parser);
+
+        setValidator(validator);
+    }
+
+    public void setValidator(Validator<T> validator) {
+        checkNonNull(validator, "validator cannot be null");
+
+        this.validator = validator;
+    }
+
+    public Validator<T> getValidator() {
+        return validator;
+    }
+
+    @Override
+    public void setValue(T value) {
+        getValidator().validate(value);
+
+        super.setValue(value);
     }
 }

@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.terminal.arguments;
 
+import static com.abiddarris.common.utils.Preconditions.checkNonNull;
+
 import com.abiddarris.terminal.arguments.parsers.ValueParser;
 
 public abstract class Argument<T> {
@@ -25,6 +27,9 @@ public abstract class Argument<T> {
     private T value;
 
     public Argument(String name, ValueParser<T> parser) {
+        checkNonNull(name, "name cannot be null");
+        checkNonNull(parser, "parser cannot be null");
+
         this.name = name;
         this.parser = parser;
     }
