@@ -4,6 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.abiddarris.terminal.arguments.ArgumentParser;
+import com.abiddarris.terminal.arguments.ArgumentParserException;
+import com.abiddarris.terminal.arguments.PositionalArgument;
+import com.abiddarris.terminal.arguments.parsers.StringParser;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +98,59 @@ public class CommandTest {
         assertEquals("print", context.getCommandName());
 
         command.release();
+    }
+
+    @Test
+    void positionalArgumentTest() {
+        terminal.addCommand("print", command);
+        terminal.execute("print hi");
+
+        Context context = command.getContext();
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+        parser.parse(context.getArgs());
+
+        assertEquals("hi", message.getValue());
+
+        command.release();
+    }
+
+    @Test
+    void positionalArgumentTest_unexpectedArgument() {
+        terminal.addCommand("print", command);
+        terminal.execute("print hi hi2");
+
+        Context context = command.getContext();
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+
+        try {
+            assertThrows(ArgumentParserException.class, () -> parser.parse(context.getArgs()));
+        } finally {
+            command.release();
+        }
+    }
+
+    @Test
+    void positionalArgumentTest_missingArgument() {
+        terminal.addCommand("print", command);
+        terminal.execute("print");
+
+        Context context = command.getContext();
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+
+        try {
+            assertThrows(ArgumentParserException.class, () -> parser.parse(context.getArgs()));
+        } finally {
+            command.release();
+        }
     }
 
     private static class CommandImpl implements Command {
