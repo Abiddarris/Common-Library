@@ -20,10 +20,40 @@ import java.util.List;
 
 public class ArgumentParser {
 
-    private final List<PositionalArgument<?>> positionalArguments = new ArrayList<>();
+    private final List<PositionalArgumentData> positionalArguments = new ArrayList<>();
+    private boolean positionalArgumentOptionalCalled;
 
     public void require(PositionalArgument<?> argument) {
-        positionalArguments.add(argument);
+        if (positionalArgumentOptionalCalled) {
+            throw new IllegalStateException("Cannot add required positional argument after optional positional argument");
+        }
+
+        throwIfArgumentAlreadyAdded(argument);
+
+        if (argument.getValue() != null) {
+            argument.setValue(null);
+        }
+
+        positionalArguments.add(new PositionalArgumentData(argument, true));
+    }
+
+    public void optional(PositionalArgument<?> argument) {
+        throwIfArgumentAlreadyAdded(argument);
+
+        positionalArgumentOptionalCalled = true;
+        positionalArguments.add(new PositionalArgumentData(argument, false));
+    }
+
+    private void throwIfArgumentAlreadyAdded(PositionalArgument<?> argument) {
+        if (isAlreadyAdded(argument)) {
+            throw new IllegalArgumentException(String.format("Argument %s already added", argument.getName()));
+        }
+    }
+
+    private boolean isAlreadyAdded(PositionalArgument<?> argument) {
+        return positionalArguments.stream()
+                .map(data -> data.argument)
+                .anyMatch(arg -> arg.equals(argument));
     }
 
     public void parse(String[] args) {
@@ -35,12 +65,22 @@ public class ArgumentParser {
         }
 
         for (int i = 0; i < positionalArguments.size(); i++) {
-            if (i == args.length) {
-                throw new ArgumentParserException(String.format("Missing %s argument", (i + 1) + getSuffix(i + 1)));
+            PositionalArgumentData positionalArgumentData = positionalArguments.get(i);
+            if (i >= args.length && positionalArgumentData.required) {
+                throw new ArgumentParserException(
+                        String.format(
+                                "Missing %s argument (%s)",
+                                (i + 1) + getSuffix(i + 1),
+                                positionalArgumentData.argument.getName()
+                        )
+                );
             }
 
-            PositionalArgument<?> positionalArgument = positionalArguments.get(i);
-            positionalArgument.parse(args[i]);
+            if (i >= args.length) {
+                continue;
+            }
+
+            positionalArgumentData.argument.parse(args[i]);
         }
     }
 
@@ -55,5 +95,16 @@ public class ArgumentParser {
         }
 
         return "th";
+    }
+
+    private static class PositionalArgumentData {
+
+        private final PositionalArgument<?> argument;
+        private final boolean required;
+
+        public PositionalArgumentData(PositionalArgument<?> argument, boolean required) {
+            this.argument = argument;
+            this.required = required;
+        }
     }
 }

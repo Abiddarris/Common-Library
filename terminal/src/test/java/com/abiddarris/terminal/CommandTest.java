@@ -2,6 +2,7 @@ package com.abiddarris.terminal;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.abiddarris.terminal.arguments.ArgumentParser;
@@ -151,6 +152,91 @@ public class CommandTest {
         } finally {
             command.release();
         }
+    }
+
+    @Test
+    void positionalArgumentTest_optionalArgumentTestAndDefaultValueTest_withOptionalArgumentNotProvided() {
+        terminal.addCommand("print", command);
+        terminal.execute("print hello");
+
+        Context context = command.getContext();
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+        PositionalArgument<String> message2 = new PositionalArgument<>("message2", StringParser.INSTANCE);
+        message2.setValue("Earth");
+
+        try {
+            ArgumentParser parser = new ArgumentParser();
+            parser.require(message);
+            parser.optional(message2);
+            parser.parse(context.getArgs());
+
+            assertEquals("hello", message.getValue());
+            assertEquals("Earth", message2.getValue());
+        } finally {
+            command.release();
+        }
+    }
+
+    @Test
+    void positionalArgumentTest_optionalArgumentTestAndDefaultValueTest_providedOptionalArgument() {
+        terminal.addCommand("print", command);
+        terminal.execute("print hello world");
+
+        Context context = command.getContext();
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+        PositionalArgument<String> message2 = new PositionalArgument<>("message2", StringParser.INSTANCE);
+        message2.setValue("Earth");
+
+        try {
+            ArgumentParser parser = new ArgumentParser();
+            parser.require(message);
+            parser.optional(message2);
+            parser.parse(context.getArgs());
+
+            assertEquals("hello", message.getValue());
+            assertEquals("world", message2.getValue());
+        } finally {
+            command.release();
+        }
+    }
+
+    @Test
+    void defaultValueResetToNullIfAddedToRequired() {
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+        message.setValue("Hello");
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+
+        assertNull(message.getValue());
+    }
+
+    @Test
+    void addRequiredPositionalArgumentAfterOptionalOne() {
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+        PositionalArgument<String> message2 = new PositionalArgument<>("message2", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(message);
+        assertThrows(IllegalStateException.class, () -> parser.require(message2));
+    }
+
+    @Test
+    void addDuplicateOptionalPositionalArgument() {
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(message);
+        assertThrows(IllegalArgumentException.class, () -> parser.optional(message));
+    }
+
+    @Test
+    void addDuplicateRequiredPositionalArgument() {
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+        assertThrows(IllegalArgumentException.class, () -> parser.require(message));
     }
 
     private static class CommandImpl implements Command {
