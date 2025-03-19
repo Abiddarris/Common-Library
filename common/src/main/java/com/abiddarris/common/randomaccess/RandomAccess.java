@@ -436,7 +436,7 @@ public abstract class RandomAccess implements Closeable {
     /**
      * Close this {@code RandomAccess}
      *
-     * <p>Subclasses of this class that ovveride this method must calls
+     * <p>Subclasses of this class that override this method must calls
      * its super implementation. Failure to do so would results in bugs
      * where {@code RandomAccess} is interactable even after call to {@link #close()}
      * 
