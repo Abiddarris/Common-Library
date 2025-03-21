@@ -47,6 +47,10 @@ public class TaskManager {
         }
     }
 
+    public <P, R> TaskInfo<P, R> execute(Task<P, R> task) {
+        return execute(task, null);
+    }
+
     public <P, R> TaskInfo<P, R> execute(Task<P, R> task, ProgressPublisher<P> publisher) {
         ensureLive();
         if (publisher == null) {
