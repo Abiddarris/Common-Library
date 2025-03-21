@@ -24,6 +24,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.abiddarris.common.android.tasks.v2.IndeterminateProgress;
 import com.abiddarris.common.android.tasks.v2.ProgressPublisher;
+import com.abiddarris.common.utils.Exceptions;
 
 abstract class NotificationProgressPublisher<P extends IndeterminateProgress> implements ProgressPublisher<P> {
 
@@ -32,6 +33,7 @@ abstract class NotificationProgressPublisher<P extends IndeterminateProgress> im
     private final NotificationManagerCompat notificationManager;
 
     private IndeterminateProgress progress;
+    private Throwable throwable;
 
     NotificationProgressPublisher(NotificationCompat.Builder builder, Context context, int id) {
         this.notificationManager = NotificationManagerCompat.from(context);
@@ -55,12 +57,23 @@ abstract class NotificationProgressPublisher<P extends IndeterminateProgress> im
         builder.setContentTitle(indeterminateProgress.getTitle())
                 .setContentText(indeterminateProgress.getMessage())
                 .setProgress((int)maxProgress, (int) progress, maxProgress == 0);
+        updateBigStyle();
 
         updateNotification();
     }
 
     @Override
     public void error(Throwable throwable) {
+        this.throwable = throwable;
+        updateBigStyle();
+    }
+
+    private void updateBigStyle() {
+        if (throwable == null) {
+            return;
+        }
+        builder.setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(progress.getMessage() + "\n" + Exceptions.toString(throwable)));
     }
 
     @Override
@@ -73,6 +86,7 @@ abstract class NotificationProgressPublisher<P extends IndeterminateProgress> im
             builder.setContentTitle(progress.getTitle())
                     .setContentText(progress.getMessage())
                     .setProgress(0, 0, false);
+            updateBigStyle();
             updateNotification();
         }, 3000);
     }
