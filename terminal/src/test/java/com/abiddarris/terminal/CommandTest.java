@@ -687,6 +687,44 @@ public class CommandTest {
         assertEquals(args[1], receiver.getValue());
     }
 
+    @Test
+    void nullArgument() {
+        ArgumentParser parser = new ArgumentParser();
+        assertThrows(NullPointerException.class, () -> parser.optional(null));
+        assertThrows(NullPointerException.class, () -> parser.require(null));
+    }
+
+    @Test
+    void multipleArgumentsWithSameName_optional() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message2 = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(message);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> parser.optional(message2));
+        assertEquals("Argument with name message already exists", exception.getMessage());
+    }
+
+    @Test
+    void multipleArgumentsWithSameName_required() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message2 = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(message);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> parser.require(message2));
+        assertEquals("Argument with name message already exists", exception.getMessage());
+    }
 
     private static class CommandImpl implements Command {
 

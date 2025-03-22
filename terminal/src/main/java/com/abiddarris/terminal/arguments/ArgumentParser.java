@@ -15,6 +15,8 @@
  ***********************************************************************************/
 package com.abiddarris.terminal.arguments;
 
+import static com.abiddarris.common.utils.Preconditions.checkNonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,12 +28,12 @@ public class ArgumentParser {
     private boolean allowUnlimitedPositionalArgument = true;
 
     public void require(PositionalArgument<?> argument) {
+        validateArgument(argument);
+
         if (!allowRequiredForPositionalArgument) {
             throw new IllegalStateException("Cannot add required positional argument after optional positional argument");
         }
-
         checkItIsUnlimitedPositionalArgument(argument);
-        throwIfArgumentAlreadyAdded(argument);
 
         if (argument.getValue() != null) {
             argument.setValue(null);
@@ -41,7 +43,7 @@ public class ArgumentParser {
     }
 
     public void optional(PositionalArgument<?> argument) {
-        throwIfArgumentAlreadyAdded(argument);
+        validateArgument(argument);
         checkOptionalArgumentAllowed();
         checkItIsUnlimitedPositionalArgument(argument);
 
@@ -67,9 +69,16 @@ public class ArgumentParser {
         }
     }
 
-    private void throwIfArgumentAlreadyAdded(PositionalArgument<?> argument) {
+    private void validateArgument(PositionalArgument<?> argument) {
+        checkNonNull(argument, "Cannot be null");
         if (isAlreadyAdded(argument)) {
             throw new IllegalArgumentException(String.format("Argument %s already added", argument.getName()));
+        }
+
+        if (positionalArguments.stream()
+                .map(data -> data.argument.getName())
+                .anyMatch(name -> name.equals(argument.getName()))) {
+            throw new IllegalArgumentException(String.format("Argument with name %s already exists", argument.getName()));
         }
     }
 
