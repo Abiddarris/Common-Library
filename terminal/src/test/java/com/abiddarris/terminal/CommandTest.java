@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
 import com.abiddarris.terminal.arguments.PositionalArgument;
+import com.abiddarris.terminal.arguments.UnlimitedPositionalArgument;
 import com.abiddarris.terminal.arguments.parsers.StringParser;
 import com.abiddarris.terminal.arguments.validators.PermittedValueValidator;
 
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 public class CommandTest {
 
@@ -281,16 +284,409 @@ public class CommandTest {
 
     @Test
     void optionalPositionalArgument_withPossibleValues_notProvided() {
-        PositionalArgument<String> message = new PositionalArgument<>(
+        PositionalArgument<String> level = new PositionalArgument<>(
                 "level", StringParser.INSTANCE,
                 new PermittedValueValidator<>("debug", "warning")
         );
         String[] args = {};
 
         ArgumentParser parser = new ArgumentParser();
-        parser.optional(message);
+        parser.optional(level);
         parser.parse(args);
     }
+
+    @Test
+    void optional_unlimitedTwoPositionalArgument() {
+        PositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> messages2 = new UnlimitedPositionalArgument<>(
+                "message2", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(messages);
+        assertThrows(IllegalArgumentException.class, () -> parser.optional(messages2));
+    }
+
+    @Test
+    void required_unlimitedTwoPositionalArgument() {
+        PositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> messages2 = new UnlimitedPositionalArgument<>(
+                "message2", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(messages);
+        assertThrows(IllegalArgumentException.class, () -> parser.require(messages2));
+    }
+
+    @Test
+    void requiredOptional_unlimitedTwoPositionalArgument() {
+        PositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> messages2 = new UnlimitedPositionalArgument<>(
+                "message2", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(messages);
+        assertThrows(IllegalArgumentException.class, () -> parser.optional(messages2));
+    }
+
+    @Test
+    void optionalArgumentAfter_unlimitedPositionalArgument() {
+        PositionalArgument<String> messages = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+        PositionalArgument<String> messages2 = new UnlimitedPositionalArgument<>(
+                "message2", StringParser.INSTANCE
+        );
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(messages2);
+        assertThrows(IllegalArgumentException.class, () -> parser.optional(messages));
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentAtTheEnd_satisfied() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John", "Hi", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receiver);
+        parser.require(messages);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receiver.getValue());
+        assertEquals(args[2], messages.getValue());
+        assertEquals(List.of(args[2], args[3]), messages.getValues());
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentAtTheEnd_notSatisified() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receiver);
+        parser.require(messages);
+
+        Exception exception = assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing 3rd argument (messages)", exception.getMessage());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentAtTheEnd_satisfied() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John", "Hi", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receiver);
+        parser.optional(messages);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receiver.getValue());
+        assertEquals(args[2], messages.getValue());
+        assertEquals(List.of(args[2], args[3]), messages.getValues());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentAtTheEnd_notSatisified() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receiver);
+        parser.optional(messages);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receiver.getValue());
+        assertNull(messages.getValue());
+        assertEquals(Collections.EMPTY_LIST, messages.getValues());
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentOnMiddle_satisfied() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> receivers = new UnlimitedPositionalArgument<>(
+                "receivers", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John", "Samuel", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receivers);
+        parser.require(message);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receivers.getValue());
+        assertEquals(List.of(args[1], args[2]), receivers.getValues());
+        assertEquals(args[3], message.getValue());
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentOnMiddle_notSatisified() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> receivers = new UnlimitedPositionalArgument<>(
+                "receivers", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.require(receivers);
+        parser.require(message);
+
+        Exception exception = assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing 3rd argument (message)", exception.getMessage());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentOnMiddle_satisfied() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> receivers = new UnlimitedPositionalArgument<>(
+                "receivers", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John", "Samuel", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.optional(receivers);
+        parser.require(message);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receivers.getValue());
+        assertEquals(List.of(args[1], args[2]), receivers.getValues());
+        assertEquals(args[3], message.getValue());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentOnMiddle_notSatisified() {
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        UnlimitedPositionalArgument<String> receivers = new UnlimitedPositionalArgument<>(
+                "receivers", StringParser.INSTANCE
+        );
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "Nice Day"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(sender);
+        parser.optional(receivers);
+        parser.require(message);
+
+        parser.parse(args);
+
+        assertEquals(args[0], sender.getValue());
+        assertNull(receivers.getValue());
+        assertEquals(Collections.EMPTY_LIST, receivers.getValues());
+        assertEquals(args[1], message.getValue());
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentOnStart_satisfied() {
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Hi", "Nice Day", "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(messages);
+        parser.require(sender);
+        parser.require(receiver);
+
+        parser.parse(args);
+
+        assertEquals(args[0], messages.getValue());
+        assertEquals(List.of(args[0], args[1]), messages.getValues());
+        assertEquals(args[2], sender.getValue());
+        assertEquals(args[3], receiver.getValue());
+    }
+
+    @Test
+    void requiredUnlimitedPositionalArgumentOnStart_notSatisified() {
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(messages);
+        parser.require(sender);
+        parser.require(receiver);
+
+        Exception exception = assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing 3rd argument (receiver)", exception.getMessage());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentOnStart_satisfied() {
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Hi", "Nice Day", "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(messages);
+        parser.require(sender);
+        parser.require(receiver);
+
+        parser.parse(args);
+
+        assertEquals(args[0], messages.getValue());
+        assertEquals(List.of(args[0], args[1]), messages.getValues());
+        assertEquals(args[2], sender.getValue());
+        assertEquals(args[3], receiver.getValue());
+    }
+
+    @Test
+    void optionalUnlimitedPositionalArgumentOnStart_notSatisified() {
+        UnlimitedPositionalArgument<String> messages = new UnlimitedPositionalArgument<>(
+                "messages", StringParser.INSTANCE
+        );
+        PositionalArgument<String> sender = new PositionalArgument<>(
+                "sender", StringParser.INSTANCE
+        );
+        PositionalArgument<String> receiver = new PositionalArgument<>(
+                "receiver", StringParser.INSTANCE
+        );
+
+        String[] args = {
+                "Michael", "John"
+        };
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(messages);
+        parser.require(sender);
+        parser.require(receiver);
+
+        parser.parse(args);
+
+        assertNull(messages.getValue());
+        assertEquals(Collections.EMPTY_LIST, messages.getValues());
+        assertEquals(args[0], sender.getValue());
+        assertEquals(args[1], receiver.getValue());
+    }
+
 
     private static class CommandImpl implements Command {
 

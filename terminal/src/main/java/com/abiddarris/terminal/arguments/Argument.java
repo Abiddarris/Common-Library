@@ -50,7 +50,7 @@ public abstract class Argument<T> {
         return parser;
     }
 
-    public void parse(String arg) {
+    protected void parse(String arg) {
         setValue(getParser().parse(arg));
     }
 }
