@@ -18,6 +18,7 @@ package com.abiddarris.common.android.pm;
 import static android.app.Activity.RESULT_OK;
 import static android.content.pm.PackageInstaller.EXTRA_STATUS_MESSAGE;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -41,6 +42,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.abiddarris.common.files.Files;
+import com.abiddarris.common.utils.Randoms;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -57,6 +59,7 @@ import java.util.zip.ZipInputStream;
 public class Packages {
     
     private static final String ACTION_INSTALLED = "com.abiddarris.common.android.ACTION_INSTALLED";
+    private static final String ACTION_UNINSTALLED = "com.abiddarris.common.android.ACTION_UNINSTALLED";
 
     public static String[] getAbiFromPackage(Context context, String packageName) throws NameNotFoundException, IOException {
         return getAbiFromPackage(context, packageName, false);
@@ -142,6 +145,34 @@ public class Packages {
         session.commit(pendingIntent.getIntentSender());
     }
 
+    @SuppressLint("MissingPermission")
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public static void uninstallPackage(Context context, String packageName, @Nullable InstallationCallback callback) {
+        PackageInstaller packageInstaller = context.getPackageManager().getPackageInstaller();
+        InstallationListener listener = new InstallationListener();
+        InstallationCallback internalCallback = (status, message) -> {
+            context.unregisterReceiver(listener);
+
+            if (callback != null) {
+                callback.installationResult(status, message);
+            }
+        };
+
+        listener.setCallback(internalCallback);
+        ContextCompat.registerReceiver(
+                context, listener, new IntentFilter(ACTION_UNINSTALLED),
+                ContextCompat.RECEIVER_EXPORTED
+        );
+
+        Intent intent = new Intent(ACTION_UNINSTALLED);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                context, Randoms.randomInt(0, Integer.MAX_VALUE), intent,
+                PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        packageInstaller.uninstall(packageName, pendingIntent.getIntentSender());
+    }
+
     public static boolean isAllowedToInstallPackage(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return context.getPackageManager().canRequestPackageInstalls();
@@ -190,4 +221,5 @@ public class Packages {
             this.internalCallback = internalCallback;
         }
     }
+
 }
