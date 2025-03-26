@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
+import com.abiddarris.terminal.arguments.Option;
 import com.abiddarris.terminal.arguments.PositionalArgument;
 import com.abiddarris.terminal.arguments.UnlimitedPositionalArgument;
 import com.abiddarris.terminal.arguments.parsers.StringParser;
@@ -690,7 +692,8 @@ public class CommandTest {
     @Test
     void nullArgument() {
         ArgumentParser parser = new ArgumentParser();
-        assertThrows(NullPointerException.class, () -> parser.optional(null));
+        assertThrows(NullPointerException.class, () -> parser.optional((PositionalArgument<?>)null));
+        assertThrows(NullPointerException.class, () -> parser.optional((Option<?>)null));
         assertThrows(NullPointerException.class, () -> parser.require(null));
     }
 
@@ -724,6 +727,116 @@ public class CommandTest {
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> parser.require(message2));
         assertEquals("Argument with name message already exists", exception.getMessage());
+    }
+
+    @Test
+    void optionTestOptional() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"--user", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+    }
+
+    @Test
+    void optionTestOptional_shortName() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"-u", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+    }
+
+    @Test
+    void optionTestOptional_withMissingValue() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"-u"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for user", exception.getMessage());
+    }
+
+    @Test
+    void optionTestOptional_noOption() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {};
+
+        parser.parse(args);
+        assertNull(user.getValue());
+    }
+
+    @Test
+    void multipleOptionOptional_withSameShortName() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        Option<String> password = new Option<>("password", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+        IllegalArgumentException exception =
+                assertThrowsExactly(IllegalArgumentException.class, () -> parser.optional(password));
+        assertEquals("Multiple options with same short name (u) detected", exception.getMessage());
+    }
+
+    @Test
+    void multipleValuesSuppliedForOptionOptional() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+        String[] args = {"-u", "Andrew", "-u", "Jack"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("user only requires one value", exception.getMessage());
+    }
+
+    @Test
+    void unknown_short_option() {
+        ArgumentParser parser = new ArgumentParser();
+        String[] args = {"-c", "hi"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Unknown option : c", exception.getMessage());
+    }
+
+    @Test
+    void unknown_long_option() {
+        ArgumentParser parser = new ArgumentParser();
+        String[] args = {"--message", "hi"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Unknown option : message", exception.getMessage());
+    }
+
+    @Test
+    void optionWithPosArgs() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        PositionalArgument<String> message = new PositionalArgument<>("message", StringParser.INSTANCE);
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+        parser.require(message);
+
+        String[] args = {"-u", "Michael", "Hi bob!"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+        assertEquals("Hi bob!", message.getValue());
     }
 
     private static class CommandImpl implements Command {

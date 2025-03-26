@@ -19,11 +19,15 @@ import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class ArgumentParser {
 
     private final List<PositionalArgumentData> positionalArguments = new ArrayList<>();
+    private final List<OptionArgumentData> options = new ArrayList<>();
     private boolean allowRequiredForPositionalArgument = true;
     private boolean allowUnlimitedPositionalArgument = true;
 
@@ -69,12 +73,35 @@ public class ArgumentParser {
         }
     }
 
-    private void validateArgument(PositionalArgument<?> argument) {
+    private void validateArgument(Argument<?> argument) {
         checkNonNull(argument, "Cannot be null");
-        if (isAlreadyAdded(argument)) {
-            throw new IllegalArgumentException(String.format("Argument %s already added", argument.getName()));
+        checkArgumentNotAlreadyAdded(argument);
+        checkNameAlreadyExists(argument);
+    }
+
+    private void checkArgumentNotAlreadyAdded(Argument<?> argument) {
+        if (argument instanceof PositionalArgument<?>) {
+            if (positionalArguments.stream()
+                    .map(data -> data.argument)
+                    .anyMatch(arg -> arg.equals(argument))) {
+                throw new IllegalArgumentException(String.format("Argument %s already added", argument.getName()));
+            }
+            return;
         }
 
+        if (argument instanceof BaseOption<?>) {
+            if (options.stream()
+                    .map(data -> data.argument)
+                    .anyMatch(opt -> opt.equals(argument))) {
+                throw new IllegalArgumentException(String.format("Option %s already added", argument.getName()));
+            }
+            return;
+        }
+
+        throw new IllegalArgumentException("Unknown argument type : " + argument.getClass());
+    }
+
+    private void checkNameAlreadyExists(Argument<?> argument) {
         if (positionalArguments.stream()
                 .map(data -> data.argument.getName())
                 .anyMatch(name -> name.equals(argument.getName()))) {
@@ -82,13 +109,108 @@ public class ArgumentParser {
         }
     }
 
-    private boolean isAlreadyAdded(PositionalArgument<?> argument) {
-        return positionalArguments.stream()
-                .map(data -> data.argument)
-                .anyMatch(arg -> arg.equals(argument));
+    public void parse(String[] args) {
+        args = parseOption(args);
+        parsePositionalArguments(args);
     }
 
-    public void parse(String[] args) {
+    private String[] parseOption(String[] args) {
+        int lastOption = getLastOptionIndex(args);
+        if (lastOption == -1) {
+            return args;
+        }
+
+        int end = Math.min(args.length, lastOption + 2);
+
+        String[] optArgs = Arrays.copyOfRange(args, 0, end);
+        Map<String, List<String>> options = mapValuesToKey(optArgs);
+        mapShortNameToLongName(options);
+        mapValuesToOptionObject(options);
+
+        for (String option : options.keySet()) {
+            throw new ArgumentParserException("Unknown option : " + option.substring(2));
+        }
+
+        return Arrays.copyOfRange(args, end, args.length);
+    }
+
+    private void mapValuesToOptionObject(Map<String, List<String>> options) {
+        for (OptionArgumentData data : this.options) {
+            List<String> values = options.remove("--" + data.argument.getName());
+            if (values == null) {
+                continue;
+            }
+
+            if (values.size() > 1) {
+                throw new ArgumentParserException(
+                        data.argument.getName() + " only requires one value");
+            }
+
+            if (values.isEmpty()) {
+                throw new ArgumentParserException("Missing value for " + data.argument.getName());
+            }
+
+            data.argument.parse(values.get(0));
+        }
+    }
+
+    private void mapShortNameToLongName(Map<String, List<String>> options) {
+        for (String key : new HashSet<>(options.keySet())) {
+            char shortName = key.charAt(1);
+            if (key.length() != 2 || !key.startsWith("-") || shortName == '-') {
+                continue;
+            }
+
+            Option<?> option = getOptionFromShort(shortName);
+            if (option == null) {
+                throw new ArgumentParserException("Unknown option : " + shortName);
+            }
+
+            List<String> values = options.computeIfAbsent("--" + option.getName(), (str) -> new ArrayList<>());
+            values.addAll(options.get(key));
+
+            options.remove(key);
+        }
+    }
+
+    private static Map<String, List<String>> mapValuesToKey(String[] optArgs) {
+        Map<String, List<String>> options = new HashMap<>();
+        List<String> values = null;
+        for (String optArg : optArgs) {
+            if (optArg.startsWith("-")) {
+                values = options.computeIfAbsent(optArg, (str) -> new ArrayList<>());
+            } else if (values != null) {
+                values.add(optArg);
+            } else {
+                throw new ArgumentParserException("Unknown value : " + optArg);
+            }
+        }
+        return options;
+    }
+
+    private static int getLastOptionIndex(String[] args) {
+        int lastOption = -1;
+        for (int i = args.length - 1; i >= 0; i--) {
+            if (args[i].startsWith("-")) {
+                lastOption = i;
+                break;
+            }
+        }
+        return lastOption;
+    }
+
+    private Option<?> getOptionFromShort(char c) {
+        for (OptionArgumentData data : options) {
+            for (char shortName : data.argument.getShortNames()) {
+                if (c == shortName) {
+                    return data.argument;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void parsePositionalArguments(String[] args) {
         int unlimitedPositionalArgumentPos = getUnlimitedPositionalArgumentPos();
         if (unlimitedPositionalArgumentPos == -1 && args.length > positionalArguments.size()) {
             int pos = positionalArguments.size() + 1;
@@ -173,12 +295,40 @@ public class ArgumentParser {
         return "th";
     }
 
+    public void optional(Option<?> option) {
+        validateArgument(option);
+        checkNoSameShortNames(option);
+
+        options.add(new OptionArgumentData(option, false));
+    }
+
+    private void checkNoSameShortNames(Option<?> option) {
+        for (char shortName : option.getShortNames()) {
+            if (getOptionFromShort(shortName) != null) {
+                throw new IllegalArgumentException(String.format(
+                        "Multiple options with same short name (%s) detected", shortName
+                ));
+            }
+        }
+    }
+
     private static class PositionalArgumentData {
 
         private final PositionalArgument<?> argument;
         private final boolean required;
 
         public PositionalArgumentData(PositionalArgument<?> argument, boolean required) {
+            this.argument = argument;
+            this.required = required;
+        }
+    }
+
+    private static class OptionArgumentData {
+
+        private final Option<?> argument;
+        private final boolean required;
+
+        public OptionArgumentData(Option<?> argument, boolean required) {
             this.argument = argument;
             this.required = required;
         }
