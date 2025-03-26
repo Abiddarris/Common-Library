@@ -21,7 +21,7 @@ import com.abiddarris.terminal.arguments.parsers.ValueParser;
 import com.abiddarris.terminal.arguments.validators.AlwaysAcceptValidator;
 import com.abiddarris.terminal.arguments.validators.Validator;
 
-public class PositionalArgument<T> extends Argument<T> {
+public class PositionalArgument<T> extends Argument<T> implements HasValidator<T> {
 
     private Validator<T> validator;
 
@@ -35,12 +35,14 @@ public class PositionalArgument<T> extends Argument<T> {
         setValidator(validator);
     }
 
+    @Override
     public void setValidator(Validator<T> validator) {
         checkNonNull(validator, "validator cannot be null");
 
         this.validator = validator;
     }
 
+    @Override
     public Validator<T> getValidator() {
         return validator;
     }

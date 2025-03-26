@@ -20,16 +20,32 @@ import com.abiddarris.terminal.arguments.validators.Validator;
 
 import java.util.List;
 
-public class UnlimitedPositionalArgument<T> extends PositionalArgument<T> {
+public class MultipleValueOption<T> extends Option<T> {
 
     private final MultipleValuesArgument<T> multipleValuesArgument = new MultipleValuesArgument<T>();
 
-    public UnlimitedPositionalArgument(String name, ValueParser<T> parser) {
+    public MultipleValueOption(String name, ValueParser<T> parser) {
         super(name, parser);
     }
 
-    public UnlimitedPositionalArgument(String name, ValueParser<T> parser, Validator<T> validator) {
+    public MultipleValueOption(String name, ValueParser<T> parser, Validator<T> validator) {
         super(name, parser, validator);
+    }
+
+    public MultipleValueOption(String name, char shortName, ValueParser<T> parser) {
+        super(name, shortName, parser);
+    }
+
+    public MultipleValueOption(String name, char shortName, ValueParser<T> parser, Validator<T> validator) {
+        super(name, shortName, parser, validator);
+    }
+
+    public MultipleValueOption(String name, char[] shortNames, ValueParser<T> parser) {
+        super(name, shortNames, parser);
+    }
+
+    public MultipleValueOption(String name, char[] shortNames, ValueParser<T> parser, Validator<T> validator) {
+        super(name, shortNames, parser, validator);
     }
 
     @Override

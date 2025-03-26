@@ -21,7 +21,7 @@ import com.abiddarris.terminal.arguments.parsers.ValueParser;
 import com.abiddarris.terminal.arguments.validators.AlwaysAcceptValidator;
 import com.abiddarris.terminal.arguments.validators.Validator;
 
-public class Option<T> extends BaseOption<T> {
+public class Option<T> extends BaseOption<T> implements HasValidator<T> {
 
     private Validator<T> validator = new AlwaysAcceptValidator<>();
 
@@ -55,10 +55,12 @@ public class Option<T> extends BaseOption<T> {
         setValidator(validator);
     }
 
+    @Override
     public Validator<T> getValidator() {
         return validator;
     }
 
+    @Override
     public void setValidator(Validator<T> validator) {
         checkNonNull(validator, "validator cannot be null");
 

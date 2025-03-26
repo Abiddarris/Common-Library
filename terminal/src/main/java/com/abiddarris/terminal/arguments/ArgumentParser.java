@@ -140,6 +140,13 @@ public class ArgumentParser {
                 continue;
             }
 
+            if (data.argument instanceof MultipleValueOption<?> && !values.isEmpty()){
+                ((MultipleValueOption<?>) data.argument).parse(
+                        values.toArray(new String[0])
+                );
+                continue;
+            }
+
             if (values.size() > 1) {
                 throw new ArgumentParserException(
                         data.argument.getName() + " only requires one value");

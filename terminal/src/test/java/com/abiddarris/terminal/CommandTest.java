@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
+import com.abiddarris.terminal.arguments.MultipleValueOption;
 import com.abiddarris.terminal.arguments.Option;
 import com.abiddarris.terminal.arguments.PositionalArgument;
 import com.abiddarris.terminal.arguments.UnlimitedPositionalArgument;
@@ -878,6 +879,208 @@ public class CommandTest {
                 assertThrowsExactly(IllegalArgumentException.class, () -> parser.require(password));
         assertEquals("Multiple options with same short name (u) detected", exception.getMessage());
     }
+
+    @Test
+    void multipleValuesOptionTestOptional() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"--user", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+        assertEquals(List.of("Michael"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesOptionTestOptional_shortName() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"-u", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+        assertEquals(List.of("Michael"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesOptionTestOptional_withMissingValue() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {"-u"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for user", exception.getMessage());
+    }
+
+    @Test
+    void multipleValuesOptionTestOptional_noOption() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(user);
+
+        String[] args = {};
+        parser.parse(args);
+
+        assertNull(user.getValue());
+    }
+
+    @Test
+    void multipleValuesSuppliedForMultipleValueOptionOptional() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+
+        String[] args = {"-u", "Andrew", "-u", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesSuppliedAsLongNameForMultipleValueOptionOptional() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+
+        String[] args = {"--user", "Andrew", "--user", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesSuppliedMixedForMultipleValueOptionOptional() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+
+        String[] args = {"--user", "Andrew", "-u", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesOptionTestRequired() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"--user", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+        assertEquals(List.of("Michael"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesOptionTestRequired_shortName() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"-u", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+        assertEquals(List.of("Michael"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesOptionTestRequired_withMissingValue() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"-u"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for user", exception.getMessage());
+    }
+
+    @Test
+    void multipleValuesOptionTestRequired_noOption() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing option : user", exception.getMessage());
+    }
+
+    @Test
+    void multipleValuesSuppliedForMultipleValuesOptionRequired() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.require(user);
+        String[] args = {"-u", "Andrew", "-u", "Jack"};
+
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesSuppliedAsLongNameForMultipleValueOptionRequired() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.require(user);
+
+        String[] args = {"--user", "Andrew", "--user", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void multipleValuesSuppliedMixedForMultipleValueOptionRequired() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.require(user);
+
+        String[] args = {"--user", "Andrew", "-u", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
 
     @Test
     void unknown_short_option() {
