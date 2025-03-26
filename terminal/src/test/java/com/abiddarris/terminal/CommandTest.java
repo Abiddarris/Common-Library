@@ -694,7 +694,8 @@ public class CommandTest {
         ArgumentParser parser = new ArgumentParser();
         assertThrows(NullPointerException.class, () -> parser.optional((PositionalArgument<?>)null));
         assertThrows(NullPointerException.class, () -> parser.optional((Option<?>)null));
-        assertThrows(NullPointerException.class, () -> parser.require(null));
+        assertThrows(NullPointerException.class, () -> parser.require((Option<?>) null));
+        assertThrows(NullPointerException.class, () -> parser.require((PositionalArgument<?>) null));
     }
 
     @Test
@@ -779,6 +780,19 @@ public class CommandTest {
     }
 
     @Test
+    void multipleValuesSuppliedForOptionOptional() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+        String[] args = {"-u", "Andrew", "-u", "Jack"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("user only requires one value", exception.getMessage());
+    }
+
+    @Test
     void multipleOptionOptional_withSameShortName() {
         Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
         Option<String> password = new Option<>("password", 'u', StringParser.INSTANCE);
@@ -791,16 +805,78 @@ public class CommandTest {
     }
 
     @Test
-    void multipleValuesSuppliedForOptionOptional() {
+    void optionTestRequired() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"--user", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+    }
+
+    @Test
+    void optionTestRequired_shortName() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"-u", "Michael"};
+
+        parser.parse(args);
+        assertEquals("Michael", user.getValue());
+    }
+
+    @Test
+    void optionTestRequired_withMissingValue() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {"-u"};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for user", exception.getMessage());
+    }
+
+    @Test
+    void optionTestRequired_noOption() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(user);
+
+        String[] args = {};
+
+        ArgumentParserException exception =
+                assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing option : user", exception.getMessage());
+    }
+
+    @Test
+    void multipleValuesSuppliedForOptionRequired() {
         Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
         ArgumentParser parser = new ArgumentParser();
 
-        parser.optional(user);
+        parser.require(user);
         String[] args = {"-u", "Andrew", "-u", "Jack"};
 
         ArgumentParserException exception =
                 assertThrowsExactly(ArgumentParserException.class, () -> parser.parse(args));
         assertEquals("user only requires one value", exception.getMessage());
+    }
+
+    @Test
+    void multipleOptionRequired_withSameShortName() {
+        Option<String> user = new Option<>("user", 'u', StringParser.INSTANCE);
+        Option<String> password = new Option<>("password", 'u', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.require(user);
+        IllegalArgumentException exception =
+                assertThrowsExactly(IllegalArgumentException.class, () -> parser.require(password));
+        assertEquals("Multiple options with same short name (u) detected", exception.getMessage());
     }
 
     @Test

@@ -116,11 +116,7 @@ public class ArgumentParser {
 
     private String[] parseOption(String[] args) {
         int lastOption = getLastOptionIndex(args);
-        if (lastOption == -1) {
-            return args;
-        }
-
-        int end = Math.min(args.length, lastOption + 2);
+        int end = lastOption == -1 ? 0 : Math.min(args.length, lastOption + 2);
 
         String[] optArgs = Arrays.copyOfRange(args, 0, end);
         Map<String, List<String>> options = mapValuesToKey(optArgs);
@@ -138,6 +134,9 @@ public class ArgumentParser {
         for (OptionArgumentData data : this.options) {
             List<String> values = options.remove("--" + data.argument.getName());
             if (values == null) {
+                if (data.required) {
+                    throw new ArgumentParserException("Missing option : " + data.argument.getName());
+                }
                 continue;
             }
 
@@ -296,10 +295,18 @@ public class ArgumentParser {
     }
 
     public void optional(Option<?> option) {
+        addOption(option, false);
+    }
+
+    public void require(Option<?> option) {
+        addOption(option, true);
+    }
+
+    private void addOption(Option<?> option, boolean required) {
         validateArgument(option);
         checkNoSameShortNames(option);
 
-        options.add(new OptionArgumentData(option, false));
+        options.add(new OptionArgumentData(option, required));
     }
 
     private void checkNoSameShortNames(Option<?> option) {
