@@ -2,12 +2,15 @@ package com.abiddarris.terminal;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
+import com.abiddarris.terminal.arguments.Flag;
 import com.abiddarris.terminal.arguments.MultipleValueOption;
 import com.abiddarris.terminal.arguments.Option;
 import com.abiddarris.terminal.arguments.PositionalArgument;
@@ -981,6 +984,21 @@ public class CommandTest {
     }
 
     @Test
+    void multipleValuesSuppliedForMultipleShortNamesForMultipleValueOptionOptional() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", new char[] {'u', 's'}, StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.optional(user);
+
+        String[] args = {"-s", "Andrew", "-u", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
     void multipleValuesOptionTestRequired() {
         MultipleValueOption<String> user = new MultipleValueOption<>(
                 "user", 'u', StringParser.INSTANCE);
@@ -1081,6 +1099,86 @@ public class CommandTest {
         assertEquals(List.of("Andrew", "Jack"), user.getValues());
     }
 
+    @Test
+    void multipleValuesSuppliedForMultipleShortNamesForMultipleValueOptionRequired() {
+        MultipleValueOption<String> user = new MultipleValueOption<>(
+                "user", new char[] {'u', 's'}, StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+
+        parser.require(user);
+
+        String[] args = {"-s", "Andrew", "-u", "Jack"};
+        parser.parse(args);
+
+        assertEquals("Andrew", user.getValue());
+        assertEquals(List.of("Andrew", "Jack"), user.getValues());
+    }
+
+    @Test
+    void flagTest() {
+        Flag debug = new Flag("debug", 'd');
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+
+        String[] args = {"--debug"};
+        parser.parse(args);
+
+        assertTrue(debug.getValue());
+    }
+
+    @Test
+    void flagTest_shortName() {
+        Flag debug = new Flag("debug", 'd');
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+
+        String[] args = {"-d"};
+        parser.parse(args);
+
+        assertTrue(debug.getValue());
+    }
+
+    @Test
+    void flagTestWithAnPosArg() {
+        Flag debug = new Flag("debug", 'd');
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+        parser.require(message);
+
+        String[] args = {"--debug", "Hello"};
+        parser.parse(args);
+
+        assertTrue(debug.getValue());
+        assertEquals("Hello", message.getValue());
+    }
+
+    @Test
+    void flagTest_notSpecified() {
+        Flag debug = new Flag("debug", 'd');
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+
+        String[] args = {};
+        parser.parse(args);
+
+        assertFalse(debug.getValue());
+    }
+
+    @Test
+    void flagWithValueTest() {
+        Flag debug = new Flag("debug", 'd');
+        Option<String> output = new Option<>("output", 'o', StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+        parser.require(output);
+
+        String[] args = {"-d", "0", "--output", "hello.txt"};
+        Exception e = assertThrowsExactly(ArgumentParserException.class,
+                () -> parser.parse(args));
+        assertEquals("Unknown value : 0", e.getMessage());
+    }
 
     @Test
     void unknown_short_option() {

@@ -115,9 +115,7 @@ public class ArgumentParser {
     }
 
     private String[] parseOption(String[] args) {
-        int lastOption = getLastOptionIndex(args);
-        int end = lastOption == -1 ? 0 : Math.min(args.length, lastOption + 2);
-
+        int end = getOptionEndIndex(args);
         String[] optArgs = Arrays.copyOfRange(args, 0, end);
         Map<String, List<String>> options = mapValuesToKey(optArgs);
         mapShortNameToLongName(options);
@@ -128,6 +126,49 @@ public class ArgumentParser {
         }
 
         return Arrays.copyOfRange(args, end, args.length);
+    }
+
+    private int getOptionEndIndex(String[] args) {
+        int lastOptionIndex = getLastOptionIndex(args);
+        if (lastOptionIndex == -1) {
+            return 0;
+        }
+
+        String optionName = args[lastOptionIndex];
+        BaseOption<?> lastOption = getOption(optionName);
+        if (lastOption == null) {
+            throw new ArgumentParserException("Unknown option : " + getNameWithoutSymbol(optionName));
+        }
+
+        if (!(lastOption instanceof Flag)) {
+            lastOptionIndex++;
+        }
+
+        return Math.min(args.length, ++lastOptionIndex);
+    }
+
+    private BaseOption<?> getOption(String optionName) {
+        if (optionName.length() == 2) {
+            return getOptionFromShort(optionName.charAt(1));
+        }
+
+        optionName = optionName.substring(2);
+
+        for (OptionArgumentData data : options) {
+            if (data.argument.getName().equals(optionName)) {
+                return data.argument;
+            }
+        }
+
+        return null;
+    }
+
+    private String getNameWithoutSymbol(String optionName) {
+        if (optionName.length() == 2) {
+            return String.valueOf(optionName.charAt(1));
+        } else {
+            return optionName.substring(2);
+        }
     }
 
     private void mapValuesToOptionObject(Map<String, List<String>> options) {
@@ -167,7 +208,7 @@ public class ArgumentParser {
                 continue;
             }
 
-            Option<?> option = getOptionFromShort(shortName);
+            BaseOption<?> option = getOptionFromShort(shortName);
             if (option == null) {
                 throw new ArgumentParserException("Unknown option : " + shortName);
             }
@@ -179,12 +220,12 @@ public class ArgumentParser {
         }
     }
 
-    private static Map<String, List<String>> mapValuesToKey(String[] optArgs) {
+    private Map<String, List<String>> mapValuesToKey(String[] optArgs) {
         Map<String, List<String>> options = new HashMap<>();
         List<String> values = null;
         for (String optArg : optArgs) {
             if (optArg.startsWith("-")) {
-                values = options.computeIfAbsent(optArg, (str) -> new ArrayList<>());
+                values = handleFlagIfItIsFlag(optArg, options);
             } else if (values != null) {
                 values.add(optArg);
             } else {
@@ -192,6 +233,16 @@ public class ArgumentParser {
             }
         }
         return options;
+    }
+
+    private List<String> handleFlagIfItIsFlag(String optArg, Map<String, List<String>> options) {
+        BaseOption<?> option = getOption(optArg);
+        if (option instanceof Flag) {
+            option.parse("true");
+        } else {
+            return options.computeIfAbsent(optArg, (str) -> new ArrayList<>());
+        }
+        return null;
     }
 
     private static int getLastOptionIndex(String[] args) {
@@ -205,7 +256,7 @@ public class ArgumentParser {
         return lastOption;
     }
 
-    private Option<?> getOptionFromShort(char c) {
+    private BaseOption<?> getOptionFromShort(char c) {
         for (OptionArgumentData data : options) {
             for (char shortName : data.argument.getShortNames()) {
                 if (c == shortName) {
@@ -301,7 +352,7 @@ public class ArgumentParser {
         return "th";
     }
 
-    public void optional(Option<?> option) {
+    public void optional(BaseOption<?> option) {
         addOption(option, false);
     }
 
@@ -309,14 +360,14 @@ public class ArgumentParser {
         addOption(option, true);
     }
 
-    private void addOption(Option<?> option, boolean required) {
+    private void addOption(BaseOption<?> option, boolean required) {
         validateArgument(option);
         checkNoSameShortNames(option);
 
         options.add(new OptionArgumentData(option, required));
     }
 
-    private void checkNoSameShortNames(Option<?> option) {
+    private void checkNoSameShortNames(BaseOption<?> option) {
         for (char shortName : option.getShortNames()) {
             if (getOptionFromShort(shortName) != null) {
                 throw new IllegalArgumentException(String.format(
@@ -339,10 +390,10 @@ public class ArgumentParser {
 
     private static class OptionArgumentData {
 
-        private final Option<?> argument;
+        private final BaseOption<?> argument;
         private final boolean required;
 
-        public OptionArgumentData(Option<?> argument, boolean required) {
+        public OptionArgumentData(BaseOption<?> argument, boolean required) {
             this.argument = argument;
             this.required = required;
         }
