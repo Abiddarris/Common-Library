@@ -82,13 +82,11 @@ abstract class NotificationProgressPublisher<P extends IndeterminateProgress> im
             return;
         }
 
-        postDelayed(() -> {
-            builder.setContentTitle(progress.getTitle())
-                    .setContentText(progress.getMessage())
-                    .setProgress(0, 0, false);
-            updateBigStyle();
-            updateNotification();
-        }, 3000);
+        builder.setContentTitle(progress.getTitle())
+                .setContentText(progress.getMessage())
+                .setProgress(0, 0, false);
+        updateBigStyle();
+        updateNotification();
     }
 
     protected abstract long getProgress(P progress);
