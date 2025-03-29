@@ -1,5 +1,5 @@
 /***********************************************************************************
- * Copyright 2024 Abiddarris
+ * Copyright 2024-2025 Abiddarris
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,7 @@ public final class InputStreams {
             skipExact(stream, Long.MAX_VALUE);
         } while(stream.read() != -1);
     }
-    
+
     /**
      * Write all bytes from given {@code InputStream} to given {@code OutputStream}
      *
@@ -184,11 +184,29 @@ public final class InputStreams {
      * @since 1.0
      */
     public static void writeAllTo(InputStream src, OutputStream dest) throws IOException {
+        writeAllTo(src, dest, null);
+    }
+
+    /**
+     * Write all bytes from given {@code InputStream} to given {@code OutputStream}
+     *
+     * @param src      Bytes source
+     * @param dest     Write destination
+     * @param canceler Canceler object.
+     * @throws IOException if an I/O error occurs while reading the stream
+     * @return {@code true} if operation succeed. {@code false} if operation canceled.
+     * @since 1.0
+     */
+    public static boolean writeAllTo(InputStream src, OutputStream dest, Canceler canceler) throws IOException {
         int len;
         byte[] buf = new byte[8192];
         while((len = src.read(buf)) != -1) {
+            if (canceler != null && canceler.isCancel()) {
+                return false;
+            }
             dest.write(buf, 0, len);
         }
         dest.flush();
+        return true;
     }
 }
