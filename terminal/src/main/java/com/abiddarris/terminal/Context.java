@@ -29,7 +29,7 @@ public class Context {
     private final OutputStream errorStream;
     private final String commandName;
 
-    Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, OutputStream errorStream) {
+    protected Context(Terminal terminal, String[] args, OutputStream outputStream, InputStream inputStream, OutputStream errorStream) {
         this.terminal = terminal;
         this.commandName = args[0];
         this.args = Arrays.copyOfRange(args, 1, args.length);

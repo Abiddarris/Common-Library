@@ -17,6 +17,9 @@ package com.abiddarris.terminal.arguments;
 
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
+import com.abiddarris.common.utils.Container;
+import com.abiddarris.terminal.Command;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +33,7 @@ public class ArgumentParser {
     private final List<OptionArgumentData> options = new ArrayList<>();
     private boolean allowRequiredForPositionalArgument = true;
     private boolean allowUnlimitedPositionalArgument = true;
+    private Map<String, Command> commands = new HashMap<>();
 
     public void require(PositionalArgument<?> argument) {
         validateArgument(argument);
@@ -109,9 +113,29 @@ public class ArgumentParser {
         }
     }
 
-    public void parse(String[] args) {
+    public PendingCommandHandle parse(String[] args) {
+        PendingCommandHandle pendingCommandHandle = handleSubcommand(args);
+        if (pendingCommandHandle != null) {
+            return pendingCommandHandle;
+        }
+
         args = parseOption(args);
         parsePositionalArguments(args);
+
+        return null;
+    }
+
+    private PendingCommandHandle handleSubcommand(String[] args) {
+        if (args.length == 0 || commands.isEmpty()) {
+            return null;
+        }
+
+        Command command = commands.get(args[0]);
+        if (command == null) {
+            return null;
+        }
+
+        return new PendingCommandHandle(command, args);
     }
 
     private String[] parseOption(String[] args) {
@@ -394,6 +418,10 @@ public class ArgumentParser {
                 ));
             }
         }
+    }
+
+    public void registerCommand(String name, Command command) {
+        commands.put(name, command);
     }
 
     private static class PositionalArgumentData {

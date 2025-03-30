@@ -8,11 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.abiddarris.common.utils.ObjectWrapper;
 import com.abiddarris.terminal.arguments.ArgumentParser;
 import com.abiddarris.terminal.arguments.ArgumentParserException;
 import com.abiddarris.terminal.arguments.Flag;
 import com.abiddarris.terminal.arguments.MultipleValueOption;
 import com.abiddarris.terminal.arguments.Option;
+import com.abiddarris.terminal.arguments.PendingCommandHandle;
 import com.abiddarris.terminal.arguments.PositionalArgument;
 import com.abiddarris.terminal.arguments.UnlimitedPositionalArgument;
 import com.abiddarris.terminal.arguments.parsers.StringParser;
@@ -107,6 +109,75 @@ public class CommandTest {
 
         Context context = command.getContext();
         assertEquals("print", context.getCommandName());
+
+        command.release();
+    }
+
+    @Test
+    void subcommandTest() throws Throwable {
+        terminal.addCommand("util", command);
+        terminal.execute("util print hi");
+
+        Context context = command.getContext();
+        ArgumentParser parser = new ArgumentParser();
+        ObjectWrapper<Context> subcommandContext = new ObjectWrapper<>();
+        parser.registerCommand("print", (ctx) -> {
+            subcommandContext.setObject(ctx);
+            return 0;
+        });
+
+        PendingCommandHandle handle = parser.parse(context.getArgs());
+        assertEquals(0, handle.execute(context));
+
+        Context subcommandCtx = subcommandContext.getObject();
+        assertArrayEquals(new String[] {"hi"}, subcommandCtx.getArgs());
+        assertEquals("print", subcommandCtx.getCommandName());
+        assertEquals(context.getInputStream(), subcommandCtx.getInputStream());
+        assertEquals(context.getOutputStream(), subcommandCtx.getOutputStream());
+        assertEquals(context.getErrorStream(), subcommandCtx.getErrorStream());
+
+        command.release();
+    }
+
+    @Test
+    void addSubcommand_butDoNotExecuteItTest() {
+        terminal.addCommand("util", command);
+        terminal.execute("util");
+
+        Context context = command.getContext();
+        ArgumentParser parser = new ArgumentParser();
+        ObjectWrapper<Context> subcommandContext = new ObjectWrapper<>();
+        parser.registerCommand("print", (ctx) -> {
+            subcommandContext.setObject(ctx);
+            return 0;
+        });
+
+        PendingCommandHandle handle = parser.parse(context.getArgs());
+        assertNull(handle);
+
+        command.release();
+    }
+
+    @Test
+    void subcommandTest_butDoNotExecuteItAndCheckParentCommandArgs() throws Throwable {
+        terminal.addCommand("util", command);
+        terminal.execute("util hi");
+
+        PositionalArgument<String> arg = new PositionalArgument<>("arg", StringParser.INSTANCE);
+
+        Context context = command.getContext();
+        ArgumentParser parser = new ArgumentParser();
+        parser.require(arg);
+
+        ObjectWrapper<Context> subcommandContext = new ObjectWrapper<>();
+        parser.registerCommand("print", (ctx) -> {
+            subcommandContext.setObject(ctx);
+            return 0;
+        });
+
+        PendingCommandHandle handle = parser.parse(context.getArgs());
+        assertNull(handle);
+        assertEquals("hi", arg.getValue());
 
         command.release();
     }
