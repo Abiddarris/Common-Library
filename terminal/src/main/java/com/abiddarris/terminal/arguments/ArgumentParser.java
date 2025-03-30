@@ -115,8 +115,10 @@ public class ArgumentParser {
     }
 
     private String[] parseOption(String[] args) {
-        int end = getOptionEndIndex(args);
-        String[] optArgs = Arrays.copyOfRange(args, 0, end);
+        int posArgsStart = getPositionalArgumentStart(args);
+        int optArgsEnd = getOptArgsEnd(args, posArgsStart);
+
+        String[] optArgs = Arrays.copyOfRange(args, 0, optArgsEnd);
         Map<String, List<String>> options = mapValuesToKey(optArgs);
         mapShortNameToLongName(options);
         mapValuesToOptionObject(options);
@@ -125,10 +127,27 @@ public class ArgumentParser {
             throw new ArgumentParserException("Unknown option : " + option.substring(2));
         }
 
-        return Arrays.copyOfRange(args, end, args.length);
+        return Arrays.copyOfRange(args, posArgsStart, args.length);
     }
 
-    private int getOptionEndIndex(String[] args) {
+    private static int getOptArgsEnd(String[] args, int posArgsStart) {
+        if (posArgsStart == 0) {
+            return 0;
+        }
+
+        if (posArgsStart < args.length && args[posArgsStart - 1].equals("--")) {
+            return posArgsStart - 1;
+        }
+
+        return posArgsStart;
+    }
+
+    private int getPositionalArgumentStart(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("--")) {
+                return i + 1;
+            }
+        }
         int lastOptionIndex = getLastOptionIndex(args);
         if (lastOptionIndex == -1) {
             return 0;

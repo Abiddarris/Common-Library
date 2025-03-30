@@ -1155,6 +1155,38 @@ public class CommandTest {
     }
 
     @Test
+    void flagAfterDoubleHyphens() {
+        Flag debug = new Flag("debug", 'd');
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message", StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+        parser.require(message);
+
+        String[] args = {"--", "--debug"};
+        parser.parse(args);
+
+        assertFalse(debug.getValue());
+        assertEquals("--debug", message.getValue());
+    }
+
+    @Test
+    void flagWithTwoDoubleHyphens() {
+        Flag debug = new Flag("debug", 'd');
+        UnlimitedPositionalArgument<String> message = new UnlimitedPositionalArgument<>(
+                "message", StringParser.INSTANCE);
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(debug);
+        parser.require(message);
+
+        String[] args = {"--", "--debug", "--"};
+        parser.parse(args);
+
+        assertFalse(debug.getValue());
+        assertEquals(List.of("--debug", "--"), message.getValues());
+    }
+
+    @Test
     void flagTest_notSpecified() {
         Flag debug = new Flag("debug", 'd');
         ArgumentParser parser = new ArgumentParser();
