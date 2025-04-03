@@ -21,13 +21,19 @@ import java.util.List;
 public class DefaultParser implements Parser {
 
     @Override
-    public String[] parse(String command) {
+    public String[] parse(Terminal terminal, String command) {
         EscapedCharSequence sequence = new EscapedCharSequence(command);
         strip(sequence);
+
+        new VariableExpander(terminal, sequence);
+
         removeDuplicateSpace(sequence);
 
         List<EscapedCharSequence> args = splitBySpace(sequence);
+        return turnIntoString(args);
+    }
 
+    private String[] turnIntoString(List<EscapedCharSequence> args) {
         return args.stream()
                 .map(seq -> {
                     if (seq.isEmpty()) {
@@ -35,7 +41,7 @@ public class DefaultParser implements Parser {
                     }
 
                     if (seq.charAt(0) == '"' && !seq.isEscaped(0)) {
-                        seq.removeChar(0);
+                        seq.deleteChar(0);
                     }
 
                     int i = seq.length() - 1;
@@ -44,7 +50,7 @@ public class DefaultParser implements Parser {
                     }
 
                     if (seq.charAt(i) == '"' && !seq.isEscaped(i)) {
-                        seq.removeChar(i);
+                        seq.deleteChar(i);
                     }
 
                     return seq;
@@ -56,7 +62,7 @@ public class DefaultParser implements Parser {
     private void strip(EscapedCharSequence sequence) {
         for (int i = 0; i < sequence.length(); i++) {
             if (sequence.actualChar(i, ' ')) {
-                sequence.removeChar(i--);
+                sequence.deleteChar(i--);
                 continue;
             }
             break;
@@ -64,7 +70,7 @@ public class DefaultParser implements Parser {
 
         for (int i = sequence.length() - 1; i >= 0; i--) {
             if (sequence.actualChar(i, ' ')) {
-                sequence.removeChar(i);
+                sequence.deleteChar(i);
                 continue;
             }
             break;
@@ -80,7 +86,7 @@ public class DefaultParser implements Parser {
             }
 
             if (dropUpcomingSpace) {
-                sequence.removeChar(i);
+                sequence.deleteChar(i);
                 i--;
                 continue;
             }
@@ -101,7 +107,7 @@ public class DefaultParser implements Parser {
         return args;
     }
 
-    private static class EscapedCharSequence implements CharSequence {
+    static class EscapedCharSequence implements CharSequence {
 
         private final List<Char> chars = new ArrayList<>();
 
@@ -129,10 +135,10 @@ public class DefaultParser implements Parser {
         }
 
         public void addChar(char c, boolean escaped) {
-            this.chars.add(new Char(c, escaped));
+            insertChar(chars.size(), c, escaped);
         }
 
-        public void removeChar(int i) {
+        public void deleteChar(int i) {
             this.chars.remove(i);
         }
 
@@ -195,6 +201,22 @@ public class DefaultParser implements Parser {
                 builder.append(c.c);
             }
             return builder.toString();
+        }
+
+        public void delete(int start, int end) {
+            for (int i = 0; i < end - start; i++) {
+                deleteChar(start);
+            }
+        }
+
+        public void insertRaw(int i, String value) {
+            for (char c : value.toCharArray()) {
+                insertChar(i++, c, false);
+            }
+        }
+
+        public void insertChar(int i, char c, boolean escaped) {
+            this.chars.add(i, new Char(c, escaped));
         }
 
         private static class Char {

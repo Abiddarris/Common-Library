@@ -127,7 +127,7 @@ class TerminalTest {
 
     @Test
     void parserThatReturnsNull() {
-        terminal.setParser(str -> null);
+        terminal.setParser((terminal, str) -> null);
         assertThrows(NullPointerException.class, () -> terminal.execute("hai"));
     }
 

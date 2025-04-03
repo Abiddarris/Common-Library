@@ -76,7 +76,7 @@ public class Terminal {
             throw new CommandException("command is blank");
         }
 
-        String[] args = parser.parse(command);
+        String[] args = parser.parse(this, command);
         checkNonNull(args, "Parser.parse() cannot return null");
 
         Command commandObj = getCommand(args[0]);
