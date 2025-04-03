@@ -180,12 +180,45 @@ public class CommandTest {
     }
 
     @Test
+    void spaceInCommandName() {
+        terminal.addCommand("print func", command);
+        execute("print\\ func Hello  World", context -> {
+            assertArrayEquals(new String[] {"Hello", "World"}, context.getArgs());
+        });
+    }
+
+    @Test
     void doubleSpacesTest() {
         terminal.addCommand("print", command);
         execute("print Hello  World", context -> {
             assertArrayEquals(new String[] {"Hello", "World"}, context.getArgs());
         });
     }
+
+    @Test
+    void spaceOnTheEndOfCommand() {
+        terminal.addCommand("print", command);
+        execute("print Hello World  ", context -> {
+            assertArrayEquals(new String[] {"Hello", "World"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void escapedSpaceOnTheEndOfCommand() {
+        terminal.addCommand("print", command);
+        execute("print Hello World\\ ", context -> {
+            assertArrayEquals(new String[] {"Hello", "World "}, context.getArgs());
+        });
+    }
+
+    @Test
+    void spaceOnStartOfCommand() {
+        terminal.addCommand("print", command);
+        execute(" print Hello World\\ ", context -> {
+            assertArrayEquals(new String[] {"Hello", "World "}, context.getArgs());
+        });
+    }
+
 
     private void execute(String command, ContextConsumer contextConsumer) {
         terminal.execute(command);

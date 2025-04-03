@@ -23,6 +23,7 @@ public class DefaultParser implements Parser {
     @Override
     public String[] parse(String command) {
         EscapedCharSequence sequence = new EscapedCharSequence(command);
+        strip(sequence);
         removeDuplicateSpace(sequence);
 
         List<EscapedCharSequence> args = splitBySpace(sequence);
@@ -30,6 +31,24 @@ public class DefaultParser implements Parser {
         return args.stream()
                 .map(seq -> seq.toString(false))
                 .toArray(String[]::new);
+    }
+
+    private void strip(EscapedCharSequence sequence) {
+        for (int i = 0; i < sequence.length(); i++) {
+            if (sequence.actualChar(i, ' ')) {
+                sequence.removeChar(i--);
+                continue;
+            }
+            break;
+        }
+
+        for (int i = sequence.length() - 1; i >= 0; i--) {
+            if (sequence.actualChar(i, ' ')) {
+                sequence.removeChar(i);
+                continue;
+            }
+            break;
+        }
     }
 
     private void removeDuplicateSpace(EscapedCharSequence sequence) {
