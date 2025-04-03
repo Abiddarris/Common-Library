@@ -179,6 +179,14 @@ public class CommandTest {
         });
     }
 
+    @Test
+    void doubleSpacesTest() {
+        terminal.addCommand("print", command);
+        execute("print Hello  World", context -> {
+            assertArrayEquals(new String[] {"Hello", "World"}, context.getArgs());
+        });
+    }
+
     private void execute(String command, ContextConsumer contextConsumer) {
         terminal.execute(command);
 

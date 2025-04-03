@@ -23,20 +23,44 @@ public class DefaultParser implements Parser {
     @Override
     public String[] parse(String command) {
         EscapedCharSequence sequence = new EscapedCharSequence(command);
+        removeDuplicateSpace(sequence);
+
+        List<EscapedCharSequence> args = splitBySpace(sequence);
+
+        return args.stream()
+                .map(seq -> seq.toString(false))
+                .toArray(String[]::new);
+    }
+
+    private void removeDuplicateSpace(EscapedCharSequence sequence) {
+        boolean dropUpcomingSpace = false;
+        for (int i = 0; i < sequence.length(); i++) {
+            if (!sequence.actualChar(i, ' ')) {
+                dropUpcomingSpace = false;
+                continue;
+            }
+
+            if (dropUpcomingSpace) {
+                sequence.removeChar(i);
+                i--;
+                continue;
+            }
+            dropUpcomingSpace = true;
+        }
+    }
+
+    private List<EscapedCharSequence> splitBySpace(EscapedCharSequence sequence) {
         List<EscapedCharSequence> args = new ArrayList<>();
         int lastSpace = -1;
         for (int i = 0; i < sequence.length(); i++) {
             char c = sequence.charAt(i);
-            if (c == ' ' && !sequence.isEscaped(i)) {
+            if (sequence.actualChar(i, ' ')) {
                 args.add(sequence.subSequence(lastSpace + 1, i));
                 lastSpace = i;
             }
         }
         args.add(sequence.subSequence(lastSpace + 1, sequence.length()));
-
-        return args.stream()
-                .map(seq -> seq.toString(false))
-                .toArray(String[]::new);
+        return args;
     }
 
     private static class EscapedCharSequence implements CharSequence {
@@ -48,7 +72,7 @@ public class DefaultParser implements Parser {
                 char c = str.charAt(i);
                 i++;
                 if (c != '\\') {
-                    chars.add(new Char(c, false));
+                    addChar(c, false);
                     continue;
                 }
 
@@ -58,12 +82,20 @@ public class DefaultParser implements Parser {
 
                 c = str.charAt(i);
                 i++;
-                chars.add(new Char(c, true));
+                addChar(c, true);
             }
         }
 
         private EscapedCharSequence(List<Char> chars) {
             this.chars.addAll(chars);
+        }
+
+        public void addChar(char c, boolean escaped) {
+            this.chars.add(new Char(c, escaped));
+        }
+
+        public void removeChar(int i) {
+            this.chars.remove(i);
         }
 
         @Override
@@ -99,6 +131,10 @@ public class DefaultParser implements Parser {
                 builder.append(c.c);
             }
             return builder.toString();
+        }
+
+        public boolean actualChar(int i, char c) {
+            return charAt(i) == c && !isEscaped(i);
         }
 
         private static class Char {
