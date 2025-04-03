@@ -29,6 +29,26 @@ public class DefaultParser implements Parser {
         List<EscapedCharSequence> args = splitBySpace(sequence);
 
         return args.stream()
+                .map(seq -> {
+                    if (seq.isEmpty()) {
+                        return seq;
+                    }
+
+                    if (seq.charAt(0) == '"' && !seq.isEscaped(0)) {
+                        seq.removeChar(0);
+                    }
+
+                    int i = seq.length() - 1;
+                    if (i < 0) {
+                        return seq;
+                    }
+
+                    if (seq.charAt(i) == '"' && !seq.isEscaped(i)) {
+                        seq.removeChar(i);
+                    }
+
+                    return seq;
+                })
                 .map(seq -> seq.toString(false))
                 .toArray(String[]::new);
     }
@@ -54,7 +74,7 @@ public class DefaultParser implements Parser {
     private void removeDuplicateSpace(EscapedCharSequence sequence) {
         boolean dropUpcomingSpace = false;
         for (int i = 0; i < sequence.length(); i++) {
-            if (!sequence.actualChar(i, ' ')) {
+            if (!(sequence.actualChar(i, ' ') && !sequence.insideQuote(i))) {
                 dropUpcomingSpace = false;
                 continue;
             }
@@ -72,8 +92,7 @@ public class DefaultParser implements Parser {
         List<EscapedCharSequence> args = new ArrayList<>();
         int lastSpace = -1;
         for (int i = 0; i < sequence.length(); i++) {
-            char c = sequence.charAt(i);
-            if (sequence.actualChar(i, ' ')) {
+            if (sequence.actualChar(i, ' ') && !sequence.insideQuote(i)) {
                 args.add(sequence.subSequence(lastSpace + 1, i));
                 lastSpace = i;
             }
@@ -131,6 +150,32 @@ public class DefaultParser implements Parser {
             return chars.get(i).escaped;
         }
 
+        public boolean insideQuote(int i) {
+            boolean inQuote = false;
+            for (int j = 0; j < chars.size(); j++) {
+                if (actualChar(j, '"')) {
+                    if (inQuote) {
+                        inQuote = false;
+                        continue;
+                    }
+
+                    inQuote = true;
+                    if (j == i) {
+                        return false;
+                    }
+                }
+
+                if (j == i) {
+                    return inQuote;
+                }
+            }
+            return false;
+        }
+
+        public boolean actualChar(int i, char c) {
+            return charAt(i) == c && !isEscaped(i);
+        }
+
         @Override
         public EscapedCharSequence subSequence(int i, int i1) {
             return new EscapedCharSequence(chars.subList(i, i1));
@@ -150,10 +195,6 @@ public class DefaultParser implements Parser {
                 builder.append(c.c);
             }
             return builder.toString();
-        }
-
-        public boolean actualChar(int i, char c) {
-            return charAt(i) == c && !isEscaped(i);
         }
 
         private static class Char {

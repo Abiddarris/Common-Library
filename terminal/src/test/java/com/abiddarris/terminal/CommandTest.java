@@ -219,6 +219,30 @@ public class CommandTest {
         });
     }
 
+    @Test
+    void doubleQuotedArgument() {
+        terminal.addCommand("print", command);
+        execute("print \"Hello World\"", context -> {
+            assertArrayEquals(new String[] {"Hello World"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void duplicateSpaceInDoubleQuotedArgument() {
+        terminal.addCommand("print", command);
+        execute("print \"Hello  World\"", context -> {
+            assertArrayEquals(new String[] {"Hello  World"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void escapedDoubleQuoteOutsideQuote() {
+        terminal.addCommand("print", command);
+        execute("print \\\"Hello World\\\"", context -> {
+            assertArrayEquals(new String[] {"\"Hello", "World\""}, context.getArgs());
+        });
+    }
+
 
     private void execute(String command, ContextConsumer contextConsumer) {
         terminal.execute(command);
