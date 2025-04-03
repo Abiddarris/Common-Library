@@ -171,6 +171,28 @@ public class CommandTest {
         command.release();
     }
 
+    @Test
+    void escapedStringTest() {
+        terminal.addCommand("print", command);
+        execute("print Hello\\ World", context -> {
+            assertArrayEquals(new String[] {"Hello World"}, context.getArgs());
+        });
+    }
+
+    private void execute(String command, ContextConsumer contextConsumer) {
+        terminal.execute(command);
+
+        try {
+            contextConsumer.onContext(this.command.getContext());
+        } finally {
+            this.command.release();
+        }
+    }
+
+    private interface ContextConsumer {
+        void onContext(Context context);
+    }
+
     private static class CommandImpl implements Command {
 
         private final Object contextLock = new Object();
