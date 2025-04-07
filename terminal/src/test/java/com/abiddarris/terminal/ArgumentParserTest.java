@@ -1123,4 +1123,91 @@ public class ArgumentParserTest {
         assertEquals("Michael", user.getValue());
         assertEquals("Hi bob!", message.getValue());
     }
+
+    @Test
+    void multipleFlagsShortNameWithoutSpaces() {
+        Flag print = new Flag("print", 'p');
+        Flag verbose = new Flag("verbose", 'v');
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(print);
+        parser.optional(verbose);
+
+        String[] args = {"-vp"};
+
+        parser.parse(args);
+
+        assertTrue(print.getValue());
+        assertTrue(verbose.getValue());
+    }
+
+    @Test
+    void flagAndOptionShortNameWithoutSpace() {
+        Option<String> print = new Option<>("print", 'p', StringParser.INSTANCE);
+        Flag verbose = new Flag("verbose", 'v');
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(print);
+        parser.optional(verbose);
+
+        String[] args = {"-vp", "hi"};
+
+        parser.parse(args);
+
+        assertEquals("hi", print.getValue());
+        assertTrue(verbose.getValue());
+    }
+
+    @Test
+    void flagAndOptionShortNameWithoutSpace_withPositionalArgument() {
+        PositionalArgument<String> message = new PositionalArgument<>(
+                "message",StringParser.INSTANCE);
+        Option<String> print = new Option<>("print", 'p', StringParser.INSTANCE);
+        Flag verbose = new Flag("verbose", 'v');
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(message);
+        parser.optional(print);
+        parser.optional(verbose);
+
+        String[] args = {"-vp", "hi", "hi2"};
+
+        parser.parse(args);
+
+        assertEquals("hi", print.getValue());
+        assertEquals("hi2", message.getValue());
+        assertTrue(verbose.getValue());
+    }
+
+    @Test
+    void flagAndOptionShortNameWithoutSpace_optionNotSupplied() {
+        Option<String> print = new Option<>("print", 'p', StringParser.INSTANCE);
+        Flag verbose = new Flag("verbose", 'v');
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(print);
+        parser.optional(verbose);
+
+        String[] args = {"-vp"};
+
+        ArgumentParserException exception =
+                assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for print", exception.getMessage());
+    }
+
+    @Test
+    void flagAndOptionShortNameWithoutSpace_optionOnStart() {
+        Option<String> print = new Option<>("print", 'p', StringParser.INSTANCE);
+        Flag verbose = new Flag("verbose", 'v');
+
+        ArgumentParser parser = new ArgumentParser();
+        parser.optional(print);
+        parser.optional(verbose);
+
+        String[] args = {"-pv"};
+
+        ArgumentParserException exception =
+                assertThrows(ArgumentParserException.class, () -> parser.parse(args));
+        assertEquals("Missing value for print", exception.getMessage());
+    }
 }

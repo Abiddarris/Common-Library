@@ -17,7 +17,6 @@ package com.abiddarris.terminal.arguments;
 
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
-import com.abiddarris.common.utils.Container;
 import com.abiddarris.terminal.Command;
 
 import java.util.ArrayList;
@@ -178,6 +177,10 @@ public class ArgumentParser {
         }
 
         String optionName = args[lastOptionIndex];
+        if (!isLongName(optionName) && optionName.length() != 2) {
+            optionName = "-" + optionName.charAt(optionName.length() - 1);
+        }
+
         BaseOption<?> lastOption = getOption(optionName);
         if (lastOption == null) {
             throw new ArgumentParserException("Unknown option : " + getNameWithoutSymbol(optionName));
@@ -207,11 +210,15 @@ public class ArgumentParser {
     }
 
     private String getNameWithoutSymbol(String optionName) {
-        if (optionName.length() == 2) {
-            return String.valueOf(optionName.charAt(1));
-        } else {
+        if (isLongName(optionName)) {
             return optionName.substring(2);
         }
+
+        return String.valueOf(optionName.charAt(1));
+    }
+
+    private boolean isLongName(String name) {
+        return name.startsWith("--");
     }
 
     private void mapValuesToOptionObject(Map<String, List<String>> options) {
@@ -268,7 +275,7 @@ public class ArgumentParser {
         List<String> values = null;
         for (String optArg : optArgs) {
             if (optArg.startsWith("-")) {
-                values = handleFlagIfItIsFlag(optArg, options);
+                values = handleBaseOption(optArg, options);
             } else if (values != null) {
                 values.add(optArg);
             } else {
@@ -278,14 +285,26 @@ public class ArgumentParser {
         return options;
     }
 
-    private List<String> handleFlagIfItIsFlag(String optArg, Map<String, List<String>> options) {
-        BaseOption<?> option = getOption(optArg);
-        if (option instanceof Flag) {
-            option.parse("true");
-        } else {
-            return options.computeIfAbsent(optArg, (str) -> new ArrayList<>());
+    private List<String> handleBaseOption(String optArg, Map<String, List<String>> options) {
+        String[] args = {optArg};
+        if (!isLongName(optArg)) {
+            args = optArg.substring(1).split("");
+            for (int i = 0; i < args.length; i++) {
+                args[i] = "-" + args[i];
+            }
         }
-        return null;
+
+        List<String> values = null;
+        for (String arg : args) {
+            BaseOption<?> option = getOption(arg);
+            if (option instanceof Flag) {
+                option.parse("true");
+                continue;
+            }
+
+            values = options.computeIfAbsent(arg, (str) -> new ArrayList<>());
+        }
+        return values;
     }
 
     private static int getLastOptionIndex(String[] args) {
