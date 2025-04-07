@@ -40,7 +40,8 @@ public class DefaultParser implements Parser {
                         return seq;
                     }
 
-                    if (seq.charAt(0) == '"' && !seq.isEscaped(0)) {
+                    char firstChar = seq.charAt(0);
+                    if ((firstChar == '"' || firstChar == '\'') && !seq.isEscaped(0)) {
                         seq.deleteChar(0);
                     }
 
@@ -49,7 +50,8 @@ public class DefaultParser implements Parser {
                         return seq;
                     }
 
-                    if (seq.charAt(i) == '"' && !seq.isEscaped(i)) {
+                    char lastChar = seq.charAt(i);
+                    if ((lastChar == '"' || lastChar == '\'') && !seq.isEscaped(i)) {
                         seq.deleteChar(i);
                     }
 
@@ -157,25 +159,39 @@ public class DefaultParser implements Parser {
         }
 
         public boolean insideQuote(int i) {
-            boolean inQuote = false;
+            return getQuoteType(i) != QuoteType.NONE;
+        }
+
+        public QuoteType getQuoteType(int i) {
+            QuoteType type = QuoteType.NONE;
             for (int j = 0; j < chars.size(); j++) {
                 if (actualChar(j, '"')) {
-                    if (inQuote) {
-                        inQuote = false;
+                    if (type == QuoteType.DOUBLE) {
+                        type = QuoteType.NONE;
                         continue;
                     }
 
-                    inQuote = true;
+                    type = QuoteType.DOUBLE;
                     if (j == i) {
-                        return false;
+                        return QuoteType.NONE;
+                    }
+                } else if (actualChar(j, '\'')) {
+                    if (type == QuoteType.QUOTE) {
+                        type = QuoteType.NONE;
+                        continue;
+                    }
+
+                    type = QuoteType.QUOTE;
+                    if (j == i) {
+                        return QuoteType.NONE;
                     }
                 }
 
                 if (j == i) {
-                    return inQuote;
+                    return type;
                 }
             }
-            return false;
+            return QuoteType.NONE;
         }
 
         public boolean actualChar(int i, char c) {
@@ -228,5 +244,10 @@ public class DefaultParser implements Parser {
                 this.escaped = escaped;
             }
         }
+
+    }
+
+    public enum QuoteType {
+        NONE, QUOTE, DOUBLE
     }
 }

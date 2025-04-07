@@ -437,6 +437,198 @@ public class CommandTest {
     }
 
     @Test
+    void variableExpansionQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '$USER'", context -> {
+            assertArrayEquals(new String[] {"$USER"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionNextToEachOtherQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '$USER$USER'", context -> {
+            assertArrayEquals(new String[] {"$USER$USER"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionValueHasSpaceQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid Darris");
+
+        execute("print '$USER'", context -> {
+            assertArrayEquals(new String[] {"$USER"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionFollowedByInvalidVariableNameQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '$USER/Desktop'", context -> {
+            assertArrayEquals(new String[] {"$USER/Desktop"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionAfterSomeTextQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '/home/$USER'", context -> {
+            assertArrayEquals(new String[] {"/home/$USER"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionFollowedByValidVariableNameQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '$USERDesktop'", context -> {
+            assertArrayEquals(new String[] {"$USERDesktop"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionValueDoesNotSetQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '$USER'", context -> {
+            assertArrayEquals(new String[] {"$USER"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionEmptyNameQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '$'", context -> {
+            assertArrayEquals(new String[] {"$"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionInvalidNameQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '$6d'", context -> {
+            assertArrayEquals(new String[] {"$6d"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '${USER}'", context -> {
+            assertArrayEquals(new String[] {"${USER}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionNextToEachOtherCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '${USER}${USER}'", context -> {
+            assertArrayEquals(new String[] {"${USER}${USER}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionValueHasSpaceWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid Darris");
+
+        execute("print '${USER}'", context -> {
+            assertArrayEquals(new String[] {"${USER}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionFollowedByInvalidVariableNameWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '${USER}/Desktop'", context -> {
+            assertArrayEquals(new String[] {"${USER}/Desktop"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionAfterSomeTextWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '/home/${USER}'", context -> {
+            assertArrayEquals(new String[] {"/home/${USER}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionFollowedByValidVariableNameWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+        terminal.setVariable("USER", "Abid");
+
+        execute("print '${USER}Desktop'", context -> {
+            assertArrayEquals(new String[] {"${USER}Desktop"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionValueDoesNotSetWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '${USER}'", context -> {
+            assertArrayEquals(new String[] {"${USER}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionEmptyNameWithCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '${}'", context -> {
+            assertArrayEquals(new String[] {"${}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionEmptyNameWithEscapedCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '$\\{\\}'", context -> {
+            assertArrayEquals(new String[] {"${}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionInvalidNameCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '${6d}'", context -> {
+                    assertArrayEquals(new String[] {"${6d}"}, context.getArgs());
+        });
+    }
+
+    @Test
+    void variableExpansionNumbersCurlyBracketsQuoted() {
+        terminal.addCommand("print", command);
+
+        execute("print '${72}'", context -> {
+            assertArrayEquals(new String[] {"${72}"}, context.getArgs());
+        });
+    }
+
+    @Test
     void variableExpansionDoubleQuoted() {
         terminal.addCommand("print", command);
         terminal.setVariable("USER", "Abid");
@@ -605,7 +797,7 @@ public class CommandTest {
     void variableExpansionEmptyNameWithEscapedCurlyBracketsDoubleQuoted() {
         terminal.addCommand("print", command);
 
-        execute("print $\\{\\}", context -> {
+        execute("print \"$\\{\\}\"", context -> {
             assertArrayEquals(new String[] {"${}"}, context.getArgs());
         });
     }

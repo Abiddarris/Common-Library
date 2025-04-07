@@ -144,7 +144,8 @@ class VariableExpander {
     }
 
     private void checkStartOfVariable(DefaultParser.EscapedCharSequence sequence, int i) {
-        if (!sequence.actualChar(i, '$')) {
+        if (!sequence.actualChar(i, '$') ||
+                sequence.getQuoteType(i) == DefaultParser.QuoteType.QUOTE) {
             return;
         }
         mark(i);
