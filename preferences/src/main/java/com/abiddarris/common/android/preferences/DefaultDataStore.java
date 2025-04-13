@@ -15,13 +15,15 @@
  * ────────────────────────────────────────────────────────────────────── */
 package com.abiddarris.common.android.preferences;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
+@SuppressLint("ApplySharedPref")
 public class DefaultDataStore implements DataStore {
 
-    private SharedPreferences preferences;
+    private final SharedPreferences preferences;
 
     public DefaultDataStore(Context context) {
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -36,7 +38,7 @@ public class DefaultDataStore implements DataStore {
     public boolean getBoolean(String key) {
         return preferences.getBoolean(key, false);
     }
-    
+
     @Override
     public void store(String key, String value) {
         preferences.edit()
