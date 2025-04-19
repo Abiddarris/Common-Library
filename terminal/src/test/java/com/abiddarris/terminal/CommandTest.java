@@ -821,6 +821,27 @@ public class CommandTest {
         });
     }
 
+    @Test
+    void simpleAssignment() {
+        terminal.execute("data=HelloWorld");
+
+        assertEquals("HelloWorld", terminal.getVariable("data"));
+    }
+
+    @Test
+    void simpleAssignment_startWithNumber() {
+        Exception e = assertThrows(CommandNotFoundException.class, () ->
+                terminal.execute("4data=HelloWorld"));
+        assertEquals("Command '4data=HelloWorld' not found", e.getMessage());
+    }
+
+    @Test
+    void simpleAssignment_invalidKeyName() {
+        Exception e = assertThrows(CommandNotFoundException.class, () ->
+                terminal.execute("da#ta=HelloWorld"));
+        assertEquals("Command 'da#ta=HelloWorld' not found", e.getMessage());
+    }
+
     private void execute(String command, ContextConsumer contextConsumer) {
         terminal.execute(command);
 

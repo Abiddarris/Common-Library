@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.terminal;
+package com.abiddarris.terminal.parser;
+
+import com.abiddarris.terminal.ParseException;
+import com.abiddarris.terminal.Terminal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +174,7 @@ class VariableExpander {
             varName.deleteChar(varName.length() - 1);
         }
 
-        if (!checkVariableNameValid(varName)) {
+        if (!checkVariableNameValid(varName, acceptNumberOnly)) {
             throwBadSubstitution();
         }
 
@@ -184,7 +187,7 @@ class VariableExpander {
         return start + value.length() - 1;
     }
 
-    private boolean checkVariableNameValid(DefaultParser.EscapedCharSequence varName) {
+    static boolean checkVariableNameValid(DefaultParser.EscapedCharSequence varName, boolean acceptNumberOnly) {
         String string = varName.toString(false);
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);

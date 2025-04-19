@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.terminal;
+package com.abiddarris.terminal.parser;
+
+import com.abiddarris.terminal.Terminal;
 
 public interface Parser {
-    String[] parse(Terminal terminal, String command);
+    Action parse(Terminal terminal, String command);
 }

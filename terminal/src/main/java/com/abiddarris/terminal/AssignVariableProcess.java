@@ -15,16 +15,35 @@
  ***********************************************************************************/
 package com.abiddarris.terminal;
 
+import com.abiddarris.common.stream.NullOutputStream;
+
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.ExecutionException;
 
-public interface Process {
-    InputStream getInputStream();
+public class AssignVariableProcess implements Process {
 
-    int getResultCode() throws ExecutionException, InterruptedException;
+    public static final NullOutputStream NULL_OUTPUT_STREAM = new NullOutputStream();
+    private final ByteArrayInputStream inputStream = new ByteArrayInputStream(new byte[0]);
 
-    OutputStream getOutputStream();
+    @Override
+    public InputStream getInputStream() {
+        return inputStream;
+    }
 
-    InputStream getErrorStream();
+    @Override
+    public int getResultCode() throws ExecutionException, InterruptedException {
+        return 0;
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return NULL_OUTPUT_STREAM;
+    }
+
+    @Override
+    public InputStream getErrorStream() {
+        return inputStream;
+    }
 }

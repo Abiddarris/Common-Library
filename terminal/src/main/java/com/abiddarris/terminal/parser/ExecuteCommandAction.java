@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.terminal;
+package com.abiddarris.terminal.parser;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.concurrent.ExecutionException;
+public class ExecuteCommandAction implements Action {
 
-public interface Process {
-    InputStream getInputStream();
+    private final String[] args;
 
-    int getResultCode() throws ExecutionException, InterruptedException;
+    public ExecuteCommandAction(String[] args) {
+        this.args = args;
+    }
 
-    OutputStream getOutputStream();
-
-    InputStream getErrorStream();
+    public String[] getArgs() {
+        return args;
+    }
 }

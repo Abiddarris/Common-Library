@@ -13,24 +13,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.terminal;
+package com.abiddarris.terminal.parser;
+
+import com.abiddarris.terminal.Terminal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DefaultParser implements Parser {
 
     @Override
-    public String[] parse(Terminal terminal, String command) {
+    public Action parse(Terminal terminal, String command) {
         EscapedCharSequence sequence = new EscapedCharSequence(command);
-        strip(sequence);
+        sequence.strip();
 
         new VariableExpander(terminal, sequence);
 
         removeDuplicateSpace(sequence);
 
         List<EscapedCharSequence> args = splitBySpace(sequence);
-        return turnIntoString(args);
+        return Objects.requireNonNullElseGet(
+                checkForAssignment(args), () -> new ExecuteCommandAction(turnIntoString(args)));
+
+    }
+
+    private static VariableAssignmentAction checkForAssignment(List<EscapedCharSequence> args) {
+        if (args.isEmpty()) {
+            return null;
+        }
+
+        EscapedCharSequence seq = args.get(0);
+        int c = seq.findChar('=');
+        if (c < 0 || c == seq.length() - 1 || seq.insideQuote(c)) {
+            return null;
+        }
+
+        EscapedCharSequence name = seq.subSequence(0, c);
+        if (!VariableExpander.checkVariableNameValid(name, false)) {
+            return null;
+        }
+
+        EscapedCharSequence value = seq.subSequence(c + 1, seq.length());
+
+        return new VariableAssignmentAction(name.toString(false), value.toString(false));
     }
 
     private String[] turnIntoString(List<EscapedCharSequence> args) {
@@ -59,24 +85,6 @@ public class DefaultParser implements Parser {
                 })
                 .map(seq -> seq.toString(false))
                 .toArray(String[]::new);
-    }
-
-    private void strip(EscapedCharSequence sequence) {
-        for (int i = 0; i < sequence.length(); i++) {
-            if (sequence.actualChar(i, ' ')) {
-                sequence.deleteChar(i--);
-                continue;
-            }
-            break;
-        }
-
-        for (int i = sequence.length() - 1; i >= 0; i--) {
-            if (sequence.actualChar(i, ' ')) {
-                sequence.deleteChar(i);
-                continue;
-            }
-            break;
-        }
     }
 
     private void removeDuplicateSpace(EscapedCharSequence sequence) {
@@ -136,6 +144,24 @@ public class DefaultParser implements Parser {
             this.chars.addAll(chars);
         }
 
+        private void strip() {
+            for (int i = 0; i < length(); i++) {
+                if (actualChar(i, ' ')) {
+                    deleteChar(i--);
+                    continue;
+                }
+                break;
+            }
+
+            for (int i = length() - 1; i >= 0; i--) {
+                if (actualChar(i, ' ')) {
+                    deleteChar(i);
+                    continue;
+                }
+                break;
+            }
+        }
+
         public void addChar(char c, boolean escaped) {
             insertChar(chars.size(), c, escaped);
         }
@@ -162,6 +188,10 @@ public class DefaultParser implements Parser {
             return getQuoteType(i) != QuoteType.NONE;
         }
 
+        public boolean isEmpty() {
+            return length() == 0;
+        }
+        
         public QuoteType getQuoteType(int i) {
             QuoteType type = QuoteType.NONE;
             for (int j = 0; j < chars.size(); j++) {
@@ -233,6 +263,15 @@ public class DefaultParser implements Parser {
 
         public void insertChar(int i, char c, boolean escaped) {
             this.chars.add(i, new Char(c, escaped));
+        }
+
+        public int findChar(char c) {
+            for (int i = 0; i < length(); i++) {
+                if (actualChar(i, c)) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         private static class Char {

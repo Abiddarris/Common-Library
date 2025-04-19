@@ -13,18 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***********************************************************************************/
-package com.abiddarris.terminal;
+package com.abiddarris.terminal.parser;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.concurrent.ExecutionException;
+public class VariableAssignmentAction implements Action {
 
-public interface Process {
-    InputStream getInputStream();
+    private final String name;
+    private final String value;
 
-    int getResultCode() throws ExecutionException, InterruptedException;
+    public VariableAssignmentAction(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-    OutputStream getOutputStream();
+    public String getName() {
+        return name;
+    }
 
-    InputStream getErrorStream();
+    public String getValue() {
+        return value;
+    }
 }

@@ -18,6 +18,11 @@ package com.abiddarris.terminal;
 import static com.abiddarris.common.utils.Preconditions.checkNonNull;
 
 import com.abiddarris.common.utils.Exceptions;
+import com.abiddarris.terminal.parser.Action;
+import com.abiddarris.terminal.parser.DefaultParser;
+import com.abiddarris.terminal.parser.ExecuteCommandAction;
+import com.abiddarris.terminal.parser.Parser;
+import com.abiddarris.terminal.parser.VariableAssignmentAction;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,9 +81,20 @@ public class Terminal {
             throw new CommandException("command is blank");
         }
 
-        String[] args = parser.parse(this, command);
-        checkNonNull(args, "Parser.parse() cannot return null");
+        Action action = parser.parse(this, command);
+        checkNonNull(action, "Parser.parse() cannot return null");
 
+        if (action instanceof VariableAssignmentAction) {
+            VariableAssignmentAction act = (VariableAssignmentAction)action;
+            setVariable(act.getName(), act.getValue());
+
+            return new AssignVariableProcess();
+        }
+
+        return executeInternal(((ExecuteCommandAction)action).getArgs());
+    }
+
+    private Process executeInternal(String[] args) {
         Command commandObj = getCommand(args[0]);
         if (commandObj == null) {
             throw new CommandNotFoundException(String.format("Command '%s' not found", args[0]));
@@ -113,7 +129,7 @@ public class Terminal {
             }
         });
 
-        return new Process(future, outInPipe, inOutPipe == null ? new StubOutputStream() : inOutPipe, errInPipe);
+        return new CommandProcess(future, outInPipe, inOutPipe == null ? new StubOutputStream() : inOutPipe, errInPipe);
     }
 
     public Terminal newTerminal() {
