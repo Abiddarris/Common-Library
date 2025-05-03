@@ -17,8 +17,8 @@ package com.abiddarris.common.android.preferences;
 
 public class ListEntry {
 
-    private String title;
-    private String value;
+    private final String title;
+    private final String value;
 
     public ListEntry(String title, String value) {
         this.title = title;
