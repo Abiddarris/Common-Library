@@ -66,9 +66,11 @@ public class EditTextPreference extends DialogPreference {
                 return;
             }
 
-            String value = preference.getValueOrDefault();
-            setText(value);
+            if (savedInstanceState == null) {
+                setText(preference.getValueOrDefault());
+            }
 
+            String value = getText();
             DialogEditTextBinding ui = getUI();
             if (value != null) {
                 ui.textInputEditText.setSelection(value.length());
@@ -83,7 +85,7 @@ public class EditTextPreference extends DialogPreference {
                     .setNegativeButton(android.R.string.cancel, (d, w) -> {})
                     .setPositiveButton(android.R.string.ok, (d, w) -> {
                         EditTextPreference editTextPreference = getEditTextPreference();
-                        editTextPreference.storeString(getText());
+                        editTextPreference.storeString(ui.textInputEditText.getText().toString());
                         editTextPreference.refillView();
                     });
         }
