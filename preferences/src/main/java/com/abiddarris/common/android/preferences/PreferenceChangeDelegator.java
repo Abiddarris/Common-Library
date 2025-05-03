@@ -17,9 +17,12 @@ package com.abiddarris.common.android.preferences;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle.Event;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LifecycleEventObserver;
+import androidx.lifecycle.LifecycleOwner;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,34 +31,27 @@ import java.util.Map;
 public class PreferenceChangeDelegator
         implements LifecycleEventObserver, OnSharedPreferenceChangeListener {
 
-    private Map<String, List<PreferenceKeyChangedListener>> listeners = new HashMap<>();
-    private SharedPreferences preferences;
+    private final Map<String, List<PreferenceKeyChangedListener>> listeners = new HashMap<>();
+    private final SharedPreferences preferences;
 
     public PreferenceChangeDelegator(SharedPreferences preferences) {
         this.preferences = preferences;
     }
     
     public void addListener(String key, PreferenceKeyChangedListener listener) {
-    	getListeners(key)
-            .add(listener);
+    	getListeners(key).add(listener);
     }
     
     public void removeListener(String key, PreferenceKeyChangedListener listener) {
-    	getListeners(key)
-            .remove(listener);
+    	getListeners(key).remove(listener);
     }
     
     private synchronized List<PreferenceKeyChangedListener> getListeners(String key) {
-        List<PreferenceKeyChangedListener> listeners = this.listeners.get(key);
-        if(listeners == null) {
-            listeners = new ArrayList<>();
-            this.listeners.put(key, listeners);
-        }
-        return listeners;
+        return listeners.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
     @Override
-    public void onStateChanged(LifecycleOwner owner, Event event) {
+    public void onStateChanged(@NonNull LifecycleOwner owner, Event event) {
         switch (event) {
             case ON_RESUME:
                 preferences.registerOnSharedPreferenceChangeListener(this);
@@ -68,7 +64,7 @@ public class PreferenceChangeDelegator
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         List<PreferenceKeyChangedListener> listeners = getListeners(key);
-        for(PreferenceKeyChangedListener listener : listeners) {
+        for (PreferenceKeyChangedListener listener : listeners) {
         	listener.onPreferenceKeyChanged(sharedPreferences, key);
         }
     }
