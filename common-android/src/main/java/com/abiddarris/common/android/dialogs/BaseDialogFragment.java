@@ -249,35 +249,41 @@ public class BaseDialogFragment<Result> extends DialogFragment {
         }
     }
 
+    protected void onClearVariable() {
+    }
+
     private void addOnShowListener(Runnable runnable) {
         onShowListeners.add(runnable);
     }
-    
+
     public static class BaseDialogViewModel extends ViewModel {
-        
+
         private Map<String, ObservableValue<?>> variables = null;
+
         private BaseDialogFragment fragment;
-        
+
         private Map<String, ObservableValue<?>> attach(Map<String, ObservableValue<?>> variables, BaseDialogFragment fragment) {
             this.fragment = fragment;
-            
+
             if(this.variables == null) {
                 this.variables = variables;
             }
             return this.variables;
         }
-        
+
         @Override
         @SuppressWarnings("unchecked")
         protected void onCleared() {
             super.onCleared();
-            
+
+            fragment.onClearVariable();
+
             try {
                 fragment.sendResult(fragment.getDefaultResult());
             } catch (IllegalStateException ignored) {
                 ignored.printStackTrace();
             }
         }
-        
+
     }
 }
