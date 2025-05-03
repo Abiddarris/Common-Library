@@ -20,8 +20,10 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     
     buildFeatures {
@@ -36,5 +38,7 @@ dependencies {
     implementation("junit:junit:4.12")
     implementation 'androidx.preference:preference:1.2.1'
     implementation project(':common-android')
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 }
 
