@@ -15,13 +15,14 @@
  ***********************************************************************************/
 package com.abiddarris.common.android.dialogs;
 
+import com.google.android.material.R;
+
 import android.content.Context;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import androidx.annotation.NonNull;
-import com.abiddarris.common.android.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogBuilder extends MaterialAlertDialogBuilder {
@@ -47,7 +48,7 @@ public class DialogBuilder extends MaterialAlertDialogBuilder {
     
     public DialogBuilder setView(View view) {
         Resources resources = getContext().getResources();
-        
+
         int padding = (int)resources.getDimension(R.dimen.abc_dialog_padding_material);
         int paddingTop = (int)resources.getDimension(R.dimen.abc_dialog_padding_top_material);
         int paddingBottom = (int)resources.getDimension(R.dimen.abc_dialog_list_padding_bottom_no_buttons);
