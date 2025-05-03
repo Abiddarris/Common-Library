@@ -25,9 +25,10 @@ import com.abiddarris.common.android.preferences.databinding.LayoutPreferenceBin
 
 public class Preference {
 
+    private final PreferenceFragment fragment;
+
     private DataStore dataStore;
     private OnSavePreference onSavePreference;
-    private PreferenceFragment fragment;
     private String key;
     private String title;
     private String summary;
@@ -150,11 +151,7 @@ public class Preference {
         if (view != null) fillView(view);
     }
 
-    @Deprecated
-    protected void onClick() {}
-
     protected void onClick(View view) {
-        onClick();
     }
 
     View getView() {
@@ -173,7 +170,7 @@ public class Preference {
         return view;
     }
 
-    public static interface OnSavePreference {
+    public interface OnSavePreference {
         boolean save(Preference preference, Object newValue);
     }
 
