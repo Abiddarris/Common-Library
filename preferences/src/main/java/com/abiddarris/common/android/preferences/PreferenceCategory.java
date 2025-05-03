@@ -17,23 +17,24 @@ package com.abiddarris.common.android.preferences;
 
 import android.view.LayoutInflater;
 import android.view.View;
+
 import com.abiddarris.common.android.preferences.databinding.LayoutCategoryBinding;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PreferenceCategory extends Preference {
 
-    private List<Preference> preferences = new ArrayList<>();
-    private String category;
+    private final List<Preference> preferences = new ArrayList<>();
 
     public PreferenceCategory(PreferenceFragment fragment, String key) {
         super(fragment, key);
     }
     
     public void addPreference(Preference... preferences) {
-        for(Preference preference : preferences) {
-            if(preference instanceof PreferenceCategory) 
-                throw new IllegalArgumentException("preference cannot be category!");
+        for (Preference preference : preferences) {
+            if (preference instanceof PreferenceCategory)
+                throw new IllegalArgumentException("preference cannot be a category!");
             
             this.preferences.add(preference);
         }
