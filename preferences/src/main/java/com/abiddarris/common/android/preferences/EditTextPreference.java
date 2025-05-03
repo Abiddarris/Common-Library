@@ -15,52 +15,84 @@
  * ────────────────────────────────────────────────────────────────────── */
 package com.abiddarris.common.android.preferences;
 
-import android.view.LayoutInflater;
-import android.view.View;
+import android.os.Bundle;
 import android.widget.EditText;
 
-import com.abiddarris.common.android.preferences.databinding.LayoutEditTextBinding;
+import androidx.annotation.Nullable;
+
+import com.abiddarris.common.android.databinding.DialogEditTextBinding;
+import com.abiddarris.common.android.dialogs.EditTextDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class EditTextPreference extends DialogPreference {
 
     private String defaultValue;
     private OnBindEditTextListener onBindEditTextListener;
-    private LayoutEditTextBinding binding;
 
     public EditTextPreference(PreferenceFragment fragment, String key) {
-        super(fragment, key);
-    }
-
-    @Override
-    protected View onCreateView(LayoutInflater inflater) {
-        String value = getValueOrDefault();
-        binding = LayoutEditTextBinding.inflate(inflater);
-
-        binding.textInput.getEditText().setText(value);
-        binding.textInput.getEditText().requestFocus();
-        
-        if(getOnBindEditTextListener() != null)
-            getOnBindEditTextListener().onBind(binding.textInput.getEditText());
-        
-        if(value != null) {
-            binding.textInput.getEditText()
-                .setSelection(value.length());
-        }
-        
-        return binding.getRoot();
-    }
-
-    @Override
-    protected void onSave() {
-        super.onSave();
-
-        storeString(binding.textInput.getEditText().getText().toString());
-        refillView();
+        super(fragment, key, (preference) -> new EditTextDialogImpl());
     }
 
     public String getValueOrDefault() {
         String value = getNonNullDataStore().getString(getKey());
         return value != null ? value : getDefaultValue();
+    }
+
+    public String getDefaultValue() {
+        return this.defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public OnBindEditTextListener getOnBindEditTextListener() {
+        return this.onBindEditTextListener;
+    }
+
+    public void setOnBindEditTextListener(OnBindEditTextListener onBindEditTextListener) {
+        this.onBindEditTextListener = onBindEditTextListener;
+    }
+
+    public static class EditTextDialogImpl extends EditTextDialog {
+
+        @Override
+        protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
+            super.onCreateDialog(builder, savedInstanceState);
+
+            EditTextPreference preference = getEditTextPreference();
+            if (preference == null) {
+                dismiss();
+                return;
+            }
+
+            String value = preference.getValueOrDefault();
+            setText(value);
+
+            DialogEditTextBinding ui = getUI();
+            if (value != null) {
+                ui.textInputEditText.setSelection(value.length());
+            }
+            ui.textInputEditText.requestFocus();
+
+            if(preference.getOnBindEditTextListener() != null) {
+                preference.getOnBindEditTextListener().onBind(ui.textInputEditText);
+            }
+
+            builder.setTitle(preference.getTitle())
+                    .setNegativeButton(android.R.string.cancel, (d, w) -> {})
+                    .setPositiveButton(android.R.string.ok, (d, w) -> {
+                        EditTextPreference editTextPreference = getEditTextPreference();
+                        editTextPreference.storeString(getText());
+                        editTextPreference.refillView();
+                    });
+        }
+
+        @Nullable
+        private EditTextPreference getEditTextPreference() {
+            return getVariable(PREFERENCE);
+        }
+
     }
 
     public static class EditTextSummaryProvider implements SummaryProvider {
@@ -80,23 +112,7 @@ public class EditTextPreference extends DialogPreference {
         }
     }
 
-    public static interface OnBindEditTextListener {
+    public interface OnBindEditTextListener {
         void onBind(EditText editText);
-    }
-
-    public String getDefaultValue() {
-        return this.defaultValue;
-    }
-
-    public void setDefaultValue(String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
-
-    public OnBindEditTextListener getOnBindEditTextListener() {
-        return this.onBindEditTextListener;
-    }
-
-    public void setOnBindEditTextListener(OnBindEditTextListener onBindEditTextListener) {
-        this.onBindEditTextListener = onBindEditTextListener;
     }
 }

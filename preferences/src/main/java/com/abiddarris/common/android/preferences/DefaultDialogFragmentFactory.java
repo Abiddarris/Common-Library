@@ -15,37 +15,12 @@
  * ────────────────────────────────────────────────────────────────────── */
 package com.abiddarris.common.android.preferences;
 
-import android.app.Dialog;
-import android.os.Bundle;
-import androidx.annotation.CallSuper;
-import androidx.annotation.MainThread;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
+import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 
-public class DialogFragmentPreference extends DialogFragment {
-    
-    private DialogPreference preference;
-    
+public class DefaultDialogFragmentFactory implements DialogFragmentFactory {
+
     @Override
-    public Dialog onCreateDialog(Bundle bundle) {
-        String key = getArguments()
-            .getString(DialogPreference.KEY);
-        
-        preference = new ViewModelProvider(requireActivity())
-            .get(DialogCommunicator.class)
-            .find(key);
-        
-        return preference.onCreateDialog(this);
+    public BaseDialogFragment<?> createDialogFragment(DialogPreference preference) {
+        return new BaseDialogFragment<>();
     }
-    
-    @Override
-    @MainThread
-    @CallSuper
-    public void onDestroy() {
-        preference.onDialogDestroy();
-        
-        super.onDestroy();
-    }
-    
-    
 }

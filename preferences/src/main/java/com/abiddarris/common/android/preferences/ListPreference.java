@@ -15,19 +15,20 @@
  * ────────────────────────────────────────────────────────────────────── */
 package com.abiddarris.common.android.preferences;
 
-import android.app.Dialog;
+import android.os.Bundle;
 
-import androidx.fragment.app.DialogFragment;
+import androidx.annotation.Nullable;
+
+import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ListPreference extends DialogPreference {
 
-    private int selection;
     private ListEntry[] entries = new ListEntry[0];
     private String defaultValue;
 
     public ListPreference(PreferenceFragment fragment, String key) {
-        super(fragment, key);
+        super(fragment, key, (preference) -> new ListPreferenceDialog());
     }
 
     public void setEntries(ListEntry... entries) {
@@ -36,39 +37,6 @@ public class ListPreference extends DialogPreference {
     
     public ListEntry[] getEntries() {
         return entries;
-    }
-
-    @Override
-    protected Dialog onCreateDialog(DialogFragment fragment) {
-        String value = getValueOrDefault();
-        
-        String[] choices = new String[entries.length];
-        int selection = -1;
-        for (int i = 0; i < choices.length; i++) {
-            choices[i] = entries[i].getTitle();
-            
-            if(selection == -1 && entries[i].getValue().equals(value)) {
-                selection = i;
-            }
-        }
-
-        return new MaterialAlertDialogBuilder(getFragment().getContext())
-                .setTitle(getTitle())
-                .setSingleChoiceItems(choices, selection, (dialog, which) -> this.selection = which)
-                .setNegativeButton(android.R.string.cancel, (p1, p2) -> onCancel())
-                .setPositiveButton(android.R.string.ok, (p1, p2) -> {
-                    fragment.dismiss();
-                    onSave();
-                })
-                .create();
-    }
-    
-    @Override
-    protected void onSave() {
-        super.onSave();
-        
-        storeString(getEntries()[selection].getValue());
-        refillView();
     }
     
     public String getValue() {
@@ -110,5 +78,49 @@ public class ListPreference extends DialogPreference {
         	return provider;
         }
         
+    }
+
+    public static class ListPreferenceDialog extends BaseDialogFragment<Void> {
+
+        private int selection;
+
+        @Override
+        protected void onCreateDialog(MaterialAlertDialogBuilder builder, Bundle savedInstanceState) {
+            super.onCreateDialog(builder, savedInstanceState);
+
+            ListPreference preference = getListPreference();
+            if (preference == null) {
+                return;
+            }
+            String value = preference.getValueOrDefault();
+
+            ListEntry[] entries = preference.getEntries();
+            String[] choices = new String[entries.length];
+            int selection = -1;
+            for (int i = 0; i < choices.length; i++) {
+                choices[i] = entries[i].getTitle();
+
+                if(selection == -1 && entries[i].getValue().equals(value)) {
+                    selection = i;
+                }
+            }
+
+            builder.setTitle(preference.getTitle())
+                    .setSingleChoiceItems(choices, selection,
+                            (dialog, which) -> this.selection = which)
+                    .setNegativeButton(android.R.string.cancel, (p1, p2) -> {})
+                    .setPositiveButton(android.R.string.ok, (p1, p2) -> {
+                        ListPreference listPreference = getListPreference();
+                        listPreference.storeString(
+                                listPreference.getEntries()[this.selection].getValue());
+                        listPreference.refillView();
+                    })
+                    .create();
+        }
+
+        @Nullable
+        private ListPreference getListPreference() {
+            return getVariable(PREFERENCE);
+        }
     }
 }

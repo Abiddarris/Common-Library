@@ -15,65 +15,57 @@
  * ────────────────────────────────────────────────────────────────────── */
 package com.abiddarris.common.android.preferences;
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.ViewModelProvider;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public abstract class DialogPreference extends Preference {
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-    static final String KEY = "key";
+import com.abiddarris.common.android.dialogs.BaseDialogFragment;
 
-    public DialogPreference(PreferenceFragment fragment, String key) {
+public class DialogPreference extends Preference {
+
+    public static final String PREFERENCE = "preference";
+    private final DialogFragmentFactory factory;
+
+    public DialogPreference(PreferenceFragment fragment, String key, DialogFragmentFactory factory) {
         super(fragment, key);
 
-        new ViewModelProvider(fragment.requireActivity()).get(DialogCommunicator.class).add(this);
+        if (factory == null) {
+            factory = new DefaultDialogFragmentFactory();
+        }
+
+        this.factory = factory;
+
+        Fragment dialogFragment = getShownDialogFragment();
+        if (dialogFragment == null) return;
+
+        BaseDialogFragment<?> baseDialogFragment = (BaseDialogFragment<?>)dialogFragment;
+        baseDialogFragment.saveVariable(PREFERENCE, this);
     }
-    
+
+    @Nullable
+    private Fragment getShownDialogFragment() {
+        Fragment dialogFragment = getFragment()
+                .getChildFragmentManager()
+                .findFragmentByTag(getKey());
+
+        if (!(dialogFragment instanceof BaseDialogFragment)) {
+            return null;
+        }
+        return dialogFragment;
+    }
+
     @Override
     protected void onClick(View view) {
         super.onClick(view);
-      
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY, getKey());
 
-        DialogFragmentPreference dialog = new DialogFragmentPreference();
-        dialog.setArguments(bundle);
+        if (getShownDialogFragment() != null) {
+            return;
+        }
+
+        BaseDialogFragment<?> dialog = factory.createDialogFragment(this);
+        dialog.saveVariable(PREFERENCE, this);
         dialog.show(getFragment().getChildFragmentManager(), getKey());
     }
-    
-    protected Dialog onCreateDialog(DialogFragment fragment) {
-        View view = onCreateView(getFragment().getLayoutInflater());
-        
-        AlertDialog dialog = new MaterialAlertDialogBuilder(getFragment().getContext())
-                .setTitle(getTitle())
-                .setView(view)
-                .setNegativeButton(android.R.string.cancel, (p1, p2) -> onCancel())
-                .setPositiveButton(android.R.string.ok, (p1, p2) -> {
-                    fragment.dismiss();
-                    onSave();
-                })
-                .create();
-        
-        onViewCreated(dialog, view);
-        return dialog;
-    }
-    
-    protected View onCreateView(LayoutInflater inflater) {
-        return null;
-    }
-    
-    protected void onViewCreated(AlertDialog dialog, View view) {
-    }
-
-    protected void onCancel() {}
-
-    protected void onSave() {}
-
-    protected void onDialogDestroy() {}
     
 }

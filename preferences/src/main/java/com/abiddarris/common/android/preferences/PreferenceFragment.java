@@ -17,18 +17,19 @@ package com.abiddarris.common.android.preferences;
 
 import android.os.Bundle;
 import android.view.View;
+
 import androidx.annotation.CallSuper;
 import androidx.annotation.MainThread;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.abiddarris.common.android.preferences.databinding.FragmentPreferenceBinding;
 
 public abstract class PreferenceFragment extends Fragment {
 
     private DataStore defaultDataStore;
-    private PreferenceAdapter adapter;
-    
+
     public PreferenceFragment() {
         super(R.layout.fragment_preference);
     }
@@ -44,25 +45,16 @@ public abstract class PreferenceFragment extends Fragment {
     
     @Override
     @MainThread
-    public final void onViewCreated(View view, Bundle bundle) {
+    public final void onViewCreated(@NonNull View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-        
-        adapter = new PreferenceAdapter(getContext(), onCreatePreference());
+
+        PreferenceAdapter adapter = new PreferenceAdapter(getContext(), onCreatePreference());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         FragmentPreferenceBinding binding = FragmentPreferenceBinding.bind(view);
 
         binding.recyclerView.setLayoutManager(layoutManager);
         binding.recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    @MainThread
-    @CallSuper
-    public void onDestroy() {
-        super.onDestroy();
-
-        new ViewModelProvider(requireActivity()).get(DialogCommunicator.class).clear();
     }
 
     public DataStore getDefaultDataStore() {
@@ -78,8 +70,5 @@ public abstract class PreferenceFragment extends Fragment {
     }
 
     public abstract Preference[] onCreatePreference();
-    
-    PreferenceAdapter getAdapter() {
-        return adapter;
-    }
+
 }
